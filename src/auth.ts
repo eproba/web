@@ -4,6 +4,7 @@ import { Gender, User } from "@/types/user";
 declare module "next-auth" {
   interface Session {
     user: User & DefaultSession["user"];
+    accessToken: string;
   }
 }
 
@@ -27,16 +28,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   ],
   callbacks: {
-    jwt({ token, user }) {
+    jwt({ token, user, account }) {
       if (user) {
         // User is available during sign-in
-        return { ...token, ...user };
+        return { ...token, ...user, accessToken: account?.access_token };
       }
       return token;
     },
     session({ session, token }) {
       return {
         ...session,
+        accessToken: token.accessToken,
         user: {
           ...session.user,
           id: token.sub,

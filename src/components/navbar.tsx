@@ -26,8 +26,6 @@ export async function Navbar({ messages }: NavbarProps) {
   const session = await auth();
   const user = session?.user;
 
-  console.log(user);
-
   return (
     <nav className="flex items-center p-4 container mx-auto mt-4 gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
       <div className="flex items-center gap-4">
@@ -212,6 +210,7 @@ export async function Navbar({ messages }: NavbarProps) {
 
         {/* Right Side Navigation */}
         <div className="hidden md:flex gap-2">
+          <ThemeSwitch />
           {user ? (
             <>
               <Link href="/profile">
@@ -247,7 +246,6 @@ export async function Navbar({ messages }: NavbarProps) {
               </form>
             </>
           )}
-          <ThemeSwitch />
         </div>
       </div>
 
