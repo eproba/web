@@ -11,6 +11,7 @@ export interface Task {
   description: string | null;
   status: TaskStatus;
   approver: string | null;
+  approverName: string | null;
   approvalDate: Date | null;
 }
 

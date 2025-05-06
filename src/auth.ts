@@ -14,7 +14,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       id: "eproba",
       name: "Epróba",
       type: "oidc",
-      issuer: `${process.env.NEXT_PUBLIC_API_URL}/oauth2`,
+      issuer: `${process.env.NEXT_PUBLIC_SERVER_URL}/oauth2`,
       clientId: process.env.AUTH_CLIENT_ID,
       clientSecret: process.env.AUTH_CLIENT_SECRET,
       authorization: {

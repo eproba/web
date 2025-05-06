@@ -25,6 +25,7 @@ export function taskSerializer(apiResponse: any): Task {
     description: apiResponse.description,
     status: apiResponse.status,
     approver: apiResponse.approver,
+    approverName: apiResponse.approver_name,
     approvalDate: apiResponse.approval_date
       ? new Date(apiResponse.approval_date)
       : null,

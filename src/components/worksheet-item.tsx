@@ -10,10 +10,10 @@ export const WorksheetItem = ({
   variant = "user",
 }: {
   worksheet: Worksheet;
-  variant?: "user" | "managed" | "shared";
+  variant?: "user" | "managed" | "shared" | "archived";
 }) => {
   return (
-    <div className="bg-card rounded-lg p-6 shadow-sm">
+    <div className="bg-card rounded-lg p-6 shadow-md">
       <div className="flex justify-between items-start mb-4">
         <div>
           <h2 className="text-2xl font-semibold">{worksheet.name}</h2>
@@ -25,7 +25,10 @@ export const WorksheetItem = ({
           {worksheet.supervisor && (
             <p className="text-sm text-muted-foreground">
               Opiekun:{" "}
-              <a href={`/profile/${worksheet.supervisor}`}>
+              <a
+                href={`/profile/${worksheet.supervisor}`}
+                className="text-primary"
+              >
                 {worksheet.supervisorName}
               </a>
             </p>

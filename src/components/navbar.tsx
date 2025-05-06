@@ -27,7 +27,7 @@ export async function Navbar({ messages }: NavbarProps) {
   const user = session?.user;
 
   return (
-    <nav className="flex items-center p-4 container mx-auto mt-4 gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
+    <nav className="flex items-center p-4 px-5 container mx-auto mt-4 gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
       <div className="flex items-center gap-4">
         <AppLogo />
 
@@ -69,7 +69,7 @@ export async function Navbar({ messages }: NavbarProps) {
                 <NavigationMenuTrigger className="bg-transparent">
                   <Link href="/worksheets/manage">Zarządzaj próbami</Link>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="dark:bg-[#161b22]">
+                <NavigationMenuContent className="dark:bg-[#161b22] z-50">
                   <ul className="grid gap-1 p-2 w-[240px]">
                     <NavigationMenuItem>
                       <NavigationMenuLink asChild>
@@ -114,7 +114,7 @@ export async function Navbar({ messages }: NavbarProps) {
                     Admin
                   </Link>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="dark:bg-[#161b22]">
+                <NavigationMenuContent className="dark:bg-[#161b22] z-50">
                   <ul className="grid gap-1 p-2 w-[240px]">
                     <NavigationMenuItem>
                       <NavigationMenuLink asChild>
@@ -147,7 +147,7 @@ export async function Navbar({ messages }: NavbarProps) {
                 <NavigationMenuTrigger className="bg-transparent">
                   <Link href="/teams">Twoja drużyna</Link>
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="dark:bg-[#161b22]">
+                <NavigationMenuContent className="dark:bg-[#161b22] z-50">
                   <ul className="grid gap-1 p-2 w-[240px]">
                     <NavigationMenuItem>
                       <NavigationMenuLink asChild>
@@ -179,7 +179,7 @@ export async function Navbar({ messages }: NavbarProps) {
               <NavigationMenuTrigger className="bg-transparent">
                 Więcej
               </NavigationMenuTrigger>
-              <NavigationMenuContent className="dark:bg-[#161b22]">
+              <NavigationMenuContent className="dark:bg-[#161b22] z-50">
                 <ul className="grid gap-1 p-2 w-[240px]">
                   <NavigationMenuItem>
                     <NavigationMenuLink asChild>

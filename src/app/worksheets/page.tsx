@@ -12,7 +12,7 @@ export default async function UserWorksheets() {
     return <LoginRequired />;
   }
 
-  const response = await fetch(`${API_URL}/api/worksheets?user`, {
+  const response = await fetch(`${API_URL}/worksheets?user`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -43,7 +43,11 @@ export default async function UserWorksheets() {
         </div>
       ) : (
         data?.map((worksheet) => (
-          <WorksheetItem key={worksheet.id} worksheet={worksheet} />
+          <WorksheetItem
+            key={worksheet.id}
+            worksheet={worksheet}
+            variant="user"
+          />
         ))
       )}
     </div>

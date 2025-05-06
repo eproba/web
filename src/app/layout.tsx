@@ -4,6 +4,8 @@ import { Metadata } from "next";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Providers } from "@/components/providers";
+import { ThemedToastContainer } from "@/components/themed-toast-container";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "Epróba",
@@ -35,6 +37,7 @@ export default function RootLayout({
       </head>
       <body className="flex flex-col min-h-screen">
         <Providers>
+          <NextTopLoader color="#1abc9c" />
           {/*{devMode && (*/}
           {/*    <div*/}
           {/*        className="fixed top-8 right-0 bg-red-600 text-white px-10 py-2 text-sm font-bold z-[9999] rotate-45 translate-x-10 -translate-y-2 shadow-lg">*/}
@@ -50,6 +53,8 @@ export default function RootLayout({
               {children}
             </main>
           </div>
+
+          <ThemedToastContainer />
 
           {/* Footer */}
           <Footer />
