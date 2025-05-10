@@ -2,10 +2,14 @@ import { Task, Worksheet } from "@/types/worksheet";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-export function worksheetSerializer(apiResponse: any): Worksheet {
+export function worksheetSerializer(apiResponse: any): Worksheet | null {
+  if (apiResponse.deleted) {
+    return null;
+  }
   return {
     id: apiResponse.id,
     user: apiResponse.user,
+    userId: apiResponse.user?.id,
     name: apiResponse.name,
     description: apiResponse.description,
     supervisor: apiResponse.supervisor,

@@ -1,10 +1,14 @@
 import NextAuth, { DefaultSession } from "next-auth";
-import { Gender, User } from "@/types/user";
+import { User } from "@/types/user";
+import { userSerializer } from "@/lib/serializers/user";
+
+const refreshTokenPromises = new Map<string, Promise<any>>();
 
 declare module "next-auth" {
   interface Session {
     user: User & DefaultSession["user"];
     accessToken: string;
+    error?: "RefreshTokenError";
   }
 }
 
@@ -28,38 +32,76 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     },
   ],
   callbacks: {
-    jwt({ token, user, account }) {
-      if (user) {
-        // User is available during sign-in
-        return { ...token, ...user, accessToken: account?.access_token };
+    async jwt({ token, user, account }) {
+      if (user && account) {
+        return {
+          ...token,
+          ...user,
+          accessToken: account.access_token,
+          expiresAt: account.expires_at,
+          refreshToken: account.refresh_token,
+        };
+      } else if (
+        typeof token.expiresAt === "number" &&
+        Date.now() < token.expiresAt * 1000 - 5 * 1000 // 5 seconds buffer expiresAt
+      ) {
+        return token;
+      } else {
+        if (!token.refreshToken) throw new TypeError("Missing refresh_token");
+        const userId = token.sub;
+        if (!userId) throw new TypeError("Missing user ID");
+
+        // Check for existing refresh promise
+        let refreshPromise = refreshTokenPromises.get(userId);
+        if (!refreshPromise) {
+          refreshPromise = (async () => {
+            try {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_SERVER_URL}/oauth2/token/`,
+                {
+                  method: "POST",
+                  body: new URLSearchParams({
+                    client_id: process.env.AUTH_CLIENT_ID!,
+                    client_secret: process.env.AUTH_CLIENT_SECRET!,
+                    grant_type: "refresh_token",
+                    refresh_token: token.refreshToken as string,
+                  }),
+                },
+              );
+
+              const tokensOrError = await response.json();
+              if (!response.ok) throw tokensOrError;
+
+              return {
+                ...token,
+                accessToken: tokensOrError.access_token,
+                expiresAt: Math.floor(
+                  Date.now() / 1000 + tokensOrError.expires_in,
+                ),
+                refreshToken: tokensOrError.refresh_token,
+              };
+            } catch (error) {
+              console.error("Error refreshing access_token", error);
+              return { ...token, error: "RefreshTokenError" };
+            } finally {
+              refreshTokenPromises.delete(userId);
+            }
+          })();
+
+          refreshTokenPromises.set(userId, refreshPromise);
+        }
+
+        return await refreshPromise;
       }
-      return token;
     },
     session({ session, token }) {
+      if (token.error) {
+        return { ...session, user: undefined };
+      }
       return {
         ...session,
         accessToken: token.accessToken,
-        user: {
-          ...session.user,
-          id: token.sub,
-          nickname: token.nickname,
-          firstName: token.given_name,
-          lastName: token.family_name,
-          name: token.name,
-          email: token.email,
-          emailVerified: token.email_verified,
-          gender: Object.values(Gender).includes(token.gender as Gender)
-            ? (token.gender as Gender)
-            : null,
-          patrol: token.patrol,
-          rank: token.rank,
-          scoutRank: token.scout_rank,
-          instructorRank: token.instructor_rank,
-          function: token.function,
-          isActive: token.is_active,
-          isStaff: token.is_staff,
-          isSuperuser: token.is_superuser,
-        },
+        user: { ...session.user, ...userSerializer(token) },
       };
     },
   },

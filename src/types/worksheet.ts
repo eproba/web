@@ -1,3 +1,5 @@
+import { PublicUser } from "@/types/user";
+
 export enum TaskStatus {
   TODO = 0,
   AWAITING_APPROVAL = 1,
@@ -17,7 +19,8 @@ export interface Task {
 
 export interface Worksheet {
   id: string;
-  user: string;
+  user: PublicUser | undefined;
+  userId: string;
   name: string;
   description: string;
   supervisor: string | null;

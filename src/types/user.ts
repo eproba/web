@@ -1,17 +1,15 @@
 export enum Gender {
-  Male = "male",
-  Female = "female",
-  Other = "other",
+  Male = 0,
+  Female = 1,
+  Other = 2,
 }
 
-export interface User {
+export interface PublicUser {
   id: string;
   nickname: string | null;
   firstName: string | null;
   lastName: string | null;
   name: string;
-  email: string;
-  emailVerified: boolean;
   gender: Gender | null;
   patrol: string | null;
   rank: string;
@@ -21,4 +19,9 @@ export interface User {
   isActive: boolean;
   isStaff: boolean;
   isSuperuser: boolean;
+}
+
+export interface User extends PublicUser {
+  email: string;
+  emailVerified: boolean;
 }

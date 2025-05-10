@@ -1,18 +1,18 @@
 import { auth } from "@/auth";
-import Link from "next/link";
 import { API_URL } from "@/lib/api";
 import { Worksheet } from "@/types/worksheet";
 import { LoginRequired } from "@/components/login-required";
-import { WorksheetItem } from "@/components/worksheet-item";
 import { worksheetSerializer } from "@/lib/serializers/worksheet";
+import { handleError } from "@/lib/error-alert-handler";
+import { WorksheetList } from "@/components/worksheet-list";
 
 export default async function UserWorksheets() {
   const session = await auth();
-  if (!session) {
+  if (!session || !session.user) {
     return <LoginRequired />;
   }
 
-  const response = await fetch(`${API_URL}/worksheets?user`, {
+  const response = await fetch(`${API_URL}/worksheets/?user`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -21,34 +21,21 @@ export default async function UserWorksheets() {
   });
 
   if (!response.ok) {
-    throw new Error("Failed to fetch worksheets");
+    return await handleError(response);
   }
   const data = (await response.json()).map(worksheetSerializer) as Worksheet[];
 
-  // if (error)
-  //   return (
-  //     <div className="p-4 bg-destructive/10 text-destructive rounded-lg">
-  //       {error.message}
-  //     </div>
-  //   );
+  const activeWorksheets = data.filter((worksheet) => !worksheet.isArchived);
+  const archivedWorksheets = data.filter((worksheet) => worksheet.isArchived);
 
   return (
     <div className="space-y-4 md:px-16">
-      {data?.length === 0 ? (
-        <div className="p-4 bg-card rounded-lg">
-          No worksheets found.
-          <Link href="/worksheets/create" className="text-primary">
-            create a new one
-          </Link>
+      <WorksheetList worksheets={activeWorksheets} variant="user" />
+      {archivedWorksheets?.length > 0 && (
+        <div className="space-y-4 mt-8">
+          <h2 className="text-2xl font-semibold">Archiwum</h2>
+          <WorksheetList worksheets={archivedWorksheets} variant="archived" />
         </div>
-      ) : (
-        data?.map((worksheet) => (
-          <WorksheetItem
-            key={worksheet.id}
-            worksheet={worksheet}
-            variant="user"
-          />
-        ))
       )}
     </div>
   );

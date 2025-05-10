@@ -5,13 +5,13 @@ import { TaskTable } from "@/components/task-table";
 // import { QrModal } from './QrModal';
 // import { useToast } from '@/components/ui/use-toast';
 
-export const WorksheetItem = ({
+export function WorksheetItem({
   worksheet,
   variant = "user",
 }: {
   worksheet: Worksheet;
   variant?: "user" | "managed" | "shared" | "archived";
-}) => {
+}) {
   return (
     <div className="bg-card rounded-lg p-6 shadow-md">
       <div className="flex justify-between items-start mb-4">
@@ -47,4 +47,4 @@ export const WorksheetItem = ({
       <TaskTable worksheet={worksheet} variant={variant} />
     </div>
   );
-};
+}

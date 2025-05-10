@@ -33,6 +33,9 @@ export function AppLogo({
         alt="Epróba"
         className="w-[112px] mb-1"
       />
+      <span className="absolute translate-x-16 -translate-y-6 -rotate-30 text-green-500 pointer-events-none bg-accent/50">
+        v2 βeta
+      </span>
     </Link>
   ) : (
     <div className="h-[32px] w-[112px]"></div>
