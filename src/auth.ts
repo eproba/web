@@ -2,6 +2,8 @@ import NextAuth, { DefaultSession } from "next-auth";
 import { User } from "@/types/user";
 import { userSerializer } from "@/lib/serializers/user";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 const refreshTokenPromises = new Map<string, Promise<any>>();
 
 declare module "next-auth" {
