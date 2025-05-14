@@ -30,11 +30,11 @@ export default async function UserWorksheets() {
 
   return (
     <div className="space-y-4 md:px-16">
-      <WorksheetList worksheets={activeWorksheets} variant="user" />
+      <WorksheetList orgWorksheets={activeWorksheets} variant="user" />
       {archivedWorksheets?.length > 0 && (
         <div className="space-y-4 mt-8">
           <h2 className="text-2xl font-semibold">Archiwum</h2>
-          <WorksheetList worksheets={archivedWorksheets} variant="archived" />
+          <WorksheetList orgWorksheets={archivedWorksheets} variant="shared" />
         </div>
       )}
     </div>

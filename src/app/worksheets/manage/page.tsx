@@ -82,7 +82,7 @@ export default async function ManagedWorksheets() {
   return (
     <div className="md:px-16">
       <WorksheetList
-        worksheets={data}
+        orgWorksheets={data}
         variant="managed"
         showFilters={true}
         patrols={patrols}

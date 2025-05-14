@@ -81,7 +81,7 @@ export default async function ArchivedWorksheets() {
   return (
     <div className="md:px-16">
       <WorksheetList
-        worksheets={data}
+        orgWorksheets={data}
         variant="archived"
         showFilters={true}
         patrols={patrols}

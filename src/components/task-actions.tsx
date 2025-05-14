@@ -1,5 +1,3 @@
-"use client";
-
 import {
   Tooltip,
   TooltipContent,
@@ -26,7 +24,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { PublicUser } from "@/types/user";
 import {
   Select,
@@ -38,26 +36,25 @@ import {
 import { Button } from "@/components/ui/button";
 import { publicUserSerializer } from "@/lib/serializers/user";
 import { ToastMsg } from "@/lib/toast-msg";
-import { useRouter } from "next/navigation";
 import { useApi } from "@/lib/api-client";
+import { taskSerializer } from "@/lib/serializers/worksheet";
 
 export function TaskActions({
   worksheetId,
   task,
   variant,
+  updateTask,
 }: {
   worksheetId: string;
   task: Task;
   variant: "user" | "managed";
+  updateTask: (task: Task) => void;
 }) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
   const [availableApprovers, setAvailableApprovers] = useState<PublicUser[]>(
     [],
   );
   const [selectedApprover, setSelectedApprover] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   const apiClient = useApi();
 
@@ -90,7 +87,7 @@ export function TaskActions({
             : undefined,
       };
 
-      await apiClient(
+      const response = await apiClient(
         `/worksheets/${worksheetId}/tasks/${task.id}/${action}/`,
         options,
       );
@@ -103,20 +100,7 @@ export function TaskActions({
         clear: "Status zadania wyczyszczony",
       };
       toast.success(messages[action]);
-      if (action === "submit") {
-        setDialogOpen(false);
-        // Workaround for the dialog flashing open after closing
-        setTimeout(() => {
-          startTransition(() => {
-            setSelectedApprover(null);
-            router.refresh();
-          });
-        }, 300);
-      } else {
-        startTransition(() => {
-          router.refresh();
-        });
-      }
+      updateTask(taskSerializer(await response.json()));
     } catch (error) {
       handleApiError(error, action);
     } finally {
@@ -154,7 +138,7 @@ export function TaskActions({
   }
 
   if (
-    (loading || isPending) &&
+    loading &&
     !(
       variant === "user" &&
       (task.status === TaskStatus.TODO || task.status === TaskStatus.REJECTED)
@@ -187,9 +171,7 @@ export function TaskActions({
         case TaskStatus.REJECTED:
           return (
             <Dialog
-              open={dialogOpen}
               onOpenChange={async (open) => {
-                setDialogOpen(open);
                 if (open) {
                   await fetchAvailableApprovers();
                 } else {
@@ -197,10 +179,10 @@ export function TaskActions({
                 }
               }}
             >
-              <DialogTrigger disabled={loading || isPending}>
+              <DialogTrigger disabled={loading}>
                 <TooltipProvider>
                   <Tooltip>
-                    {loading || isPending ? (
+                    {loading ? (
                       <>
                         <TooltipTrigger className="relative" asChild>
                           <div>
@@ -270,6 +252,7 @@ export function TaskActions({
                     <DialogClose asChild>
                       <Button variant="outline">Anuluj</Button>
                     </DialogClose>
+                    <DialogClose asChild>
                     <Button
                       onClick={() => handleTaskAction("submit")}
                       disabled={!selectedApprover || loading}
@@ -283,6 +266,7 @@ export function TaskActions({
                         </>
                       )}
                     </Button>
+                    </DialogClose>
                   </div>
                 </DialogHeader>
               </DialogContent>

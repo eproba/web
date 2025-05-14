@@ -1,5 +1,5 @@
 "use client";
-import { Worksheet } from "@/types/worksheet";
+import { Task, Worksheet } from "@/types/worksheet";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { WorksheetItem } from "@/components/worksheet-item";
@@ -38,12 +38,12 @@ const stringSimilarity = (str1: string, str2: string): boolean => {
 };
 
 export function WorksheetList({
-  worksheets,
+  orgWorksheets,
   variant = "user",
   showFilters = false,
   patrols = [],
 }: {
-  worksheets: Worksheet[];
+  orgWorksheets: Worksheet[];
   variant?: "user" | "managed" | "shared" | "archived";
   showFilters?: boolean;
   patrols?: Record<string, string>[];
@@ -51,17 +51,42 @@ export function WorksheetList({
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedPatrol, setSelectedPatrol] = useState<string>("null");
+  const [worksheets, setWorksheets] = useState<Worksheet[]>(orgWorksheets);
 
-  // Debounce with longer delay for search query
+  function updateWorksheet(worksheet: Worksheet) {
+    setWorksheets((prevWorksheets) =>
+      prevWorksheets.map((w) => (w.id === worksheet.id ? worksheet : w)),
+    );
+  }
+
+  function updateTask(worksheetId: string,  task: Task) {
+    setWorksheets((prevWorksheets) =>
+      prevWorksheets.map((w) => {
+        if (w.id === worksheetId) {
+          return {
+            ...w,
+            tasks: w.tasks.map((t) => (t.id === task.id ? task : t)),
+          };
+        }
+        return w;
+      }),
+    );
+  }
+
+  function deleteWorksheet(worksheetId: string) {
+    setWorksheets((prevWorksheets) =>
+      prevWorksheets.filter((w) => w.id !== worksheetId),
+    );
+  }
+
   useEffect(() => {
     const timerId = setTimeout(() => {
       setDebouncedSearchQuery(searchQuery);
-    }, 400); // Increased debounce time
+    }, 400);
 
     return () => clearTimeout(timerId);
   }, [searchQuery]);
 
-  // Optimized search function with memoization
   const searchText = useCallback(
     (text: string | undefined): boolean => {
       if (!text || !debouncedSearchQuery) return false;
@@ -74,7 +99,7 @@ export function WorksheetList({
   const filteredWorksheets = useMemo(() => {
     // Skip filtering if no filters are applied
     if (debouncedSearchQuery === "" && selectedPatrol === "null") {
-      return worksheets;
+      return worksheets || [];
     }
 
     return worksheets.filter((worksheet) => {
@@ -141,6 +166,9 @@ export function WorksheetList({
             key={worksheet.id}
             worksheet={worksheet}
             variant={variant}
+            updateWorksheet={updateWorksheet}
+            updateTask={updateTask}
+            deleteWorksheet={() => deleteWorksheet(worksheet.id)}
           />
         ))
       )}

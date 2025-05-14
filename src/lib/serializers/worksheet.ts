@@ -1,4 +1,5 @@
 import { Task, Worksheet } from "@/types/worksheet";
+import { publicUserSerializer } from "@/lib/serializers/user";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -8,7 +9,7 @@ export function worksheetSerializer(apiResponse: any): Worksheet | null {
   }
   return {
     id: apiResponse.id,
-    user: apiResponse.user,
+    user: publicUserSerializer(apiResponse.user),
     userId: apiResponse.user?.id,
     name: apiResponse.name,
     description: apiResponse.description,
