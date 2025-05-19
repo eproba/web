@@ -10,7 +10,10 @@ export function ToastMsg({
     href?: string;
   };
 }) {
-  const description = typeof data.description === "string" ? data.description : `${data.description.status} ${data.description.statusText}\n${data.description.message}`;
+  const description =
+    typeof data.description === "string"
+      ? data.description
+      : `${data.description.status} ${data.description.statusText}\n${data.description.message}`;
   if (data.href) {
     return (
       <Link href={data.href}>

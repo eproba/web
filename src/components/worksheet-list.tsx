@@ -59,7 +59,7 @@ export function WorksheetList({
     );
   }
 
-  function updateTask(worksheetId: string,  task: Task) {
+  function updateTask(worksheetId: string, task: Task) {
     setWorksheets((prevWorksheets) =>
       prevWorksheets.map((w) => {
         if (w.id === worksheetId) {

@@ -80,7 +80,7 @@ export default async function ManagedWorksheets() {
     return 0;
   });
   return (
-    <div className="md:px-16">
+    <div className="">
       <WorksheetList
         orgWorksheets={data}
         variant="managed"

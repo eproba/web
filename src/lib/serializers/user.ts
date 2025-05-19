@@ -1,32 +1,83 @@
-import { Gender, PublicUser, User } from "@/types/user";
+import {
+  Gender,
+  InstructorRank,
+  PublicUser,
+  ScoutRank,
+  User,
+  UserFunction,
+} from "@/types/user";
+import { displayNameFromUser } from "@/lib/utils";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+interface ApiUserResponse {
+  id: string;
+  nickname?: string | null;
+  given_name?: string | null;
+  first_name?: string | null;
+  family_name?: string | null;
+  last_name?: string | null;
+  name: string;
+  gender?: string | null;
+  patrol?: string | null;
+  patrol_name?: string | null;
+  team?: string | null;
+  team_name?: string | null;
+  scout_rank: number;
+  instructor_rank: number;
+  function: number;
+  is_active: boolean;
+  is_staff: boolean;
+  is_superuser: boolean;
+  email?: string;
+  email_verified?: boolean;
+}
 
-export function publicUserSerializer(apiResponse: any): PublicUser {
-  return {
+export function publicUserSerializer(apiResponse: ApiUserResponse): PublicUser {
+  const gender = Gender.fromValue(apiResponse.gender ?? null);
+
+  const scoutRank = ScoutRank.fromValue(apiResponse.scout_rank, gender);
+  const instructorRank = InstructorRank.fromValue(
+    apiResponse.instructor_rank,
+    gender,
+  );
+  const combinedRank =
+    [scoutRank, instructorRank]
+      .filter((r) => r.value > 0)
+      .map((r) => r.fullName)
+      .join(" ") || "brak stopnia";
+
+  const baseUser = {
     id: apiResponse.id,
-    nickname: apiResponse.nickname,
-    firstName: apiResponse.given_name,
-    lastName: apiResponse.family_name,
+    nickname: apiResponse.nickname ?? null,
+    firstName: apiResponse.given_name ?? apiResponse.first_name ?? null,
+    lastName: apiResponse.family_name ?? apiResponse.last_name ?? null,
     name: apiResponse.name,
-    gender: Object.values(Gender).includes(apiResponse.gender as Gender)
-      ? (apiResponse.gender as Gender)
-      : null,
-    patrol: apiResponse.patrol,
-    rank: apiResponse.rank,
-    scoutRank: apiResponse.scout_rank,
-    instructorRank: apiResponse.instructor_rank,
-    function: apiResponse.function,
+    gender,
+    patrol: apiResponse.patrol ?? null,
+    patrolName: apiResponse.patrol_name ?? null,
+    team: apiResponse.team ?? null,
+    teamName: apiResponse.team_name ?? null,
+    rank: combinedRank,
+    scoutRank: scoutRank,
+    instructorRank: instructorRank,
+    function: UserFunction.fromValue(apiResponse.function, gender),
     isActive: apiResponse.is_active,
     isStaff: apiResponse.is_staff,
     isSuperuser: apiResponse.is_superuser,
   };
+
+  return {
+    ...baseUser,
+    displayName: displayNameFromUser(baseUser),
+  };
 }
 
-export function userSerializer(apiResponse: any): User {
+export function userSerializer(
+  apiResponse: ApiUserResponse & { email?: string; email_verified?: boolean },
+): User {
+  const publicUser = publicUserSerializer(apiResponse);
   return {
-    ...publicUserSerializer(apiResponse),
-    email: apiResponse.email,
-    emailVerified: apiResponse.email_verified,
+    ...publicUser,
+    email: apiResponse.email ?? "",
+    emailVerified: apiResponse.email_verified ?? false,
   };
 }

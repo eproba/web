@@ -49,7 +49,7 @@ export default function RootLayout({
             {/* NAVBAR */}
             <Navbar />
 
-            <main className="mx-auto container flex flex-col pt-4 mb-24">
+            <main className="mx-auto container md:px-16 flex flex-col pt-4 mb-24">
               {children}
             </main>
           </div>

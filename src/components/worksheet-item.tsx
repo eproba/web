@@ -22,9 +22,7 @@ export function WorksheetItem({
           <h2 className="text-2xl font-semibold">
             {worksheet.name}
             {(variant === "managed" || variant === "archived") && (
-              <span className="">
-                {" "}- {worksheet.user?.nickname}
-              </span>
+              <span className=""> - {worksheet.user?.nickname}</span>
             )}
           </h2>
           {worksheet.description && (
@@ -45,10 +43,18 @@ export function WorksheetItem({
           )}
         </div>
 
-        <WorksheetActions worksheet={worksheet} variant={variant} deleteWorksheet={deleteWorksheet} />
+        <WorksheetActions
+          worksheet={worksheet}
+          variant={variant}
+          removeWorksheet={deleteWorksheet}
+        />
       </div>
 
-      <TaskTable worksheet={worksheet} variant={variant} updateTask={(task) => updateTask?.(worksheet.id, task)} />
+      <TaskTable
+        worksheet={worksheet}
+        variant={variant}
+        updateTask={(task) => updateTask?.(worksheet.id, task)}
+      />
     </div>
   );
 }

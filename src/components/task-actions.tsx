@@ -1,10 +1,10 @@
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import React from "react";
+import { toast } from "react-toastify";
+import { ApiError } from "@/lib/api";
+import { useApi } from "@/lib/api-client";
 import { Task, TaskStatus } from "@/types/worksheet";
+import { PublicUser } from "@/types/user";
+import { ToastMsg } from "@/lib/toast-msg";
 import {
   CloudUploadIcon,
   EraserIcon,
@@ -13,8 +13,14 @@ import {
   SignatureIcon,
   TicketXIcon,
 } from "lucide-react";
-import { toast } from "react-toastify";
-import { ApiError } from "@/lib/api";
+import { taskSerializer } from "@/lib/serializers/worksheet";
+import { publicUserSerializer } from "@/lib/serializers/user";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import {
   Dialog,
   DialogClose,
@@ -24,8 +30,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useState } from "react";
-import { PublicUser } from "@/types/user";
 import {
   Select,
   SelectContent,
@@ -34,376 +38,361 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { publicUserSerializer } from "@/lib/serializers/user";
-import { ToastMsg } from "@/lib/toast-msg";
-import { useApi } from "@/lib/api-client";
-import { taskSerializer } from "@/lib/serializers/worksheet";
+import { composeEventHandlers } from "@radix-ui/primitive";
+import { cn } from "@/lib/utils";
 
-export function TaskActions({
-  worksheetId,
-  task,
-  variant,
-  updateTask,
-}: {
+type TaskAction = "submit" | "unsubmit" | "accept" | "reject" | "clear";
+
+const ACTION_MESSAGES: Record<TaskAction, string> = {
+  submit: "Zgłoszenie wysłane",
+  unsubmit: "Zgłoszenie wycofane",
+  accept: "Zadanie zatwierdzone",
+  reject: "Zadanie odrzucone",
+  clear: "Status zadania wyczyszczony",
+};
+
+const ERROR_MESSAGES: Record<TaskAction, string> = {
+  submit: "Nie udało się zgłosić zadania",
+  unsubmit: "Nie udało się wycofać zgłoszenia",
+  accept: "Nie udało się zatwierdzić zadania",
+  reject: "Nie udało się odrzucić zadania",
+  clear: "Nie udało się wyczyścić statusu zadania",
+};
+
+interface TaskActionsProps {
   worksheetId: string;
   task: Task;
   variant: "user" | "managed";
   updateTask: (task: Task) => void;
-}) {
-  const [availableApprovers, setAvailableApprovers] = useState<PublicUser[]>(
-    [],
-  );
-  const [selectedApprover, setSelectedApprover] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  closeDrawer?: () => void;
+  format?: "icon" | "button";
+  onClick?: (event: React.MouseEvent) => void;
+}
 
+const LoadingIndicator = ({ format }: { format: "icon" | "button" }) => (
+  <div className="relative w-full flex items-center justify-center">
+    <CloudUploadIcon className="absolute text-gray-500 animate-ping size-5" />
+    <CloudUploadIcon className="text-gray-500 size-5" />
+    {format === "button" && <span className="sr-only">Ładowanie...</span>}
+  </div>
+);
+
+const ActionButton = ({
+  icon: Icon,
+  color,
+  tooltip,
+  variant,
+  children,
+  ref,
+  ...props
+}: {
+  icon: React.ComponentType<{ className?: string }>;
+  color?: string;
+  tooltip?: string;
+  variant: "ghost" | "default";
+  children?: React.ReactNode;
+  ref?: React.Ref<HTMLButtonElement>;
+} & React.ComponentPropsWithoutRef<typeof Button>) => (
+  <TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <Button ref={ref} {...props} variant={variant}>
+          <Icon className={cn("size-5", color)} />
+          {children}
+        </Button>
+      </TooltipTrigger>
+      {tooltip && <TooltipContent>{tooltip}</TooltipContent>}
+    </Tooltip>
+  </TooltipProvider>
+);
+
+const SubmitDialog = ({
+  worksheetId,
+  task,
+  children,
+  onSuccess,
+}: {
+  worksheetId: string;
+  task: Task;
+  children: React.ReactNode;
+  onSuccess: (id: string) => void;
+}) => {
   const apiClient = useApi();
+  const [approvers, setApprovers] = React.useState<PublicUser[]>([]);
+  const [selectedApprover, setSelectedApprover] = React.useState<string>();
+  const [loading, setLoading] = React.useState(false);
 
-  async function fetchAvailableApprovers() {
+  const fetchApprovers = async () => {
     setLoading(true);
     try {
       const response = await apiClient(
         `/worksheets/${worksheetId}/tasks/${task.id}/approvers/`,
       );
       const data = (await response.json()).map(publicUserSerializer);
-      setAvailableApprovers(data);
+      setApprovers(data);
       if (data.length === 1) setSelectedApprover(data[0].id);
     } catch (error) {
-      handleApiError(error);
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie można pobrać osób do zgłoszenia",
+            description:
+              error instanceof ApiError ? error.message : "Nieznany błąd",
+          },
+        }),
+      );
     } finally {
       setLoading(false);
     }
-  }
+  };
 
-  async function handleTaskAction(
-    action: "submit" | "unsubmit" | "accept" | "reject" | "clear",
-  ) {
+  return (
+    <Dialog
+      onOpenChange={(open) =>
+        open ? fetchApprovers() : setSelectedApprover(undefined)
+      }
+    >
+      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Do kogo chcesz zgłosić to zadanie?</DialogTitle>
+          <DialogDescription>
+            Wybierz osobę, do której chcesz zgłosić wykonanie zadania{" "}
+            <q>{task.name}</q>.
+          </DialogDescription>
+          <Select
+            value={selectedApprover ?? ""}
+            onValueChange={setSelectedApprover}
+            disabled={!approvers.length || loading}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue
+                placeholder={
+                  loading
+                    ? "Ładowanie..."
+                    : approvers.length
+                      ? "Wybierz osobę"
+                      : "Brak dostępnych osób"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {approvers.map((approver) => (
+                <SelectItem key={approver.id} value={approver.id}>
+                  {`${approver.firstName} ${approver.lastName} "${approver.nickname}"`}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <div className="flex justify-end gap-2 mt-4">
+            <DialogClose asChild>
+              <Button variant="outline">Anuluj</Button>
+            </DialogClose>
+            <DialogClose asChild>
+              <Button
+                onClick={() => onSuccess(selectedApprover ?? "")}
+                disabled={!selectedApprover}
+              >
+                Wyślij
+              </Button>
+            </DialogClose>
+          </div>
+        </DialogHeader>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+const useTaskActions = ({
+  worksheetId,
+  task,
+  updateTask,
+  closeDrawer,
+}: Pick<
+  TaskActionsProps,
+  "worksheetId" | "task" | "updateTask" | "closeDrawer"
+>) => {
+  const apiClient = useApi();
+  const [loading, setLoading] = React.useState(false);
+
+  const handleAction = async (action: TaskAction, body?: object) => {
     setLoading(true);
     try {
-      const options: RequestInit = {
-        method: "POST",
-        body:
-          action === "submit"
-            ? JSON.stringify({ approver: selectedApprover })
-            : undefined,
-      };
-
       const response = await apiClient(
         `/worksheets/${worksheetId}/tasks/${task.id}/${action}/`,
-        options,
+        body
+          ? { method: "POST", body: JSON.stringify(body) }
+          : { method: "POST" },
       );
-
-      const messages = {
-        submit: "Zgłoszenie wysłane",
-        unsubmit: "Zgłoszenie wycofane",
-        accept: "Zadanie zatwierdzone",
-        reject: "Zadanie odrzucone",
-        clear: "Status zadania wyczyszczony",
-      };
-      toast.success(messages[action]);
+      toast.success(ACTION_MESSAGES[action]);
       updateTask(taskSerializer(await response.json()));
+      closeDrawer?.();
     } catch (error) {
-      handleApiError(error, action);
+      toast.error(
+        ToastMsg({
+          data: {
+            title: ERROR_MESSAGES[action],
+            description:
+              error instanceof ApiError ? error.message : "Nieznany błąd",
+          },
+        }),
+      );
     } finally {
       setLoading(false);
     }
+  };
+
+  return { loading, handleAction };
+};
+
+export function TaskActions({
+  worksheetId,
+  task,
+  variant,
+  updateTask,
+  closeDrawer,
+  format = "icon",
+  onClick,
+}: TaskActionsProps) {
+  const { loading, handleAction } = useTaskActions({
+    worksheetId,
+    task,
+    updateTask,
+    closeDrawer,
+  });
+  const isUserVariant = variant === "user";
+
+  if (loading) {
+    return <LoadingIndicator format={format} />;
   }
 
-  function handleApiError(
-    error: unknown,
-    action?: "submit" | "unsubmit" | "accept" | "reject" | "clear",
-  ) {
-    if (error instanceof ApiError) {
-      toast.error(ToastMsg, {
-        data: {
-          title: getErrorMessage(action),
-          description: error.message,
-        },
-      });
-    } else {
-      toast.error("Wystąpił nieoczekiwany błąd");
-    }
-  }
+  const handleSubmit = (approverId: string) => {
+    handleAction("submit", { approver: approverId });
+  };
 
-  function getErrorMessage(
-    action?: "submit" | "unsubmit" | "accept" | "reject" | "clear",
-  ) {
-    const messages = {
-      submit: "Nie udało się zgłosić zadania",
-      unsubmit: "Nie udało się wycofać zgłoszenia",
-      accept: "Nie udało się zatwierdzić zadania",
-      reject: "Nie udało się odrzucić zadania",
-      clear: "Nie udało się wyczyścić statusu zadania",
-    };
-    return action ? messages[action] : "Nie udało się wykonać operacji";
-  }
+  const userActions = {
+    [TaskStatus.TODO]: (
+      <SubmitDialog
+        worksheetId={worksheetId}
+        task={task}
+        onSuccess={handleSubmit}
+      >
+        <ActionButton
+          icon={SendIcon}
+          color="text-blue-500"
+          tooltip="Zgłoś wykonanie"
+          className="w-full sm:w-fit"
+          variant={format === "button" ? "default" : "ghost"}
+          onClick={onClick}
+        >
+          {format === "button" && "Zgłoś wykonanie"}
+        </ActionButton>
+      </SubmitDialog>
+    ),
+    [TaskStatus.REJECTED]: (
+      <SubmitDialog
+        worksheetId={worksheetId}
+        task={task}
+        onSuccess={handleSubmit}
+      >
+        <ActionButton
+          icon={SendIcon}
+          color="text-blue-500"
+          tooltip="Wyślij ponownie"
+          className="w-full sm:w-fit"
+          variant={format === "button" ? "default" : "ghost"}
+          onClick={onClick}
+        >
+          {format === "button" && "Wyślij ponownie"}
+        </ActionButton>
+      </SubmitDialog>
+    ),
+    [TaskStatus.AWAITING_APPROVAL]: (
+      <ActionButton
+        icon={TicketXIcon}
+        color="text-red-500"
+        tooltip="Wycofaj zgłoszenie"
+        className="w-full sm:w-fit"
+        variant={format === "button" ? "default" : "ghost"}
+        onClick={composeEventHandlers(() => handleAction("unsubmit"), onClick)}
+      >
+        {format === "button" && "Wycofaj zgłoszenie"}
+      </ActionButton>
+    ),
+    [TaskStatus.APPROVED]: null,
+  };
 
-  if (
-    loading &&
-    !(
-      variant === "user" &&
-      (task.status === TaskStatus.TODO || task.status === TaskStatus.REJECTED)
-    )
-  ) {
-    return (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger className="relative">
-            <>
-              <CloudUploadIcon
-                size={20}
-                className="absolute text-gray-500 animate-ping"
-              />
-              <CloudUploadIcon size={20} className="text-gray-500" />
-            </>
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>Akcja w toku...</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-  }
+  const managedActions = {
+    [TaskStatus.TODO]: (
+      <ActionButton
+        icon={SignatureIcon}
+        color="text-green-500"
+        tooltip="Podpisz zadanie"
+        className="w-full sm:w-fit"
+        variant={format === "button" ? "default" : "ghost"}
+        onClick={composeEventHandlers(() => handleAction("accept"), onClick)}
+      >
+        {format === "button" && "Podpisz zadanie"}
+      </ActionButton>
+    ),
+    [TaskStatus.APPROVED]: (
+      <ActionButton
+        icon={PenOffIcon}
+        color="text-red-500"
+        tooltip="Anuluj wykonanie zadania"
+        className="w-full sm:w-fit"
+        variant={format === "button" ? "default" : "ghost"}
+        onClick={composeEventHandlers(() => handleAction("reject"), onClick)}
+      >
+        {format === "button" && "Anuluj wykonanie zadania"}
+      </ActionButton>
+    ),
+    [TaskStatus.AWAITING_APPROVAL]: (
+      <div className="grid gap-2 grid-cols-2 w-full">
+        <ActionButton
+          icon={SignatureIcon}
+          color="text-green-500"
+          tooltip="Zatwierdź zadanie"
+          variant={format === "button" ? "default" : "ghost"}
+          onClick={composeEventHandlers(() => handleAction("accept"), onClick)}
+        >
+          {format === "button" && "Zatwierdź zadanie"}
+        </ActionButton>
+        <ActionButton
+          icon={PenOffIcon}
+          color="text-red-500"
+          tooltip="Odrzuć zadanie"
+          variant={format === "button" ? "default" : "ghost"}
+          onClick={composeEventHandlers(() => handleAction("reject"), onClick)}
+        >
+          {format === "button" && "Odrzuć zadanie"}
+        </ActionButton>
+      </div>
+    ),
+    [TaskStatus.REJECTED]: (
+      <div className="grid gap-2 grid-cols-2 w-full">
+        <ActionButton
+          icon={SignatureIcon}
+          color="text-green-500"
+          tooltip="Podpisz zadanie"
+          variant={format === "button" ? "default" : "ghost"}
+          onClick={composeEventHandlers(() => handleAction("accept"), onClick)}
+        >
+          {format === "button" && "Podpisz zadanie"}
+        </ActionButton>
+        <ActionButton
+          icon={EraserIcon}
+          color="text-gray-500"
+          tooltip="Wyczyść status"
+          variant={format === "button" ? "default" : "ghost"}
+          onClick={composeEventHandlers(() => handleAction("clear"), onClick)}
+        >
+          {format === "button" && "Wyczyść status"}
+        </ActionButton>
+      </div>
+    ),
+  };
 
-  switch (variant) {
-    case "user":
-      switch (task.status) {
-        case TaskStatus.TODO:
-        case TaskStatus.REJECTED:
-          return (
-            <Dialog
-              onOpenChange={async (open) => {
-                if (open) {
-                  await fetchAvailableApprovers();
-                } else {
-                  setSelectedApprover(null);
-                }
-              }}
-            >
-              <DialogTrigger disabled={loading}>
-                <TooltipProvider>
-                  <Tooltip>
-                    {loading ? (
-                      <>
-                        <TooltipTrigger className="relative" asChild>
-                          <div>
-                            <CloudUploadIcon
-                              size={20}
-                              className="absolute text-gray-500 animate-ping"
-                            />
-                            <CloudUploadIcon
-                              size={20}
-                              className="text-gray-500"
-                            />
-                          </div>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>Akcja w toku...</p>
-                        </TooltipContent>
-                      </>
-                    ) : (
-                      <>
-                        <TooltipTrigger asChild>
-                          <SendIcon size={20} className="text-blue-500" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p>
-                            {task.status === TaskStatus.TODO
-                              ? "Zgłoś wykonanie"
-                              : "Wyślij ponownie"}
-                          </p>
-                        </TooltipContent>
-                      </>
-                    )}
-                  </Tooltip>
-                </TooltipProvider>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Do kogo chcesz zgłosić to zadanie?</DialogTitle>
-                  <DialogDescription>
-                    Wybierz osobę, do której chcesz zgłosić wykonanie zadania{" "}
-                    <q>{task.name}</q>.
-                  </DialogDescription>
-                  <Select
-                    onValueChange={(value) => setSelectedApprover(value)}
-                    value={selectedApprover || ""}
-                    disabled={availableApprovers.length === 0}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={
-                          availableApprovers.length > 0
-                            ? "Wybierz osobę"
-                            : loading
-                              ? "Ładowanie..."
-                              : "Brak dostępnych osób"
-                        }
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableApprovers.map((approver) => (
-                        <SelectItem key={approver.id} value={approver.id}>
-                          {`${approver.nickname} ${approver.lastName}`}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <div className="flex justify-end mt-4 gap-2">
-                    <DialogClose asChild>
-                      <Button variant="outline">Anuluj</Button>
-                    </DialogClose>
-                    <DialogClose asChild>
-                    <Button
-                      onClick={() => handleTaskAction("submit")}
-                      disabled={!selectedApprover || loading}
-                    >
-                      {loading ? (
-                        "Ładowanie..."
-                      ) : (
-                        <>
-                          Wyślij
-                          <SendIcon size={20} />
-                        </>
-                      )}
-                    </Button>
-                    </DialogClose>
-                  </div>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
-          );
-
-        case TaskStatus.AWAITING_APPROVAL:
-          return (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <TicketXIcon
-                    size={20}
-                    className="text-red-500"
-                    onClick={() => handleTaskAction("unsubmit")}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Wycofaj zgłoszenie</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          );
-
-        default:
-          return null;
-      }
-    case "managed":
-      switch (task.status) {
-        case TaskStatus.TODO:
-          return (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <SignatureIcon
-                    size={20}
-                    className="text-green-500"
-                    onClick={() => handleTaskAction("accept")}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Podpisz zadanie</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          );
-
-        case TaskStatus.APPROVED:
-          return (
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>
-                  <PenOffIcon
-                    size={20}
-                    className="text-red-500"
-                    onClick={() => handleTaskAction("reject")}
-                  />
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Anuluj wykonanie zadania</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          );
-
-        case TaskStatus.AWAITING_APPROVAL:
-          return (
-            <div className="flex gap-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <SignatureIcon
-                      size={20}
-                      className="text-green-500"
-                      onClick={() => handleTaskAction("accept")}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Zatwierdź zadanie</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <PenOffIcon
-                      size={20}
-                      className="text-red-500"
-                      onClick={() => handleTaskAction("reject")}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Odrzuć zadanie</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          );
-
-        case TaskStatus.REJECTED:
-          return (
-            <div className="flex gap-2">
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <SignatureIcon
-                      size={20}
-                      className="text-green-500"
-                      onClick={() => handleTaskAction("accept")}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Podpisz zadanie</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <EraserIcon
-                      size={20}
-                      className="text-gray-500"
-                      onClick={() => handleTaskAction("clear")}
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Wyczyść status</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-          );
-
-        default:
-          return null;
-      }
-    default:
-      return null;
-  }
+  const actions = isUserVariant ? userActions : managedActions;
+  return actions[task.status] || null;
 }

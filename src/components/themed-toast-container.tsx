@@ -11,7 +11,7 @@ export function ThemedToastContainer() {
       position="bottom-right"
       theme={resolvedTheme === "dark" ? "dark" : "light"}
       draggable
-      newestOnTop
+      stacked
     />
   );
 }

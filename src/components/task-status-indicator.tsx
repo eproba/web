@@ -12,7 +12,7 @@ import {
   CircleIcon,
   CircleXIcon,
   ClockIcon,
-  UserIcon,
+  UserCheckIcon,
 } from "lucide-react";
 
 export function TaskStatusIndicator({
@@ -22,7 +22,7 @@ export function TaskStatusIndicator({
 }: {
   task: Task;
   tooltip?: boolean;
-  format?: "icon" | "full";
+  format?: "icon" | "badges";
 }) {
   const statusConfig = {
     [TaskStatus.AWAITING_APPROVAL]: {
@@ -68,7 +68,7 @@ export function TaskStatusIndicator({
     <TooltipProvider>
       <Tooltip open={tooltip !== false ? undefined : false}>
         <TooltipTrigger>
-          {format === "full" ? (
+          {format === "badges" ? (
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="secondary" className="text-md [&>svg]:size-auto">
                 <Icon size={16} />
@@ -87,7 +87,7 @@ export function TaskStatusIndicator({
                     variant="secondary"
                     className="text-md font-normal  [&>svg]:size-auto"
                   >
-                    <UserIcon size={16} />
+                    <UserCheckIcon size={16} />
                     {task.approverName}
                   </Badge>
                 </>

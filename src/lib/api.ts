@@ -4,7 +4,9 @@ export const API_URL =
     : "";
 
 if (API_URL === "") {
-  throw new Error("NEXT_PUBLIC_SERVER_URL was not set in enviroment variables!");
+  throw new Error(
+    "NEXT_PUBLIC_SERVER_URL was not set in enviroment variables!",
+  );
 }
 
 export class ApiError extends Error {

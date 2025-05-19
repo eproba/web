@@ -29,7 +29,7 @@ export default async function UserWorksheets() {
   const archivedWorksheets = data.filter((worksheet) => worksheet.isArchived);
 
   return (
-    <div className="space-y-4 md:px-16">
+    <div className="space-y-4">
       <WorksheetList orgWorksheets={activeWorksheets} variant="user" />
       {archivedWorksheets?.length > 0 && (
         <div className="space-y-4 mt-8">
