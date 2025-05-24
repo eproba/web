@@ -45,7 +45,7 @@ export default function RootLayout({
           {/*    </div>*/}
           {/*)}*/}
 
-          <div className="flex flex-col flex-1 px-4">
+          <div className="flex flex-col flex-1 p-2 md:p-4">
             {/* NAVBAR */}
             <Navbar />
 

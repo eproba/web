@@ -63,7 +63,7 @@ export function TaskTable({
             <TableCell colSpan={4}>
               <div className="flex items-center justify-end gap-4 w-full">
                 <Progress value={completionPercentage} className="w-24" />
-                <p className="text-sm">{completionPercentage}%</p>
+                <p className="text-sm">{completionPercentage || 0}%</p>
               </div>
             </TableCell>
           </TableRow>

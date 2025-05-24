@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
+import Image from "next/image";
 
 export default function AboutPage() {
   return (
@@ -48,11 +49,12 @@ export default function AboutPage() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img
-                src="https://placehold.co/200x59?text=Google+Play"
+              <Image
+                src="/get-it-on-google-play-pl.svg"
                 alt="Google Play"
                 width={200}
                 height={59}
+                className="border-1 border-gray-500 rounded-md"
               />
             </a>
           </div>

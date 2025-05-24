@@ -73,7 +73,7 @@ export function WorksheetActions({
   removeWorksheet?: (worksheetId: string) => void;
 }) {
   const router = useRouter();
-  const apiClient = useApi();
+  const { apiClient } = useApi();
   const [baseUrl, setBaseUrl] = useState("");
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
 
@@ -273,7 +273,7 @@ export function WorksheetActions({
                 {baseUrl && (
                   <QRCodeSVG
                     value={`${baseUrl}/worksheets/${worksheet.id}`}
-                    size={256}
+                    size={240}
                     className="rounded-md"
                   />
                 )}

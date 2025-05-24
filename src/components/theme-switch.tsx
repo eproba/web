@@ -26,10 +26,10 @@ export function ThemeSwitch() {
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem onClick={() => setTheme("light")}>
-          Light
+          Jasny
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("dark")}>
-          Dark
+          Ciemny
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => setTheme("system")}>
           System

@@ -23,6 +23,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { User } from "@/types/user";
+import { API_URL } from "@/lib/api";
+import { userSerializer } from "@/lib/serializers/user";
 
 interface NavbarProps {
   messages?: Array<{
@@ -208,18 +210,25 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => (
 
 export async function Navbar({ messages }: NavbarProps) {
   const session = await auth();
-  const user = session?.user;
 
   if (session?.error === "RefreshTokenError") {
     await signOut();
     console.error("Refresh token error");
   }
+  const response = await fetch(`${API_URL}/user/`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${session?.accessToken}`,
+    },
+  });
+
+  const user = userSerializer(await response.json());
 
   const filteredMainNav = MAIN_NAV_ITEMS.filter((item) => item.access?.(user));
   const filteredMoreNav = MORE_NAV_ITEMS.filter((item) => item.access?.(user));
 
   return (
-    <nav className="flex items-center p-4 px-5 container mx-auto mt-4 gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
+    <nav className="flex items-center p-4 px-5 container mx-auto gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
       <div className="flex items-center gap-4 justify-between w-full md:w-auto">
         <AppLogo />
 

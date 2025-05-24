@@ -69,13 +69,21 @@ interface TaskActionsProps {
   onClick?: (event: React.MouseEvent) => void;
 }
 
-const LoadingIndicator = ({ format }: { format: "icon" | "button" }) => (
+const LoadingIcon = () => (
   <div className="relative w-full flex items-center justify-center">
     <CloudUploadIcon className="absolute text-gray-500 animate-ping size-5" />
     <CloudUploadIcon className="text-gray-500 size-5" />
-    {format === "button" && <span className="sr-only">Ładowanie...</span>}
   </div>
 );
+
+const LoadingIndicator = ({ format }: { format: "icon" | "button" }) =>
+  format === "button" ? (
+    <Button variant="outline" className="w-full pointer-events-none">
+      <LoadingIcon />
+    </Button>
+  ) : (
+    <LoadingIcon />
+  );
 
 const ActionButton = ({
   icon: Icon,
@@ -117,7 +125,7 @@ const SubmitDialog = ({
   children: React.ReactNode;
   onSuccess: (id: string) => void;
 }) => {
-  const apiClient = useApi();
+  const { apiClient } = useApi();
   const [approvers, setApprovers] = React.useState<PublicUser[]>([]);
   const [selectedApprover, setSelectedApprover] = React.useState<string>();
   const [loading, setLoading] = React.useState(false);
@@ -136,8 +144,7 @@ const SubmitDialog = ({
         ToastMsg({
           data: {
             title: "Nie można pobrać osób do zgłoszenia",
-            description:
-              error instanceof ApiError ? error.message : "Nieznany błąd",
+            description: error as Error,
           },
         }),
       );
@@ -179,7 +186,7 @@ const SubmitDialog = ({
             <SelectContent>
               {approvers.map((approver) => (
                 <SelectItem key={approver.id} value={approver.id}>
-                  {`${approver.firstName} ${approver.lastName} "${approver.nickname}"`}
+                  {approver.displayName}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -212,7 +219,7 @@ const useTaskActions = ({
   TaskActionsProps,
   "worksheetId" | "task" | "updateTask" | "closeDrawer"
 >) => {
-  const apiClient = useApi();
+  const { apiClient } = useApi();
   const [loading, setLoading] = React.useState(false);
 
   const handleAction = async (action: TaskAction, body?: object) => {

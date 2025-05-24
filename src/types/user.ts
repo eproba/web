@@ -2,6 +2,7 @@ export interface FieldInfo<T extends string | number = string | number> {
   value: T;
   fullName: string;
   shortName: string | null;
+  numberValue?: number | null;
 }
 
 export class Gender {
@@ -9,18 +10,21 @@ export class Gender {
     value: "male",
     fullName: "Mężczyzna",
     shortName: "M",
+    numberValue: 0,
   };
 
   static readonly Female: FieldInfo<string> = {
     value: "female",
     fullName: "Kobieta",
     shortName: "K",
+    numberValue: 1,
   };
 
   static readonly Other: FieldInfo<string> = {
     value: "other",
     fullName: "Inna",
     shortName: "I",
+    numberValue: 2,
   };
 
   private static readonly genderMap = new Map(
@@ -53,7 +57,7 @@ export class ScoutRank {
     number,
     { male: string; female: string }
   >([
-    [0, { male: "brak", female: "brak" }],
+    [0, { male: "", female: "" }],
     [1, { male: "biszkopt", female: "biszkopt" }],
     [2, { male: "mł.", female: "och." }],
     [3, { male: "wyw.", female: "trop." }],
@@ -91,7 +95,7 @@ export class InstructorRank {
   ]);
 
   private static readonly shortNames = new Map<number, string>([
-    [0, "brak"],
+    [0, ""],
     [1, "pwd."],
     [2, "phm."],
     [3, "hm."],
@@ -192,4 +196,5 @@ export interface PublicUser {
 export interface User extends PublicUser {
   email: string;
   emailVerified: boolean;
+  hasPassword: boolean;
 }

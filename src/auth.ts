@@ -1,5 +1,4 @@
-import NextAuth, { DefaultSession } from "next-auth";
-import { User } from "@/types/user";
+import NextAuth from "next-auth";
 import { userSerializer } from "@/lib/serializers/user";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
@@ -8,7 +7,6 @@ const refreshTokenPromises = new Map<string, Promise<any>>();
 
 declare module "next-auth" {
   interface Session {
-    user: User & DefaultSession["user"];
     accessToken: string;
     error?: "RefreshTokenError";
   }
@@ -36,6 +34,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   callbacks: {
     async jwt({ token, user, account }) {
       if (user && account) {
+        // First sign in
         return {
           ...token,
           ...user,
@@ -103,7 +102,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return {
         ...session,
         accessToken: token.accessToken,
-        user: { ...session.user, ...userSerializer(token) },
+        user: { ...session.user, ...userSerializer(token as any) },
       };
     },
   },
