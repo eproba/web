@@ -5,7 +5,6 @@ import { useApi } from "@/lib/api-client";
 import { User } from "@/types/user";
 import { toast } from "react-toastify";
 import { ToastMsg } from "@/lib/toast-msg";
-import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -27,7 +26,6 @@ export const UserDeactivateDialog = ({
   user: User;
 }) => {
   const { apiClient } = useApi();
-  const router = useRouter();
 
   const handleSubmit = async () => {
     try {
@@ -37,7 +35,6 @@ export const UserDeactivateDialog = ({
       });
       toast.success("Twoje konto zostało dezaktywowane");
       await signOut({ redirectTo: "/" });
-      router.refresh();
     } catch (error) {
       toast.error(
         ToastMsg({

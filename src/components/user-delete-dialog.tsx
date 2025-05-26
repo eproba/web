@@ -5,7 +5,6 @@ import { useApi } from "@/lib/api-client";
 import { User } from "@/types/user";
 import { toast } from "react-toastify";
 import { ToastMsg } from "@/lib/toast-msg";
-import { useRouter } from "next/navigation";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,7 +30,6 @@ export const UserDeleteDialog = ({
   const CONFIRMATION_MESSAGE = "USUŃ KONTO";
 
   const { apiClient } = useApi();
-  const router = useRouter();
 
   const [inputValue, setInputValue] = useState("");
 

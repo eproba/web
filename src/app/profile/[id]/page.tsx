@@ -4,6 +4,8 @@ import { auth, signOut } from "@/auth";
 import { LoginRequired } from "@/components/login-required";
 import { userSerializer } from "@/lib/serializers/user";
 import { API_URL } from "@/lib/api";
+import { notFound } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
 export default async function ProfilePage({
   params,
@@ -17,6 +19,10 @@ export default async function ProfilePage({
     console.error("Refresh token error");
   }
 
+  if (!session) {
+    return <LoginRequired />;
+  }
+
   const response = await fetch(`${API_URL}/users/${id}`, {
     method: "GET",
     headers: {
@@ -26,14 +32,13 @@ export default async function ProfilePage({
   });
 
   if (!response.ok) {
-    console.error("Failed to fetch user data");
-    return <LoginRequired />;
+    notFound();
   }
 
   const user = userSerializer(await response.json());
 
-  if (!session || !user) {
-    return <LoginRequired />;
+  if (!user) {
+    notFound();
   }
 
   return (
@@ -80,6 +85,16 @@ export default async function ProfilePage({
               <TableCell className="font-medium">Funkcja</TableCell>
               <TableCell>{user.function.fullName}</TableCell>
             </TableRow>
+            {user.isStaff && (
+              <TableRow>
+                <TableCell className="font-medium">Rola w Epróbie</TableCell>
+                <TableCell>
+                  <Badge variant={user.isSuperuser ? "success" : "info"}>
+                    {user.isSuperuser ? "Administrator" : "Obsługa"}
+                  </Badge>
+                </TableCell>
+              </TableRow>
+            )}
           </TableBody>
         </Table>
       </CardContent>

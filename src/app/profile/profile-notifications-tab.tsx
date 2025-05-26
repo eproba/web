@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -41,11 +41,7 @@ export function ProfileNotificationsTab() {
   const [isLoading, setIsLoading] = useState(true);
   const { apiClient } = useApi();
 
-  useEffect(() => {
-    fetchDevices();
-  }, []);
-
-  const fetchDevices = async () => {
+  const fetchDevices = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await apiClient("/fcm/devices/", {
@@ -65,7 +61,11 @@ export function ProfileNotificationsTab() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [apiClient]);
+
+  useEffect(() => {
+    fetchDevices();
+  }, [fetchDevices]);
 
   const handleDeviceAction = async (
     registrationId: string,

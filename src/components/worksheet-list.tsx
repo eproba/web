@@ -1,7 +1,6 @@
 "use client";
 import { Task, Worksheet } from "@/types/worksheet";
 import { Input } from "@/components/ui/input";
-import Link from "next/link";
 import { WorksheetItem } from "@/components/worksheet-item";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
@@ -11,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 // Simple function to calculate string similarity
 const stringSimilarity = (str1: string, str2: string): boolean => {
@@ -42,22 +42,18 @@ export function WorksheetList({
   variant = "user",
   showFilters = false,
   patrols = [],
+  currentUserId,
 }: {
   orgWorksheets: Worksheet[];
-  variant?: "user" | "managed" | "shared" | "archived";
+  variant?: "user" | "managed" | "shared" | "archived" | "review";
   showFilters?: boolean;
   patrols?: Record<string, string>[];
+  currentUserId?: string;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
   const [selectedPatrol, setSelectedPatrol] = useState<string>("null");
   const [worksheets, setWorksheets] = useState<Worksheet[]>(orgWorksheets);
-
-  function updateWorksheet(worksheet: Worksheet) {
-    setWorksheets((prevWorksheets) =>
-      prevWorksheets.map((w) => (w.id === worksheet.id ? worksheet : w)),
-    );
-  }
 
   function updateTask(worksheetId: string, task: Task) {
     setWorksheets((prevWorksheets) =>
@@ -153,22 +149,31 @@ export function WorksheetList({
         </div>
       )}
       {filteredWorksheets.length === 0 ? (
-        <div className="p-4 bg-card rounded-lg">
-          Nie znaleziono prób pasujących do podanych kryteriów.
-          <Link href="/worksheets/create" className="text-primary">
-            {" "}
-            Stwórz nową
-          </Link>
-        </div>
+        variant === "review" ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>Nie masz żadnych zadań do sprawdzenia.</CardTitle>
+            </CardHeader>
+          </Card>
+        ) : (
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                Nie znaleziono prób pasujących do podanych kryteriów.
+              </CardTitle>
+            </CardHeader>
+            <CardContent>{/*TODO: Add create worksheet button */}</CardContent>
+          </Card>
+        )
       ) : (
         filteredWorksheets.map((worksheet) => (
           <WorksheetItem
             key={worksheet.id}
             worksheet={worksheet}
             variant={variant}
-            updateWorksheet={updateWorksheet}
             updateTask={updateTask}
             deleteWorksheet={() => deleteWorksheet(worksheet.id)}
+            currentUserId={currentUserId}
           />
         ))
       )}

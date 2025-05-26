@@ -102,7 +102,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       return {
         ...session,
         accessToken: token.accessToken,
-        user: { ...session.user, ...userSerializer(token as any) },
+        user: {
+          ...session.user,
+          ...userSerializer({ ...token, id: token.sub as string } as any),
+        },
       };
     },
   },

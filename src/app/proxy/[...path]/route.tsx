@@ -1,42 +1,56 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { path: string[] } },
-) {
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.redirect("/login");
+function handleRedirect(response: Response, request: Request) {
+  const location = response.headers.get("Location");
+  if (!location) return null;
+
+  // Create a full URL for relative redirects
+  const isAbsoluteUrl = location.startsWith("http");
+  const baseUrl = isAbsoluteUrl
+    ? location
+    : `${process.env.NEXT_PUBLIC_SERVER_URL}${location.startsWith("/") ? location : "/" + location}`;
+  const redirectUrl = new URL(baseUrl);
+
+  // Add embed=true parameter if needed
+  if (!redirectUrl.searchParams.has("embed")) {
+    redirectUrl.searchParams.append("embed", "true");
   }
 
-  const url = new URL(request.url);
-  const query = url.search ? url.search + "&embed=true" : "?embed=true";
-  const path = (await params).path.join("/");
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/${path}/${query}`,
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-    },
+  // Update Location to include /proxy/ prefix for internal URLs
+  let finalLocation = redirectUrl.toString();
+  if (location.startsWith("/") && !location.startsWith("/proxy/")) {
+    const relativePath = `/proxy${location.startsWith("/") ? location : "/" + location}`;
+    const pathWithEmbed =
+      relativePath + (relativePath.includes("?") ? "&" : "?") + "embed=true";
+
+    const origin = request.headers.get("host") || "";
+    const protocol = request.headers.get("x-forwarded-proto") || "http";
+    finalLocation = `${protocol}://${origin}${pathWithEmbed}`;
+  }
+
+  const redirectResponse = NextResponse.redirect(
+    finalLocation,
+    response.status,
   );
 
-  if (!response.ok) {
-    console.error(response);
-    return new NextResponse(response.body, {
-      headers: {
-        "Content-Type": response.headers.get("Content-Type") || "text/html",
-      },
-    });
-  }
+  // Copy cookies from original response
+  response.headers.forEach((value, key) => {
+    if (key.toLowerCase() === "set-cookie") {
+      redirectResponse.headers.append("Set-Cookie", value);
+    }
+  });
 
-  let html = await response.text();
+  return redirectResponse;
+}
 
-  // Update all href="/..." and src="/..." to include /proxy/
-  const replacements = [
+function modifyResponseContent(responseText: string) {
+  let modified = responseText.replace(
+    /<form([^>]*)action="\/([^"]*)"([^>]*)>/g,
+    '<form$1action="/proxy/$2"$3>',
+  );
+
+  const replacements: [RegExp, string][] = [
     [/href="\/(?!proxy\/)/g, 'href="/proxy/'],
     [/href = `\/(?!proxy\/)/g, "href = `/proxy/"],
     [/href='\/(?!proxy\/)/g, "href='/proxy/"],
@@ -44,133 +58,142 @@ export async function GET(
     [/fetch\("\/(?!proxy\/)/g, 'fetch("/proxy/'],
     [/fetch\('\/(?!proxy\/)/g, "fetch('/proxy/"],
     [/fetch\(`\/(?!proxy\/)/g, "fetch(`/proxy/"],
+    [/fetchData\('\/(?!proxy\/)/g, "fetchData('/proxy/"],
+    [/action="\/(?!proxy\/)/g, 'action="/proxy/'],
   ];
 
   for (const [pattern, replacement] of replacements) {
-    html = html.replaceAll(pattern, replacement as string);
+    modified = modified.replaceAll(pattern, replacement);
   }
 
-  return new NextResponse(html, {
+  return modified;
+}
+
+function createResponse(
+  responseText: BodyInit | null | undefined,
+  response: Response,
+  status?: undefined,
+) {
+  // Special handling for 204 No Content responses
+  if (response.status === 204) {
+    const noContentResponse = new NextResponse(null, {
+      status: 204,
+    });
+
+    // Forward cookies
+    response.headers.forEach((value, key) => {
+      if (key.toLowerCase() === "set-cookie") {
+        noContentResponse.headers.append("Set-Cookie", value);
+      }
+    });
+
+    return noContentResponse;
+  }
+
+  const nextResponse = new NextResponse(responseText, {
+    status: status || response.status,
     headers: {
       "Content-Type": response.headers.get("Content-Type") || "text/html",
     },
   });
+
+  // Forward cookies
+  response.headers.forEach((value, key) => {
+    if (key.toLowerCase() === "set-cookie") {
+      nextResponse.headers.append("Set-Cookie", value);
+    }
+  });
+
+  return nextResponse;
+}
+
+// Main request handler
+async function handleRequest(
+  request: Request,
+  params: { path: string[] },
+  method: string,
+) {
+  const session = await auth();
+  if (!session?.user) {
+    return NextResponse.redirect("/login");
+  }
+
+  const url = new URL(request.url);
+  const query = url.search ? url.search + "&embed=true" : "?embed=true";
+  const path = (await params).path.join("/");
+
+  const fetchOptions: RequestInit = {
+    method,
+    headers: {
+      "Content-Type": request.headers.get("Content-Type") || "application/json",
+      Cookie: request.headers.get("cookie") || "",
+      Authorization: `Bearer ${session.accessToken}`,
+    },
+    redirect: "manual",
+  };
+
+  // Handle request body for POST and PATCH methods
+  if (method === "POST" || method === "PATCH") {
+    const contentType = request.headers.get("Content-Type") || "";
+    const clonedRequest = request.clone();
+
+    if (contentType.includes("application/json")) {
+      fetchOptions.body = JSON.stringify(await clonedRequest.json());
+    } else if (contentType.includes("multipart/form-data")) {
+      fetchOptions.body = await clonedRequest.formData();
+    } else {
+      fetchOptions.body = await clonedRequest.text();
+    }
+  }
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/${path}/${query}`,
+    fetchOptions,
+  );
+
+  // Handle redirects
+  if (response.status >= 300 && response.status < 400) {
+    const redirectResponse = handleRedirect(response, request);
+    if (redirectResponse) return redirectResponse;
+  }
+
+  // Handle errors
+  if (!response.ok) {
+    console.error(`Error ${response.status}:`, response);
+    const errorContent = await response.text().catch(() => "");
+    return createResponse(errorContent, response);
+  }
+
+  // Handle successful response
+  const responseText = await response.text();
+  const modifiedResponse = modifyResponseContent(responseText);
+  return createResponse(modifiedResponse, response);
+}
+
+export async function GET(
+  request: Request,
+  { params }: { params: { path: string[] } },
+) {
+  return handleRequest(request, params, "GET");
 }
 
 export async function POST(
   request: Request,
   { params }: { params: { path: string[] } },
 ) {
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.redirect("/login");
-  }
-
-  const path = (await params).path.join("/");
-  const body = await request.json();
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/${path}/`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-      body: JSON.stringify(body),
-    },
-  );
-
-  if (!response.ok) {
-    console.error(response);
-    return new NextResponse(response.body, {
-      headers: {
-        "Content-Type": response.headers.get("Content-Type") || "text/html",
-      },
-    });
-  }
-
-  return new NextResponse(response.body, {
-    headers: {
-      "Content-Type": response.headers.get("Content-Type") || "text/html",
-    },
-  });
+  return handleRequest(request, params, "POST");
 }
 
 export async function PATCH(
   request: Request,
   { params }: { params: { path: string[] } },
 ) {
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.redirect("/login");
-  }
-
-  const path = (await params).path.join("/");
-  const body = await request.json();
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/${path}/`,
-    {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-      body: JSON.stringify(body),
-    },
-  );
-
-  if (!response.ok) {
-    console.error(response);
-    return new NextResponse(response.body, {
-      headers: {
-        "Content-Type": response.headers.get("Content-Type") || "text/html",
-      },
-    });
-  }
-
-  return new NextResponse(response.body, {
-    headers: {
-      "Content-Type": response.headers.get("Content-Type") || "text/html",
-    },
-  });
+  return handleRequest(request, params, "PATCH");
 }
 
 export async function DELETE(
   request: Request,
   { params }: { params: { path: string[] } },
 ) {
-  const session = await auth();
-  if (!session || !session.user) {
-    return NextResponse.redirect("/login");
-  }
-
-  const path = (await params).path.join("/");
-
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/${path}/`,
-    {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${session.accessToken}`,
-      },
-    },
-  );
-
-  if (!response.ok) {
-    console.error(response);
-    return new NextResponse(response.body, {
-      headers: {
-        "Content-Type": response.headers.get("Content-Type") || "text/html",
-      },
-    });
-  }
-
-  return new NextResponse(response.body, {
-    headers: {
-      "Content-Type": response.headers.get("Content-Type") || "text/html",
-    },
-  });
+  return handleRequest(request, params, "DELETE");
 }

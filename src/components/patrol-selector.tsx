@@ -61,15 +61,6 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
     }
   }, [isApiReady, apiClient]);
 
-  const handleOrganizationChange = useCallback((value: string) => {
-    const newOrg = Number(value);
-    setSelectedOrganization(newOrg);
-    setSelectedDistrict((prev) => {
-      if (prev) handleDistrictChange(prev, newOrg);
-      return prev;
-    });
-  }, []);
-
   const handleDistrictChange = useCallback(
     async (value: string, orgOverride?: number | null) => {
       setSelectedDistrict(value);
@@ -95,6 +86,18 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
       }
     },
     [selectedOrganization, apiClient, setSelectedPatrol],
+  );
+
+  const handleOrganizationChange = useCallback(
+    (value: string) => {
+      const newOrg = Number(value);
+      setSelectedOrganization(newOrg);
+      setSelectedDistrict((prev) => {
+        if (prev) handleDistrictChange(prev, newOrg);
+        return prev;
+      });
+    },
+    [handleDistrictChange],
   );
 
   const handleTeamChange = useCallback(

@@ -140,6 +140,18 @@ export default async function UserProfilePage() {
                   <TableCell className="font-medium">Funkcja</TableCell>
                   <TableCell>{user.function.fullName}</TableCell>
                 </TableRow>
+                {user.isStaff && (
+                  <TableRow>
+                    <TableCell className="font-medium">
+                      Rola w Epróbie
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={user.isSuperuser ? "success" : "info"}>
+                        {user.isSuperuser ? "Administrator" : "Obsługa"}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </CardContent>

@@ -15,10 +15,12 @@ export function TaskTable({
   worksheet,
   variant,
   updateTask,
+  currentUserId,
 }: {
   worksheet: Worksheet;
-  variant: "user" | "managed" | "shared" | "archived";
+  variant: "user" | "managed" | "shared" | "archived" | "review";
   updateTask: (task: Task) => void;
+  currentUserId?: string;
 }) {
   const completionPercentage = Math.round(
     (worksheet.tasks.filter((task) => task.status === TaskStatus.APPROVED)
@@ -33,6 +35,7 @@ export function TaskTable({
           <TableHead className="w-8">Lp.</TableHead>
           <TableHead>Zadanie</TableHead>
           <TableHead className="w-16 hidden sm:table-cell">Status</TableHead>
+          <TableHead className="sm:hidden"></TableHead>
           {(variant === "managed" || variant === "user") && (
             <TableHead className="w-16 hidden sm:table-cell">Akcje</TableHead>
           )}
@@ -47,12 +50,13 @@ export function TaskTable({
             variant={variant}
             worksheetId={worksheet.id}
             updateTask={updateTask}
+            currentUserId={currentUserId}
           />
         ))}
         {worksheet.tasks.length === 0 && (
           <TableRow>
             <TableCell colSpan={4} className="text-center">
-              Ta proba nie ma jeszcze zadań.
+              Ta próba nie ma jeszcze zadań.
             </TableCell>
           </TableRow>
         )}

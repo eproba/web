@@ -62,7 +62,7 @@ const ERROR_MESSAGES: Record<TaskAction, string> = {
 interface TaskActionsProps {
   worksheetId: string;
   task: Task;
-  variant: "user" | "managed";
+  variant: "user" | "managed" | "review";
   updateTask: (task: Task) => void;
   closeDrawer?: () => void;
   format?: "icon" | "button";

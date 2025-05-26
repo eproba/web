@@ -1,4 +1,4 @@
-import { Task } from "@/types/worksheet";
+import { Task, TaskStatus } from "@/types/worksheet";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { TaskStatusIndicator } from "@/components/task-status-indicator";
 import { TaskActions } from "@/components/task-actions";
@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/drawer";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
 export function TaskTableRow({
   task,
@@ -21,23 +22,37 @@ export function TaskTableRow({
   variant,
   worksheetId,
   updateTask,
+  currentUserId,
 }: {
   task: Task;
   index: number;
-  variant: "user" | "managed" | "shared" | "archived";
+  variant: "user" | "managed" | "shared" | "archived" | "review";
   worksheetId: string;
   updateTask: (task: Task) => void;
+  currentUserId?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
+  const isHighlightedTask =
+    variant === "review" &&
+    task.status === TaskStatus.AWAITING_APPROVAL &&
+    task.approver === currentUserId;
+
+  const rowStyle =
+    variant === "review" && !isHighlightedTask
+      ? "opacity-50 hover:opacity-100 transition-opacity"
+      : "";
+
   return (
     <Drawer key={task.id} open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild className="sm:hidden">
-        <TableRow className="hover:bg-muted/10">
+        <TableRow className={cn("hover:bg-muted/10", rowStyle)}>
           <TableCell className="font-medium align-text-top w-8">
             {index + 1}
           </TableCell>
           <TableCell>
-            <p className="text-wrap">{task.name}</p>
+            <p className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}>
+              {task.name}
+            </p>
             {task.description && (
               <p className="text-sm text-muted-foreground text-wrap line-clamp-3">
                 {task.description}
@@ -49,12 +64,16 @@ export function TaskTableRow({
           </TableCell>
         </TableRow>
       </DrawerTrigger>
-      <TableRow className="hover:bg-muted/10 hidden sm:table-row">
+      <TableRow
+        className={cn("hover:bg-muted/10 hidden sm:table-row", rowStyle)}
+      >
         <TableCell className="font-medium align-text-top w-8">
           {index + 1}
         </TableCell>
         <TableCell>
-          <p className="text-wrap">{task.name}</p>
+          <p className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}>
+            {task.name}
+          </p>
           {task.description && (
             <p className="text-sm text-muted-foreground text-wrap">
               {task.description}
@@ -64,7 +83,9 @@ export function TaskTableRow({
         <TableCell className="text-center w-16 p-0">
           <TaskStatusIndicator task={task} />
         </TableCell>
-        {(variant === "managed" || variant === "user") && (
+        {(variant === "managed" ||
+          variant === "user" ||
+          variant === "review") && (
           <TableCell className="text-center w-16 p-0">
             <TaskActions
               task={task}
@@ -84,7 +105,9 @@ export function TaskTableRow({
         </DrawerHeader>
         <div className="flex flex-col items-center justify-between px-4 gap-4">
           <TaskStatusIndicator task={task} format="badges" tooltip={false} />
-          {(variant === "managed" || variant === "user") && (
+          {(variant === "managed" ||
+            variant === "user" ||
+            variant === "review") && (
             <TaskActions
               task={task}
               variant={variant}

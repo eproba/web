@@ -53,7 +53,7 @@ const MAIN_NAV_ITEMS: NavItem[] = [
     access: (user) => !!user && user.function.value >= 2,
     subItems: [
       { title: "Zarządzaj próbami", href: "/worksheets/manage" },
-      { title: "Prośby o zatwierdzenie", href: "/worksheets/check-tasks" },
+      { title: "Prośby o zatwierdzenie", href: "/worksheets/review" },
       { title: "Archiwum", href: "/worksheets/archive" },
       { title: "Szablony", href: "/worksheets/templates" },
       { title: "Utwórz nową próbę", href: "/worksheets/create" },
@@ -69,8 +69,8 @@ const MAIN_NAV_ITEMS: NavItem[] = [
         href: `${process.env.NEXT_PUBLIC_SERVER_URL}/admin`,
         external: true,
       },
-      { title: "Zarządzaj stroną", href: "/site-management" },
-      { title: "Zgłoszenia drużyn", href: "/team-requests" },
+      { title: "Zarządzaj stroną", href: "/admin/site-management" },
+      { title: "Zgłoszenia drużyn", href: "/admin/team-requests" },
     ],
     external: true,
   },
@@ -209,20 +209,24 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => (
 );
 
 export async function Navbar({ messages }: NavbarProps) {
+  let user: User | undefined = undefined;
   const session = await auth();
 
   if (session?.error === "RefreshTokenError") {
     await signOut();
     console.error("Refresh token error");
   }
-  const response = await fetch(`${API_URL}/user/`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
-    },
-  });
 
-  const user = userSerializer(await response.json());
+  if (session) {
+    const response = await fetch(`${API_URL}/user/`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${session?.accessToken}`,
+      },
+    });
+
+    user = userSerializer(await response.json());
+  }
 
   const filteredMainNav = MAIN_NAV_ITEMS.filter((item) => item.access?.(user));
   const filteredMoreNav = MORE_NAV_ITEMS.filter((item) => item.access?.(user));

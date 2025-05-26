@@ -15,6 +15,7 @@ import {
   PrinterIcon,
   QrCodeIcon,
   Share2Icon,
+  SquareArrowOutUpRightIcon,
   SquarePenIcon,
   TrashIcon,
 } from "lucide-react";
@@ -59,7 +60,7 @@ type WorksheetAction = {
   handler?: () => void;
   href?: string;
   requiresConfirmation?: boolean;
-  variant: ("managed" | "archived" | "user")[];
+  variant: ("managed" | "archived" | "user" | "review")[];
   renderContent?: (action: WorksheetAction, baseUrl: string) => React.ReactNode;
 };
 
@@ -69,7 +70,7 @@ export function WorksheetActions({
   removeWorksheet,
 }: {
   worksheet: Worksheet;
-  variant: "user" | "managed" | "shared" | "archived";
+  variant: "user" | "managed" | "shared" | "archived" | "review";
   removeWorksheet?: (worksheetId: string) => void;
 }) {
   const router = useRouter();
@@ -318,10 +319,19 @@ export function WorksheetActions({
       handler: () => setShowDeleteAlert(true),
       variant: ["managed", "archived"],
     },
+    {
+      id: "open-in-manage",
+      label: "Skocz do próby",
+      icon: SquareArrowOutUpRightIcon,
+      href: `/worksheets/manage#${worksheet.id}`,
+      variant: ["review"],
+    },
   ];
 
   const filteredActions = worksheetActions.filter((action) =>
-    action.variant.includes(variant as "managed" | "archived"),
+    action.variant.includes(
+      variant as "managed" | "archived" | "user" | "review",
+    ),
   );
 
   const renderActionIcon = (action: WorksheetAction) => {
@@ -361,57 +371,75 @@ export function WorksheetActions({
     </div>
   );
 
-  const renderMobileMenu = () => (
-    <div className="md:hidden">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="size-8 p-0 data-[state=open]:bg-muted"
-          >
-            <EllipsisVerticalIcon className="size-5" />
-            <span className="sr-only">Otwórz menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {filteredActions.map((action) => {
-            // Special case for QR in mobile view - download directly
-            if (action.id === "qr") {
+  const renderMobileMenu = () =>
+    // Only show dropdown when there are multiple actions
+    filteredActions.length > 1 ? (
+      <div className="md:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              className="size-8 p-0 data-[state=open]:bg-muted"
+            >
+              <EllipsisVerticalIcon className="size-5" />
+              <span className="sr-only">Otwórz menu</span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {filteredActions.map((action) => {
+              // Special case for QR in mobile view - download directly
+              if (action.id === "qr") {
+                return (
+                  <DropdownMenuItem key={action.id} onSelect={handleDownloadQR}>
+                    <QrCodeIcon className="h-4 w-4" />
+                    Pobierz kod QR
+                  </DropdownMenuItem>
+                );
+              }
+
               return (
-                <DropdownMenuItem key={action.id} onSelect={handleDownloadQR}>
-                  <QrCodeIcon className=" h-4 w-4" />
-                  Pobierz kod QR
+                <DropdownMenuItem
+                  key={action.id}
+                  onSelect={action.handler}
+                  asChild={!!action.href}
+                >
+                  {action.href ? (
+                    <Link href={action.href} className="flex items-center">
+                      <action.icon className="h-4 w-4" />
+                      {action.label}
+                    </Link>
+                  ) : (
+                    <div className="flex items-center">
+                      <action.icon className="mr-2 h-4 w-4" />
+                      {action.label}
+                    </div>
+                  )}
                 </DropdownMenuItem>
               );
-            }
-
-            return (
-              <DropdownMenuItem
-                key={action.id}
-                onSelect={action.handler}
-                asChild={!!action.href}
-              >
-                {action.href ? (
-                  <Link href={action.href} className="flex items-center">
-                    <action.icon className=" h-4 w-4" />
-                    {action.label}
-                  </Link>
-                ) : (
-                  <div className="flex items-center">
-                    <action.icon className="mr-2 h-4 w-4" />
-                    {action.label}
-                  </div>
-                )}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    ) : (
+      // For single action on mobile, render the icon directly
+      <div className="md:hidden">
+        {filteredActions.map((action) => (
+          <TooltipProvider key={action.id}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                {renderActionIcon(action)}
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{action.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+      </div>
+    );
 
   // Only render for managed or archived variants
-  if (!["managed", "archived", "user"].includes(variant)) {
+  if (!["managed", "archived", "user", "review"].includes(variant)) {
     return null;
   }
 

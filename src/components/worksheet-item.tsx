@@ -5,24 +5,30 @@ import { WorksheetActions } from "@/components/worksheet-actions";
 export function WorksheetItem({
   worksheet,
   variant = "user",
-  updateWorksheet,
   updateTask,
   deleteWorksheet,
+  currentUserId,
 }: {
   worksheet: Worksheet;
-  variant?: "user" | "managed" | "shared" | "archived";
-  updateWorksheet?: (worksheet: Worksheet) => void;
+  variant?: "user" | "managed" | "shared" | "archived" | "review";
   updateTask?: (worksheetId: string, task: Task) => void;
   deleteWorksheet?: (worksheetId: string) => void;
+  currentUserId?: string;
 }) {
   return (
-    <div className="bg-card rounded-lg p-6 shadow-md">
+    <div className="bg-card rounded-lg p-6 shadow-md" id={worksheet.id}>
       <div className="flex justify-between items-start mb-4">
         <div>
           <h2 className="text-2xl font-semibold">
             {worksheet.name}
             {(variant === "managed" || variant === "archived") && (
-              <span className=""> - {worksheet.user?.nickname}</span>
+              <a
+                href={`/profile/${worksheet.user?.id}`}
+                className="text-primary"
+              >
+                {" "}
+                - {worksheet.user?.displayName}
+              </a>
             )}
           </h2>
           {worksheet.description && (
@@ -54,6 +60,7 @@ export function WorksheetItem({
         worksheet={worksheet}
         variant={variant}
         updateTask={(task) => updateTask?.(worksheet.id, task)}
+        currentUserId={currentUserId}
       />
     </div>
   );
