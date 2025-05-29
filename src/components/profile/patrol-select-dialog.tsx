@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { PatrolSelector } from "@/components/patrol-selector";
+import { PatrolSelector } from "@/components/profile/patrol-selector";
 import { FieldInfo } from "@/types/user";
 import { toast } from "react-toastify";
 import { ToastMsg } from "@/lib/toast-msg";

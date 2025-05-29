@@ -10,11 +10,14 @@ export enum TaskStatus {
 export interface Task {
   id: string;
   name: string;
-  description: string | null;
+  description: string;
   status: TaskStatus;
   approver: string | null;
   approverName: string | null;
   approvalDate: Date | null;
+  category: "general" | "individual";
+  notes: string | null;
+  order: number;
 }
 
 export interface Worksheet {
@@ -30,4 +33,5 @@ export interface Worksheet {
   createdAt: Date;
   isArchived: boolean;
   isDeleted: boolean;
+  notes: string | null;
 }

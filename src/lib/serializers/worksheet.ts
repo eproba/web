@@ -20,6 +20,7 @@ export function worksheetSerializer(apiResponse: any): Worksheet | null {
     createdAt: new Date(apiResponse.created_at),
     isArchived: apiResponse.is_archived,
     isDeleted: apiResponse.is_deleted,
+    notes: apiResponse.notes || null,
   };
 }
 
@@ -34,5 +35,8 @@ export function taskSerializer(apiResponse: any): Task {
     approvalDate: apiResponse.approval_date
       ? new Date(apiResponse.approval_date)
       : null,
+    category: apiResponse.category,
+    notes: apiResponse.notes || null,
+    order: apiResponse.order || 0,
   };
 }

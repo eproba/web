@@ -4,7 +4,7 @@ import { Worksheet } from "@/types/worksheet";
 import { LoginRequired } from "@/components/login-required";
 import { worksheetSerializer } from "@/lib/serializers/worksheet";
 import { handleError } from "@/lib/error-alert-handler";
-import { WorksheetList } from "@/components/worksheet-list";
+import { WorksheetList } from "@/components/worksheets/worksheet-list";
 import { teamSerializer } from "@/lib/serializers/team";
 import { Team } from "@/types/team";
 

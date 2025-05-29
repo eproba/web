@@ -9,9 +9,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
-import { TaskTableRow } from "./task-table-row";
+import { TaskTableRow } from "../task-table-row";
 
-export function TaskTable({
+export function TemplateTaskTable({
   worksheet,
   variant,
   updateTask,

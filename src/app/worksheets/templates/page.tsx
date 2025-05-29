@@ -5,14 +5,16 @@ import { LoginRequired } from "@/components/login-required";
 import { worksheetSerializer } from "@/lib/serializers/worksheet";
 import { handleError } from "@/lib/error-alert-handler";
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
+import { teamSerializer } from "@/lib/serializers/team";
+import { Team } from "@/types/team";
 
-export default async function ReviewWorksheets() {
+export default async function TemplatesPage() {
   const session = await auth();
   if (!session || !session.user) {
     return <LoginRequired />;
   }
 
-  const response = await fetch(`${API_URL}/worksheets/?review`, {
+  const response = await fetch(`${API_URL}/templates/`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -26,7 +28,7 @@ export default async function ReviewWorksheets() {
 
   const data = (await response.json()).reduce(
     (acc: Worksheet[], worksheet: Worksheet) => {
-      const serializedWorksheet = worksheetSerializer(worksheet);
+      const serializedWorksheet = worksheet;
       if (serializedWorksheet) {
         acc.push(serializedWorksheet);
       }
@@ -37,11 +39,7 @@ export default async function ReviewWorksheets() {
 
   return (
     <div className="">
-      <WorksheetList
-        orgWorksheets={data}
-        variant="review"
-        currentUserId={session.user.id}
-      />
+      <WorksheetList orgWorksheets={data} variant="managed" />
     </div>
   );
 }

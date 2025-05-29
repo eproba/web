@@ -9,7 +9,7 @@ import Link from "next/link";
 export default async function NewsPostPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
   const session = await auth();
   const { slug } = await params;

@@ -2,6 +2,10 @@
 
 import { useEffect, useRef, useState } from "react";
 
+/**
+ * `IframeRenderer` is a React component that renders an iframe with dynamic height adjustment.
+ * It's designed to work with proxy to old version of the site, allowing it to display content from a specified URL.
+ */
 export function IframeRenderer({ src }: { src: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [height, setHeight] = useState("24px");

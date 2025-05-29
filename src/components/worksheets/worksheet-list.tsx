@@ -1,7 +1,7 @@
 "use client";
 import { Task, Worksheet } from "@/types/worksheet";
 import { Input } from "@/components/ui/input";
-import { WorksheetItem } from "@/components/worksheet-item";
+import { WorksheetItem } from "@/components/worksheets/worksheet-item";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Select,
@@ -166,16 +166,21 @@ export function WorksheetList({
           </Card>
         )
       ) : (
-        filteredWorksheets.map((worksheet) => (
-          <WorksheetItem
-            key={worksheet.id}
-            worksheet={worksheet}
-            variant={variant}
-            updateTask={updateTask}
-            deleteWorksheet={() => deleteWorksheet(worksheet.id)}
-            currentUserId={currentUserId}
-          />
-        ))
+        filteredWorksheets
+          .sort(
+            (a, b) =>
+              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime(),
+          )
+          .map((worksheet) => (
+            <WorksheetItem
+              key={worksheet.id}
+              worksheet={worksheet}
+              variant={variant}
+              updateTask={updateTask}
+              deleteWorksheet={() => deleteWorksheet(worksheet.id)}
+              currentUserId={currentUserId}
+            />
+          ))
       )}
     </div>
   );

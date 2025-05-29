@@ -4,7 +4,7 @@ import { Worksheet } from "@/types/worksheet";
 import { LoginRequired } from "@/components/login-required";
 import { worksheetSerializer } from "@/lib/serializers/worksheet";
 import { handleError } from "@/lib/error-alert-handler";
-import { WorksheetList } from "@/components/worksheet-list";
+import { WorksheetList } from "@/components/worksheets/worksheet-list";
 
 export default async function UserWorksheets() {
   const session = await auth();
@@ -23,7 +23,17 @@ export default async function UserWorksheets() {
   if (!response.ok) {
     return await handleError(response);
   }
-  const data = (await response.json()).map(worksheetSerializer) as Worksheet[];
+
+  const data = (await response.json()).reduce(
+    (acc: Worksheet[], worksheet: Worksheet) => {
+      const serializedWorksheet = worksheetSerializer(worksheet);
+      if (serializedWorksheet) {
+        acc.push(serializedWorksheet);
+      }
+      return acc;
+    },
+    [],
+  ) as Worksheet[];
 
   const activeWorksheets = data.filter((worksheet) => !worksheet.isArchived);
   const archivedWorksheets = data.filter((worksheet) => worksheet.isArchived);

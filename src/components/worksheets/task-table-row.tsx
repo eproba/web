@@ -1,7 +1,7 @@
 import { Task, TaskStatus } from "@/types/worksheet";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { TaskStatusIndicator } from "@/components/task-status-indicator";
-import { TaskActions } from "@/components/task-actions";
+import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
+import { TaskActions } from "@/components/worksheets/task-actions";
 import {
   Drawer,
   DrawerClose,

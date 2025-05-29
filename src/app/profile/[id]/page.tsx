@@ -10,7 +10,7 @@ import { Badge } from "@/components/ui/badge";
 export default async function ProfilePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await auth();
   const { id } = await params;

@@ -1,6 +1,6 @@
 import { Task, Worksheet } from "@/types/worksheet";
-import { TaskTable } from "@/components/task-table";
-import { WorksheetActions } from "@/components/worksheet-actions";
+import { TaskTable } from "@/components/worksheets/task-table";
+import { WorksheetActions } from "@/components/worksheets/worksheet-actions";
 
 export function WorksheetItem({
   worksheet,
@@ -47,6 +47,10 @@ export function WorksheetItem({
               </a>
             </p>
           )}
+
+          <p className="text-sm text-muted-foreground">
+            Ostatnia aktualizacja: {worksheet.updatedAt.toLocaleString()}
+          </p>
         </div>
 
         <WorksheetActions

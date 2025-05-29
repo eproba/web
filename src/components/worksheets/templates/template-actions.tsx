@@ -64,7 +64,7 @@ type WorksheetAction = {
   renderContent?: (action: WorksheetAction, baseUrl: string) => React.ReactNode;
 };
 
-export function WorksheetActions({
+export function TemplateActions({
   worksheet,
   variant,
   removeWorksheet,

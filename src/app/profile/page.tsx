@@ -17,13 +17,13 @@ import {
   UsersRoundIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PatrolSelectDialog } from "@/components/patrol-select-dialog";
-import { UserDeleteDialog } from "@/components/user-delete-dialog";
-import { UserDeactivateDialog } from "@/components/user-deactivate-dialog";
+import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
+import { UserDeleteDialog } from "@/components/profile/user-delete-dialog";
+import { UserDeactivateDialog } from "@/components/profile/user-deactivate-dialog";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { PasswordChangeDialog } from "@/components/password-change-dialog";
-import { ResendVerificationEmailButton } from "@/components/resend-verification-email-button";
+import { PasswordChangeDialog } from "@/components/profile/password-change-dialog";
+import { ResendVerificationEmailButton } from "@/components/profile/resend-verification-email-button";
 import { ProfileNotificationsTab } from "./profile-notifications-tab";
 
 export default async function UserProfilePage() {

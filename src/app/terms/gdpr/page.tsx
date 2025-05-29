@@ -45,15 +45,37 @@ export default function GDPRPage() {
               <strong>
                 Adres poczty elektronicznej Inspektora Ochrony Danych
               </strong>
-              : iod@zhr.pl
+              :{" "}
+              <a
+                href="mailto:iod@zhr.pl"
+                target="_blank"
+                className="text-[#1abc9c] hover:underline"
+              >
+                iod@zhr.pl
+              </a>
+            </li>
+            <li>
+              <strong>Adres poczty elektronicznej Administratora</strong>:{" "}
+              <a
+                href="mailto:eproba@zhr.pl"
+                target="_blank"
+                className="text-[#1abc9c] hover:underline"
+              >
+                eproba@zhr.pl
+              </a>
             </li>
             <li>
               <strong>Adres korespondencyjny</strong>: Związek Harcerstwa
               Rzeczypospolitej, ul. Litewska 11/13, 00-589 Warszawa
             </li>
             <li>
-              <strong>Formularz kontaktowy</strong> - dostępny pod adresem:
-              eproba.zhr.pl/contact/
+              <strong>Formularz kontaktowy</strong> - dostępny pod adresem:{" "}
+              <Link
+                href="https://eproba.zhr.pl/contact"
+                className="text-[#1abc9c] hover:underline"
+              >
+                eproba.zhr.pl/contact
+              </Link>
             </li>
           </ul>
         </Section>
