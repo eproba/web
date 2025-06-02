@@ -2,26 +2,19 @@ import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  FormDescription,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { UseFormReturn } from "react-hook-form";
 import { type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { UserCombobox } from "@/components/user-combobox";
 import { User } from "@/types/user";
 import { RequiredFunctionLevel } from "@/lib/const";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { InfoIcon } from "lucide-react";
 
 interface WorksheetBasicInfoProps {
   form: UseFormReturn<WorksheetWithTasks>;
   currentUser: User;
 }
 
-export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
+export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
   form,
   currentUser,
 }) => {
@@ -78,33 +71,6 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
               </FormItem>
             )}
           />
-
-          <FormField
-            control={form.control}
-            name="supervisor"
-            render={({ field }) => (
-              <FormItem>
-                <label className="text-sm font-medium">Opiekun</label>
-                <UserCombobox
-                  value={field.value || ""}
-                  onValueChange={field.onChange}
-                  placeholder="Wyszukaj opiekuna..."
-                  searchEndpoint="/users/search/"
-                />
-                <FormDescription>Dla prób z kapitułą</FormDescription>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          {form.getValues("templateNotes") && (
-            <Alert>
-              <InfoIcon />
-              <AlertDescription>
-                {form.getValues("templateNotes")}
-              </AlertDescription>
-            </Alert>
-          )}
         </div>
       </CardContent>
     </Card>

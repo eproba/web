@@ -10,21 +10,31 @@ import {
 } from "@/components/ui/table";
 import { Progress } from "@/components/ui/progress";
 import { TaskTableRow } from "./task-table-row";
+import { User } from "@/types/user";
+import { TemplateTask, TemplateWorksheet } from "@/types/template";
 
 export function TaskTable({
   worksheet,
   variant,
   updateTask,
-  currentUserId,
-}: {
-  worksheet: Worksheet;
-  variant: "user" | "managed" | "shared" | "archived" | "review";
-  updateTask: (task: Task) => void;
-  currentUserId?: string;
-}) {
+  currentUser,
+}:
+  | {
+      worksheet: Worksheet;
+      variant: "user" | "managed" | "shared" | "archived" | "review";
+      updateTask?: (task: Task) => void;
+      currentUser?: User;
+    }
+  | {
+      worksheet: TemplateWorksheet;
+      variant: "template";
+      updateTask?: (task: Task) => void;
+      currentUser?: User;
+    }) {
   const completionPercentage = Math.round(
-    (worksheet.tasks.filter((task) => task.status === TaskStatus.APPROVED)
-      .length /
+    (worksheet.tasks.filter(
+      (task) => "status" in task && task.status === TaskStatus.APPROVED,
+    ).length /
       worksheet.tasks.length) *
       100 || 0,
   );
@@ -43,7 +53,9 @@ export function TaskTable({
       <TableRow className="hover:bg-transparent">
         <TableHead className="w-8">Lp.</TableHead>
         <TableHead>Zadanie</TableHead>
-        <TableHead className="w-16 hidden sm:table-cell">Status</TableHead>
+        {variant !== "template" && (
+          <TableHead className="w-16 hidden sm:table-cell">Status</TableHead>
+        )}
         <TableHead className="sm:hidden"></TableHead>
         {(variant === "managed" || variant === "user") && (
           <TableHead className="w-16 hidden sm:table-cell">Akcje</TableHead>
@@ -52,19 +64,35 @@ export function TaskTable({
     </TableHeader>
   );
 
-  const renderTaskList = (tasks: Task[]) => (
+  const renderTaskList = (tasks: (Task | TemplateTask)[]) => (
     <TableBody>
-      {tasks.map((task, index) => (
-        <TaskTableRow
-          key={task.id}
-          task={task}
-          index={index}
-          variant={variant}
-          worksheetId={worksheet.id}
-          updateTask={updateTask}
-          currentUserId={currentUserId}
-        />
-      ))}
+      {tasks.map((task, index) => {
+        if (variant === "template") {
+          return (
+            <TaskTableRow
+              key={task.id}
+              task={task as TemplateTask}
+              index={index}
+              variant={variant}
+              worksheetId={worksheet.id}
+              updateTask={updateTask}
+              currentUser={currentUser}
+            />
+          );
+        } else {
+          return (
+            <TaskTableRow
+              key={task.id}
+              task={task as Task}
+              index={index}
+              variant={variant}
+              worksheetId={worksheet.id}
+              updateTask={updateTask}
+              currentUser={currentUser}
+            />
+          );
+        }
+      })}
       {tasks.length === 0 && (
         <TableRow>
           <TableCell colSpan={4} className="text-center">
@@ -87,7 +115,7 @@ export function TaskTable({
       <Table>
         {renderTableHeader()}
         {renderTaskList(worksheet.tasks)}
-        {variant !== "archived" && (
+        {variant !== "archived" && variant !== "template" && (
           <TableFooter className="bg-transparent">
             <TableRow className="hover:bg-transparent">
               <TableCell colSpan={4}>
@@ -124,7 +152,7 @@ export function TaskTable({
         </div>
       )}
 
-      {variant !== "archived" && (
+      {variant !== "archived" && variant !== "template" && (
         <div className="bg-transparent border-t pt-3">{renderProgress()}</div>
       )}
     </div>

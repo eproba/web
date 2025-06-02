@@ -7,12 +7,14 @@ interface WorksheetSubmitButtonProps {
   isSubmitting: boolean;
   onSubmit: (e: React.FormEvent) => void;
   mode: "create" | "edit";
+  variant: "template" | "worksheet";
 }
 
 export const WorksheetSubmitButton: React.FC<WorksheetSubmitButtonProps> = ({
   isSubmitting,
   onSubmit,
   mode,
+  variant,
 }) => {
   return (
     <motion.div layout>
@@ -31,7 +33,9 @@ export const WorksheetSubmitButton: React.FC<WorksheetSubmitButtonProps> = ({
           ) : (
             <>
               <PenIcon className="w-4 h-4 mr-2" />
-              {mode === "create" ? "Utwórz próbę" : "Zapisz zmiany"}
+              {mode === "create"
+                ? `Utwórz ${variant === "worksheet" ? "próbę" : "szablon"}`
+                : "Zapisz zmiany"}
             </>
           )}
         </Button>

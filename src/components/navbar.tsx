@@ -23,8 +23,8 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import { User } from "@/types/user";
-import { API_URL } from "@/lib/api";
-import { userSerializer } from "@/lib/serializers/user";
+import { RequiredFunctionLevel } from "@/lib/const";
+import { fetchCurrentUser } from "@/lib/server-api";
 
 interface NavbarProps {
   messages?: Array<{
@@ -50,7 +50,9 @@ const MAIN_NAV_ITEMS: NavItem[] = [
   {
     title: "Zarządzaj próbami",
     href: "/worksheets/manage",
-    access: (user) => !!user && user.function.value >= 2,
+    access: (user) =>
+      !!user &&
+      user.function.numberValue >= RequiredFunctionLevel.WORKSHEET_MANAGEMENT,
     subItems: [
       { title: "Zarządzaj próbami", href: "/worksheets/manage" },
       { title: "Prośby o zatwierdzenie", href: "/worksheets/review" },
@@ -77,7 +79,9 @@ const MAIN_NAV_ITEMS: NavItem[] = [
   {
     title: "Twoja drużyna",
     href: "/team",
-    access: (user) => !!user && user.function.value >= 3,
+    access: (user) =>
+      !!user &&
+      user.function.numberValue >= RequiredFunctionLevel.TEAM_MANAGEMENT,
     subItems: [
       { title: "Zarządzaj drużyną", href: "/team" },
       { title: "Statystyki", href: "/team/statistics" },
@@ -184,7 +188,7 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => (
                     target={subItem.external ? "_blank" : undefined}
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent",
+                      "bg-transparent w-full items-start",
                     )}
                   >
                     {subItem.title}
@@ -212,20 +216,16 @@ export async function Navbar({ messages }: NavbarProps) {
   let user: User | undefined = undefined;
   const session = await auth();
 
-  if (session?.error === "RefreshTokenError") {
-    await signOut();
-    console.error("Refresh token error");
-  }
+  // if (session?.error === "RefreshTokenError") {
+  //   await signOut();
+  //   console.error("Refresh token error");
+  // }
 
   if (session) {
-    const response = await fetch(`${API_URL}/user/`, {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${session?.accessToken}`,
-      },
-    });
-
-    user = userSerializer(await response.json());
+    const userResults = await fetchCurrentUser();
+    if (userResults.user) {
+      user = userResults.user;
+    }
   }
 
   const filteredMainNav = MAIN_NAV_ITEMS.filter((item) => item.access?.(user));
@@ -243,55 +243,53 @@ export async function Navbar({ messages }: NavbarProps) {
               <MenuIcon className="size-6" />
             </Button>
           </DrawerTrigger>
-          <DrawerContent className="h-full w-[300px] ml-auto rounded-l-lg">
-            <div className="flex flex-col h-full p-4">
-              <DrawerHeader className="p-0 mb-4">
-                <DrawerTitle className="flex justify-between items-center">
-                  <AppLogo />
+          <DrawerContent className="h-full w-[300px] ml-auto rounded-l-lgflex flex-col p-4">
+            <DrawerHeader className="p-0 mb-4">
+              <DrawerTitle className="flex justify-between items-center">
+                <AppLogo />
+                <DrawerClose asChild>
+                  <Button variant="ghost" size="icon">
+                    <XIcon className="h-5 w-5" />
+                  </Button>
+                </DrawerClose>
+              </DrawerTitle>
+            </DrawerHeader>
+
+            <div className="flex-1 flex flex-col gap-3">
+              {filteredMainNav.map((item) => (
+                <div key={item.href} className="flex flex-col gap-1">
                   <DrawerClose asChild>
-                    <Button variant="ghost" size="icon">
-                      <XIcon className="h-5 w-5" />
-                    </Button>
+                    <MobileNavItem
+                      item={item}
+                      header={(item.subItems?.length ?? 0) > 0}
+                    />
                   </DrawerClose>
-                </DrawerTitle>
-              </DrawerHeader>
-
-              <div className="flex-1 flex flex-col gap-3">
-                {filteredMainNav.map((item) => (
-                  <div key={item.href} className="flex flex-col gap-1">
-                    <DrawerClose asChild>
-                      <MobileNavItem
-                        item={item}
-                        header={(item.subItems?.length ?? 0) > 0}
-                      />
+                  {item.subItems?.map((subItem) => (
+                    <DrawerClose key={subItem.href} asChild>
+                      <MobileNavItem item={subItem} />
                     </DrawerClose>
-                    {item.subItems?.map((subItem) => (
-                      <DrawerClose key={subItem.href} asChild>
-                        <MobileNavItem item={subItem} />
-                      </DrawerClose>
-                    ))}
-                  </div>
-                ))}
+                  ))}
+                </div>
+              ))}
 
-                <div className="mt-4 border-t pt-2">
-                  <h5 className="text-xs text-muted-foreground px-3 mb-2">
-                    Więcej
-                  </h5>
-                  <div className="flex flex-col gap-1">
-                    {filteredMoreNav.map((item) => (
-                      <DrawerClose key={item.href} asChild>
-                        <MobileNavItem item={item} />
-                      </DrawerClose>
-                    ))}
-                  </div>
+              <div className="mt-4 border-t pt-2">
+                <h5 className="text-xs text-muted-foreground px-3 mb-2">
+                  Więcej
+                </h5>
+                <div className="flex flex-col gap-1">
+                  {filteredMoreNav.map((item) => (
+                    <DrawerClose key={item.href} asChild>
+                      <MobileNavItem item={item} />
+                    </DrawerClose>
+                  ))}
                 </div>
               </div>
+            </div>
 
-              <div className="mt-auto pt-4 border-t">
-                <div className="flex flex-col gap-2">
-                  <div className="flex gap-2 justify-between items-center px-2">
-                    <AuthButtons user={user} />
-                  </div>
+            <div className="mt-auto pt-4 border-t">
+              <div className="flex flex-col gap-2">
+                <div className="flex gap-2 justify-between items-center px-2">
+                  <AuthButtons user={user} />
                 </div>
               </div>
             </div>

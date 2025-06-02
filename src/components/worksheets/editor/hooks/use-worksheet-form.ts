@@ -10,21 +10,23 @@ import { toast } from "react-toastify";
 import { useApi } from "@/lib/api-client";
 import { v4 as uuid } from "uuid";
 import { ToastMsg } from "@/lib/toast-msg";
-import { ApiError } from "@/lib/api";
 import { useRouter } from "nextjs-toploader/app";
+import { User } from "@/types/user";
 
 interface UseWorksheetFormProps {
   mode: "create" | "edit";
   redirectTo: string;
   initialData?: Partial<WorksheetWithTasks>;
-  userId?: string;
+  currentUser: User;
+  variant: "template" | "worksheet";
 }
 
 export const useWorksheetForm = ({
   mode,
   redirectTo,
   initialData,
-  userId,
+  currentUser,
+  variant,
 }: UseWorksheetFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { apiClient } = useApi();
@@ -46,11 +48,12 @@ export const useWorksheetForm = ({
     name: initialData?.name || "",
     description: initialData?.description || "",
     supervisor: initialData?.supervisor || "",
-    userId: initialData?.userId || userId || "",
+    userId: initialData?.userId || currentUser.id || "",
     tasks:
       initialData?.tasks && initialData.tasks.length > 0
         ? initialData.tasks
         : defaultTasks,
+    templateNotes: initialData?.templateNotes || undefined,
   };
 
   const form = useForm<WorksheetWithTasks>({
@@ -78,23 +81,24 @@ export const useWorksheetForm = ({
         user_id: data.userId || undefined,
         name: data.name.trim(),
         description: data.description.trim(),
-        supervisor: data.supervisor,
+        supervisor: data.supervisor || undefined,
         tasks: validTasks.map((task) => ({
           id: task.id,
           task: task.name.trim(),
           description: task.description.trim(),
           category: task.category,
           order: task.order,
+          template_notes: task.templateNotes?.trim() || undefined,
         })),
       };
 
-      await apiClient(
-        "/worksheets/" + (mode === "edit" ? `${initialData?.id}/` : ""),
-        {
-          method: mode === "create" ? "POST" : "PUT",
-          body: JSON.stringify(worksheetData),
-        },
-      );
+      const endpoint = variant === "worksheet" ? "/worksheets/" : "/templates/";
+      const url = mode === "edit" ? `${endpoint}${initialData?.id}/` : endpoint;
+
+      await apiClient(url, {
+        method: mode === "create" ? "POST" : "PUT",
+        body: JSON.stringify(worksheetData),
+      });
 
       toast.success(
         mode === "create"
@@ -109,8 +113,7 @@ export const useWorksheetForm = ({
         ToastMsg({
           data: {
             title: "Błąd podczas tworzenia próby",
-            description:
-              error instanceof ApiError ? error.message : "Nieznany błąd",
+            description: error as Error,
           },
         }),
       );

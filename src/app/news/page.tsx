@@ -1,40 +1,22 @@
-import { auth } from "@/auth";
-import { API_URL } from "@/lib/api";
-import { handleError } from "@/lib/error-alert-handler";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { postSerializer } from "@/lib/serializers/news";
-import { Post } from "@/types/news";
+import { fetchNews } from "@/lib/server-api";
 
 export default async function NewsPage() {
-  const session = await auth();
+  const { posts: news, error } = await fetchNews();
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(session?.accessToken
-      ? { Authorization: `Bearer ${session.accessToken}` }
-      : {}),
-  };
-
-  const response = await fetch(`${API_URL}/news/`, {
-    method: "GET",
-    headers,
-  });
-
-  if (!response.ok) {
-    return await handleError(response);
+  if (error) {
+    return error;
   }
 
-  const news = (await response.json()).map(postSerializer) as Post[];
-
-  const pinnedNews = news
+  const pinnedNews = news!
     .filter((post) => post.pinned)
     .sort(
       (a, b) =>
         b.priority - a.priority ||
         new Date(b.createdOn).getTime() - new Date(a.createdOn).getTime(),
     );
-  const otherNews = news
+  const otherNews = news!
     .filter((post) => !post.pinned)
     .sort(
       (a, b) =>
@@ -89,7 +71,7 @@ export default async function NewsPage() {
         </>
       )}
 
-      {news.length === 0 && (
+      {news!.length === 0 && (
         <Card className="p-4">
           <CardContent>
             <p className="text-muted-foreground">

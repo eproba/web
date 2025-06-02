@@ -8,7 +8,7 @@ import {
 } from "@/types/user";
 import { displayNameFromUser } from "@/lib/utils";
 
-interface ApiUserResponse {
+export interface ApiUserResponse {
   id: string;
   nickname?: string | null;
   given_name?: string | null;

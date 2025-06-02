@@ -1,7 +1,6 @@
 import React from "react";
 import { WorksheetEditor } from "@/components/worksheets/editor/worksheet-editor";
-import { WorksheetWithTasks } from "@/lib/schemas/worksheet";
-import { auth } from "@/auth";
+import { fetchCurrentUser, fetchTemplate } from "@/lib/server-api";
 
 interface WorksheetCreatePageProps {
   searchParams: Promise<{
@@ -9,25 +8,37 @@ interface WorksheetCreatePageProps {
   }>;
 }
 
-// This is a server component that can process initial data
 const WorksheetCreatePage = async ({
   searchParams,
 }: WorksheetCreatePageProps) => {
-  const session = await auth();
-  let initialData: Partial<WorksheetWithTasks> | undefined = undefined;
-
   const { templateId } = await searchParams;
 
+  const { user, error: userError } = await fetchCurrentUser();
+  if (userError) {
+    return userError;
+  }
+
   if (templateId) {
-    console.log(templateId);
+    const { template, error: templateError } = await fetchTemplate(templateId);
+    if (templateError) {
+      return templateError;
+    }
+
+    return (
+      <WorksheetEditor
+        mode="create"
+        redirectTo={`/worksheets/templates#${templateId}`}
+        initialData={template}
+        currentUser={user!}
+      />
+    );
   }
 
   return (
     <WorksheetEditor
-      initialData={initialData}
       mode="create"
       redirectTo="/worksheets"
-      userId={session?.user?.id}
+      currentUser={user!}
     />
   );
 };

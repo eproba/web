@@ -2,7 +2,7 @@ export interface FieldInfo<T extends string | number = string | number> {
   value: T;
   fullName: string;
   shortName: string | null;
-  numberValue?: number | null;
+  numberValue: number;
 }
 
 export class Gender {
@@ -79,6 +79,7 @@ export class ScoutRank {
         ScoutRank.ranks.get(normalizedValue)?.[genderType] || "brak stopnia",
       shortName:
         ScoutRank.shortNames.get(normalizedValue)?.[genderType] || null,
+      numberValue: normalizedValue,
     };
   }
 }
@@ -114,6 +115,7 @@ export class InstructorRank {
         InstructorRank.ranks.get(normalizedValue)?.[genderType] ||
         "brak stopnia",
       shortName: InstructorRank.shortNames.get(normalizedValue) || null,
+      numberValue: normalizedValue,
     };
   }
 }
@@ -168,6 +170,7 @@ export class UserFunction {
       value: func.value,
       fullName: func[genderType],
       shortName: null,
+      numberValue: func.value,
     };
   }
 }

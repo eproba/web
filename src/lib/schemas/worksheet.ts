@@ -8,6 +8,10 @@ export const taskSchema = z.object({
     .max(2000, "Opis zadania nie może przekraczać 2000 znaków"),
   category: z.enum(["general", "individual"]),
   order: z.number(),
+  templateNotes: z
+    .string()
+    .max(1000, "Notatki szablonu nie mogą przekraczać 1000 znaków")
+    .optional(),
 });
 
 export const worksheetWithTasksSchema = z.object({
@@ -24,6 +28,10 @@ export const worksheetWithTasksSchema = z.object({
     .array(taskSchema)
     .min(1, "Dodaj co najmniej jedno zadanie")
     .max(100, "Maksymalnie 50 zadań"),
+  templateNotes: z
+    .string()
+    .max(1000, "Notatki szablonu nie mogą przekraczać 1000 znaków")
+    .optional(),
 });
 
 export type Task = z.infer<typeof taskSchema>;

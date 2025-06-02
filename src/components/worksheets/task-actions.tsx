@@ -1,9 +1,8 @@
 import React from "react";
 import { toast } from "react-toastify";
-import { ApiError } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { Task, TaskStatus } from "@/types/worksheet";
-import { PublicUser } from "@/types/user";
+import { PublicUser, User } from "@/types/user";
 import { ToastMsg } from "@/lib/toast-msg";
 import {
   CloudUploadIcon,
@@ -40,6 +39,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import { cn } from "@/lib/utils";
+import { RequiredFunctionLevel } from "@/lib/const";
 
 type TaskAction = "submit" | "unsubmit" | "accept" | "reject" | "clear";
 
@@ -67,6 +67,7 @@ interface TaskActionsProps {
   closeDrawer?: () => void;
   format?: "icon" | "button";
   onClick?: (event: React.MouseEvent) => void;
+  currentUser?: User;
 }
 
 const LoadingIcon = () => (
@@ -239,8 +240,7 @@ const useTaskActions = ({
         ToastMsg({
           data: {
             title: ERROR_MESSAGES[action],
-            description:
-              error instanceof ApiError ? error.message : "Nieznany błąd",
+            description: error as Error,
           },
         }),
       );
@@ -260,6 +260,7 @@ export function TaskActions({
   closeDrawer,
   format = "icon",
   onClick,
+  currentUser,
 }: TaskActionsProps) {
   const { loading, handleAction } = useTaskActions({
     worksheetId,
@@ -267,7 +268,6 @@ export function TaskActions({
     updateTask,
     closeDrawer,
   });
-  const isUserVariant = variant === "user";
 
   if (loading) {
     return <LoadingIndicator format={format} />;
@@ -400,6 +400,35 @@ export function TaskActions({
     ),
   };
 
-  const actions = isUserVariant ? userActions : managedActions;
-  return actions[task.status] || null;
+  switch (variant) {
+    case "user":
+      return userActions[task.status] || null;
+    case "managed":
+    case "review":
+      if (!currentUser) {
+        return null; // No actions available without current user context
+      }
+      switch (task.category) {
+        case "individual":
+          if (
+            currentUser.function.numberValue >=
+              RequiredFunctionLevel.INDIVIDUAL_TASKS_MANAGEMENT ||
+            task.approver === currentUser.id // Override for if the user is the approver, it shouldn't ever happen but just in case i mess something up
+          ) {
+            return managedActions[task.status] || null;
+          }
+          return null;
+        case "general":
+          if (
+            currentUser.function.numberValue >=
+              RequiredFunctionLevel.WORKSHEET_MANAGEMENT ||
+            task.approver === currentUser.id
+          ) {
+            return managedActions[task.status] || null;
+          }
+          return null;
+        default:
+          return null;
+      }
+  }
 }

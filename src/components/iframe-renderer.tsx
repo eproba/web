@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 
 /**
  * `IframeRenderer` is a React component that renders an iframe with dynamic height adjustment.
@@ -8,7 +9,7 @@ import { useEffect, useRef, useState } from "react";
  */
 export function IframeRenderer({ src }: { src: string }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [height, setHeight] = useState("24px");
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const iframe = iframeRef.current;
@@ -16,8 +17,10 @@ export function IframeRenderer({ src }: { src: string }) {
 
     const updateHeight = () => {
       try {
+        iframe.style.height = "auto"; // Reset height to auto to get accurate scrollHeight
         const newHeight = iframe.contentWindow?.document.body.scrollHeight;
-        if (newHeight) setHeight(`${newHeight}px`);
+        if (newHeight) containerRef.current!.style.height = `${newHeight}px`;
+        iframe.style.height = `100%`; // Set height to 100% to fill the container
       } catch {
         // Cross-origin iframe, cannot access
       }
@@ -57,11 +60,17 @@ export function IframeRenderer({ src }: { src: string }) {
   if (!src) return null;
 
   return (
-    <iframe
-      ref={iframeRef}
-      src={src}
-      className="w-full mb-8"
-      style={{ height }}
-    />
+    <AnimatePresence>
+      <motion.div
+        ref={containerRef}
+        className="w-full mb-8 transition-all duration-100"
+      >
+        <iframe
+          ref={iframeRef}
+          src={src}
+          className="w-full border-none h-full"
+        />
+      </motion.div>
+    </AnimatePresence>
   );
 }

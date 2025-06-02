@@ -28,11 +28,7 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
   );
 
   const updateTask = useCallback(
-    (
-      category: string,
-      id: string,
-      updates: { field: string; value: string }[],
-    ) => {
+    (id: string, updates: { field: string; value: string }[]) => {
       const updatedTasks = watchedTasks.map((task) => {
         if (task.id === id) {
           const updatedTask = { ...task };
@@ -157,6 +153,35 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
     [],
   );
 
+  const transferAllTasks = useCallback(
+    (sourceCategory: string, destCategory: string) => {
+      if (sourceCategory === destCategory) return;
+
+      const tasksToMove = watchedTasks.filter(
+        (task) => task.category === sourceCategory,
+      );
+
+      if (tasksToMove.length === 0) return;
+
+      const updatedTasks = watchedTasks.map((task) =>
+        task.category === sourceCategory
+          ? { ...task, category: destCategory as "general" | "individual" }
+          : task,
+      );
+
+      const reorderedTasks = updatedTasks.map((task) => {
+        const sameCategory = updatedTasks.filter(
+          (t) => t.category === task.category,
+        );
+        const newOrder = sameCategory.findIndex((t) => t.id === task.id);
+        return { ...task, order: newOrder };
+      });
+
+      updateTasksInForm(reorderedTasks);
+    },
+    [watchedTasks, updateTasksInForm],
+  );
+
   return {
     watchedTasks,
     generalTasks,
@@ -167,5 +192,6 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
     removeTask,
     reorderTasks,
     moveTaskBetweenCategories,
+    transferAllTasks,
   };
 };

@@ -1,9 +1,6 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { auth, signOut } from "@/auth";
 import { LoginRequired } from "@/components/login-required";
-import { userSerializer } from "@/lib/serializers/user";
-import { API_URL } from "@/lib/api";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileEditForm } from "./profile-edit-form";
 import {
@@ -25,30 +22,15 @@ import Image from "next/image";
 import { PasswordChangeDialog } from "@/components/profile/password-change-dialog";
 import { ResendVerificationEmailButton } from "@/components/profile/resend-verification-email-button";
 import { ProfileNotificationsTab } from "./profile-notifications-tab";
+import { fetchCurrentUser } from "@/lib/server-api";
 
 export default async function UserProfilePage() {
-  const session = await auth();
-  if (session?.error === "RefreshTokenError") {
-    await signOut();
-    console.error("Refresh token error");
+  const { user, error: userError } = await fetchCurrentUser();
+  if (userError) {
+    return userError;
   }
 
-  const response = await fetch(`${API_URL}/user/`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    console.error("Failed to fetch user data");
-    return <LoginRequired />;
-  }
-
-  const user = userSerializer(await response.json());
-
-  if (!session || !user) {
+  if (!user) {
     return <LoginRequired />;
   }
 

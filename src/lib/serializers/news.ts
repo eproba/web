@@ -1,9 +1,23 @@
 import { Post } from "@/types/news";
-import { publicUserSerializer } from "@/lib/serializers/user";
+import { ApiUserResponse, publicUserSerializer } from "@/lib/serializers/user";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+export interface ApiPostResponse {
+  id: string;
+  author: ApiUserResponse;
+  title: string;
+  slug: string;
+  created_on: string;
+  updated_on: string;
+  status: "draft" | "published" | "archived";
+  content: string;
+  minimum_function: number;
+  authorized_only: boolean;
+  pinned: boolean;
+  priority: number;
+  hidden: boolean;
+}
 
-export function postSerializer(apiResponse: any): Post | null {
+export function postSerializer(apiResponse: ApiPostResponse): Post | null {
   return {
     id: apiResponse.id,
     author: publicUserSerializer(apiResponse.author),

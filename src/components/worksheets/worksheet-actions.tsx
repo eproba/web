@@ -1,6 +1,6 @@
 "use client";
 import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
-import { ComponentType, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Tooltip,
   TooltipContent,
@@ -12,6 +12,7 @@ import {
   ArchiveIcon,
   ArchiveRestoreIcon,
   EllipsisVerticalIcon,
+  LucideIcon,
   PrinterIcon,
   QrCodeIcon,
   Share2Icon,
@@ -20,7 +21,6 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { toast } from "react-toastify";
-import { ApiError } from "@/lib/api";
 import { ToastMsg } from "@/lib/toast-msg";
 import { useRouter } from "next/navigation";
 import { useApi } from "@/lib/api-client";
@@ -52,14 +52,9 @@ import {
 type WorksheetAction = {
   id: string;
   label: string;
-  icon: ComponentType<{
-    className?: string;
-    size?: number;
-    onClick?: () => void;
-  }>;
+  icon: LucideIcon;
   handler?: () => void;
   href?: string;
-  requiresConfirmation?: boolean;
   variant: ("managed" | "archived" | "user" | "review")[];
   renderContent?: (action: WorksheetAction, baseUrl: string) => React.ReactNode;
 };
@@ -151,22 +146,14 @@ export function WorksheetActions({
         router.refresh();
       }
     } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(
-          ToastMsg({
-            data: { title: "Nie można usunąć arkusza", description: error },
-          }),
-        );
-      } else {
-        toast.error(
-          ToastMsg({
-            data: {
-              title: "Nie można usunąć arkusza",
-              description: "Nieznany błąd",
-            },
-          }),
-        );
-      }
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie można usunąć próby",
+            description: error as Error,
+          },
+        }),
+      );
     } finally {
       setShowDeleteAlert(false);
     }
@@ -185,25 +172,14 @@ export function WorksheetActions({
         router.refresh();
       }
     } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(
-          ToastMsg({
-            data: {
-              title: "Nie można przenieść arkusza do archiwum",
-              description: error,
-            },
-          }),
-        );
-      } else {
-        toast.error(
-          ToastMsg({
-            data: {
-              title: "Nie można przenieść arkusza do archiwum",
-              description: "Nieznany błąd",
-            },
-          }),
-        );
-      }
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie można przenieść próby do archiwum",
+            description: error as Error,
+          },
+        }),
+      );
     }
   }
 
@@ -220,25 +196,14 @@ export function WorksheetActions({
         router.refresh();
       }
     } catch (error) {
-      if (error instanceof ApiError) {
-        toast.error(
-          ToastMsg({
-            data: {
-              title: "Nie można przywrócić arkusza z archiwum",
-              description: error,
-            },
-          }),
-        );
-      } else {
-        toast.error(
-          ToastMsg({
-            data: {
-              title: "Nie można przywrócić arkusza z archiwum",
-              description: "Nieznany błąd",
-            },
-          }),
-        );
-      }
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie można przywrócić próby z archiwum",
+            description: error as Error,
+          },
+        }),
+      );
     }
   }
 
@@ -308,14 +273,13 @@ export function WorksheetActions({
       id: "edit",
       label: "Edytuj",
       icon: SquarePenIcon,
-      href: `/worksheets/edit/${worksheet.id}`,
+      href: `/worksheets/${worksheet.id}/edit`,
       variant: ["managed"],
     },
     {
       id: "delete",
       label: "Usuń",
       icon: TrashIcon,
-      requiresConfirmation: true,
       handler: () => setShowDeleteAlert(true),
       variant: ["managed", "archived"],
     },

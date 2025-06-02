@@ -10,26 +10,31 @@ import { useWorksheetForm } from "@/components/worksheets/editor/hooks/use-works
 import { useWorksheetTasks } from "@/components/worksheets/editor/hooks/use-worksheet-tasks";
 import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
 import { Task, WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { User } from "@/types/user";
+import { TemplateWorksheetBasicInfo } from "@/components/worksheets/editor/template-basic-info";
 
 interface WorksheetEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
   mode: "create" | "edit";
+  variant?: "template" | "worksheet";
   redirectTo: string;
-  userId?: string;
+  currentUser: User;
 }
 
 export const WorksheetEditor = ({
   initialData,
   mode,
+  variant = "worksheet",
   redirectTo,
-  userId,
+  currentUser,
 }: WorksheetEditorProps) => {
   // Initialize form with initial data
   const { form, onSubmit, isSubmitting } = useWorksheetForm({
     mode,
     redirectTo,
     initialData,
-    userId: userId,
+    currentUser,
+    variant,
   });
 
   // Initialize task management with a custom hook
@@ -42,6 +47,7 @@ export const WorksheetEditor = ({
     reorderTasks,
     moveTaskBetweenCategories,
     updateTasksInForm,
+    transferAllTasks,
   } = useWorksheetTasks({ form });
 
   // Initialize drag and drop with a custom hook
@@ -67,8 +73,8 @@ export const WorksheetEditor = ({
   // Watch tasks for changes to auto-enable descriptions only if user hasn't made a choice
   useEffect(() => {
     const tasks = watchedTasks || [];
-    const hasDescriptions = tasks.some((task: Task) =>
-      task.description?.trim(),
+    const hasDescriptions = tasks.some(
+      (task: Task) => task.description?.trim() || task.templateNotes?.trim(),
     );
 
     // Only auto-enable if the user hasn't explicitly toggled it
@@ -96,14 +102,23 @@ export const WorksheetEditor = ({
       >
         <Form {...form}>
           {/* Worksheet Basic Info */}
-          <WorksheetBasicInfo form={form} />
+          {variant === "worksheet" ? (
+            <WorksheetBasicInfo form={form} currentUser={currentUser} />
+          ) : (
+            <TemplateWorksheetBasicInfo form={form} currentUser={currentUser} />
+          )}
 
           {/* Task Controls */}
           <TaskControls
             showDescriptions={showDescriptions}
             enableCategories={enableCategories}
             onToggleDescriptions={handleToggleDescriptions}
-            onToggleCategories={() => setEnableCategories(!enableCategories)}
+            onToggleCategories={() => {
+              if (enableCategories) {
+                transferAllTasks("individual", "general");
+              }
+              setEnableCategories(!enableCategories);
+            }}
           />
 
           {/* Tasks Section */}
@@ -116,6 +131,8 @@ export const WorksheetEditor = ({
             onUpdateTask={updateTask}
             onAddTask={addTask}
             onRemoveTask={removeTask}
+            currentUser={currentUser}
+            variant={variant}
           />
 
           {/* Submit Button */}
@@ -123,6 +140,7 @@ export const WorksheetEditor = ({
             isSubmitting={isSubmitting}
             onSubmit={onSubmit}
             mode={mode}
+            variant={variant}
           />
         </Form>
       </div>

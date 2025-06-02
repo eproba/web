@@ -1,41 +1,20 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { auth, signOut } from "@/auth";
-import { LoginRequired } from "@/components/login-required";
-import { userSerializer } from "@/lib/serializers/user";
-import { API_URL } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
+import { fetchUser } from "@/lib/server-api";
 
 export default async function ProfilePage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
-  const session = await auth();
   const { id } = await params;
-  if (session?.error === "RefreshTokenError") {
-    await signOut();
-    console.error("Refresh token error");
+
+  const { user, error: userError } = await fetchUser(id);
+  if (userError) {
+    return userError;
   }
-
-  if (!session) {
-    return <LoginRequired />;
-  }
-
-  const response = await fetch(`${API_URL}/users/${id}`, {
-    method: "GET",
-    headers: {
-      Authorization: `Bearer ${session?.accessToken}`,
-      "Content-Type": "application/json",
-    },
-  });
-
-  if (!response.ok) {
-    notFound();
-  }
-
-  const user = userSerializer(await response.json());
 
   if (!user) {
     notFound();

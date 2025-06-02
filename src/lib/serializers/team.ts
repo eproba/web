@@ -1,11 +1,11 @@
 import { Organization, Patrol, Team, District } from "@/types/team";
 
-interface ApiDistrictResponse {
+export interface ApiDistrictResponse {
   id: string;
   name: string;
 }
 
-interface ApiTeamResponse {
+export interface ApiTeamResponse {
   id: string;
   name: string;
   short_name: string;
@@ -18,7 +18,7 @@ interface ApiTeamResponse {
   patrols?: Patrol[];
 }
 
-interface ApiPatrolResponse {
+export interface ApiPatrolResponse {
   id: string;
   name: string;
   team: string;

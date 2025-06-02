@@ -16,7 +16,7 @@ export interface Task {
   approverName: string | null;
   approvalDate: Date | null;
   category: "general" | "individual";
-  notes: string | null;
+  notes: string;
   order: number;
 }
 
@@ -33,5 +33,5 @@ export interface Worksheet {
   createdAt: Date;
   isArchived: boolean;
   isDeleted: boolean;
-  notes: string | null;
+  notes: string;
 }

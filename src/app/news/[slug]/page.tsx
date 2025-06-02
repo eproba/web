@@ -1,36 +1,19 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { auth } from "@/auth";
-import { API_URL } from "@/lib/api";
 import { notFound } from "next/navigation";
-import { handleError } from "@/lib/error-alert-handler";
-import { postSerializer } from "@/lib/serializers/news";
 import Link from "next/link";
+import { fetchNewsPost } from "@/lib/server-api";
 
 export default async function NewsPostPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const session = await auth();
   const { slug } = await params;
+  const { post, error } = await fetchNewsPost(slug);
 
-  const headers = {
-    "Content-Type": "application/json",
-    ...(session?.accessToken
-      ? { Authorization: `Bearer ${session.accessToken}` }
-      : {}),
-  };
-
-  const response = await fetch(`${API_URL}/news/${slug}`, {
-    method: "GET",
-    headers,
-  });
-
-  if (!response.ok) {
-    return await handleError(response);
+  if (error) {
+    return error;
   }
-
-  const post = postSerializer(await response.json());
 
   if (!post) {
     notFound();

@@ -14,6 +14,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { User, UserFunction } from "@/types/user";
+import { RequiredFunctionLevel } from "@/lib/const";
 
 interface TaskListProps {
   title?: string | null;
@@ -22,13 +24,14 @@ interface TaskListProps {
   showDescriptions: boolean;
   enableCategories: boolean;
   onUpdateTask: (
-    category: string,
     id: string,
     updates: { field: string; value: string }[],
   ) => void;
   onAddTask: (category: string) => void;
   onRemoveTask: (category: string, id: string) => void;
   form: UseFormReturn<WorksheetWithTasks>;
+  currentUser: User;
+  variant: "template" | "worksheet";
 }
 
 export const TaskList: React.FC<TaskListProps> = ({
@@ -41,6 +44,8 @@ export const TaskList: React.FC<TaskListProps> = ({
   onAddTask,
   onRemoveTask,
   form,
+  currentUser,
+  variant,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDropHovered, setIsDropHovered] = useState(false);
@@ -78,10 +83,6 @@ export const TaskList: React.FC<TaskListProps> = ({
       ref={containerRef}
       className={cn(
         "space-y-1 transition-all duration-300 relative touch-manipulation w-full",
-        tasks.length === 0 && "ring-2 ring-transparent",
-        tasks.length === 0 &&
-          isDropHovered &&
-          "ring-blue-500 ring-opacity-50 bg-blue-50/30 dark:bg-blue-950/30 rounded-lg",
       )}
     >
       {tasks.length === 0 ? (
@@ -96,8 +97,7 @@ export const TaskList: React.FC<TaskListProps> = ({
             delay: 0.1,
           }}
           className={cn(
-            "flex flex-col items-center justify-center py-12 text-center relative",
-            "border-2 border-transparent rounded-lg",
+            "flex flex-col items-center justify-center py-12 text-center relative border-2 border-dashed border-transparent rounded-lg transition-all",
             isDropHovered &&
               "border-dashed border-blue-500 bg-blue-50/50 dark:bg-blue-950/50",
           )}
@@ -186,11 +186,11 @@ export const TaskList: React.FC<TaskListProps> = ({
                     index={index}
                     taskIndex={taskIndex}
                     showDescription={showDescriptions}
-                    onUpdate={(updates) =>
-                      onUpdateTask(category, task.id, updates)
-                    }
+                    onUpdate={(updates) => onUpdateTask(task.id, updates)}
                     onRemove={() => onRemoveTask(category, task.id)}
                     form={form}
+                    currentUser={currentUser}
+                    variant={variant}
                   />
                 </motion.div>
               );
@@ -262,8 +262,14 @@ export const TaskList: React.FC<TaskListProps> = ({
                     </TooltipTrigger>
                     <TooltipContent>
                       {category === "general"
-                        ? "Zadania ogólne, mogą je podpisywać zastępowi"
-                        : "Zadania indywidualne, podpisać je może tylko kadra lub opiekun"}
+                        ? `Zadania ogólne, mogą je podpisywać ${UserFunction.fromValue(
+                            RequiredFunctionLevel.WORKSHEET_MANAGEMENT,
+                            currentUser.gender,
+                          ).fullName.toLowerCase()} i wyżej`
+                        : `Zadania indywidualne, podpisać je może co najmniej ${UserFunction.fromValue(
+                            RequiredFunctionLevel.INDIVIDUAL_TASKS_MANAGEMENT,
+                            currentUser.gender,
+                          ).fullName.toLowerCase()} lub opiekun${currentUser.gender?.value === "female" ? "ka" : ""}`}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

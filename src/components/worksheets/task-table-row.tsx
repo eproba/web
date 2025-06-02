@@ -15,6 +15,14 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { User } from "@/types/user";
+import { TemplateTask } from "@/types/template";
+import { MessageSquareDashedIcon } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 export function TaskTableRow({
   task,
@@ -22,20 +30,29 @@ export function TaskTableRow({
   variant,
   worksheetId,
   updateTask,
-  currentUserId,
-}: {
-  task: Task;
-  index: number;
-  variant: "user" | "managed" | "shared" | "archived" | "review";
-  worksheetId: string;
-  updateTask: (task: Task) => void;
-  currentUserId?: string;
-}) {
+  currentUser,
+}:
+  | {
+      task: Task;
+      index: number;
+      variant: "user" | "managed" | "shared" | "archived" | "review";
+      worksheetId: string;
+      updateTask?: (task: Task) => void;
+      currentUser?: User;
+    }
+  | {
+      task: TemplateTask;
+      index: number;
+      variant: "template";
+      worksheetId: string;
+      updateTask?: (task: Task) => void;
+      currentUser?: User;
+    }) {
   const [isOpen, setIsOpen] = useState(false);
   const isHighlightedTask =
     variant === "review" &&
     task.status === TaskStatus.AWAITING_APPROVAL &&
-    task.approver === currentUserId;
+    task.approver === currentUser?.id;
 
   const rowStyle =
     variant === "review" && !isHighlightedTask
@@ -59,9 +76,11 @@ export function TaskTableRow({
               </p>
             )}
           </TableCell>
-          <TableCell className="text-center w-8">
-            <TaskStatusIndicator task={task} tooltip={false} />
-          </TableCell>
+          {variant !== "template" && (
+            <TableCell className="text-center w-8">
+              <TaskStatusIndicator task={task} tooltip={false} />
+            </TableCell>
+          )}
         </TableRow>
       </DrawerTrigger>
       <TableRow
@@ -72,7 +91,22 @@ export function TaskTableRow({
         </TableCell>
         <TableCell>
           <p className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}>
-            {task.name}
+            <span className="inline-flex items-center gap-2">
+              {task.name}
+              {variant === "template" && task.templateNotes && (
+                <Popover>
+                  <PopoverTrigger>
+                    <MessageSquareDashedIcon className="size-4 text-muted-foreground" />
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <p className="text-sm text-muted-foreground">
+                      Notatka - widoczna do momentu utworzenie próby z szablonu:
+                    </p>
+                    <p className="text-sm">{task.templateNotes}</p>
+                  </PopoverContent>
+                </Popover>
+              )}
+            </span>
           </p>
           {task.description && (
             <p className="text-sm text-muted-foreground text-wrap">
@@ -80,9 +114,11 @@ export function TaskTableRow({
             </p>
           )}
         </TableCell>
-        <TableCell className="text-center w-16 p-0">
-          <TaskStatusIndicator task={task} />
-        </TableCell>
+        {variant !== "template" && (
+          <TableCell className="text-center w-16 p-0">
+            <TaskStatusIndicator task={task} />
+          </TableCell>
+        )}
         {(variant === "managed" ||
           variant === "user" ||
           variant === "review") && (
@@ -91,7 +127,8 @@ export function TaskTableRow({
               task={task}
               variant={variant}
               worksheetId={worksheetId}
-              updateTask={updateTask}
+              updateTask={updateTask!}
+              currentUser={currentUser}
             />
           </TableCell>
         )}
@@ -104,7 +141,9 @@ export function TaskTableRow({
           </DrawerDescription>
         </DrawerHeader>
         <div className="flex flex-col items-center justify-between px-4 gap-4">
-          <TaskStatusIndicator task={task} format="badges" tooltip={false} />
+          {variant !== "template" && (
+            <TaskStatusIndicator task={task} format="badges" tooltip={false} />
+          )}
           {(variant === "managed" ||
             variant === "user" ||
             variant === "review") && (
@@ -112,9 +151,10 @@ export function TaskTableRow({
               task={task}
               variant={variant}
               worksheetId={worksheetId}
-              updateTask={updateTask}
+              updateTask={updateTask!}
               format="button"
               closeDrawer={() => setIsOpen(false)}
+              currentUser={currentUser}
             />
           )}
         </div>

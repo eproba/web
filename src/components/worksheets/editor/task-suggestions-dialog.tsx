@@ -161,7 +161,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="browse" className="space-y-4">
+          <TabsContent value="browse" className="space-y-4 h-full">
             {/* Search and Filters */}
             <div className="space-y-3">
               <div className="relative">
@@ -171,6 +171,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-10"
+                  startIcon={SearchIcon}
                 />
               </div>
 
@@ -198,7 +199,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
             </div>
 
             {/* Task Ideas List */}
-            <ScrollArea className="h-[400px] w-full border rounded-lg p-4">
+            <ScrollArea className="w-full">
               <div className="space-y-3">
                 {filteredIdeas.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">

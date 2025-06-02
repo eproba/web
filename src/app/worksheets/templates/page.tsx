@@ -1,45 +1,40 @@
-import { auth } from "@/auth";
-import { API_URL } from "@/lib/api";
-import { Worksheet } from "@/types/worksheet";
-import { LoginRequired } from "@/components/login-required";
-import { worksheetSerializer } from "@/lib/serializers/worksheet";
-import { handleError } from "@/lib/error-alert-handler";
-import { WorksheetList } from "@/components/worksheets/worksheet-list";
-import { teamSerializer } from "@/lib/serializers/team";
-import { Team } from "@/types/team";
+import { TemplateList } from "@/components/worksheets/templates/template-list";
+import { fetchTemplates } from "@/lib/server-api";
 
 export default async function TemplatesPage() {
-  const session = await auth();
-  if (!session || !session.user) {
-    return <LoginRequired />;
+  const { templates, error: templatesError } = await fetchTemplates();
+  if (templatesError) {
+    return templatesError;
   }
 
-  const response = await fetch(`${API_URL}/templates/`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    return await handleError(response);
-  }
-
-  const data = (await response.json()).reduce(
-    (acc: Worksheet[], worksheet: Worksheet) => {
-      const serializedWorksheet = worksheet;
-      if (serializedWorksheet) {
-        acc.push(serializedWorksheet);
-      }
-      return acc;
-    },
-    [],
-  ) as Worksheet[];
+  const teamTemplates = templates!.filter(
+    (worksheet) => worksheet.teamId !== null,
+  );
+  const organizationTemplates = templates!.filter(
+    (worksheet) => worksheet.organization !== null,
+  );
 
   return (
-    <div className="">
-      <WorksheetList orgWorksheets={data} variant="managed" />
+    <div className="space-y-4">
+      {teamTemplates.length > 0 && (
+        <div className="space-y-4 mt-8">
+          <h2 className="text-2xl font-semibold">Szablony twojej drużyny</h2>
+          <TemplateList orgTemplates={teamTemplates} />
+        </div>
+      )}
+      {organizationTemplates.length > 0 && (
+        <div className="space-y-4 mt-8">
+          <h2 className="text-2xl font-semibold">
+            Szablony twojej organizacji
+          </h2>
+          <TemplateList orgTemplates={organizationTemplates} />
+        </div>
+      )}
+      {!teamTemplates.length && !organizationTemplates.length && (
+        <div className="text-center text-gray-500 mt-8">
+          <p>Brak dostępnych szablonów.</p>
+        </div>
+      )}
     </div>
   );
 }

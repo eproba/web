@@ -3,6 +3,7 @@ import { TaskList } from "@/components/worksheets/editor/task-list";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { UseFormReturn } from "react-hook-form";
 import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { User } from "@/types/user";
 
 interface TasksSectionProps {
   form: UseFormReturn<WorksheetWithTasks>;
@@ -11,12 +12,13 @@ interface TasksSectionProps {
   showDescriptions: boolean;
   enableCategories: boolean;
   onUpdateTask: (
-    category: string,
     id: string,
     updates: { field: string; value: string }[],
   ) => void;
   onAddTask: (category: string) => void;
   onRemoveTask: (category: string, id: string) => void;
+  currentUser: User;
+  variant: "template" | "worksheet";
 }
 
 export const TasksSection: React.FC<TasksSectionProps> = ({
@@ -28,6 +30,8 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
   onUpdateTask,
   onAddTask,
   onRemoveTask,
+  currentUser,
+  variant,
 }) => {
   return (
     <div className="space-y-6">
@@ -43,6 +47,8 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
           onAddTask={onAddTask}
           onRemoveTask={onRemoveTask}
           form={form}
+          currentUser={currentUser}
+          variant={variant}
         />
 
         {/* Individual Tasks (only when categories enabled) */}
@@ -57,6 +63,8 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
             onAddTask={onAddTask}
             onRemoveTask={onRemoveTask}
             form={form}
+            currentUser={currentUser}
+            variant={variant}
           />
         )}
       </div>

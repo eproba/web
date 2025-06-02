@@ -16,7 +16,7 @@ export function ToastMsg({
       description = data.description;
       break;
     case "object":
-      if (data.description instanceof ApiError) {
+      if ("status" in data.description && "statusText" in data.description) {
         description = `${data.description.status} ${data.description.statusText}\n${data.description.message}`;
       } else if (data.description.message) {
         description = data.description.message;

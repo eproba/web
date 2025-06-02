@@ -1,15 +1,43 @@
 import { Task, Worksheet } from "@/types/worksheet";
-import { publicUserSerializer } from "@/lib/serializers/user";
+import { ApiUserResponse, publicUserSerializer } from "@/lib/serializers/user";
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
+export interface ApiTaskResponse {
+  id: string;
+  task: string;
+  description: string;
+  status: number;
+  approver: string | null;
+  approver_name: string;
+  approval_date?: string | null;
+  category: "general" | "individual";
+  notes: string;
+  order?: number;
+}
 
-export function worksheetSerializer(apiResponse: any): Worksheet | null {
-  if (apiResponse.deleted) {
+export interface ApiWorksheetResponse {
+  id: string;
+  user: ApiUserResponse;
+  name: string;
+  description: string;
+  supervisor: string;
+  supervisor_name: string;
+  tasks: ApiTaskResponse[];
+  updated_at: string;
+  created_at: string;
+  is_archived: boolean;
+  is_deleted: boolean;
+  notes: string;
+}
+
+export function worksheetSerializer(
+  apiResponse: ApiWorksheetResponse,
+): Worksheet | null {
+  if (apiResponse.is_deleted) {
     return null;
   }
   return {
     id: apiResponse.id,
-    user: publicUserSerializer(apiResponse.user),
+    user: apiResponse.user ? publicUserSerializer(apiResponse.user) : undefined,
     userId: apiResponse.user?.id,
     name: apiResponse.name,
     description: apiResponse.description,
@@ -20,11 +48,11 @@ export function worksheetSerializer(apiResponse: any): Worksheet | null {
     createdAt: new Date(apiResponse.created_at),
     isArchived: apiResponse.is_archived,
     isDeleted: apiResponse.is_deleted,
-    notes: apiResponse.notes || null,
+    notes: apiResponse.notes,
   };
 }
 
-export function taskSerializer(apiResponse: any): Task {
+export function taskSerializer(apiResponse: ApiTaskResponse): Task {
   return {
     id: apiResponse.id,
     name: apiResponse.task,
@@ -36,7 +64,7 @@ export function taskSerializer(apiResponse: any): Task {
       ? new Date(apiResponse.approval_date)
       : null,
     category: apiResponse.category,
-    notes: apiResponse.notes || null,
+    notes: apiResponse.notes,
     order: apiResponse.order || 0,
   };
 }

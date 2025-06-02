@@ -1,10 +1,7 @@
 import { auth } from "@/auth";
-import { API_URL } from "@/lib/api";
-import { Worksheet } from "@/types/worksheet";
 import { LoginRequired } from "@/components/login-required";
-import { worksheetSerializer } from "@/lib/serializers/worksheet";
-import { handleError } from "@/lib/error-alert-handler";
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
+import { fetchUserWorksheets } from "@/lib/server-api";
 
 export default async function UserWorksheets() {
   const session = await auth();
@@ -12,31 +9,17 @@ export default async function UserWorksheets() {
     return <LoginRequired />;
   }
 
-  const response = await fetch(`${API_URL}/worksheets/?user`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${session.accessToken}`,
-    },
-  });
-
-  if (!response.ok) {
-    return await handleError(response);
+  const { worksheets, error } = await fetchUserWorksheets();
+  if (error) {
+    return error;
   }
 
-  const data = (await response.json()).reduce(
-    (acc: Worksheet[], worksheet: Worksheet) => {
-      const serializedWorksheet = worksheetSerializer(worksheet);
-      if (serializedWorksheet) {
-        acc.push(serializedWorksheet);
-      }
-      return acc;
-    },
-    [],
-  ) as Worksheet[];
-
-  const activeWorksheets = data.filter((worksheet) => !worksheet.isArchived);
-  const archivedWorksheets = data.filter((worksheet) => worksheet.isArchived);
+  const activeWorksheets = worksheets!.filter(
+    (worksheet) => !worksheet.isArchived,
+  );
+  const archivedWorksheets = worksheets!.filter(
+    (worksheet) => worksheet.isArchived,
+  );
 
   return (
     <div className="space-y-4">

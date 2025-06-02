@@ -3,7 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { GripVerticalIcon, SparklesIcon, Trash2Icon } from "lucide-react";
+import {
+  GripVerticalIcon,
+  InfoIcon,
+  SparklesIcon,
+  Trash2Icon,
+} from "lucide-react";
 import {
   draggable,
   dropTargetForElements,
@@ -18,6 +23,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { TaskSuggestionsDialog } from "./task-suggestions-dialog";
@@ -33,6 +39,9 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useDebouncedCallback } from "use-debounce";
+import { User } from "@/types/user";
+import { RequiredFunctionLevel } from "@/lib/const";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface TaskItemProps {
   task: Task;
@@ -42,6 +51,8 @@ interface TaskItemProps {
   onUpdate: (updates: { field: string; value: string }[]) => void;
   onRemove: () => void;
   form: UseFormReturn<WorksheetWithTasks>;
+  currentUser: User;
+  variant: "template" | "worksheet";
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({
@@ -52,6 +63,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   onUpdate,
   onRemove,
   form,
+  currentUser,
+  variant,
 }) => {
   const elementRef = useRef<HTMLDivElement>(null);
   const dragHandleRef = useRef<HTMLDivElement>(null);
@@ -294,7 +307,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       >
         <div className="flex gap-3 items-start">
           {/* Task Number */}
-          <div className="flex items-center pt-2 min-w-[2rem]">
+          <div className="flex items-center pt-2 min-w-4 sm:min-w-8">
             <span className="text-sm font-medium text-muted-foreground select-none">
               {index + 1}.
             </span>
@@ -327,6 +340,17 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               )}
             />
 
+            {showDescription &&
+              variant === "worksheet" &&
+              form.getValues(`tasks.${taskIndex}.templateNotes`) && (
+                <Alert>
+                  <InfoIcon />
+                  <AlertDescription>
+                    {form.getValues(`tasks.${taskIndex}.templateNotes`)}
+                  </AlertDescription>
+                </Alert>
+              )}
+
             {showDescription && (
               <FormField
                 control={form.control}
@@ -353,33 +377,68 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 )}
               />
             )}
+
+            {showDescription && variant === "template" && (
+              <FormField
+                control={form.control}
+                name={`tasks.${taskIndex}.templateNotes` as const}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-xs text-muted-foreground">
+                      Notatki do szablonu, znikają po utworzeniu próby
+                    </FormLabel>
+                    <FormControl>
+                      <Textarea
+                        {...field}
+                        placeholder="To zadanie ma na celu..."
+                        rows={2}
+                        onMouseDown={(e) => e.stopPropagation()}
+                        onDragStart={(e) => e.preventDefault()}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          debouncedUpdate([
+                            { field: "description", value: e.target.value },
+                          ]);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 flex-col-reverse sm:flex-row">
             {/* AI Suggestions Button */}
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowSuggestions(true)}
-              className={cn(
-                "opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
-                showSuggestions &&
-                  "opacity-100 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+            {currentUser.function.numberValue >=
+              RequiredFunctionLevel.TASK_SUGGESTIONS &&
+              variant === "worksheet" && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSuggestions(true)}
+                  className={cn(
+                    "opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
+                    showSuggestions &&
+                      "opacity-100 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+                  )}
+                  title="Pomysły na zadania"
+                >
+                  <SparklesIcon className="w-4 h-4" />
+                </Button>
               )}
-              title="Pomysły na zadania"
-            >
-              <SparklesIcon className="w-4 h-4" />
-            </Button>
 
+            {/* Delete Task Button */}
             <AlertDialog>
               <AlertDialogTrigger asChild>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
+                  className="sm:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
                 >
                   <Trash2Icon className="w-4 h-4" />
                 </Button>

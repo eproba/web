@@ -2,7 +2,9 @@
 import { Task, Worksheet } from "@/types/worksheet";
 import { Input } from "@/components/ui/input";
 import { WorksheetItem } from "@/components/worksheets/worksheet-item";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useDebounce } from "use-debounce";
+import Fuse from "fuse.js";
 import {
   Select,
   SelectContent,
@@ -11,47 +13,24 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-// Simple function to calculate string similarity
-const stringSimilarity = (str1: string, str2: string): boolean => {
-  const s1 = str1.toLowerCase();
-  const s2 = str2.toLowerCase();
-
-  // Exact match or contains
-  if (s2.includes(s1) || s1.includes(s2)) return true;
-
-  // Check if it's just a minor typo (if input is at least 4 chars)
-  if (s1.length >= 4) {
-    // Allow one character difference for every 4 characters
-    const allowedDiff = Math.floor(s1.length / 4);
-    let diff = 0;
-
-    // Check if removing N characters from s1 would make it a substring of s2
-    for (let i = 0; i < s1.length && diff <= allowedDiff; i++) {
-      const subStr = s1.slice(0, i) + s1.slice(i + 1);
-      if (s2.includes(subStr)) return true;
-      diff++;
-    }
-  }
-
-  return false;
-};
+import { User } from "@/types/user";
+import { SearchIcon } from "lucide-react";
 
 export function WorksheetList({
   orgWorksheets,
   variant = "user",
   showFilters = false,
   patrols = [],
-  currentUserId,
+  currentUser,
 }: {
   orgWorksheets: Worksheet[];
   variant?: "user" | "managed" | "shared" | "archived" | "review";
   showFilters?: boolean;
   patrols?: Record<string, string>[];
-  currentUserId?: string;
+  currentUser?: User;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
+  const [debouncedSearchQuery] = useDebounce(searchQuery, 400);
   const [selectedPatrol, setSelectedPatrol] = useState<string>("null");
   const [worksheets, setWorksheets] = useState<Worksheet[]>(orgWorksheets);
 
@@ -75,52 +54,36 @@ export function WorksheetList({
     );
   }
 
-  useEffect(() => {
-    const timerId = setTimeout(() => {
-      setDebouncedSearchQuery(searchQuery);
-    }, 400);
-
-    return () => clearTimeout(timerId);
-  }, [searchQuery]);
-
-  const searchText = useCallback(
-    (text: string | undefined): boolean => {
-      if (!text || !debouncedSearchQuery) return false;
-      return stringSimilarity(debouncedSearchQuery, text);
-    },
-    [debouncedSearchQuery],
-  );
-
-  // Filter worksheets based on search query and selected patrol
   const filteredWorksheets = useMemo(() => {
-    // Skip filtering if no filters are applied
-    if (debouncedSearchQuery === "" && selectedPatrol === "null") {
-      return worksheets || [];
+    let filteredByPatrol = worksheets;
+    if (selectedPatrol !== "null") {
+      filteredByPatrol = worksheets.filter(
+        (worksheet) => worksheet.user?.patrol === selectedPatrol,
+      );
     }
 
-    return worksheets.filter((worksheet) => {
-      // Filter by patrol first (quicker check)
-      const patrolMatch =
-        selectedPatrol === "null" || worksheet.user?.patrol === selectedPatrol;
+    if (!debouncedSearchQuery) {
+      return filteredByPatrol;
+    }
 
-      if (!patrolMatch || debouncedSearchQuery === "") {
-        return patrolMatch;
-      }
+    const fuseOptions = {
+      keys: [
+        "name",
+        "description",
+        "user.id",
+        "tasks.name",
+        "tasks.description",
+      ],
+      threshold: 0.4, // Lower threshold = stricter matching
+      ignoreLocation: true,
+      findAllMatches: true,
+    };
 
-      // Search in name
-      const nameMatch = searchText(worksheet.name);
-      if (nameMatch) return true;
+    const fuse = new Fuse(filteredByPatrol, fuseOptions);
+    const searchResults = fuse.search(debouncedSearchQuery);
 
-      // Only search in tasks if name doesn't match
-      return (
-        worksheet.tasks?.some(
-          (task) =>
-            searchText(task.name) ||
-            (task.description && searchText(task.description)),
-        ) || false
-      );
-    });
-  }, [worksheets, debouncedSearchQuery, selectedPatrol, searchText]);
+    return searchResults.map((result) => result.item);
+  }, [worksheets, debouncedSearchQuery, selectedPatrol]);
 
   return (
     <div className="space-y-4">
@@ -129,9 +92,10 @@ export function WorksheetList({
           <Input
             type="text"
             placeholder="Wyszukaj próbę"
-            className="w-full max-w-xs"
+            containerClassName="max-w-xs"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
+            startIcon={SearchIcon}
           />
           <Select onValueChange={setSelectedPatrol} value={selectedPatrol}>
             <SelectTrigger className="w-40">
@@ -178,7 +142,7 @@ export function WorksheetList({
               variant={variant}
               updateTask={updateTask}
               deleteWorksheet={() => deleteWorksheet(worksheet.id)}
-              currentUserId={currentUserId}
+              currentUser={currentUser}
             />
           ))
       )}

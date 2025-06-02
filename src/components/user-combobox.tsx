@@ -97,6 +97,8 @@ export function UserCombobox({
         }
       };
       fetchSelectedUser();
+    } else if (!value) {
+      setLoading(false);
     }
   }, [value, selectedUser, isApiReady, apiClient]);
 

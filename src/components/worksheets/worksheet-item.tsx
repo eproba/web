@@ -1,19 +1,20 @@
 import { Task, Worksheet } from "@/types/worksheet";
 import { TaskTable } from "@/components/worksheets/task-table";
 import { WorksheetActions } from "@/components/worksheets/worksheet-actions";
+import { User } from "@/types/user";
 
 export function WorksheetItem({
   worksheet,
   variant = "user",
   updateTask,
   deleteWorksheet,
-  currentUserId,
+  currentUser,
 }: {
   worksheet: Worksheet;
   variant?: "user" | "managed" | "shared" | "archived" | "review";
   updateTask?: (worksheetId: string, task: Task) => void;
   deleteWorksheet?: (worksheetId: string) => void;
-  currentUserId?: string;
+  currentUser?: User;
 }) {
   return (
     <div className="bg-card rounded-lg p-6 shadow-md" id={worksheet.id}>
@@ -64,7 +65,7 @@ export function WorksheetItem({
         worksheet={worksheet}
         variant={variant}
         updateTask={(task) => updateTask?.(worksheet.id, task)}
-        currentUserId={currentUserId}
+        currentUser={currentUser}
       />
     </div>
   );
