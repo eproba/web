@@ -21,12 +21,10 @@ function handleRedirect(response: Response, request: Request) {
   let finalLocation = redirectUrl.toString();
   if (location.startsWith("/") && !location.startsWith("/proxy/")) {
     const relativePath = `/proxy${location.startsWith("/") ? location : "/" + location}`;
-    const pathWithEmbed =
-      relativePath + (relativePath.includes("?") ? "&" : "?") + "embed=true";
 
     const origin = request.headers.get("host") || "";
     const protocol = request.headers.get("x-forwarded-proto") || "http";
-    finalLocation = `${protocol}://${origin}${pathWithEmbed}`;
+    finalLocation = `${protocol}://${origin}${relativePath}`;
   }
 
   const redirectResponse = NextResponse.redirect(
@@ -119,7 +117,11 @@ async function handleRequest(
   }
 
   const url = new URL(request.url);
-  const query = url.search ? url.search + "&embed=true" : "?embed=true";
+
+  if (!url.searchParams.has("embed")) {
+    url.searchParams.append("embed", "true");
+  }
+  const query = url.search;
   const path = (await params).path.join("/");
 
   const fetchOptions: RequestInit = {
@@ -146,8 +148,10 @@ async function handleRequest(
     }
   }
 
+  const isStaticFile = path.startsWith("static/");
+
   const response = await fetch(
-    `${process.env.INTERNAL_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL}/${path}/${query}`,
+    `${process.env.INTERNAL_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL}/${path}${isStaticFile ? "" : "/"}${query}`,
     fetchOptions,
   );
 
