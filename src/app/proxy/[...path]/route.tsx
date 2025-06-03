@@ -9,7 +9,7 @@ function handleRedirect(response: Response, request: Request) {
   const isAbsoluteUrl = location.startsWith("http");
   const baseUrl = isAbsoluteUrl
     ? location
-    : `${process.env.NEXT_PUBLIC_SERVER_URL}${location.startsWith("/") ? location : "/" + location}`;
+    : `${process.env.INTERNAL_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL}${location.startsWith("/") ? location : "/" + location}`;
   const redirectUrl = new URL(baseUrl);
 
   // Add embed=true parameter if needed
@@ -147,7 +147,7 @@ async function handleRequest(
   }
 
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/${path}/${query}`,
+    `${process.env.INTERNAL_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL}/${path}/${query}`,
     fetchOptions,
   );
 
