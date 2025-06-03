@@ -110,7 +110,7 @@ function createResponse(
 // Main request handler
 async function handleRequest(
   request: Request,
-  params: { path: string[] },
+  params: Promise<{ path: string[] }>,
   method: string,
 ) {
   const session = await auth();
@@ -172,28 +172,28 @@ async function handleRequest(
 
 export async function GET(
   request: Request,
-  { params }: { params: { path: string[] } },
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   return handleRequest(request, params, "GET");
 }
 
 export async function POST(
   request: Request,
-  { params }: { params: { path: string[] } },
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   return handleRequest(request, params, "POST");
 }
 
 export async function PATCH(
   request: Request,
-  { params }: { params: { path: string[] } },
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   return handleRequest(request, params, "PATCH");
 }
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { path: string[] } },
+  { params }: { params: Promise<{ path: string[] }> },
 ) {
   return handleRequest(request, params, "DELETE");
 }

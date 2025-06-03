@@ -3,6 +3,11 @@ export const API_URL =
     ? process.env.NEXT_PUBLIC_SERVER_URL + "/api"
     : "";
 
+export const INTERNAL_API_URL =
+  process.env.INTERNAL_SERVER_URL !== undefined
+    ? process.env.INTERNAL_SERVER_URL + "/api"
+    : API_URL;
+
 if (API_URL === "") {
   throw new Error(
     "NEXT_PUBLIC_SERVER_URL was not set in enviroment variables!",

@@ -1,25 +1,15 @@
 import { auth } from "@/auth";
-import { API_URL } from "@/lib/api";
+import { API_URL, INTERNAL_API_URL } from "@/lib/api";
 import { handleError } from "@/lib/error-alert-handler";
 import { Worksheet } from "@/types/worksheet";
 import { PublicUser, User } from "@/types/user";
 import { Team } from "@/types/team";
 import { TemplateWorksheet } from "@/types/template";
 import { Post } from "@/types/news";
-import {
-  ApiWorksheetResponse,
-  worksheetSerializer,
-} from "@/lib/serializers/worksheet";
-import {
-  ApiUserResponse,
-  publicUserSerializer,
-  userSerializer,
-} from "@/lib/serializers/user";
+import { ApiWorksheetResponse, worksheetSerializer } from "@/lib/serializers/worksheet";
+import { ApiUserResponse, publicUserSerializer, userSerializer } from "@/lib/serializers/user";
 import { ApiTeamResponse, teamSerializer } from "@/lib/serializers/team";
-import {
-  ApiTemplateWorksheetResponse,
-  templateSerializer,
-} from "@/lib/serializers/templates";
+import { ApiTemplateWorksheetResponse, templateSerializer } from "@/lib/serializers/templates";
 import { ApiPostResponse, postSerializer } from "@/lib/serializers/news";
 import { JSX } from "react";
 
@@ -54,7 +44,7 @@ async function apiRequest<T>(
       };
     }
 
-    const response = await fetch(`${API_URL}${endpoint}`, {
+    const response = await fetch(`${INTERNAL_API_URL || API_URL}${endpoint}`, {
       method: options.method || "GET",
       headers: {
         "Content-Type": "application/json",
