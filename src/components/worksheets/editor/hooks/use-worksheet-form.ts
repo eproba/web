@@ -6,6 +6,7 @@ import {
   WorksheetWithTasks,
   worksheetWithTasksSchema,
 } from "@/lib/schemas/worksheet";
+import { TaskStatus } from "@/types/worksheet";
 import { toast } from "react-toastify";
 import { useApi } from "@/lib/api-client";
 import { v4 as uuid } from "uuid";
@@ -19,6 +20,13 @@ interface UseWorksheetFormProps {
   initialData?: Partial<WorksheetWithTasks>;
   currentUser: User;
   variant: "template" | "worksheet";
+  onModifiedTasksDetected?: (
+    modifiedTasks: Array<{
+      id: string;
+      name: string;
+      originalStatus: TaskStatus;
+    }>,
+  ) => boolean; // Returns true if submission should continue
 }
 
 export const useWorksheetForm = ({
@@ -27,6 +35,7 @@ export const useWorksheetForm = ({
   initialData,
   currentUser,
   variant,
+  // onModifiedTasksDetected,
 }: UseWorksheetFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { apiClient } = useApi();
@@ -66,6 +75,41 @@ export const useWorksheetForm = ({
     if (isSubmitting) return;
 
     try {
+      // // Check for modified tasks with non-TODO status in edit mode
+      // if (variant === "worksheet" && mode === "edit" && initialData?.tasks && onModifiedTasksDetected) {
+      //   const modifiedTasksWithStatus = data.tasks.filter(currentTask => {
+      //     // Find the original task to compare
+      //     const originalTask = initialData.tasks?.find(t => t.id === currentTask.id);
+      //     if (!originalTask) return false;
+      //
+      //     // Check if task has been modified
+      //     const isModified = currentTask.name !== originalTask.name ||
+      //                      currentTask.description !== originalTask.description;
+      //
+      //     // Check if original task has non-TODO status
+      //     const hasNonTodoStatus = 'status' in originalTask &&
+      //                            originalTask.status !== TaskStatus.TODO;
+      //
+      //     return isModified && hasNonTodoStatus;
+      //   }).map(task => {
+      //     const originalTask = initialData.tasks?.find(t => t.id === task.id) as { status?: TaskStatus } | undefined;
+      //     return {
+      //       id: task.id,
+      //       name: task.name,
+      //       originalStatus: originalTask?.status || TaskStatus.TODO
+      //     };
+      //   });
+      //
+      //   // If we have modified tasks with status, show dialog and wait for user decision
+      //   if (modifiedTasksWithStatus.length > 0) {
+      //     const shouldContinue = onModifiedTasksDetected(modifiedTasksWithStatus);
+      //     if (!shouldContinue) {
+      //       setIsSubmitting(false);
+      //       return;
+      //     }
+      //   }
+      // }
+
       setIsSubmitting(true);
 
       // Validate that we have at least one task with content
