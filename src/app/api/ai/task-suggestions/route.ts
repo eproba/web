@@ -66,7 +66,7 @@ Przykład:
         { role: "system", content: systemPrompt },
         { role: "user", content: message },
       ],
-      max_tokens: 800,
+      max_completion_tokens: 800,
       temperature: 0.7,
     });
 
@@ -78,7 +78,7 @@ Przykład:
     const taskSuggestions = parseTaskSuggestions(responseText);
 
     return NextResponse.json({
-      content: responseText,
+      content: removeTasksFromResponse(responseText),
       suggestions: taskSuggestions,
     });
   } catch (error) {
@@ -92,8 +92,8 @@ Przykład:
 
 function parseTaskSuggestions(
   responseText: string,
-): Array<{ id: string; task: string; description: string }> {
-  const suggestions: Array<{ id: string; task: string; description: string }> =
+): Array<{ id: string; name: string; description: string }> {
+  const suggestions: Array<{ id: string; name: string; description: string }> =
     [];
 
   // Look for patterns like "**Task Name** - description"
@@ -108,7 +108,7 @@ function parseTaskSuggestions(
     if (taskName && description) {
       suggestions.push({
         id: `ai-suggestion-${index + 1}`,
-        task: taskName,
+        name: taskName,
         description: description,
       });
       index++;
@@ -116,4 +116,9 @@ function parseTaskSuggestions(
   }
 
   return suggestions;
+}
+
+function removeTasksFromResponse(responseText: string): string {
+  // Remove task suggestions from the response text
+  return responseText.replace(/\*\*[^*]+\*\*\s*[-–]\s*[^\n]+/g, "").trim();
 }

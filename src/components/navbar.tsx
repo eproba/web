@@ -159,7 +159,7 @@ const MobileNavItem = ({
     {...props}
     className={cn(
       navigationMenuTriggerStyle(),
-      "py-1.5 h-auto",
+      "py-1.5 h-auto w-full justify-start",
       header &&
         "text-xs text-muted-foreground pb-0 pt-2 h-auto pointer-events-none",
     )}
@@ -255,7 +255,7 @@ export async function Navbar({ messages }: NavbarProps) {
               </DrawerTitle>
             </DrawerHeader>
 
-            <div className="flex-1 flex flex-col gap-3">
+            <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
               {filteredMainNav.map((item) => (
                 <div key={item.href} className="flex flex-col gap-1">
                   <DrawerClose asChild>

@@ -13,11 +13,24 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { PlusIcon, SearchIcon, SparklesIcon, TagIcon } from "lucide-react";
 import { TaskSuggestionsChat } from "./task-suggestions-chat";
 
+interface Message {
+  id: string;
+  role: "user" | "assistant";
+  content: string;
+  timestamp: Date;
+  suggestions?: TaskSuggestion[];
+}
+
+interface TaskSuggestion {
+  id: string;
+  name: string;
+  description: string;
+}
+
 interface TaskIdea {
   id: string;
   title: string;
   description: string;
-  category: "general" | "individual";
   tags: string[];
   difficulty: "easy" | "medium" | "hard";
 }
@@ -26,17 +39,27 @@ interface TaskSuggestionsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddTask: (task: { name: string; description: string }) => void;
-  category: "general" | "individual";
 }
 
 export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
   open,
   onOpenChange,
   onAddTask,
-  category,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // Chat state - persists across tab changes
+  const [chatMessages, setChatMessages] = useState<Message[]>([
+    {
+      id: "1",
+      role: "assistant",
+      content: `Cześć! Jestem tutaj, aby pomóc Ci w tworzeniu zadań indywidualnych. Opowiedz mi o temacie zajęć lub aktywności, a zasugeruję odpowiednie zadania.`,
+      timestamp: new Date(),
+    },
+  ]);
+  const [chatInputMessage, setChatInputMessage] = useState("");
+  const [chatIsLoading, setChatIsLoading] = useState(false);
 
   // Mock data - this will come from API
   const mockTaskIdeas: TaskIdea[] = [
@@ -45,7 +68,6 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
       title: "Rozpoznawanie śladów zwierząt",
       description:
         "Znajdź i zidentyfikuj co najmniej 5 różnych śladów zwierząt w okolicy",
-      category: "general",
       tags: ["natura", "obserwacja", "outdoor"],
       difficulty: "medium",
     },
@@ -54,7 +76,6 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
       title: "Budowa schronienia w lesie",
       description:
         "Zbuduj tymczasowe schronienie używając tylko materiałów naturalnych",
-      category: "individual",
       tags: ["bushcraft", "przetrwanie", "outdoor"],
       difficulty: "hard",
     },
@@ -63,7 +84,6 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
       title: "Orientacja w terenie",
       description:
         "Znajdź drogę do wyznaczonego punktu używając mapy i kompasu",
-      category: "general",
       tags: ["orientacja", "mapa", "outdoor"],
       difficulty: "medium",
     },
@@ -72,7 +92,6 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
       title: "Pierwsza pomoc",
       description:
         "Przeprowadź symulację udzielenia pierwszej pomocy w sytuacji wypadku",
-      category: "individual",
       tags: ["pierwsza pomoc", "bezpieczeństwo", "medycyna"],
       difficulty: "easy",
     },
@@ -102,10 +121,9 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
       idea.description.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesTags =
       selectedTags.length === 0 ||
-      selectedTags.some((tag) => idea.tags.includes(tag));
-    const matchesCategory = idea.category === category;
+      selectedTags.every((tag) => idea.tags.includes(tag));
 
-    return matchesSearch && matchesTags && matchesCategory;
+    return matchesSearch && matchesTags;
   });
 
   const handleTagToggle = (tag: string) => {
@@ -122,35 +140,37 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
     onOpenChange(false);
   };
 
-  const getDifficultyColor = (difficulty: string) => {
+  const getDifficultyVariant = (difficulty: string) => {
     switch (difficulty) {
       case "easy":
-        return "bg-green-100 text-green-800";
+        return "success";
       case "medium":
-        return "bg-yellow-100 text-yellow-800";
+        return "warning";
       case "hard":
-        return "bg-red-100 text-red-800";
+        return "destructive";
       default:
-        return "bg-gray-100 text-gray-800";
+        return "info";
     }
   };
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-4xl h-[70vh]"
+        className="max-w-4xl h-[70vh] flex flex-col"
         aria-describedby={undefined}
       >
-        <DialogHeader>
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <SparklesIcon className="w-5 h-5 text-blue-500" />
-            Pomysły na zadania{" "}
-            {category === "general" ? "ogólne" : "indywidualne"}
+            Pomysły na zadania indywidualne
           </DialogTitle>
         </DialogHeader>
 
-        <Tabs defaultValue="browse" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+        <Tabs
+          defaultValue="browse"
+          className="w-full flex flex-col flex-1 min-h-0"
+        >
+          <TabsList className="grid w-full grid-cols-2 flex-shrink-0">
             <TabsTrigger value="browse" className="flex items-center gap-2">
               <SearchIcon className="w-4 h-4" />
               Przeglądaj pomysły
@@ -161,19 +181,18 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
             </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="browse" className="space-y-4 h-full">
+          <TabsContent
+            value="browse"
+            className="flex flex-col flex-1 min-h-0 space-y-4 data-[state=active]:flex"
+          >
             {/* Search and Filters */}
-            <div className="space-y-3">
-              <div className="relative">
-                <SearchIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Szukaj pomysłów na zadania..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-10"
-                  startIcon={SearchIcon}
-                />
-              </div>
+            <div className="space-y-3 flex-shrink-0">
+              <Input
+                placeholder="Szukaj pomysłów na zadania..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                startIcon={SearchIcon}
+              />
 
               {/* Tag filters */}
               <div className="space-y-2">
@@ -188,7 +207,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
                       variant={
                         selectedTags.includes(tag) ? "default" : "outline"
                       }
-                      className="cursor-pointer hover:bg-blue-100"
+                      className="cursor-pointer hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors"
                       onClick={() => handleTagToggle(tag)}
                     >
                       {tag}
@@ -199,61 +218,69 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
             </div>
 
             {/* Task Ideas List */}
-            <ScrollArea className="w-full">
-              <div className="space-y-3">
-                {filteredIdeas.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    <SearchIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                    <p>Nie znaleziono pomysłów pasujących do kryteriów</p>
-                  </div>
-                ) : (
-                  filteredIdeas.map((idea) => (
-                    <div
-                      key={idea.id}
-                      className="border rounded-lg p-4 hover:bg-muted transition-colors"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h3 className="font-semibold text-lg">{idea.title}</h3>
-                        <Button
-                          size="sm"
-                          onClick={() => handleAddTaskIdea(idea)}
-                          className="ml-2"
-                        >
-                          <PlusIcon className="w-4 h-4 mr-1" />
-                          Wybierz
-                        </Button>
-                      </div>
-
-                      <p className="text-gray-600 mb-3">{idea.description}</p>
-
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <Badge className={getDifficultyColor(idea.difficulty)}>
-                          {idea.difficulty === "easy"
-                            ? "Łatwe"
-                            : idea.difficulty === "medium"
-                              ? "Średnie"
-                              : "Trudne"}
-                        </Badge>
-                        {idea.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="text-xs"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
+            <div className="flex-1 min-h-0">
+              <ScrollArea className="h-full w-full pr-4">
+                <div className="space-y-3">
+                  {filteredIdeas.length === 0 ? (
+                    <div className="text-center py-8 text-gray-500">
+                      <SearchIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                      <p>Nie znaleziono pomysłów pasujących do kryteriów</p>
                     </div>
-                  ))
-                )}
-              </div>
-            </ScrollArea>
+                  ) : (
+                    filteredIdeas.map((idea) => (
+                      <div
+                        key={idea.id}
+                        className="border rounded-lg p-4 hover:bg-muted transition-colors"
+                      >
+                        <div className="flex justify-between items-start mb-2">
+                          <h3 className="font-semibold text-lg">
+                            {idea.title}
+                          </h3>
+                          <Button
+                            size="sm"
+                            onClick={() => handleAddTaskIdea(idea)}
+                            className="ml-2 flex-shrink-0"
+                          >
+                            <PlusIcon className="w-4 h-4 mr-1" />
+                            Wybierz
+                          </Button>
+                        </div>
+
+                        <p className="text-gray-600 mb-3">{idea.description}</p>
+
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <Badge
+                            variant={getDifficultyVariant(idea.difficulty)}
+                          >
+                            {idea.difficulty === "easy"
+                              ? "Łatwe"
+                              : idea.difficulty === "medium"
+                                ? "Średnie"
+                                : "Trudne"}
+                          </Badge>
+                          {idea.tags.map((tag) => (
+                            <Badge
+                              key={tag}
+                              variant="outline"
+                              className="text-xs"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </ScrollArea>
+            </div>
           </TabsContent>
 
-          <TabsContent value="ai-chat" className="space-y-4">
+          <TabsContent
+            value="ai-chat"
+            className="flex-1 min-h-0 data-[state=active]:flex"
+          >
             <TaskSuggestionsChat
-              category={category}
               onAddTask={(suggestion: {
                 name: string;
                 description: string;
@@ -261,6 +288,12 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
                 onAddTask(suggestion);
                 onOpenChange(false);
               }}
+              messages={chatMessages}
+              setMessages={setChatMessages}
+              inputMessage={chatInputMessage}
+              setInputMessage={setChatInputMessage}
+              isLoading={chatIsLoading}
+              setIsLoading={setChatIsLoading}
             />
           </TabsContent>
         </Tabs>

@@ -414,14 +414,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             {/* AI Suggestions Button */}
             {currentUser.function.numberValue >=
               RequiredFunctionLevel.TASK_SUGGESTIONS &&
-              variant === "worksheet" && (
+              variant === "worksheet" &&
+              task.category === "individual" && (
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
                   onClick={() => setShowSuggestions(true)}
                   className={cn(
-                    "opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
+                    "md:opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
                     showSuggestions &&
                       "opacity-100 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
                   )}
@@ -438,7 +439,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="sm:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
+                  className="md:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
                 >
                   <Trash2Icon className="w-4 h-4" />
                 </Button>
@@ -532,23 +533,24 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       </AnimatePresence>
 
       {/* Task Suggestions Dialog */}
-      <TaskSuggestionsDialog
-        open={showSuggestions}
-        onOpenChange={setShowSuggestions}
-        onAddTask={(suggestion) => {
-          form.setValue(`tasks.${taskIndex}.name`, suggestion.name);
-          form.setValue(
-            `tasks.${taskIndex}.description`,
-            suggestion.description,
-          );
+      {task.category === "individual" && (
+        <TaskSuggestionsDialog
+          open={showSuggestions}
+          onOpenChange={setShowSuggestions}
+          onAddTask={(suggestion) => {
+            form.setValue(`tasks.${taskIndex}.name`, suggestion.name);
+            form.setValue(
+              `tasks.${taskIndex}.description`,
+              suggestion.description,
+            );
 
-          onUpdate([
-            { field: "name", value: suggestion.name },
-            { field: "description", value: suggestion.description },
-          ]);
-        }}
-        category={task.category}
-      />
+            onUpdate([
+              { field: "name", value: suggestion.name },
+              { field: "description", value: suggestion.description },
+            ]);
+          }}
+        />
+      )}
     </motion.div>
   );
 };

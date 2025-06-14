@@ -32,6 +32,7 @@ interface ApiOptions {
   method?: string;
   body?: unknown;
   headers?: Record<string, string>;
+  allowUnauthorized?: boolean;
 }
 
 /**
@@ -43,7 +44,10 @@ async function apiRequest<T>(
 ): Promise<{ data?: T; error?: JSX.Element }> {
   try {
     const session = await auth();
-    if (!session || !session.user) {
+    if (
+      (!session || !session.user || !session.accessToken) &&
+      !options.allowUnauthorized
+    ) {
       return {
         error: await handleError(
           new Response(null, {
@@ -58,7 +62,9 @@ async function apiRequest<T>(
       method: options.method || "GET",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${session.accessToken}`,
+        ...(session?.accessToken
+          ? { Authorization: `Bearer ${session.accessToken}` }
+          : {}),
         ...options.headers,
       },
       body: options.body ? JSON.stringify(options.body) : undefined,
@@ -376,7 +382,9 @@ export async function fetchNews(): Promise<{
   posts?: Post[];
   error?: JSX.Element;
 }> {
-  const result = await apiRequest<ApiPostResponse[]>("/news/");
+  const result = await apiRequest<ApiPostResponse[]>("/news/", {
+    allowUnauthorized: true,
+  });
 
   if (result.error) {
     return { error: result.error };

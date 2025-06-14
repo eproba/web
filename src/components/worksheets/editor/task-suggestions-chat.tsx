@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -28,31 +28,36 @@ interface TaskSuggestion {
 }
 
 interface TaskSuggestionsChatProps {
-  category: "general" | "individual";
   onAddTask: (task: { name: string; description: string }) => void;
+  messages: Message[];
+  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
+  inputMessage: string;
+  setInputMessage: React.Dispatch<React.SetStateAction<string>>;
+  isLoading: boolean;
+  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
-  category,
   onAddTask,
+  messages,
+  setMessages,
+  inputMessage,
+  setInputMessage,
+  isLoading,
+  setIsLoading,
 }) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content: `Cześć! Jestem tutaj, aby pomóc Ci w tworzeniu zadań ${category === "general" ? "ogólnych" : "indywidualnych"}. Opowiedz mi o temacie zajęć lub aktywności, a zasugeruję odpowiednie zadania.`,
-      timestamp: new Date(),
-    },
-  ]);
-  const [inputMessage, setInputMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages are added
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+      const viewport = scrollAreaRef.current.querySelector(
+        '[data-slot="scroll-area-viewport"]',
+      );
+      if (viewport) {
+        viewport.scrollTop = viewport.scrollHeight;
+      }
     }
   }, [messages]);
 
@@ -98,7 +103,6 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
         },
         body: JSON.stringify({
           message: userInput,
-          category: category,
         }),
       });
 
@@ -145,7 +149,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
       const aiMessage: Message = {
         id: Date.now().toString(),
         role: "assistant",
-        content: `Na podstawie Twojego zapytania: "${userInput}", oto kilka pomysłów na zadania ${category === "general" ? "ogólne" : "indywidualne"}:`,
+        content: `Na podstawie Twojego zapytania: "${userInput}", oto kilka pomysłów na zadania indywidualne:`,
         timestamp: new Date(),
         suggestions: mockSuggestions,
       };
@@ -169,106 +173,112 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-[500px]">
+    <div className="flex flex-col h-full">
       {/* Chat Messages */}
-      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 space-y-4 h-30">
-        {/* Messages */}
-        {messages.map((message) => (
-          <div
-            key={message.id}
-            className={cn(
-              "flex gap-3",
-              message.role === "user" ? "justify-end" : "justify-start",
-            )}
-          >
-            {message.role === "assistant" && (
-              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                <BotIcon className="w-4 h-4 text-blue-600" />
-              </div>
-            )}
-
-            <div
-              className={cn(
-                "max-w-[80%] space-y-2",
-                message.role === "user" ? "items-end" : "items-start",
-              )}
-            >
-              <Card
+      <div className="flex-1 min-h-0">
+        <ScrollArea ref={scrollAreaRef} className="h-full p-4">
+          <div className="space-y-4">
+            {/* Messages */}
+            {messages.map((message) => (
+              <div
+                key={message.id}
                 className={cn(
-                  "p-3",
-                  message.role === "user"
-                    ? "bg-blue-500 text-white"
-                    : "bg-muted",
+                  "flex gap-3",
+                  message.role === "user" ? "justify-end" : "justify-start",
                 )}
               >
-                <p className="text-sm leading-relaxed">{message.content}</p>
-              </Card>
+                {message.role === "assistant" && (
+                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                    <BotIcon className="w-4 h-4 text-blue-600" />
+                  </div>
+                )}
 
-              {/* Task Suggestions */}
-              {message.suggestions && message.suggestions.length > 0 && (
-                <div className="space-y-2 w-full">
-                  {message.suggestions.map((suggestion) => (
-                    <Card key={suggestion.id} className="p-3 border-dashed">
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="flex-1 space-y-1">
-                          <h4 className="font-medium text-sm">
-                            {suggestion.name}
-                          </h4>
-                          <p className="text-xs text-muted-foreground">
-                            {suggestion.description}
-                          </p>
-                        </div>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => handleAddSuggestion(suggestion)}
-                          className="flex-shrink-0"
-                        >
-                          <PlusIcon className="w-3 h-3 mr-1" />
-                          Dodaj
-                        </Button>
-                      </div>
-                    </Card>
-                  ))}
+                <div
+                  className={cn(
+                    "max-w-[80%] space-y-2",
+                    message.role === "user" ? "items-end" : "items-start",
+                  )}
+                >
+                  <Card
+                    className={cn(
+                      "p-3",
+                      message.role === "user"
+                        ? "bg-blue-500 text-white"
+                        : "bg-muted",
+                    )}
+                  >
+                    <p className="text-sm leading-relaxed whitespace-pre-line">
+                      {message.content}
+                    </p>
+                  </Card>
+
+                  {/* Task Suggestions */}
+                  {message.suggestions && message.suggestions.length > 0 && (
+                    <div className="space-y-2 w-full">
+                      {message.suggestions.map((suggestion) => (
+                        <Card key={suggestion.id} className="p-3 border-dashed">
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="flex-1 space-y-1">
+                              <h4 className="font-medium text-sm">
+                                {suggestion.name}
+                              </h4>
+                              <p className="text-xs text-muted-foreground">
+                                {suggestion.description}
+                              </p>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => handleAddSuggestion(suggestion)}
+                              className="flex-shrink-0"
+                            >
+                              <PlusIcon className="w-3 h-3 mr-1" />
+                              Dodaj
+                            </Button>
+                          </div>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+
+                  <span className="text-xs text-muted-foreground">
+                    {message.timestamp.toLocaleTimeString("pl-PL", {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </span>
                 </div>
-              )}
 
-              <span className="text-xs text-muted-foreground">
-                {message.timestamp.toLocaleTimeString("pl-PL", {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </span>
-            </div>
+                {message.role === "user" && (
+                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                    <UserIcon className="w-4 h-4 text-gray-600" />
+                  </div>
+                )}
+              </div>
+            ))}
 
-            {message.role === "user" && (
-              <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                <UserIcon className="w-4 h-4 text-gray-600" />
+            {/* Loading indicator */}
+            {isLoading && (
+              <div className="flex gap-3 justify-start">
+                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <BotIcon className="w-4 h-4 text-blue-600" />
+                </div>
+                <Card className="p-3 bg-muted">
+                  <div className="flex items-center gap-2">
+                    <Loader2Icon className="w-4 h-4 animate-spin" />
+                    <span className="text-sm text-muted-foreground">
+                      AI pracuje nad odpowiedzią...
+                    </span>
+                  </div>
+                </Card>
               </div>
             )}
           </div>
-        ))}
-
-        {/* Loading indicator */}
-        {isLoading && (
-          <div className="flex gap-3 justify-start">
-            <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-              <BotIcon className="w-4 h-4 text-blue-600" />
-            </div>
-            <Card className="p-3 bg-muted">
-              <div className="flex items-center gap-2">
-                <Loader2Icon className="w-4 h-4 animate-spin" />
-                <span className="text-sm text-muted-foreground">
-                  AI pracuje nad odpowiedzią...
-                </span>
-              </div>
-            </Card>
-          </div>
-        )}
-      </ScrollArea>
+        </ScrollArea>
+      </div>
 
       {/* Input Area */}
-      <div className="border-t p-4">
+      <div className="border-t p-4 flex-shrink-0">
         <div className="flex gap-2">
           <div className="flex-1 relative">
             <Textarea
