@@ -6,6 +6,7 @@ import { Footer } from "@/components/footer";
 import { Providers } from "@/components/providers";
 import { ThemedToastContainer } from "@/components/themed-toast-container";
 import NextTopLoader from "nextjs-toploader";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 export const metadata: Metadata = {
   title: "Epróba",
@@ -33,7 +34,7 @@ export default function RootLayout({
           href="/images/icons/favicon.svg"
           type="image/svg+xml"
         />
-        <script src="https://accounts.google.com/gsi/client" async></script>
+        <GoogleTagManager gtmId="GTM-NN3D54WV" />
       </head>
       <body className="flex flex-col min-h-screen">
         <Providers>

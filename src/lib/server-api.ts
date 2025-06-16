@@ -408,7 +408,9 @@ export async function fetchNewsPost(slug: string): Promise<{
   post?: Post;
   error?: JSX.Element;
 }> {
-  const result = await apiRequest<ApiPostResponse>(`/news/${slug}/`);
+  const result = await apiRequest<ApiPostResponse>(`/news/${slug}/`, {
+    allowUnauthorized: true,
+  });
 
   if (result.error) {
     return { error: result.error };

@@ -149,7 +149,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
       case "hard":
         return "destructive";
       default:
-        return "info";
+        return "default";
     }
   };
 

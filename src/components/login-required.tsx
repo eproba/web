@@ -1,8 +1,36 @@
-export function LoginRequired() {
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LogInIcon } from "lucide-react";
+import { signIn } from "@/auth";
+
+interface LoginRequiredProps {
+  returnUrl?: string;
+}
+
+export function LoginRequired({ returnUrl }: LoginRequiredProps) {
   return (
-    <div className="flex flex-col items-center justify-center min-h-96">
-      <h1 className="text-2xl font-bold">Login Required</h1>
-      <p className="mt-4">Please log in to access this page.</p>
-    </div>
+    <Card className="w-full max-w-md shadow-xl">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold">Wymagane logowanie</CardTitle>
+      </CardHeader>
+      <CardContent className="text-center space-y-4">
+        <p className="text-muted-foreground">
+          Aby uzyskać dostęp do tej strony, musisz się zalogować.
+        </p>
+        <form
+          action={async () => {
+            "use server";
+            await signIn("eproba", {
+              redirectTo: returnUrl || "/",
+            });
+          }}
+        >
+          <Button className="w-full">
+            <LogInIcon />
+            Zaloguj się
+          </Button>
+        </form>
+      </CardContent>
+    </Card>
   );
 }

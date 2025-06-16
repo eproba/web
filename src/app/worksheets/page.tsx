@@ -1,14 +1,7 @@
-import { auth } from "@/auth";
-import { LoginRequired } from "@/components/login-required";
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
 import { fetchUserWorksheets } from "@/lib/server-api";
 
 export default async function UserWorksheets() {
-  const session = await auth();
-  if (!session || !session.user) {
-    return <LoginRequired />;
-  }
-
   const { worksheets, error } = await fetchUserWorksheets();
   if (error) {
     return error;

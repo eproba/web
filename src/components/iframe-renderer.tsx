@@ -19,7 +19,8 @@ export function IframeRenderer({ src }: { src: string }) {
       try {
         iframe.style.height = "auto"; // Reset height to auto to get accurate scrollHeight
         const newHeight = iframe.contentWindow?.document.body.scrollHeight;
-        if (newHeight) containerRef.current!.style.height = `${newHeight}px`;
+        if (newHeight)
+          containerRef.current!.style.height = `${newHeight + 20}px`;
         iframe.style.height = `100%`; // Set height to 100% to fill the container
       } catch {
         // Cross-origin iframe, cannot access
@@ -63,7 +64,7 @@ export function IframeRenderer({ src }: { src: string }) {
     <AnimatePresence>
       <motion.div
         ref={containerRef}
-        className="w-full mb-8 transition-all duration-100"
+        className="w-full mb-4 transition-all duration-100"
       >
         <iframe
           ref={iframeRef}

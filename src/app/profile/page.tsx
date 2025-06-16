@@ -1,6 +1,5 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { LoginRequired } from "@/components/login-required";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileEditForm } from "./profile-edit-form";
 import {
@@ -31,7 +30,7 @@ export default async function UserProfilePage() {
   }
 
   if (!user) {
-    return <LoginRequired />;
+    return <div>User not found</div>;
   }
 
   return (
