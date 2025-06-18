@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -36,12 +36,12 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useDebouncedCallback } from "use-debounce";
 import { User } from "@/types/user";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { TaskActionPopover } from "./task-action-popover";
 
 interface TaskItemProps {
   task: Task;
@@ -50,9 +50,18 @@ interface TaskItemProps {
   showDescription: boolean;
   onUpdate: (updates: { field: string; value: string }[]) => void;
   onRemove: () => void;
+  onMoveUp?: () => void;
+  onMoveDown?: () => void;
+  onMoveToDifferentCategory?: () => void;
+  canMoveUp: boolean;
+  canMoveDown: boolean;
+  canMoveToDifferentCategory: boolean;
   form: UseFormReturn<WorksheetWithTasks>;
   currentUser: User;
   variant: "template" | "worksheet";
+  ref: React.ForwardedRef<{
+    focus: () => void;
+  }>;
 }
 
 export const TaskItem: React.FC<TaskItemProps> = ({
@@ -62,9 +71,16 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   showDescription,
   onUpdate,
   onRemove,
+  onMoveUp,
+  onMoveDown,
+  onMoveToDifferentCategory,
+  canMoveUp,
+  canMoveDown,
+  canMoveToDifferentCategory,
   form,
   currentUser,
   variant,
+  ref,
 }) => {
   const elementRef = useRef<HTMLDivElement>(null);
   const dragHandleRef = useRef<HTMLDivElement>(null);
@@ -73,7 +89,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   const [isHovered, setIsHovered] = useState(false);
   const [draggedOver, setDraggedOver] = useState<"top" | "bottom" | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { dragState, setDragState } = useDragDrop();
+
+  // Expose focus method to parent
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      taskInputRef.current?.focus();
+    },
+  }));
 
   const debouncedUpdate = useDebouncedCallback(
     (updates: { field: string; value: string }[]) => {
@@ -81,20 +105,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     },
     300,
   );
-
-  const isInitialRender = useRef(true);
-
-  useEffect(() => {
-    // Skip focusing on first render
-    if (task.name === "" && taskInputRef.current && !isInitialRender.current) {
-      const timer = setTimeout(() => {
-        taskInputRef.current?.focus();
-      }, 100);
-      return () => clearTimeout(timer);
-    }
-
-    isInitialRender.current = false;
-  }, [task.name]);
 
   useEffect(() => {
     const element = elementRef.current;
@@ -193,6 +203,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
     cleanup.push(
       dropTargetForElements({
+        getIsSticky: () => true,
         element,
         getData: ({ input, element }) => {
           const rect = element.getBoundingClientRect();
@@ -410,8 +421,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1 flex-col-reverse sm:flex-row">
-            {/* AI Suggestions Button */}
+          <div className="flex items-center gap-1 flex-col-reverse md:flex-row">
+            {/* AI Suggestions Button - Desktop Only */}
             {currentUser.function.numberValue >=
               RequiredFunctionLevel.TASK_SUGGESTIONS &&
               variant === "worksheet" &&
@@ -420,9 +431,11 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                   type="button"
                   variant="ghost"
                   size="sm"
-                  onClick={() => setShowSuggestions(true)}
+                  onClick={() => {
+                    setShowSuggestions(true);
+                  }}
                   className={cn(
-                    "md:opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
+                    "hidden md:flex lg:opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
                     showSuggestions &&
                       "opacity-100 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
                   )}
@@ -432,40 +445,22 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 </Button>
               )}
 
-            {/* Delete Task Button */}
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  className="md:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
-                >
-                  <Trash2Icon className="w-4 h-4" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Usuń zadanie</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    Czy na pewno chcesz usunąć to zadanie? Ta akcja nie może być
-                    cofnięta.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Anuluj</AlertDialogCancel>
-                  <AlertDialogAction variant="destructive" onClick={onRemove}>
-                    Usuń
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            {/* Delete Task Button - Desktop Only */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="hidden md:flex lg:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
+              onClick={() => setShowDeleteDialog(true)}
+            >
+              <Trash2Icon className="w-4 h-4" />
+            </Button>
 
             <motion.div
               ref={dragHandleRef}
               className={cn(
                 "cursor-grab hover:bg-gray-100 dark:hover:bg-gray-800 transition-all touch-manipulation select-none",
-                "p-2 rounded-md flex items-center justify-center ",
+                "p-2 rounded-md items-center justify-center hidden md:flex",
                 isDragging && "cursor-grabbing bg-blue-100 dark:bg-blue-900",
                 "opacity-60 group-hover:opacity-100",
               )}
@@ -491,6 +486,22 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 )}
               />
             </motion.div>
+
+            {/* Mobile Action Menu */}
+            <TaskActionPopover
+              key={task.id}
+              task={task}
+              onMoveUp={onMoveUp}
+              onMoveDown={onMoveDown}
+              onMoveToDifferentCategory={onMoveToDifferentCategory}
+              onShowSuggestions={() => setShowSuggestions(true)}
+              onShowDeleteDialog={() => setShowDeleteDialog(true)}
+              canMoveUp={canMoveUp}
+              canMoveDown={canMoveDown}
+              canMoveToDifferentCategory={canMoveToDifferentCategory}
+              currentUser={currentUser}
+              variant={variant}
+            />
           </div>
         </div>
       </motion.div>
@@ -536,7 +547,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       {task.category === "individual" && (
         <TaskSuggestionsDialog
           open={showSuggestions}
-          onOpenChange={setShowSuggestions}
+          onOpenChange={(open) => {
+            setShowSuggestions(open);
+          }}
           onAddTask={(suggestion) => {
             form.setValue(`tasks.${taskIndex}.name`, suggestion.name);
             form.setValue(
@@ -551,6 +564,40 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           }}
         />
       )}
+
+      {/* Delete Task Dialog */}
+      <AlertDialog
+        open={showDeleteDialog}
+        onOpenChange={(open) => {
+          setShowDeleteDialog(open);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Usuń zadanie</AlertDialogTitle>
+            <AlertDialogDescription>
+              Czy na pewno chcesz usunąć to zadanie? Ta akcja nie może być
+              cofnięta.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowDeleteDialog(false)}>
+              Anuluj
+            </AlertDialogCancel>
+            <AlertDialogAction
+              variant="destructive"
+              onClick={() => {
+                onRemove();
+                setShowDeleteDialog(false);
+              }}
+            >
+              Usuń
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </motion.div>
   );
 };
+
+TaskItem.displayName = "TaskItem";

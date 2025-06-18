@@ -55,8 +55,9 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
       );
       const newOrder = existingTasksInCategory.length;
 
+      const newTaskId = uuid();
       const newTask: Task = {
-        id: uuid(),
+        id: newTaskId,
         name: "",
         description: "",
         category: category as "general" | "individual",
@@ -65,6 +66,8 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
 
       const updatedTasks = [...watchedTasks, newTask];
       updateTasksInForm(updatedTasks);
+
+      return newTaskId;
     },
     [watchedTasks, updateTasksInForm],
   );

@@ -15,8 +15,15 @@ interface TasksSectionProps {
     id: string,
     updates: { field: string; value: string }[],
   ) => void;
-  onAddTask: (category: string) => void;
+  onAddTask: (category: string) => string;
   onRemoveTask: (category: string, id: string) => void;
+  onMoveTaskUp: (category: string, taskId: string) => void;
+  onMoveTaskDown: (category: string, taskId: string) => void;
+  onMoveTaskToCategory: (
+    taskId: string,
+    fromCategory: string,
+    toCategory: string,
+  ) => void;
   currentUser: User;
   variant: "template" | "worksheet";
 }
@@ -30,6 +37,9 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
   onUpdateTask,
   onAddTask,
   onRemoveTask,
+  onMoveTaskUp,
+  onMoveTaskDown,
+  onMoveTaskToCategory,
   currentUser,
   variant,
 }) => {
@@ -46,6 +56,9 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
           onUpdateTask={onUpdateTask}
           onAddTask={onAddTask}
           onRemoveTask={onRemoveTask}
+          onMoveTaskUp={onMoveTaskUp}
+          onMoveTaskDown={onMoveTaskDown}
+          onMoveTaskToCategory={onMoveTaskToCategory}
           form={form}
           currentUser={currentUser}
           variant={variant}
@@ -62,6 +75,9 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
             onUpdateTask={onUpdateTask}
             onAddTask={onAddTask}
             onRemoveTask={onRemoveTask}
+            onMoveTaskUp={onMoveTaskUp}
+            onMoveTaskDown={onMoveTaskDown}
+            onMoveTaskToCategory={onMoveTaskToCategory}
             form={form}
             currentUser={currentUser}
             variant={variant}

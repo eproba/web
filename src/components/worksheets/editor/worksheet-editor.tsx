@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { TaskControls } from "@/components/worksheets/editor/task-controls";
 import { TasksSection } from "@/components/worksheets/editor/tasks-section";
 import { WorksheetBasicInfo } from "@/components/worksheets/editor/worksheet-basic-info";
@@ -163,6 +163,78 @@ export const WorksheetEditor = ({
     setModifiedTasks([]);
   };
 
+  // Mobile task movement handlers
+  const handleMoveTaskUp = useCallback(
+    (category: string, taskId: string) => {
+      const tasks = form.watch("tasks");
+      const categoryTasks = tasks.filter((task) => task.category === category);
+      const taskIndex = categoryTasks.findIndex((task) => task.id === taskId);
+
+      if (taskIndex > 0) {
+        const targetTask = categoryTasks[taskIndex - 1];
+        const reorderedTasks = reorderTasks(
+          tasks,
+          taskId,
+          targetTask.id,
+          "top",
+        );
+        updateTasksInForm(reorderedTasks);
+      }
+    },
+    [form, reorderTasks, updateTasksInForm],
+  );
+
+  const handleMoveTaskDown = useCallback(
+    (category: string, taskId: string) => {
+      const tasks = form.watch("tasks");
+      const categoryTasks = tasks.filter((task) => task.category === category);
+      const taskIndex = categoryTasks.findIndex((task) => task.id === taskId);
+
+      if (taskIndex < categoryTasks.length - 1) {
+        const targetTask = categoryTasks[taskIndex + 1];
+        const reorderedTasks = reorderTasks(
+          tasks,
+          taskId,
+          targetTask.id,
+          "bottom",
+        );
+        updateTasksInForm(reorderedTasks);
+      }
+    },
+    [form, reorderTasks, updateTasksInForm],
+  );
+
+  const handleMoveTaskToCategory = useCallback(
+    (taskId: string, fromCategory: string, toCategory: string) => {
+      const tasks = form.watch("tasks");
+      const targetCategoryTasks = tasks.filter(
+        (task) => task.category === toCategory,
+      );
+
+      if (targetCategoryTasks.length > 0) {
+        // Move to the end of the target category
+        const lastTask = targetCategoryTasks[targetCategoryTasks.length - 1];
+        const reorderedTasks = moveTaskBetweenCategories(
+          tasks,
+          taskId,
+          toCategory,
+          lastTask.id,
+          "bottom",
+        );
+        updateTasksInForm(reorderedTasks);
+      } else {
+        // If target category is empty, just change the category
+        const updatedTasks = tasks.map((task) =>
+          task.id === taskId
+            ? { ...task, category: toCategory as "general" | "individual" }
+            : task,
+        );
+        updateTasksInForm(updatedTasks);
+      }
+    },
+    [form, moveTaskBetweenCategories, updateTasksInForm],
+  );
+
   return (
     <DragDropProvider>
       <div
@@ -200,6 +272,9 @@ export const WorksheetEditor = ({
             onUpdateTask={updateTask}
             onAddTask={addTask}
             onRemoveTask={removeTask}
+            onMoveTaskUp={handleMoveTaskUp}
+            onMoveTaskDown={handleMoveTaskDown}
+            onMoveTaskToCategory={handleMoveTaskToCategory}
             currentUser={currentUser}
             variant={variant}
           />

@@ -156,7 +156,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-4xl h-[70vh] flex flex-col"
+        className="max-w-4xl sm:h-[70vh] h-[85vh] flex flex-col"
         aria-describedby={undefined}
       >
         <DialogHeader className="flex-shrink-0">

@@ -27,8 +27,15 @@ interface TaskListProps {
     id: string,
     updates: { field: string; value: string }[],
   ) => void;
-  onAddTask: (category: string) => void;
+  onAddTask: (category: string) => string;
   onRemoveTask: (category: string, id: string) => void;
+  onMoveTaskUp: (category: string, taskId: string) => void;
+  onMoveTaskDown: (category: string, taskId: string) => void;
+  onMoveTaskToCategory: (
+    taskId: string,
+    fromCategory: string,
+    toCategory: string,
+  ) => void;
   form: UseFormReturn<WorksheetWithTasks>;
   currentUser: User;
   variant: "template" | "worksheet";
@@ -43,12 +50,16 @@ export const TaskList: React.FC<TaskListProps> = ({
   onUpdateTask,
   onAddTask,
   onRemoveTask,
+  onMoveTaskUp,
+  onMoveTaskDown,
+  onMoveTaskToCategory,
   form,
   currentUser,
   variant,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDropHovered, setIsDropHovered] = useState(false);
+  const taskRefs = useRef<Map<string, { focus: () => void }>>(new Map());
 
   useEffect(() => {
     const element = containerRef.current;
@@ -75,7 +86,12 @@ export const TaskList: React.FC<TaskListProps> = ({
   }, [category, enableCategories, tasks.length]);
 
   const handleAddTask = () => {
-    onAddTask(category);
+    const newTaskId = onAddTask(category);
+    // Focus on the new task after a brief delay to allow for DOM updates
+    setTimeout(() => {
+      const taskRef = taskRefs.current.get(newTaskId);
+      taskRef?.focus();
+    }, 100);
   };
 
   const content = (
@@ -175,19 +191,38 @@ export const TaskList: React.FC<TaskListProps> = ({
               return (
                 <motion.div
                   key={task.id}
-                  layout="position"
+                  layout
                   initial={false}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0, height: 0, marginBottom: 0 }}
                   transition={{ duration: 0.2 }}
                 >
                   <TaskItem
+                    ref={(ref) => {
+                      if (ref) {
+                        taskRefs.current.set(task.id, ref);
+                      } else {
+                        taskRefs.current.delete(task.id);
+                      }
+                    }}
                     task={task}
                     index={index}
                     taskIndex={taskIndex}
                     showDescription={showDescriptions}
                     onUpdate={(updates) => onUpdateTask(task.id, updates)}
                     onRemove={() => onRemoveTask(category, task.id)}
+                    onMoveUp={() => onMoveTaskUp(category, task.id)}
+                    onMoveDown={() => onMoveTaskDown(category, task.id)}
+                    onMoveToDifferentCategory={() =>
+                      onMoveTaskToCategory(
+                        task.id,
+                        category,
+                        category === "general" ? "individual" : "general",
+                      )
+                    }
+                    canMoveUp={index > 0}
+                    canMoveDown={index < tasks.length - 1}
+                    canMoveToDifferentCategory={enableCategories}
                     form={form}
                     currentUser={currentUser}
                     variant={variant}
@@ -283,7 +318,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                 {tasks.length}{" "}
                 {tasks.length === 1
                   ? "zadanie"
-                  : tasks.length < 5
+                  : tasks.length < 5 && tasks.length > 1
                     ? "zadania"
                     : "zadań"}
               </motion.span>
