@@ -22,6 +22,11 @@ import {
 } from "@/lib/serializers/templates";
 import { ApiPostResponse, postSerializer } from "@/lib/serializers/news";
 import { JSX } from "react";
+import { ApiConfig } from "@/types/api-config";
+import {
+  ApiConfigResponse,
+  apiConfigSerializer,
+} from "@/lib/serializers/api-config";
 
 /**
  * Server-side API service for making authenticated requests with automatic serialization
@@ -434,6 +439,36 @@ export async function fetchNewsPost(slug: string): Promise<{
 // ===================================================================
 // UTILITY FUNCTIONS
 // ===================================================================
+
+/**
+ * Fetch api config
+ */
+export async function fetchApiConfig(): Promise<{
+  config?: ApiConfig;
+  error?: JSX.Element;
+}> {
+  const result = await apiRequest<ApiConfigResponse>("/config/", {
+    allowUnauthorized: true,
+  });
+
+  if (result.error) {
+    return { error: result.error };
+  }
+
+  const config = apiConfigSerializer(result.data!);
+  if (!config) {
+    return {
+      error: await handleError(
+        new Response(null, {
+          status: 500,
+          statusText: "Failed to fetch API config",
+        }),
+      ),
+    };
+  }
+
+  return { config };
+}
 
 /**
  * Generic API request function for custom endpoints.

@@ -7,8 +7,18 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { fetchApiConfig } from "@/lib/server-api";
+import { version } from "../../../package.json";
+import { API_VERSION } from "@/lib/api";
+import { VersionInfo } from "@/components/version-info";
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const { config: apiConfig, error } = await fetchApiConfig();
+
+  if (error || !apiConfig) {
+    return error || <div>Failed to load API configuration</div>;
+  }
+
   return (
     <div className="space-y-6">
       <Card>
@@ -201,6 +211,12 @@ export default function AboutPage() {
           </div>
         </CardContent>
       </Card>
+      <VersionInfo
+        appVersion={version}
+        serverVersion={apiConfig.serverVersion}
+        serverApiVersion={apiConfig.apiVersion}
+        clientApiVersion={API_VERSION}
+      />
     </div>
   );
 }
