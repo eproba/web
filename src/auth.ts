@@ -59,7 +59,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           refreshPromise = (async () => {
             try {
               const response = await fetch(
-                `${process.env.NEXT_PUBLIC_SERVER_URL}/oauth2/token/`,
+                `${process.env.INTERNAL_SERVER_URL || process.env.NEXT_PUBLIC_SERVER_URL}/oauth2/token/`,
                 {
                   method: "POST",
                   body: new URLSearchParams({
