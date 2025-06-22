@@ -14,7 +14,6 @@ import { TaskStatus } from "@/types/worksheet";
 import { User } from "@/types/user";
 import { TemplateWorksheetBasicInfo } from "@/components/worksheets/editor/template-basic-info";
 import { ModifiedTasksDialog } from "@/components/worksheets/editor/modified-tasks-dialog";
-import { useApi } from "@/lib/api-client";
 
 interface WorksheetEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
@@ -31,8 +30,6 @@ export const WorksheetEditor = ({
   redirectTo,
   currentUser,
 }: WorksheetEditorProps) => {
-  const { apiClient } = useApi();
-
   // State for modified tasks dialog
   const [modifiedTasks, setModifiedTasks] = useState<
     Array<{
@@ -43,7 +40,7 @@ export const WorksheetEditor = ({
   >([]);
   const [showModifiedDialog, setShowModifiedDialog] = useState(false);
 
-  // Handle modified tasks detection
+  // Handle modified tasks detection and continuation
   const handleModifiedTasksDetected = (
     tasks: Array<{
       id: string;
@@ -56,8 +53,32 @@ export const WorksheetEditor = ({
     return false; // Don't continue submission yet
   };
 
+  // Handle continuing with selected task status decisions
+  const handleContinueWithDecisions = async (tasksToKeepStatus: string[]) => {
+    try {
+      // Determine which tasks should have their status cleared
+      const tasksToClear = modifiedTasks
+        .filter((task) => !tasksToKeepStatus.includes(task.id))
+        .map((task) => task.id);
+
+      setShowModifiedDialog(false);
+      setModifiedTasks([]);
+
+      // Submit the form with current data, passing tasks to clear directly
+      await submitWithCurrentData(tasksToClear);
+    } catch (error) {
+      console.error("Error handling task status decisions:", error);
+    }
+  };
+
   // Initialize form with initial data
-  const { form, onSubmit, isSubmitting } = useWorksheetForm({
+  const {
+    form,
+    onSubmit,
+    submitWithCurrentData,
+    resetModifiedTasksHandling,
+    isSubmitting,
+  } = useWorksheetForm({
     mode,
     redirectTo,
     initialData,
@@ -123,44 +144,14 @@ export const WorksheetEditor = ({
     }
   };
 
-  // Handle clearing all statuses of modified tasks
-  const handleClearAllStatuses = async () => {
-    try {
-      // Update all modified tasks to clear their statuses
-      const tasksToUpdate = modifiedTasks.map((task) => task.id);
-
-      // Clear statuses via API for each task
-      await Promise.all(
-        tasksToUpdate.map((taskId) =>
-          apiClient(`/worksheets/${initialData?.id}/tasks/${taskId}/clear/`, {
-            method: "POST",
-          }),
-        ),
-      );
-
-      setShowModifiedDialog(false);
-      setModifiedTasks([]);
-
-      // Now submit the form
-      onSubmit();
-    } catch (error) {
-      console.error("Error clearing task statuses:", error);
-    }
-  };
-
-  // Handle continuing without clearing statuses
-  const handleContinueWithoutClearing = () => {
-    setShowModifiedDialog(false);
-    setModifiedTasks([]);
-
-    // Submit the form without clearing statuses
-    onSubmit();
-  };
-
   // Handle closing dialog
   const handleCloseDialog = () => {
     setShowModifiedDialog(false);
-    setModifiedTasks([]);
+    // Clear modified tasks after dialog is closed
+    setTimeout(() => {
+      setModifiedTasks([]);
+    }, 200);
+    resetModifiedTasksHandling(); // Reset the flag so user can try again
   };
 
   // Mobile task movement handlers
@@ -292,8 +283,7 @@ export const WorksheetEditor = ({
         <ModifiedTasksDialog
           isOpen={showModifiedDialog}
           onClose={handleCloseDialog}
-          onClearAllStatuses={handleClearAllStatuses}
-          onContinueWithoutClearing={handleContinueWithoutClearing}
+          onContinue={handleContinueWithDecisions}
           modifiedTasks={modifiedTasks}
         />
       </div>

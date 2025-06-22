@@ -35,9 +35,11 @@ export const useWorksheetForm = ({
   initialData,
   currentUser,
   variant,
-  // onModifiedTasksDetected,
+  onModifiedTasksDetected,
 }: UseWorksheetFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [tasksToClearStatus, setTasksToClearStatus] = useState<string[]>([]);
+  const [hasHandledModifiedTasks, setHasHandledModifiedTasks] = useState(false);
   const { apiClient } = useApi();
   const router = useRouter();
 
@@ -72,54 +74,91 @@ export const useWorksheetForm = ({
   });
 
   const onSubmit = async (data: WorksheetWithTasks) => {
+    await internalSubmit(data, false);
+  };
+
+  // Method to set tasks that should have their status cleared
+  const setTasksToClear = (taskIds: string[]) => {
+    setTasksToClearStatus(taskIds);
+  };
+
+  // Method to reset the modified tasks handling flag
+  const resetModifiedTasksHandling = () => {
+    setHasHandledModifiedTasks(false);
+    setTasksToClearStatus([]);
+  };
+
+  // Internal submission function that bypasses dialog logic
+  const internalSubmit = async (
+    data: WorksheetWithTasks,
+    skipDialogLogic = false,
+    tasksToSkipStatusClear?: string[],
+  ) => {
     if (isSubmitting) return;
 
     try {
-      // // Check for modified tasks with non-TODO status in edit mode
-      // if (variant === "worksheet" && mode === "edit" && initialData?.tasks && onModifiedTasksDetected) {
-      //   const modifiedTasksWithStatus = data.tasks.filter(currentTask => {
-      //     // Find the original task to compare
-      //     const originalTask = initialData.tasks?.find(t => t.id === currentTask.id);
-      //     if (!originalTask) return false;
-      //
-      //     // Check if task has been modified
-      //     const isModified = currentTask.name !== originalTask.name ||
-      //                      currentTask.description !== originalTask.description;
-      //
-      //     // Check if original task has non-TODO status
-      //     const hasNonTodoStatus = 'status' in originalTask &&
-      //                            originalTask.status !== TaskStatus.TODO;
-      //
-      //     return isModified && hasNonTodoStatus;
-      //   }).map(task => {
-      //     const originalTask = initialData.tasks?.find(t => t.id === task.id) as { status?: TaskStatus } | undefined;
-      //     return {
-      //       id: task.id,
-      //       name: task.name,
-      //       originalStatus: originalTask?.status || TaskStatus.TODO
-      //     };
-      //   });
-      //
-      //   // If we have modified tasks with status, show dialog and wait for user decision
-      //   if (modifiedTasksWithStatus.length > 0) {
-      //     const shouldContinue = onModifiedTasksDetected(modifiedTasksWithStatus);
-      //     if (!shouldContinue) {
-      //       setIsSubmitting(false);
-      //       return;
-      //     }
-      //   }
-      // }
+      // Check for modified tasks with non-TODO status in edit mode (only if we haven't handled it yet and not skipping)
+      if (
+        !skipDialogLogic &&
+        variant === "worksheet" &&
+        mode === "edit" &&
+        initialData?.tasks &&
+        onModifiedTasksDetected &&
+        !hasHandledModifiedTasks
+      ) {
+        const modifiedTasksWithStatus = data.tasks
+          .filter((currentTask) => {
+            const originalTask = initialData.tasks?.find(
+              (t) => t.id === currentTask.id,
+            );
+            if (!originalTask) return false;
+
+            const isModified =
+              currentTask.name !== originalTask.name ||
+              currentTask.description !== originalTask.description;
+
+            const hasNonTodoStatus =
+              "status" in originalTask &&
+              originalTask.status !== TaskStatus.TODO;
+
+            return isModified && hasNonTodoStatus;
+          })
+          .map((task) => {
+            const originalTask = initialData.tasks?.find(
+              (t) => t.id === task.id,
+            ) as { status?: TaskStatus } | undefined;
+            return {
+              id: task.id,
+              name: task.name,
+              originalStatus: originalTask?.status || TaskStatus.TODO,
+            };
+          });
+
+        if (modifiedTasksWithStatus.length > 0) {
+          setHasHandledModifiedTasks(true);
+          const shouldContinue = onModifiedTasksDetected(
+            modifiedTasksWithStatus,
+          );
+          if (!shouldContinue) {
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      }
 
       setIsSubmitting(true);
 
-      // Validate that we have at least one task with content
       const validTasks = data.tasks.filter(
         (task) => task.name.trim() !== "" || task.description.trim() !== "",
       );
+
       if (validTasks.length === 0) {
         toast.error("Dodaj przynajmniej jedno zadanie");
         return;
       }
+
+      const effectiveTasksToClear =
+        tasksToSkipStatusClear || tasksToClearStatus;
 
       const worksheetData = {
         user_id: data.userId || undefined,
@@ -133,6 +172,9 @@ export const useWorksheetForm = ({
           category: task.category,
           order: task.order,
           template_notes: task.templateNotes?.trim() || undefined,
+          ...(effectiveTasksToClear.includes(task.id) && {
+            clear_status: true,
+          }),
         })),
       };
 
@@ -163,6 +205,25 @@ export const useWorksheetForm = ({
       );
     } finally {
       setIsSubmitting(false);
+      setTasksToClearStatus([]);
+      setHasHandledModifiedTasks(false);
+    }
+  };
+
+  // Method to submit with current form data (for programmatic submission)
+  const submitWithCurrentData = async (tasksToSkipStatusClear?: string[]) => {
+    const currentData = form.getValues();
+
+    const isValid = await form.trigger();
+    if (!isValid) return;
+
+    const effectiveTasksToClear = tasksToSkipStatusClear || tasksToClearStatus;
+
+    try {
+      await internalSubmit(currentData, true, effectiveTasksToClear);
+    } catch (error) {
+      console.error("Error in submitWithCurrentData:", error);
+      throw error;
     }
   };
 
@@ -176,6 +237,9 @@ export const useWorksheetForm = ({
   return {
     form,
     onSubmit: form.handleSubmit(onSubmit),
+    submitWithCurrentData,
+    setTasksToClear,
+    resetModifiedTasksHandling,
     isSubmitting,
     isDirty,
     isValid,

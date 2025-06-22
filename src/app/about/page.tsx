@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { fetchApiConfig } from "@/lib/server-api";
-import { version } from "../../../package.json";
+import packageInfo from "../../../package.json";
 import { API_VERSION } from "@/lib/api";
 import { VersionInfo } from "@/components/version-info";
 
@@ -212,7 +212,7 @@ export default async function AboutPage() {
         </CardContent>
       </Card>
       <VersionInfo
-        appVersion={version}
+        appVersion={packageInfo.version}
         serverVersion={apiConfig.serverVersion}
         serverApiVersion={apiConfig.apiVersion}
         clientApiVersion={API_VERSION}
