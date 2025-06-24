@@ -8,6 +8,7 @@ const nextConfig: NextConfig = {
       new URL(
         (process.env.NEXT_PUBLIC_SERVER_URL || "https://eproba.zhr.pl") + "/**",
       ),
+      new URL((process.env.INTERNAL_SERVER_URL || "http://nginx") + "/**"),
     ],
   },
 };
