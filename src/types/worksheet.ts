@@ -1,4 +1,5 @@
 import { PublicUser } from "@/types/user";
+import { TemplateWorksheet } from "@/types/template";
 
 export enum TaskStatus {
   TODO = 0,
@@ -34,4 +35,8 @@ export interface Worksheet {
   isArchived: boolean;
   isDeleted: boolean;
   notes: string;
+  template?: Pick<
+    TemplateWorksheet,
+    "id" | "name" | "description" | "image"
+  > | null;
 }

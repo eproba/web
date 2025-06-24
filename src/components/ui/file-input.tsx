@@ -1,7 +1,7 @@
 import * as React from "react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { Upload, X, Image as ImageIcon } from "lucide-react";
+import { UploadIcon, XIcon, ImageIcon } from "lucide-react";
 import { Button } from "./button";
 
 export interface FileInputProps
@@ -42,7 +42,7 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
           const url = URL.createObjectURL(value);
           setPreviewUrl(url);
           return () => URL.revokeObjectURL(url);
-        } else if (typeof value === "string") {
+        } else if (value) {
           setPreviewUrl(value);
         }
       } else {
@@ -146,7 +146,7 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
               }}
               className="absolute top-3 right-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
             >
-              <X className="h-4 w-4" />
+              <XIcon className="h-4 w-4" />
             </Button>
           )}
 
@@ -197,7 +197,7 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
           ) : (
             <div className="flex flex-col items-center justify-center space-y-3">
               <div className="p-3 rounded-full bg-muted group-hover:bg-primary/10 transition-colors">
-                <Upload className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
+                <UploadIcon className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
               </div>
               <div className="text-center space-y-1">
                 <p className="text-sm font-medium text-foreground">

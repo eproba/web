@@ -2,6 +2,7 @@ import { Task, Worksheet } from "@/types/worksheet";
 import { TaskTable } from "@/components/worksheets/task-table";
 import { WorksheetActions } from "@/components/worksheets/worksheet-actions";
 import { User } from "@/types/user";
+import Image from "next/image";
 
 export function WorksheetItem({
   worksheet,
@@ -18,9 +19,18 @@ export function WorksheetItem({
 }) {
   return (
     <div className="bg-card rounded-lg p-6 shadow-md" id={worksheet.id}>
-      <div className="flex justify-between items-start mb-4">
-        <div>
-          <h2 className="text-2xl font-semibold">
+      <div>
+        <div className="flex w-full justify-between items-center gap-2 mb-2">
+          <h2 className="text-2xl font-semibold flex items-center">
+            {worksheet.template?.image && (
+              <Image
+                alt={worksheet.template.name}
+                className="size-10 rounded-md object-cover inline-block mr-2"
+                width={40}
+                height={40}
+                src={worksheet.template.image}
+              />
+            )}
             {worksheet.name}
             {(variant === "managed" || variant === "archived") && (
               <a
@@ -32,33 +42,33 @@ export function WorksheetItem({
               </a>
             )}
           </h2>
-          {worksheet.description && (
-            <p className="text-sm text-muted-foreground">
-              {worksheet.description}
-            </p>
-          )}
-          {worksheet.supervisor && (
-            <p className="text-sm text-muted-foreground">
-              Opiekun:{" "}
-              <a
-                href={`/profile/${worksheet.supervisor}`}
-                className="text-primary"
-              >
-                {worksheet.supervisorName}
-              </a>
-            </p>
-          )}
 
-          <p className="text-sm text-muted-foreground">
-            Ostatnia aktualizacja: {worksheet.updatedAt.toLocaleString()}
-          </p>
+          <WorksheetActions
+            worksheet={worksheet}
+            variant={variant}
+            removeWorksheet={deleteWorksheet}
+          />
         </div>
+        {worksheet.description && (
+          <p className="text-sm text-muted-foreground">
+            {worksheet.description}
+          </p>
+        )}
+        {worksheet.supervisor && (
+          <p className="text-sm text-muted-foreground">
+            Opiekun:{" "}
+            <a
+              href={`/profile/${worksheet.supervisor}`}
+              className="text-primary"
+            >
+              {worksheet.supervisorName}
+            </a>
+          </p>
+        )}
 
-        <WorksheetActions
-          worksheet={worksheet}
-          variant={variant}
-          removeWorksheet={deleteWorksheet}
-        />
+        <p className="text-sm text-muted-foreground">
+          Ostatnia aktualizacja: {worksheet.updatedAt.toLocaleString()}
+        </p>
       </div>
 
       <TaskTable

@@ -173,6 +173,7 @@ export const useWorksheetForm = ({
             clear_status: true,
           }),
         })),
+        template_id: initialData?.templateId || undefined,
       };
 
       const url =

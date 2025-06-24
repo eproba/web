@@ -27,6 +27,12 @@ export interface ApiWorksheetResponse {
   is_archived: boolean;
   is_deleted: boolean;
   notes: string;
+  template?: {
+    id: string;
+    name: string;
+    description: string;
+    image?: string | null;
+  };
 }
 
 export function worksheetSerializer(
@@ -49,6 +55,7 @@ export function worksheetSerializer(
     isArchived: apiResponse.is_archived,
     isDeleted: apiResponse.is_deleted,
     notes: apiResponse.notes,
+    template: apiResponse.template,
   };
 }
 

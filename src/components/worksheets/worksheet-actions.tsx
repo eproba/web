@@ -224,7 +224,7 @@ export function WorksheetActions({
         <Popover>
           <Tooltip>
             <TooltipTrigger asChild>
-              <PopoverTrigger>
+              <PopoverTrigger asChild>
                 <action.icon
                   className="text-muted-foreground cursor-pointer"
                   size={20}

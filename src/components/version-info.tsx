@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, ExternalLink, XCircle } from "lucide-react";
+import { CheckCircleIcon, ExternalLinkIcon, XCircleIcon } from "lucide-react";
 import * as semver from "semver";
 import { API_URL } from "@/lib/api";
 import {
@@ -38,7 +38,7 @@ export function VersionInfo({
             target="_blank"
             className="text-sm font-normal text-muted-foreground hover:text-foreground flex items-center gap-1"
           >
-            <ExternalLink className="h-3 w-3" />
+            <ExternalLinkIcon className="h-3 w-3" />
             Dokumentacja API
           </a>
         </CardTitle>
@@ -75,9 +75,9 @@ export function VersionInfo({
                   className="text-base font-mono flex items-center gap-1"
                 >
                   {!apiIsCompatible ? (
-                    <XCircle className="size-4 text-red-500" />
+                    <XCircleIcon className="size-4 text-red-500" />
                   ) : (
-                    <CheckCircle
+                    <CheckCircleIcon
                       className={cn(
                         "size-4 text-green-500",
                         ...(apiComparison < 0 ? "text-blue-500" : ""),

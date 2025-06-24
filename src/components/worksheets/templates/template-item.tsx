@@ -25,42 +25,50 @@ export function TemplateItem({
       className="bg-card rounded-lg p-6 shadow-md space-y-4"
       id={template.id}
     >
-      <div className="flex justify-between items-start mb-2">
-        <div>
-          <h2 className="text-2xl font-semibold">
-            <span className="inline-flex items-center gap-2">
-              {template.name}
-              {template.image && (
-                <Image
-                  src={template.image}
-                  alt={template.name}
-                  className="size-10 rounded-md"
-                  width={40}
-                  height={40}
-                />
-              )}
-              {template.templateNotes && (
-                <Popover>
-                  <PopoverTrigger>
-                    <MessageSquareDashedIcon className="size-5 text-muted-foreground" />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <p className="text-sm text-muted-foreground">
-                      Notatka - widoczna do momentu utworzenie próby z szablonu:
-                    </p>
-                    <p className="text-sm">{template.templateNotes}</p>
-                  </PopoverContent>
-                </Popover>
-              )}
-            </span>{" "}
+      <div>
+        <div className="flex w-full justify-between items-center gap-2 mb-2">
+          <h2 className="text-2xl font-semibold flex items-center">
+            {template.image && (
+              <Image
+                src={template.image}
+                alt={template.name}
+                className="size-10 rounded-md object-cover inline-block mr-2"
+                width={40}
+                height={40}
+              />
+            )}
+            {template.name}
+            {template.templateNotes && (
+              <Popover>
+                <PopoverTrigger>
+                  <MessageSquareDashedIcon className="size-5 text-muted-foreground ml-2" />
+                </PopoverTrigger>
+                <PopoverContent>
+                  <p className="text-sm text-muted-foreground">
+                    Notatka - widoczna do momentu utworzenie próby z szablonu:
+                  </p>
+                  <p className="text-sm">{template.templateNotes}</p>
+                </PopoverContent>
+              </Popover>
+            )}
           </h2>
-        </div>
 
-        <TemplateActions template={template} removeTemplate={deleteTemplate} />
+          <TemplateActions
+            template={template}
+            removeTemplate={deleteTemplate}
+          />
+        </div>
+        {template.description && (
+          <p className="text-sm text-muted-foreground">
+            {template.description}
+          </p>
+        )}
+        {template.updatedAt && (
+          <p className="text-sm text-muted-foreground">
+            Ostatnia aktualizacja: {template.updatedAt.toLocaleString()}
+          </p>
+        )}
       </div>
-      {template.description && (
-        <p className="text-sm text-muted-foreground">{template.description}</p>
-      )}
 
       <TaskTable worksheet={template} variant="template" />
 

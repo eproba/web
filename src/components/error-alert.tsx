@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertCircle } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 import type { ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ export function ErrorAlert({ error }: { error: Response | ApiError }) {
   const errorMessage = "message" in error ? error.message : error.toString();
   return (
     <Alert variant="destructive">
-      <AlertCircle className="h-4 w-4" />
+      <AlertCircleIcon className="h-4 w-4" />
       <AlertTitle>
         Wystąpił błąd i ta strona nie może być wyświetlona
       </AlertTitle>

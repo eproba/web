@@ -34,6 +34,7 @@ export const worksheetWithTasksSchema = z.object({
     .string()
     .max(1000, "Notatki szablonu nie mogą przekraczać 1000 znaków")
     .optional(),
+  templateId: z.string().nullable().optional(),
   image: z
     .union([z.instanceof(File), z.string().url(), z.null()])
     .optional()
