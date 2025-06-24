@@ -58,7 +58,10 @@ const MAIN_NAV_ITEMS: NavItem[] = [
       { title: "Prośby o zatwierdzenie", href: "/worksheets/review" },
       { title: "Archiwum", href: "/worksheets/archive" },
       { title: "Szablony", href: "/worksheets/templates" },
-      { title: "Utwórz nową próbę", href: "/worksheets/create" },
+      {
+        title: "Utwórz nową próbę",
+        href: "/worksheets/create?redirectTo=/worksheets/manage",
+      },
     ],
   },
   {
@@ -318,7 +321,7 @@ export async function Navbar({ messages }: NavbarProps) {
                           href={item.href}
                           className={cn(
                             navigationMenuTriggerStyle(),
-                            "bg-transparent",
+                            "bg-transparent w-full items-start",
                           )}
                           target={item.external ? "_blank" : undefined}
                         >

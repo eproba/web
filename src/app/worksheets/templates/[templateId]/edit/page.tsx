@@ -1,6 +1,6 @@
 import React from "react";
-import { WorksheetEditor } from "@/components/worksheets/editor/worksheet-editor";
 import { fetchCurrentUser, fetchTemplate } from "@/lib/server-api";
+import { TemplateEditor } from "@/components/worksheets/editor/template-editor";
 
 interface TemplateEditPageProps {
   params: Promise<{
@@ -26,12 +26,11 @@ const TemplateEditPage = async ({ params }: TemplateEditPageProps) => {
       <div className="mb-6">
         <h1 className="text-3xl font-bold  mb-2">Edycja szablonu</h1>
       </div>
-      <WorksheetEditor
+      <TemplateEditor
         mode="edit"
         redirectTo={`/worksheets/templates#${templateId}`}
         initialData={template}
         currentUser={user!}
-        variant="template"
       />
     </div>
   );

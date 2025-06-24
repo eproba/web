@@ -15,6 +15,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { User } from "@/types/user";
 import { SearchIcon } from "lucide-react";
+import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-button";
 
 export function WorksheetList({
   orgWorksheets,
@@ -87,7 +88,7 @@ export function WorksheetList({
 
   return (
     <div className="space-y-4">
-      {showFilters && (
+      {showFilters ? (
         <div className="flex items-center justify-between gap-2">
           <Input
             type="text"
@@ -97,21 +98,30 @@ export function WorksheetList({
             onChange={(e) => setSearchQuery(e.target.value)}
             startIcon={SearchIcon}
           />
-          <Select onValueChange={setSelectedPatrol} value={selectedPatrol}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Wybierz zastęp" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="null">Wszystkie</SelectItem>
-              {patrols.map((patrol) => (
-                <SelectItem key={patrol.id} value={patrol.id}>
-                  {patrol.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2">
+            <Select onValueChange={setSelectedPatrol} value={selectedPatrol}>
+              <SelectTrigger className="w-40">
+                <SelectValue placeholder="Wybierz zastęp" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="null">Wszystkie</SelectItem>
+                {patrols.map((patrol) => (
+                  <SelectItem key={patrol.id} value={patrol.id}>
+                    {patrol.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {(variant === "managed" || variant === "user") && (
+              <CreateWorksheetButton size="icon" />
+            )}
+          </div>
         </div>
-      )}
+      ) : variant === "managed" || variant === "user" ? (
+        <div className="flex justify-end">
+          <CreateWorksheetButton />
+        </div>
+      ) : null}
       {filteredWorksheets.length === 0 ? (
         variant === "review" ? (
           <Card>
@@ -126,7 +136,9 @@ export function WorksheetList({
                 Nie znaleziono prób pasujących do podanych kryteriów.
               </CardTitle>
             </CardHeader>
-            <CardContent>{/*TODO: Add create worksheet button */}</CardContent>
+            <CardContent>
+              <CreateWorksheetButton />
+            </CardContent>
           </Card>
         )
       ) : (

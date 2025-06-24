@@ -2,87 +2,36 @@
 import React, { useEffect, useState } from "react";
 import { TaskControls } from "@/components/worksheets/editor/task-controls";
 import { TasksSection } from "@/components/worksheets/editor/tasks-section";
-import { WorksheetBasicInfo } from "@/components/worksheets/editor/worksheet-basic-info";
 import { WorksheetSubmitButton } from "@/components/worksheets/editor/worksheet-submit-button";
 import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
 import { Form } from "@/components/ui/form";
-import { useWorksheetForm } from "@/components/worksheets/editor/hooks/use-worksheet-form";
 import { useWorksheetTasks } from "@/components/worksheets/editor/hooks/use-worksheet-tasks";
 import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
 import { useMobileTaskMovements } from "@/components/worksheets/editor/hooks/use-mobile-task-movements";
 import { Task, WorksheetWithTasks } from "@/lib/schemas/worksheet";
-import { TaskStatus } from "@/types/worksheet";
 import { User } from "@/types/user";
-import { ModifiedTasksDialog } from "@/components/worksheets/editor/modified-tasks-dialog";
+import { TemplateWorksheetBasicInfo } from "@/components/worksheets/editor/template-basic-info";
+import { useTemplateForm } from "@/components/worksheets/editor/hooks/use-template-form";
 
-interface WorksheetEditorProps {
+interface TemplateEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
   mode: "create" | "edit";
-  variant?: "template" | "worksheet";
   redirectTo: string;
   currentUser: User;
 }
 
-export const WorksheetEditor = ({
+export const TemplateEditor = ({
   initialData,
   mode,
   redirectTo,
   currentUser,
-}: WorksheetEditorProps) => {
-  // State for modified tasks dialog
-  const [modifiedTasks, setModifiedTasks] = useState<
-    Array<{
-      id: string;
-      name: string;
-      originalStatus: TaskStatus;
-    }>
-  >([]);
-  const [showModifiedDialog, setShowModifiedDialog] = useState(false);
-
-  // Handle modified tasks detection and continuation
-  const handleModifiedTasksDetected = (
-    tasks: Array<{
-      id: string;
-      name: string;
-      originalStatus: TaskStatus;
-    }>,
-  ) => {
-    setModifiedTasks(tasks);
-    setShowModifiedDialog(true);
-    return false; // Don't continue submission yet
-  };
-
-  // Handle continuing with selected task status decisions
-  const handleContinueWithDecisions = async (tasksToKeepStatus: string[]) => {
-    try {
-      // Determine which tasks should have their status cleared
-      const tasksToClear = modifiedTasks
-        .filter((task) => !tasksToKeepStatus.includes(task.id))
-        .map((task) => task.id);
-
-      setShowModifiedDialog(false);
-      setModifiedTasks([]);
-
-      // Submit the form with current data, passing tasks to clear directly
-      await submitWithCurrentData(tasksToClear);
-    } catch (error) {
-      console.error("Error handling task status decisions:", error);
-    }
-  };
-
+}: TemplateEditorProps) => {
   // Initialize form with initial data
-  const {
-    form,
-    onSubmit,
-    submitWithCurrentData,
-    resetModifiedTasksHandling,
-    isSubmitting,
-  } = useWorksheetForm({
+  const { form, onSubmit, isSubmitting } = useTemplateForm({
     mode,
     redirectTo,
     initialData,
     currentUser,
-    onModifiedTasksDetected: handleModifiedTasksDetected,
   });
 
   // Initialize task management with a custom hook
@@ -151,16 +100,6 @@ export const WorksheetEditor = ({
     }
   };
 
-  // Handle closing dialog
-  const handleCloseDialog = () => {
-    setShowModifiedDialog(false);
-    // Clear modified tasks after dialog is closed
-    setTimeout(() => {
-      setModifiedTasks([]);
-    }, 200);
-    resetModifiedTasksHandling(); // Reset the flag so user can try again
-  };
-
   return (
     <DragDropProvider>
       <div
@@ -168,8 +107,8 @@ export const WorksheetEditor = ({
         onKeyDown={handleKeyDown}
       >
         <Form {...form}>
-          {/* Worksheet Basic Info */}
-          <WorksheetBasicInfo form={form} currentUser={currentUser} />
+          {/* Template Basic Info */}
+          <TemplateWorksheetBasicInfo form={form} currentUser={currentUser} />
 
           {/* Task Controls */}
           <TaskControls
@@ -198,7 +137,7 @@ export const WorksheetEditor = ({
             onMoveTaskDown={handleMoveTaskDown}
             onMoveTaskToCategory={handleMoveTaskToCategory}
             currentUser={currentUser}
-            variant="worksheet"
+            variant="template"
           />
 
           {/* Submit Button */}
@@ -206,17 +145,9 @@ export const WorksheetEditor = ({
             isSubmitting={isSubmitting}
             onSubmit={onSubmit}
             mode={mode}
-            variant="worksheet"
+            variant="template"
           />
         </Form>
-
-        {/* Modified Tasks Dialog */}
-        <ModifiedTasksDialog
-          isOpen={showModifiedDialog}
-          onClose={handleCloseDialog}
-          onContinue={handleContinueWithDecisions}
-          modifiedTasks={modifiedTasks}
-        />
       </div>
     </DragDropProvider>
   );

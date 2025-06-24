@@ -19,4 +19,5 @@ export interface TemplateWorksheet {
   updatedAt: Date;
   createdAt: Date;
   templateNotes: string;
+  image?: string | null;
 }

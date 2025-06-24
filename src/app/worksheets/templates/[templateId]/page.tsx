@@ -1,6 +1,6 @@
 import React from "react";
-import { WorksheetEditor } from "@/components/worksheets/editor/worksheet-editor";
-import { fetchCurrentUser, fetchTemplate } from "@/lib/server-api";
+import { fetchTemplate } from "@/lib/server-api";
+import { TemplateItem } from "@/components/worksheets/templates/template-item";
 
 interface UseTemplatePageProps {
   params: Promise<{
@@ -16,19 +16,7 @@ const UseTemplatePage = async ({ params }: UseTemplatePageProps) => {
     return templateError;
   }
 
-  const { user, error: userError } = await fetchCurrentUser();
-  if (userError) {
-    return userError;
-  }
-
-  return (
-    <WorksheetEditor
-      mode="create"
-      redirectTo={`/worksheets/templates#${templateId}`}
-      initialData={template}
-      currentUser={user!}
-    />
-  );
+  return <TemplateItem template={template!} />;
 };
 
 export default UseTemplatePage;

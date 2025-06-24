@@ -23,15 +23,45 @@ export const worksheetWithTasksSchema = z.object({
     .max(100, "Nazwa próby nie może przekraczać 100 znaków"),
   description: z.string().max(500, "Opis nie może przekraczać 500 znaków"),
   supervisor: z.string().nullable().optional(),
-  userId: z.string(),
+  userId: z.string().nullable().optional(),
+  teamId: z.string().nullable().optional(),
+  organization: z.number().nullable().optional(),
   tasks: z
     .array(taskSchema)
     .min(1, "Dodaj co najmniej jedno zadanie")
-    .max(100, "Maksymalnie 50 zadań"),
+    .max(100, "Maksymalnie 100 zadań"),
   templateNotes: z
     .string()
     .max(1000, "Notatki szablonu nie mogą przekraczać 1000 znaków")
     .optional(),
+  image: z
+    .union([z.instanceof(File), z.string().url(), z.null()])
+    .optional()
+    .refine(
+      (value) => {
+        if (!value || typeof value === "string" || value === null) return true;
+        const allowedTypes = [
+          "image/jpeg",
+          "image/jpg",
+          "image/png",
+          "image/gif",
+          "image/svg+xml",
+        ];
+        return allowedTypes.includes(value.type);
+      },
+      {
+        message: "Dozwolone formaty: JPG, PNG, GIF, SVG",
+      },
+    )
+    .refine(
+      (value) => {
+        if (!value || typeof value === "string" || value === null) return true;
+        return value.size <= 5 * 1024 * 1024; // 5MB
+      },
+      {
+        message: "Rozmiar pliku nie może przekraczać 5MB",
+      },
+    ),
 });
 
 export type Task = z.infer<typeof taskSchema>;

@@ -20,6 +20,7 @@ export interface ApiTemplateWorksheetResponse {
   updated_at: string;
   created_at: string;
   template_notes: string;
+  image?: string | null;
 }
 
 export function templateSerializer(
@@ -35,6 +36,7 @@ export function templateSerializer(
     updatedAt: new Date(apiResponse.updated_at),
     createdAt: new Date(apiResponse.created_at),
     templateNotes: apiResponse.template_notes,
+    image: apiResponse.image || null,
   };
 }
 

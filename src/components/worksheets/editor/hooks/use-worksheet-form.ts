@@ -19,7 +19,6 @@ interface UseWorksheetFormProps {
   redirectTo: string;
   initialData?: Partial<WorksheetWithTasks>;
   currentUser: User;
-  variant: "template" | "worksheet";
   onModifiedTasksDetected?: (
     modifiedTasks: Array<{
       id: string;
@@ -34,7 +33,6 @@ export const useWorksheetForm = ({
   redirectTo,
   initialData,
   currentUser,
-  variant,
   onModifiedTasksDetected,
 }: UseWorksheetFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,7 +98,6 @@ export const useWorksheetForm = ({
       // Check for modified tasks with non-TODO status in edit mode (only if we haven't handled it yet and not skipping)
       if (
         !skipDialogLogic &&
-        variant === "worksheet" &&
         mode === "edit" &&
         initialData?.tasks &&
         onModifiedTasksDetected &&
@@ -178,8 +175,8 @@ export const useWorksheetForm = ({
         })),
       };
 
-      const endpoint = variant === "worksheet" ? "/worksheets/" : "/templates/";
-      const url = mode === "edit" ? `${endpoint}${initialData?.id}/` : endpoint;
+      const url =
+        mode === "edit" ? `/worksheets/${initialData?.id}/` : "/worksheets/";
 
       await apiClient(url, {
         method: mode === "create" ? "POST" : "PUT",

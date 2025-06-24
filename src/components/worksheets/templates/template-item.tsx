@@ -1,3 +1,5 @@
+"use client";
+
 import { TaskTable } from "@/components/worksheets/task-table";
 import { TemplateActions } from "@/components/worksheets/templates/template-actions";
 import { TemplateWorksheet } from "@/types/template";
@@ -9,6 +11,7 @@ import {
 import { MessageSquareDashedIcon, PencilRulerIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import Image from "next/image";
 
 export function TemplateItem({
   template,
@@ -22,11 +25,20 @@ export function TemplateItem({
       className="bg-card rounded-lg p-6 shadow-md space-y-4"
       id={template.id}
     >
-      <div className="flex justify-between items-start">
+      <div className="flex justify-between items-start mb-2">
         <div>
           <h2 className="text-2xl font-semibold">
             <span className="inline-flex items-center gap-2">
               {template.name}
+              {template.image && (
+                <Image
+                  src={template.image}
+                  alt={template.name}
+                  className="size-10 rounded-md"
+                  width={40}
+                  height={40}
+                />
+              )}
               {template.templateNotes && (
                 <Popover>
                   <PopoverTrigger>
@@ -42,15 +54,13 @@ export function TemplateItem({
               )}
             </span>{" "}
           </h2>
-          {template.description && (
-            <p className="text-sm text-muted-foreground">
-              {template.description}
-            </p>
-          )}
         </div>
 
         <TemplateActions template={template} removeTemplate={deleteTemplate} />
       </div>
+      {template.description && (
+        <p className="text-sm text-muted-foreground">{template.description}</p>
+      )}
 
       <TaskTable worksheet={template} variant="template" />
 

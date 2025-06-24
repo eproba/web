@@ -31,7 +31,7 @@ export function VersionInfo({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-bold flex items-center gap-2">
+        <CardTitle className="text-2xl font-bold flex flex-wrap items-center gap-2">
           Informacje o wersji
           <a
             href={`${API_URL}/schema/swagger-ui/`}

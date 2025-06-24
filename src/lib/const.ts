@@ -23,6 +23,11 @@ export const RequiredFunctionLevel = {
   WORKSHEET_MANAGEMENT: 2,
 
   /**
+   * Permission level needed for template management
+   */
+  TEAM_TEMPLATE_MANAGEMENT: 3,
+
+  /**
    * Permission level needed for individual task management
    */
   INDIVIDUAL_TASKS_MANAGEMENT: 3,

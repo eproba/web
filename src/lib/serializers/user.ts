@@ -21,6 +21,7 @@ export interface ApiUserResponse {
   patrol_name?: string | null;
   team?: string | null;
   team_name?: string | null;
+  organization?: number | null;
   scout_rank: number;
   instructor_rank: number;
   function: number;
@@ -57,6 +58,7 @@ export function publicUserSerializer(apiResponse: ApiUserResponse): PublicUser {
     patrolName: apiResponse.patrol_name ?? null,
     team: apiResponse.team ?? null,
     teamName: apiResponse.team_name ?? null,
+    organization: apiResponse.organization ?? null,
     rank: combinedRank,
     scoutRank: scoutRank,
     instructorRank: instructorRank,

@@ -5,13 +5,14 @@ import { fetchCurrentUser, fetchTemplate } from "@/lib/server-api";
 interface WorksheetCreatePageProps {
   searchParams: Promise<{
     templateId?: string;
+    redirectTo?: string;
   }>;
 }
 
 const WorksheetCreatePage = async ({
   searchParams,
 }: WorksheetCreatePageProps) => {
-  const { templateId } = await searchParams;
+  const { templateId, redirectTo } = await searchParams;
 
   const { user, error: userError } = await fetchCurrentUser();
   if (userError) {
@@ -27,7 +28,7 @@ const WorksheetCreatePage = async ({
     return (
       <WorksheetEditor
         mode="create"
-        redirectTo={`/worksheets/templates#${templateId}`}
+        redirectTo={redirectTo || `/worksheets/templates#${templateId}`}
         initialData={template}
         currentUser={user!}
       />
@@ -37,7 +38,7 @@ const WorksheetCreatePage = async ({
   return (
     <WorksheetEditor
       mode="create"
-      redirectTo="/worksheets"
+      redirectTo={redirectTo || "/worksheets"}
       currentUser={user!}
     />
   );

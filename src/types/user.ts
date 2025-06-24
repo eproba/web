@@ -187,6 +187,7 @@ export interface PublicUser {
   patrolName: string | null;
   team: string | null;
   teamName: string | null;
+  organization: number | null;
   rank: string;
   scoutRank: FieldInfo<number>;
   instructorRank: FieldInfo<number>;

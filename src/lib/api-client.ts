@@ -20,13 +20,20 @@ export function createApiClient(
     accessToken = session?.accessToken || "";
 
     const executeRequest = async (): Promise<Response> => {
+      const headers: HeadersInit = {
+        Authorization: `Bearer ${accessToken}`,
+        ...(init?.headers || {}),
+      };
+
+      // Only set Content-Type for non-FormData requests
+      if (!(init?.body instanceof FormData)) {
+        (headers as Record<string, string>)["Content-Type"] =
+          "application/json";
+      }
+
       const response = await fetch(API_URL + input, {
         ...init,
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-          ...init?.headers,
-        },
+        headers,
       });
 
       if (response.status === 401 && updateSession && !isRefreshing) {
