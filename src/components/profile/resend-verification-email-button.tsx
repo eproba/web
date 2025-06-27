@@ -17,7 +17,12 @@ export function ResendVerificationEmailButton() {
       });
 
       toast.success(
-        "Email weryfikacyjny został wysłany, sprawdź swoją skrzynkę pocztową.",
+        ToastMsg({
+          data: {
+            title: "Email weryfikacyjny został wysłany",
+            description: "Sprawdź swoją skrzynkę.",
+          },
+        }),
       );
     } catch (error) {
       toast.error(

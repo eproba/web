@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "nextjs-toploader/app";
 import { useForm } from "react-hook-form";
-import { sendEmail } from "@/app/contact/actions";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "react-toastify";
 import { Card, CardContent } from "@/components/ui/card";
+import { useApi } from "@/lib/api-client";
+import { ToastMsg } from "@/lib/toast-msg";
 
 type FormData = {
   subject: string;
@@ -18,30 +18,38 @@ type FormData = {
 
 export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const router = useRouter();
+  const { apiClient } = useApi();
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset: resetForm,
   } = useForm<FormData>();
 
   async function onSubmit(data: FormData) {
     setIsSubmitting(true);
 
     try {
-      const result = await sendEmail({
-        subject: data.subject,
-        fromEmail: data.from_email,
-        message: data.message,
+      await apiClient(`/contact/`, {
+        method: "POST",
+        body: JSON.stringify({
+          subject: data.subject,
+          from_email: data.from_email,
+          message: data.message,
+        }),
       });
-      if (result.success) {
-        router.push("/?message=Wiadomość została wysłana.");
-      } else {
-        throw new Error("Failed to send message");
-      }
+      toast.success(
+        "Wiadomość została wysłana pomyślnie! Odpowiemy na nią tak szybko, jak to możliwe.",
+      );
+      resetForm();
     } catch (error) {
       toast.error(
-        "Wystąpił błąd podczas wysyłania wiadomości. Spróbuj ponownie później.",
+        ToastMsg({
+          data: {
+            title: "Nie udało się wysłać wiadomości",
+            description: error as Error,
+          },
+        }),
       );
       console.error("Error sending email:", error);
     } finally {

@@ -504,3 +504,20 @@ export function getPatrolsFromTeams(userTeams: Team[]) {
         .flat();
   }
 }
+
+/**
+ * Verify email with token
+ */
+export async function verifyEmail(
+  userId: string,
+  token: string,
+): Promise<{ data?: { message: string }; error?: JSX.Element }> {
+  return apiRequest<{ message: string }>("/user/verify-email/", {
+    method: "POST",
+    body: {
+      user_id: userId,
+      token: token,
+    },
+    allowUnauthorized: true,
+  });
+}

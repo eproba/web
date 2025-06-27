@@ -11,6 +11,7 @@ const PUBLIC_ROUTES = [
   "^/terms$", // Terms root page (exact match)
   "^/terms/.*", // All terms subpages
   "^/login-required$", // Special route for showing login prompt
+  "^/verify-email/.*", // Email verification pages
 ];
 
 const AUTH_ROUTES = [
