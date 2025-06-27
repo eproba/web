@@ -26,10 +26,7 @@ export const worksheetWithTasksSchema = z.object({
   userId: z.string().nullable().optional(),
   teamId: z.string().nullable().optional(),
   organization: z.number().nullable().optional(),
-  tasks: z
-    .array(taskSchema)
-    .min(1, "Dodaj co najmniej jedno zadanie")
-    .max(100, "Maksymalnie 100 zadań"),
+  tasks: z.array(taskSchema).max(100, "Maksymalnie 100 zadań"),
   templateNotes: z
     .string()
     .max(1000, "Notatki szablonu nie mogą przekraczać 1000 znaków")
@@ -40,7 +37,7 @@ export const worksheetWithTasksSchema = z.object({
     .optional()
     .refine(
       (value) => {
-        if (!value || typeof value === "string" || value === null) return true;
+        if (!value || typeof value === "string") return true;
         const allowedTypes = [
           "image/jpeg",
           "image/jpg",
@@ -56,7 +53,7 @@ export const worksheetWithTasksSchema = z.object({
     )
     .refine(
       (value) => {
-        if (!value || typeof value === "string" || value === null) return true;
+        if (!value || typeof value === "string") return true;
         return value.size <= 5 * 1024 * 1024; // 5MB
       },
       {

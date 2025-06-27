@@ -24,7 +24,7 @@ interface TaskActionPopoverProps {
   onMoveDown?: () => void;
   onMoveToDifferentCategory?: () => void;
   onShowSuggestions: () => void;
-  onShowDeleteDialog: () => void;
+  onDelete: () => void;
   canMoveUp: boolean;
   canMoveDown: boolean;
   canMoveToDifferentCategory: boolean;
@@ -38,7 +38,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
   onMoveDown,
   onMoveToDifferentCategory,
   onShowSuggestions,
-  onShowDeleteDialog,
+  onDelete,
   canMoveUp,
   canMoveDown,
   canMoveToDifferentCategory,
@@ -79,7 +79,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
     setIsOpen(false);
     // Delay to ensure popover closes cleanly before opening dialog
     setTimeout(() => {
-      onShowDeleteDialog();
+      onDelete();
     }, 100);
   };
 

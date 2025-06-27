@@ -1,4 +1,3 @@
-// app/layout.tsx (lub pages/_app.tsx w starszych projektach Next.js)
 import "./globals.css";
 import { Metadata } from "next";
 import { Navbar } from "@/components/navbar";

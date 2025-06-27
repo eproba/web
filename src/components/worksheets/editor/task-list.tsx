@@ -101,7 +101,82 @@ export const TaskList: React.FC<TaskListProps> = ({
         "space-y-1 transition-all duration-300 relative touch-manipulation w-full",
       )}
     >
-      {tasks.length === 0 ? (
+      <motion.div layout className="space-y-1">
+        <AnimatePresence mode="popLayout">
+          {tasks.map((task, index) => {
+            const allTasks = form.getValues("tasks");
+            const taskIndex = allTasks.findIndex((t) => t.id === task.id);
+
+            return (
+              <motion.div
+                key={task.id}
+                layout
+                initial={false}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, height: 0, marginBottom: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                <TaskItem
+                  ref={(ref) => {
+                    if (ref) {
+                      taskRefs.current.set(task.id, ref);
+                    } else {
+                      taskRefs.current.delete(task.id);
+                    }
+                  }}
+                  task={task}
+                  index={index}
+                  taskIndex={taskIndex}
+                  showDescription={showDescriptions}
+                  onUpdate={(updates) => onUpdateTask(task.id, updates)}
+                  onRemove={() => onRemoveTask(category, task.id)}
+                  onMoveUp={() => onMoveTaskUp(category, task.id)}
+                  onMoveDown={() => onMoveTaskDown(category, task.id)}
+                  onMoveToDifferentCategory={() =>
+                    onMoveTaskToCategory(
+                      task.id,
+                      category,
+                      category === "general" ? "individual" : "general",
+                    )
+                  }
+                  canMoveUp={index > 0}
+                  canMoveDown={index < tasks.length - 1}
+                  canMoveToDifferentCategory={enableCategories}
+                  form={form}
+                  currentUser={currentUser}
+                  variant={variant}
+                />
+              </motion.div>
+            );
+          })}
+        </AnimatePresence>
+
+        {tasks.length !== 0 && (
+          <motion.div
+            layout
+            className="pt-2"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+            }}
+          >
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={handleAddTask}
+              className="w-full border-2 border-dashed border-muted-foreground/30 "
+            >
+              <PlusIcon className="w-4 h-4 mr-2" />
+              Dodaj zadanie
+            </Button>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {tasks.length === 0 && (
         <motion.div
           layout
           initial={{ opacity: 0, scale: 0.9 }}
@@ -160,7 +235,11 @@ export const TaskList: React.FC<TaskListProps> = ({
               isDropHovered && "opacity-30",
             )}
           >
-            {title ? `Brak zadań ${title.toLowerCase()}` : "Brak zadań"}
+            {enableCategories
+              ? `Brak zadań ${
+                  category === "general" ? "ogólnych" : "indywidualnych"
+                }`
+              : "Brak zadań"}
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -178,79 +257,6 @@ export const TaskList: React.FC<TaskListProps> = ({
             >
               <PlusIcon className="w-4 h-4 mr-2" />
               Dodaj pierwsze zadanie
-            </Button>
-          </motion.div>
-        </motion.div>
-      ) : (
-        <motion.div layout className="space-y-1">
-          <AnimatePresence mode="popLayout">
-            {tasks.map((task, index) => {
-              const allTasks = form.getValues("tasks");
-              const taskIndex = allTasks.findIndex((t) => t.id === task.id);
-
-              return (
-                <motion.div
-                  key={task.id}
-                  layout
-                  initial={false}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <TaskItem
-                    ref={(ref) => {
-                      if (ref) {
-                        taskRefs.current.set(task.id, ref);
-                      } else {
-                        taskRefs.current.delete(task.id);
-                      }
-                    }}
-                    task={task}
-                    index={index}
-                    taskIndex={taskIndex}
-                    showDescription={showDescriptions}
-                    onUpdate={(updates) => onUpdateTask(task.id, updates)}
-                    onRemove={() => onRemoveTask(category, task.id)}
-                    onMoveUp={() => onMoveTaskUp(category, task.id)}
-                    onMoveDown={() => onMoveTaskDown(category, task.id)}
-                    onMoveToDifferentCategory={() =>
-                      onMoveTaskToCategory(
-                        task.id,
-                        category,
-                        category === "general" ? "individual" : "general",
-                      )
-                    }
-                    canMoveUp={index > 0}
-                    canMoveDown={index < tasks.length - 1}
-                    canMoveToDifferentCategory={enableCategories}
-                    form={form}
-                    currentUser={currentUser}
-                    variant={variant}
-                  />
-                </motion.div>
-              );
-            })}
-          </AnimatePresence>
-
-          <motion.div
-            layout
-            className="pt-2"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{
-              type: "spring",
-              stiffness: 300,
-              damping: 25,
-            }}
-          >
-            <Button
-              type="button"
-              variant="ghost"
-              onClick={handleAddTask}
-              className="w-full border-2 border-dashed border-muted-foreground/30 "
-            >
-              <PlusIcon className="w-4 h-4 mr-2" />
-              Dodaj zadanie
             </Button>
           </motion.div>
         </motion.div>

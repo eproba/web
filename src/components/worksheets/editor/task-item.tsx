@@ -106,6 +106,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     300,
   );
 
+  const handleDelete = () => {
+    if (!task.name && !task.description) {
+      onRemove();
+    } else {
+      setShowDeleteDialog(true);
+    }
+  };
+
   useEffect(() => {
     const element = elementRef.current;
     const dragHandle = dragHandleRef.current;
@@ -435,7 +443,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                     setShowSuggestions(true);
                   }}
                   className={cn(
-                    "hidden md:flex lg:opacity-0 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
+                    "hidden md:flex md:opacity-0 md:pointer-coarse:opacity-100 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
                     showSuggestions &&
                       "opacity-100 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
                   )}
@@ -450,8 +458,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               type="button"
               variant="ghost"
               size="sm"
-              className="hidden md:flex lg:opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
-              onClick={() => setShowDeleteDialog(true)}
+              className="hidden md:flex md:opacity-0 md:pointer-coarse:opacity-100 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
+              onClick={() => handleDelete()}
             >
               <Trash2Icon className="w-4 h-4" />
             </Button>
@@ -495,7 +503,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               onMoveDown={onMoveDown}
               onMoveToDifferentCategory={onMoveToDifferentCategory}
               onShowSuggestions={() => setShowSuggestions(true)}
-              onShowDeleteDialog={() => setShowDeleteDialog(true)}
+              onDelete={() => handleDelete()}
               canMoveUp={canMoveUp}
               canMoveDown={canMoveDown}
               canMoveToDifferentCategory={canMoveToDifferentCategory}
