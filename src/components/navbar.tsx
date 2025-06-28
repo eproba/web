@@ -117,7 +117,7 @@ const AuthButtons = ({ user }: { user?: User }) => (
           className="flex-1"
           action={async () => {
             "use server";
-            await signOut();
+            await signOut({ redirectTo: "/" });
           }}
         >
           <Button variant="destructive" className="w-full">
