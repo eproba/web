@@ -22,6 +22,10 @@ interface CreateWorksheetButtonProps
    * The class name for the parent element
    */
   parentClassName?: string;
+  /**
+   * Whether the template is for an organization by default
+   */
+  templateForOrganization?: boolean;
 }
 
 export function CreateWorksheetButton({
@@ -30,10 +34,13 @@ export function CreateWorksheetButton({
   size = "default",
   children,
   parentClassName,
+  templateForOrganization = false,
   ...props
 }: CreateWorksheetButtonProps) {
   const pathname = usePathname();
-  const href = `/worksheets/${itemType === "template" ? "templates/" : ""}/create?redirectTo=${redirectTo || pathname}`;
+  const href = `/worksheets/${itemType === "template" ? "templates/" : ""}/create?redirectTo=${redirectTo || pathname}${
+    templateForOrganization ? "&forOrganization=true" : ""
+  }`;
 
   const defaultContent = (
     <>

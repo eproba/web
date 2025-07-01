@@ -2,6 +2,8 @@ import { TemplateList } from "@/components/worksheets/templates/template-list";
 import { fetchCurrentUser, fetchTemplates } from "@/lib/server-api";
 import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-button";
 import { RequiredFunctionLevel } from "@/lib/const";
+import { PlusIcon } from "lucide-react";
+import * as React from "react";
 
 export default async function TemplatesPage() {
   const { templates, error: templatesError } = await fetchTemplates();
@@ -59,12 +61,14 @@ export default async function TemplatesPage() {
                   variant="outline"
                   itemType="template"
                   parentClassName="hidden sm:flex"
+                  templateForOrganization={true}
                 />
                 <CreateWorksheetButton
                   variant="outline"
                   itemType="template"
                   size="icon"
                   parentClassName="sm:hidden"
+                  templateForOrganization={true}
                 />
               </>
             )}
@@ -77,6 +81,18 @@ export default async function TemplatesPage() {
           <p>Brak dostępnych szablonów.</p>
         </div>
       )}
+      {user!.function.numberValue >=
+        RequiredFunctionLevel.TEAM_TEMPLATE_MANAGEMENT &&
+        teamTemplates.length === 0 && (
+          <CreateWorksheetButton
+            variant="default"
+            itemType="template"
+            parentClassName="flex justify-center mt-8"
+          >
+            <PlusIcon className="w-4 h-4" />
+            Utwórz szablon dla drużyny
+          </CreateWorksheetButton>
+        )}
     </div>
   );
 }

@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Rozpoznawanie śladów zwierząt",
+    "description": "Znajdź i zidentyfikuj co najmniej 5 różnych śladów zwierząt w okolicy",
+    "tags": ["natura", "obserwacja", "outdoor"]
+  },
+  {
+    "name": "Budowa schronienia w lesie",
+    "description": "Zbuduj tymczasowe schronienie używając tylko materiałów naturalnych",
+    "tags": ["bushcraft", "przetrwanie", "outdoor"]
+  },
+  {
+    "name": "Orientacja w terenie",
+    "description": "Znajdź drogę do wyznaczonego punktu używając mapy i kompasu",
+    "tags": ["orientacja", "mapa", "outdoor"]
+  },
+  {
+    "name": "Pierwsza pomoc",
+    "description": "Przeprowadź symulację udzielenia pierwszej pomocy w sytuacji wypadku",
+    "tags": ["pierwsza pomoc", "bezpieczeństwo", "medycyna"]
+  },
+  {
+    "name": "Rozpalanie ogniska",
+    "description": "Rozpali ognisko używając różnych technik i materiałów naturalnych",
+    "tags": ["bushcraft", "outdoor", "przetrwanie"]
+  },
+  {
+    "name": "Obserwacja ptaków",
+    "description": "Zidentyfikuj i opisz co najmniej 10 różnych gatunków ptaków w okolicy",
+    "tags": ["natura", "obserwacja", "ornitologia"]
+  },
+  {
+    "name": "Węzły ratownicze",
+    "description": "Naucz się wiązać 5 podstawowych węzłów używanych w ratownictwie",
+    "tags": ["ratownictwo", "technika", "bezpieczeństwo"]
+  },
+  {
+    "name": "Czytanie mapy topograficznej",
+    "description": "Przeanalizuj mapę topograficzną i określ najlepszą trasę między punktami",
+    "tags": ["orientacja", "mapa", "topografia"]
+  }
+]

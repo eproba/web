@@ -22,7 +22,6 @@ interface Message {
 }
 
 interface TaskSuggestion {
-  id: string;
   name: string;
   description: string;
 }
@@ -127,19 +126,16 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
       // Fallback to mock response
       const mockSuggestions: TaskSuggestion[] = [
         {
-          id: "1",
           name: "Obserwacja ptaków w okolicy",
           description:
             "Zanotuj co najmniej 5 różnych gatunków ptaków wraz z ich zachowaniami",
         },
         {
-          id: "2",
           name: "Identyfikacja drzew liściastych",
           description:
             "Znajdź i opisz 3 różne gatunki drzew, zwracając uwagę na kształt liści",
         },
         {
-          id: "3",
           name: "Pomiar temperatury w różnych miejscach",
           description:
             "Zmierz temperaturę w słońcu, w cieniu i przy wodzie, porównaj wyniki",
@@ -216,7 +212,10 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                   {message.suggestions && message.suggestions.length > 0 && (
                     <div className="space-y-2 w-full">
                       {message.suggestions.map((suggestion) => (
-                        <Card key={suggestion.id} className="p-3 border-dashed">
+                        <Card
+                          key={suggestion.name}
+                          className="p-3 border-dashed"
+                        >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 space-y-1">
                               <h4 className="font-medium text-sm">
