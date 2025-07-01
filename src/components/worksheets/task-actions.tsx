@@ -227,7 +227,7 @@ const useTaskActions = ({
     setLoading(true);
     try {
       const response = await apiClient(
-        `/worksheets/${worksheetId}/tasks/${task.id}/${action}/`,
+        `/worksheets/${worksheetId}/tasks/${task.id}/${action === "clear" ? "clear-status" : action}/`,
         body
           ? { method: "POST", body: JSON.stringify(body) }
           : { method: "POST" },

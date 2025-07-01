@@ -8,7 +8,7 @@ export const INTERNAL_API_URL =
     ? process.env.INTERNAL_SERVER_URL + "/api"
     : API_URL;
 
-export const API_VERSION = "0.2.0"; // API version that the client expects
+export const API_VERSION = "0.3.0"; // API version that the client expects
 
 if (API_URL === "") {
   throw new Error(

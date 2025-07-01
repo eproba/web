@@ -1,6 +1,6 @@
 {
   "name": "web-v2",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",
@@ -46,7 +46,6 @@
     "nextjs-toploader": "^3.8.16",
     "openai": "^5.8.1",
     "prettier": "^3.5.3",
-    "qrcode.react": "^4.2.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-hook-form": "^7.56.4",

@@ -1,5 +1,4 @@
 "use client";
-import { QRCodeCanvas, QRCodeSVG } from "qrcode.react";
 import { useEffect, useState } from "react";
 import {
   Tooltip,
@@ -14,10 +13,10 @@ import {
   EllipsisVerticalIcon,
   LucideIcon,
   PrinterIcon,
-  QrCodeIcon,
   Share2Icon,
   SquareArrowOutUpRightIcon,
   SquarePenIcon,
+  StickyNoteIcon,
   TrashIcon,
 } from "lucide-react";
 import { toast } from "react-toastify";
@@ -34,13 +33,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
-import ReactDOM from "react-dom/client";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -48,6 +41,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { WorksheetNotesDialog } from "@/components/worksheets/worksheet-notes-dialog";
 
 type WorksheetAction = {
   id: string;
@@ -63,10 +57,12 @@ export function WorksheetActions({
   worksheet,
   variant,
   removeWorksheet,
+  updateWorksheet,
 }: {
   worksheet: Worksheet;
   variant: "user" | "managed" | "shared" | "archived" | "review";
   removeWorksheet?: (worksheetId: string) => void;
+  updateWorksheet?: (worksheet: Worksheet) => void;
 }) {
   const router = useRouter();
   const { apiClient } = useApi();
@@ -82,56 +78,6 @@ export function WorksheetActions({
       navigator.clipboard.writeText(`${baseUrl}/worksheets/${worksheet.id}`);
       toast.success("Link skopiowany do schowka");
     }
-  }
-
-  function handleDownloadQR() {
-    const qrValue = `${baseUrl}/worksheets/${worksheet.id}`;
-
-    // Create temporary container div
-    const containerRef = document.createElement("div");
-    containerRef.style.position = "absolute";
-    containerRef.style.top = "-9999px";
-    document.body.appendChild(containerRef);
-
-    // Render QR code into the container
-    const qrCodeComponent = (
-      <QRCodeCanvas
-        value={qrValue}
-        size={512}
-        level="H"
-        bgColor="#ffffff"
-        fgColor="#000000"
-      />
-    );
-
-    // Use ReactDOM to render
-    const root = ReactDOM.createRoot(containerRef);
-    root.render(qrCodeComponent);
-
-    // Need a small delay for rendering to complete
-    setTimeout(() => {
-      try {
-        // Find the canvas in the container
-        const canvasElement = containerRef.querySelector("canvas");
-        if (!canvasElement) return;
-
-        // Convert to data URL and download
-        const dataURL = canvasElement.toDataURL("image/png");
-        const link = document.createElement("a");
-        link.href = dataURL;
-        link.download = `${worksheet.name.replace(/\s+/g, "-")}-kod-QR.png`;
-        document.body.appendChild(link);
-        link.click();
-
-        // Clean up
-        document.body.removeChild(link);
-        root.unmount();
-        document.body.removeChild(containerRef);
-      } catch (error) {
-        console.error("Error downloading QR code:", error);
-        toast.error("Nie udało się pobrać kodu QR");
-      }
-    }, 100);
   }
 
   async function handleDeleteWorksheet() {
@@ -209,48 +155,47 @@ export function WorksheetActions({
 
   const worksheetActions: WorksheetAction[] = [
     {
+      id: "notes",
+      label: "Notatka",
+      icon: StickyNoteIcon,
+      variant: ["managed", "archived", "user"],
+      renderContent: (action) => (
+        <Tooltip>
+          <WorksheetNotesDialog
+            worksheet={worksheet}
+            updateWorksheet={updateWorksheet || (() => {})}
+            format="overlay"
+          >
+            <TooltipTrigger asChild>
+              <action.icon
+                className={`cursor-pointer ${
+                  worksheet.notes
+                    ? "text-amber-600 hover:text-amber-700"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+                size={20}
+              />
+            </TooltipTrigger>
+          </WorksheetNotesDialog>
+          <TooltipContent>
+            <p>{action.label}</p>
+          </TooltipContent>
+        </Tooltip>
+      ),
+    },
+    {
+      id: "edit",
+      label: "Edytuj",
+      icon: SquarePenIcon,
+      href: `/worksheets/${worksheet.id}/edit`,
+      variant: ["managed"],
+    },
+    {
       id: "share",
       label: "Skopiuj link",
       icon: Share2Icon,
       handler: copyLink,
       variant: ["managed", "archived", "user"],
-    },
-    {
-      id: "qr",
-      label: "Zobacz kod QR",
-      icon: QrCodeIcon,
-      variant: ["managed", "archived", "user"],
-      renderContent: (action, baseUrl) => (
-        <Popover>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <PopoverTrigger asChild>
-                <action.icon
-                  className="text-muted-foreground cursor-pointer"
-                  size={20}
-                />
-              </PopoverTrigger>
-            </TooltipTrigger>
-            <TooltipContent>Zobacz kod QR</TooltipContent>
-          </Tooltip>
-          <PopoverContent>
-            <div className="flex flex-col items-center justify-center gap-2">
-              <div className="p-2 bg-white rounded-md">
-                {baseUrl && (
-                  <QRCodeSVG
-                    value={`${baseUrl}/worksheets/${worksheet.id}`}
-                    size={240}
-                    className="rounded-md"
-                  />
-                )}
-              </div>
-              <Button onClick={handleDownloadQR} disabled={!baseUrl}>
-                Pobierz kod QR
-              </Button>
-            </div>
-          </PopoverContent>
-        </Popover>
-      ),
     },
     {
       id: "print",
@@ -268,13 +213,6 @@ export function WorksheetActions({
         ? handleUnarchiveWorksheet
         : handleArchiveWorksheet,
       variant: ["managed", "archived"],
-    },
-    {
-      id: "edit",
-      label: "Edytuj",
-      icon: SquarePenIcon,
-      href: `/worksheets/${worksheet.id}/edit`,
-      variant: ["managed"],
     },
     {
       id: "delete",
@@ -351,12 +289,20 @@ export function WorksheetActions({
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             {filteredActions.map((action) => {
-              // Special case for QR in mobile view - download directly
-              if (action.id === "qr") {
+              // Special case for notes in mobile view - open as drawer
+              if (action.id === "notes") {
                 return (
-                  <DropdownMenuItem key={action.id} onSelect={handleDownloadQR}>
-                    <QrCodeIcon className="h-4 w-4" />
-                    Pobierz kod QR
+                  <DropdownMenuItem key={action.id} asChild>
+                    <WorksheetNotesDialog
+                      worksheet={worksheet}
+                      updateWorksheet={updateWorksheet || (() => {})}
+                      format="mobile"
+                    >
+                      <div className="flex items-center justify-start w-full h-auto px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground">
+                        <StickyNoteIcon className="h-4 w-4 mr-2" />
+                        {worksheet.notes ? "Notatka" : "Dodaj notatkę"}
+                      </div>
+                    </WorksheetNotesDialog>
                   </DropdownMenuItem>
                 );
               }

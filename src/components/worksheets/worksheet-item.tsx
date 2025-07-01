@@ -9,44 +9,53 @@ export function WorksheetItem({
   variant = "user",
   updateTask,
   deleteWorksheet,
+  updateWorksheet,
   currentUser,
 }: {
   worksheet: Worksheet;
   variant?: "user" | "managed" | "shared" | "archived" | "review";
   updateTask?: (worksheetId: string, task: Task) => void;
   deleteWorksheet?: (worksheetId: string) => void;
+  updateWorksheet?: (worksheet: Worksheet) => void;
   currentUser?: User;
 }) {
   return (
     <div className="bg-card rounded-lg p-6 shadow-md" id={worksheet.id}>
       <div>
         <div className="flex w-full justify-between items-center gap-2 mb-2">
-          <h2 className="text-2xl font-semibold flex items-center">
+          <h2 className="text-2xl font-semibold flex">
             {worksheet.template?.image && (
               <Image
                 alt={worksheet.template.name}
-                className="size-10 rounded-md object-cover inline-block mr-2"
+                className={`size-10 rounded-md object-cover inline-block mr-2 ${
+                  worksheet.template.image.endsWith(".svg")
+                    ? "dark:invert dark:grayscale"
+                    : ""
+                }`}
                 width={40}
                 height={40}
                 src={worksheet.template.image}
               />
             )}
-            {worksheet.name}
-            {(variant === "managed" || variant === "archived") && (
-              <a
-                href={`/profile/${worksheet.user?.id}`}
-                className="text-primary"
-              >
-                {" "}
-                - {worksheet.user?.displayName}
-              </a>
-            )}
+            <div className="self-center">
+              {worksheet.name}
+              {(variant === "managed" || variant === "archived") && (
+                <a
+                  href={`/profile/${worksheet.user?.id}`}
+                  className="text-primary"
+                >
+                  {" "}
+                  - {worksheet.user?.displayName}
+                </a>
+              )}
+            </div>
           </h2>
 
           <WorksheetActions
             worksheet={worksheet}
             variant={variant}
             removeWorksheet={deleteWorksheet}
+            updateWorksheet={updateWorksheet}
           />
         </div>
         {worksheet.description && (
@@ -66,7 +75,7 @@ export function WorksheetItem({
           </p>
         )}
 
-        <p className="text-sm text-muted-foreground">
+        <p className="text-xs text-muted-foreground">
           Ostatnia aktualizacja: {worksheet.updatedAt.toLocaleString()}
         </p>
       </div>

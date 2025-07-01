@@ -3,12 +3,7 @@
 import { TaskTable } from "@/components/worksheets/task-table";
 import { TemplateActions } from "@/components/worksheets/templates/template-actions";
 import { TemplateWorksheet } from "@/types/template";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { MessageSquareDashedIcon, PencilRulerIcon } from "lucide-react";
+import { PencilRulerIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import Image from "next/image";
@@ -32,25 +27,16 @@ export function TemplateItem({
               <Image
                 src={template.image}
                 alt={template.name}
-                className="size-10 rounded-md object-cover inline-block mr-2"
+                className={`size-10 rounded-md object-cover inline-block mr-2 ${
+                  template.image.endsWith(".svg")
+                    ? "dark:invert dark:grayscale"
+                    : ""
+                }`}
                 width={40}
                 height={40}
               />
             )}
             {template.name}
-            {template.templateNotes && (
-              <Popover>
-                <PopoverTrigger>
-                  <MessageSquareDashedIcon className="size-5 text-muted-foreground ml-2" />
-                </PopoverTrigger>
-                <PopoverContent>
-                  <p className="text-sm text-muted-foreground">
-                    Notatka - widoczna do momentu utworzenie próby z szablonu:
-                  </p>
-                  <p className="text-sm">{template.templateNotes}</p>
-                </PopoverContent>
-              </Popover>
-            )}
           </h2>
 
           <TemplateActions
@@ -64,7 +50,7 @@ export function TemplateItem({
           </p>
         )}
         {template.updatedAt && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-xs text-muted-foreground">
             Ostatnia aktualizacja: {template.updatedAt.toLocaleString()}
           </p>
         )}

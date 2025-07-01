@@ -2,6 +2,7 @@ import { Task, TaskStatus } from "@/types/worksheet";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
 import { TaskActions } from "@/components/worksheets/task-actions";
+import { TaskNotes } from "@/components/worksheets/task-notes";
 import {
   Drawer,
   DrawerClose,
@@ -17,12 +18,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { User } from "@/types/user";
 import { TemplateTask } from "@/types/template";
-import { MessageSquareDashedIcon } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { motion } from "framer-motion";
 
 export function TaskTableRow({
   task,
@@ -49,6 +45,7 @@ export function TaskTableRow({
       currentUser?: User;
     }) {
   const [isOpen, setIsOpen] = useState(false);
+
   const isHighlightedTask =
     variant === "review" &&
     task.status === TaskStatus.AWAITING_APPROVAL &&
@@ -83,30 +80,29 @@ export function TaskTableRow({
           )}
         </TableRow>
       </DrawerTrigger>
+
       <TableRow
-        className={cn("hover:bg-muted/10 hidden sm:table-row", rowStyle)}
+        className={cn(
+          "relative hover:bg-muted/10 hidden sm:table-row group",
+          rowStyle,
+        )}
       >
         <TableCell className="font-medium align-text-top w-8">
+          {["managed", "review", "archived"].includes(variant) && (
+            <div className="absolute -left-8 top-0 py-0.5 z-50 pointer-events-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible has-[[data-state=open]]:opacity-100 has-[[data-state=open]]:visible transition-all duration-300 ease-out transform translate-x-2 group-hover:translate-x-0 has-[[data-state=open]]:translate-x-0">
+              <TaskNotes
+                task={task as Task}
+                worksheetId={worksheetId}
+                updateTask={updateTask!}
+                format="overlay"
+              />
+            </div>
+          )}
           {index + 1}
         </TableCell>
         <TableCell>
           <p className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}>
-            <span className="inline-flex items-center gap-2">
-              {task.name}
-              {variant === "template" && task.templateNotes && (
-                <Popover>
-                  <PopoverTrigger>
-                    <MessageSquareDashedIcon className="size-4 text-muted-foreground" />
-                  </PopoverTrigger>
-                  <PopoverContent>
-                    <p className="text-sm text-muted-foreground">
-                      Notatka - widoczna do momentu utworzenie próby z szablonu:
-                    </p>
-                    <p className="text-sm">{task.templateNotes}</p>
-                  </PopoverContent>
-                </Popover>
-              )}
-            </span>
+            {task.name}
           </p>
           {task.description && (
             <p className="text-sm text-muted-foreground text-wrap">
@@ -133,31 +129,76 @@ export function TaskTableRow({
           </TableCell>
         )}
       </TableRow>
-      <DrawerContent>
+
+      <DrawerContent
+        className="transition-all duration-300 ease-in-out overflow-hidden"
+        style={{
+          height: "auto",
+          maxHeight: "80vh",
+        }}
+      >
         <DrawerHeader>
           <DrawerTitle>{task.name}</DrawerTitle>
           <DrawerDescription className="max-h-80 overflow-y-auto text-wrap">
             {task.description}
           </DrawerDescription>
         </DrawerHeader>
-        <div className="flex flex-col items-center justify-between px-4 gap-4">
+        <motion.div
+          className="flex flex-col items-center justify-between px-4 gap-4 pb-4"
+          layout
+          transition={{
+            duration: 0.35,
+            ease: [0.4, 0.0, 0.2, 1],
+            when: "beforeChildren",
+          }}
+        >
           {variant !== "template" && (
-            <TaskStatusIndicator task={task} format="badges" tooltip={false} />
+            <motion.div
+              layout
+              className="w-full space-y-4"
+              transition={{
+                duration: 0.35,
+                ease: [0.4, 0.0, 0.2, 1],
+              }}
+            >
+              <TaskStatusIndicator
+                task={task}
+                format="badges"
+                tooltip={false}
+              />
+              {["managed", "review", "archived"].includes(variant) && (
+                <TaskNotes
+                  task={task}
+                  worksheetId={worksheetId}
+                  updateTask={updateTask!}
+                  format="mobile"
+                  className="w-full"
+                />
+              )}
+            </motion.div>
           )}
           {(variant === "managed" ||
             variant === "user" ||
             variant === "review") && (
-            <TaskActions
-              task={task}
-              variant={variant}
-              worksheetId={worksheetId}
-              updateTask={updateTask!}
-              format="button"
-              closeDrawer={() => setIsOpen(false)}
-              currentUser={currentUser}
-            />
+            <motion.div
+              layout
+              transition={{
+                duration: 0.35,
+                ease: [0.4, 0.0, 0.2, 1],
+              }}
+            >
+              <TaskActions
+                task={task}
+                variant={variant}
+                worksheetId={worksheetId}
+                updateTask={updateTask!}
+                format="button"
+                closeDrawer={() => setIsOpen(false)}
+                currentUser={currentUser}
+              />
+            </motion.div>
           )}
-        </div>
+        </motion.div>
         <DrawerFooter>
           <DrawerClose asChild>
             <Button variant="outline">Zamknij</Button>

@@ -57,7 +57,9 @@ export function TaskTable({
           <TableHead className="w-16 hidden sm:table-cell">Status</TableHead>
         )}
         <TableHead className="sm:hidden"></TableHead>
-        {(variant === "managed" || variant === "user") && (
+        {(variant === "managed" ||
+          variant === "user" ||
+          variant === "review") && (
           <TableHead className="w-16 hidden sm:table-cell">Akcje</TableHead>
         )}
       </TableRow>
@@ -95,7 +97,10 @@ export function TaskTable({
       })}
       {tasks.length === 0 && (
         <TableRow>
-          <TableCell colSpan={4} className="text-center">
+          <TableCell
+            colSpan={variant === "template" ? 2 : 4}
+            className="text-center"
+          >
             Ta próba nie ma jeszcze zadań.
           </TableCell>
         </TableRow>
@@ -112,7 +117,7 @@ export function TaskTable({
 
   if (!hasBothCategories) {
     return (
-      <Table>
+      <Table containerClassName="sm:overflow-x-visible">
         {renderTableHeader()}
         {renderTaskList(worksheet.tasks)}
         {variant !== "archived" && variant !== "template" && (
@@ -135,7 +140,7 @@ export function TaskTable({
       {generalTasks.length > 0 && (
         <div>
           <h3 className="font-medium text-lg">Zadania ogólne</h3>
-          <Table>
+          <Table containerClassName="sm:overflow-x-visible">
             {renderTableHeader()}
             {renderTaskList(generalTasks)}
           </Table>
@@ -145,7 +150,7 @@ export function TaskTable({
       {individualTasks.length > 0 && (
         <div>
           <h3 className="font-medium text-lg">Zadania indywidualne</h3>
-          <Table>
+          <Table containerClassName="sm:overflow-x-visible">
             {renderTableHeader()}
             {renderTaskList(individualTasks)}
           </Table>

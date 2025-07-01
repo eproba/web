@@ -49,6 +49,12 @@ export function WorksheetList({
     );
   }
 
+  function updateWorksheet(worksheet: Worksheet) {
+    setWorksheets((prevWorksheets) =>
+      prevWorksheets.map((w) => (w.id === worksheet.id ? worksheet : w)),
+    );
+  }
+
   function deleteWorksheet(worksheetId: string) {
     setWorksheets((prevWorksheets) =>
       prevWorksheets.filter((w) => w.id !== worksheetId),
@@ -153,6 +159,7 @@ export function WorksheetList({
               worksheet={worksheet}
               variant={variant}
               updateTask={updateTask}
+              updateWorksheet={updateWorksheet}
               deleteWorksheet={() => deleteWorksheet(worksheet.id)}
               currentUser={currentUser}
             />
