@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "react-toastify";
@@ -144,6 +144,7 @@ export function TaskNotes({
     setIsFirstRender(false);
     if (format === "overlay" && !task.notes) {
       setIsPopoverOpen(false);
+      setIsFirstRender(true);
     }
   };
 
@@ -361,14 +362,14 @@ export function TaskNotes({
           <StickyNoteIcon className="size-4" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="start" side="right">
+      <PopoverContent className="w-80 p-0" align="start" side="bottom">
         <AnimatePresence>
           {!isEditing ? (
             <motion.div
               key="display-note"
               initial={{
-                opacity: isFirstRender ? 1 : 0,
-                height: isFirstRender ? "auto" : 0,
+                opacity: isFirstRender && isPopoverOpen ? 1 : 0,
+                height: isFirstRender && isPopoverOpen ? "auto" : 0,
               }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}
@@ -446,8 +447,8 @@ export function TaskNotes({
             <motion.div
               key="edit-note"
               initial={{
-                opacity: isFirstRender ? 1 : 0,
-                height: isFirstRender ? "auto" : 0,
+                opacity: isFirstRender && isPopoverOpen ? 1 : 0,
+                height: isFirstRender && isPopoverOpen ? "auto" : 0,
               }}
               animate={{ opacity: 1, height: "auto" }}
               exit={{ opacity: 0, height: 0 }}

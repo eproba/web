@@ -141,7 +141,10 @@ export function WorksheetNotesDialog({
   const handleCancelEditing = () => {
     setEditValue(worksheet.notes || "");
     setIsEditing(false);
-    setIsFirstRender(false);
+    setIsFirstRender(!worksheet.notes);
+    if (!worksheet.notes) {
+      setIsOpen(false);
+    }
   };
 
   const handleOpenChange = (open: boolean) => {
@@ -162,8 +165,8 @@ export function WorksheetNotesDialog({
         <motion.div
           key="display-note"
           initial={{
-            opacity: isFirstRender ? 1 : 0,
-            height: isFirstRender ? "auto" : 0,
+            opacity: isFirstRender && isOpen ? 1 : 0,
+            height: isFirstRender && isOpen ? "auto" : 0,
           }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
@@ -241,8 +244,8 @@ export function WorksheetNotesDialog({
         <motion.div
           key="edit-note"
           initial={{
-            opacity: isFirstRender ? 1 : 0,
-            height: isFirstRender ? "auto" : 0,
+            opacity: isFirstRender && isOpen ? 1 : 0,
+            height: isFirstRender && isOpen ? "auto" : 0,
           }}
           animate={{ opacity: 1, height: "auto" }}
           exit={{ opacity: 0, height: 0 }}
@@ -326,7 +329,7 @@ export function WorksheetNotesDialog({
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="start" side="right">
+      <PopoverContent className="w-80 p-0" align="center" side="bottom">
         {renderNoteContent()}
       </PopoverContent>
     </Popover>
