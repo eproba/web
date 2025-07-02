@@ -5,9 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { FootprintsIcon } from "lucide-react";
 import Link from "next/link";
+import { ErrorPageParam, SignInPageErrorParam } from "@auth/core/types";
 
 interface LoginRequiredPageProps {
-  searchParams: Promise<{ returnUrl?: string }>;
+  searchParams: Promise<{
+    returnUrl?: string;
+    error?: ErrorPageParam | SignInPageErrorParam;
+  }>;
 }
 
 export default async function LoginRequiredPage({
@@ -23,7 +27,7 @@ export default async function LoginRequiredPage({
 }
 
 async function LoginRequiredContent({ searchParams }: LoginRequiredPageProps) {
-  const { returnUrl } = await searchParams;
+  const { returnUrl, error } = await searchParams;
   const session = await auth();
 
   if (session?.user) {
@@ -58,5 +62,5 @@ async function LoginRequiredContent({ searchParams }: LoginRequiredPageProps) {
     );
   }
 
-  return <LoginRequired returnUrl={returnUrl} />;
+  return <LoginRequired returnUrl={returnUrl} error={error} />;
 }
