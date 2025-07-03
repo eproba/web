@@ -24,7 +24,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorization: {
         url: `${process.env.NEXT_PUBLIC_SERVER_URL}/oauth2/authorize`,
         params: {
-          scope: "openid profile email teams worksheets wiki",
+          scope: "openid profile email teams worksheets",
         },
       },
       async profile(profile) {

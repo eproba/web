@@ -119,9 +119,7 @@ export const WorksheetEditor = ({
   const [showDescriptions, setShowDescriptions] = useState(false);
   const [userToggledDescriptions, setUserToggledDescriptions] = useState(false);
   const [enableCategories, setEnableCategories] = useState(
-    initialData?.tasks
-      ? initialData.tasks.some((task: Task) => task.category === "individual")
-      : true,
+    currentUser.organization === 0,
   );
 
   // Watch tasks for changes to auto-enable descriptions

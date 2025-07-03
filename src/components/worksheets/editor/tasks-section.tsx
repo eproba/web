@@ -67,7 +67,7 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
         {/* Individual Tasks (only when categories enabled) */}
         {enableCategories && (
           <TaskList
-            title="Zadania indywidualne"
+            title="Próby indywidualne"
             tasks={individualTasks}
             category="individual"
             showDescriptions={showDescriptions}

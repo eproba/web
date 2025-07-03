@@ -25,6 +25,7 @@ import {
 import { User } from "@/types/user";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { fetchCurrentUser } from "@/lib/server-api";
+import { Organization } from "@/types/team";
 
 interface NavbarProps {
   messages?: Array<{
@@ -91,9 +92,9 @@ const MAIN_NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    title: "Wiki",
-    href: "/wiki",
-    access: () => true,
+    title: "Regulamin stopni",
+    href: "/regulations/male",
+    access: (user) => !!user && user.organization === Organization.Male,
   },
 ];
 

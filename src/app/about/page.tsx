@@ -155,23 +155,6 @@ export default async function AboutPage() {
                 </p>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-6">
-              <AccordionTrigger>Co to jest &quot;Wiki&quot;?</AccordionTrigger>
-              <AccordionContent>
-                <p>
-                  Wiki to miejsce, gdzie możesz znaleźć informacje umieszczone
-                  przez twoją kadrę lub organizację. Może zawierać informacje o
-                  drużynie, regulaminy czy pomocne materiały. Każda drużyna może
-                  mieć swoją własną Wiki, która jest dostępna dla wszystkich
-                  członków drużyny.
-                </p>
-                <p>
-                  Dodatkowo, będą się pojawiać tam informacje i nowości
-                  dotyczące Epróby, które omogą Ci lepiej zrozumieć, jak
-                  korzystać z aplikacji i jakie funkcje oferuje.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
           </Accordion>
         </CardContent>
       </Card>
