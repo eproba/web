@@ -1,3 +1,5 @@
+"use client";
+
 import { Task, Worksheet } from "@/types/worksheet";
 import { TaskTable } from "@/components/worksheets/task-table";
 import { WorksheetActions } from "@/components/worksheets/worksheet-actions";
