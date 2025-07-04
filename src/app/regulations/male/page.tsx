@@ -9,122 +9,440 @@ import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
+  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Award, BookOpen, Shield, Star, Target, Users } from "lucide-react";
+import {
+  AwardIcon,
+  BookOpenIcon,
+  BrainIcon,
+  CheckCircleIcon,
+  DownloadIcon,
+  GlobeIcon,
+  HandIcon,
+  HeartIcon,
+  HomeIcon,
+  LeafIcon,
+  PaletteIcon,
+  ShieldIcon,
+  StarIcon,
+  TargetIcon,
+  UsersIcon,
+} from "lucide-react";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import { capitalizeFirstLetter } from "@/lib/utils";
+import { BadgePopover } from "@/components/badge-popover";
 
-export default function MaleRegulationsPage() {
+export interface BadgeData {
+  id: string;
+  name: string;
+  stars: number;
+  requirements: string[];
+  rawBasedOn: string[][];
+  basedOn: string[];
+}
+
+interface BadgeSpec {
+  name: string;
+  comment: string;
+  keywords: string[];
+  badges: BadgeData[];
+  badgeIcons: Record<string, string>;
+}
+
+interface BadgeCategory {
+  id: string;
+  ordinal: number;
+  category: number;
+  spec: BadgeSpec;
+}
+
+interface BadgeApiResponse {
+  badges: BadgeCategory[];
+  categories: {
+    id: number;
+    name: string;
+    ordinal: number;
+  }[];
+}
+
+export default async function MaleRegulationsPage() {
+  // const { templates, error: templatesError } = await fetchTemplates();
+  // if (templatesError) {
+  //   return templatesError;
+  // }
+  //
+  // const organizationTemplates = templates!.filter(
+  //   (worksheet) => worksheet.organization !== null,
+  // );
+
+  const badgesResponse = await fetch("https://stamps.zhr.pl/api/badges");
+
+  let allBadges: BadgeData[] = [];
+  const badgeMap = new Map<string, BadgeData>();
+  let badgeIcons: Record<string, string> = {};
+
+  if (badgesResponse.ok) {
+    try {
+      const badgesData: BadgeApiResponse = await badgesResponse.json();
+
+      // Extract all badges from the API response
+      allBadges = badgesData.badges.flatMap((category) => category.spec.badges);
+
+      // Create a map of badge IDs to badge data for easy lookup
+      allBadges.forEach((badge) => {
+        badgeMap.set(badge.id, badge);
+      });
+
+      // Get badge icons
+      badgeIcons = badgesData.badges.reduce(
+        (acc, category) => {
+          return { ...acc, ...category.spec.badgeIcons };
+        },
+        {} as Record<string, string>,
+      );
+    } catch (error) {
+      console.warn("Failed to parse badges data:", error);
+    }
+  } else {
+    console.warn("Failed to fetch badges data. Status:", badgesResponse.status);
+  }
+
   const ranks = [
     {
       name: "młodzik",
       shortName: "mł.",
       age: "11-13 lat",
       badge: "Krzyż harcerski",
-      variant: "secondary" as const,
+      description:
+        "Młodzik wie, co to znaczy być harcerzem, i chce nim zostać. Potrafi zadbać o siebie. Jest dzielny. Pomaga innym, szczególnie słabszym. Jest dobrym kolegą, synem i uczniem. Odróżnia dobro od zła i stara się być lepszy, niż jest.",
+      requirements: [
+        "Ma wiedzę potrzebną do harcerskich działań:",
+        "• Zna Prawo i Przyrzeczenie Harcerskie",
+        "• Wie, kim byli Robert Baden-Powell i Andrzej Małkowski",
+        "• Potrafi zaśpiewać Hymn Harcerski, Modlitwę Harcerską i pieśni obrzędowe śpiewane w drużynie",
+        "• Rozpoznaje oznaczenia stopni harcerskich i instruktorskich",
+        "• Rozpoznaje oznaczenia funkcji w drużynie i hufcu (ew. szczepie)",
+        "Zdobył wymagane sprawności",
+        "Zdobył wybrane przez siebie sprawności dodatkowe o sumie czterech gwiazdek",
+      ],
+      badges: [
+        {
+          id: "b9a086d0-a63a-11e9-978c-e1f8b14ef979",
+          name: "Płomień",
+          stars: 1,
+        },
+        {
+          id: "9299a8b0-a283-11e9-a233-a740fc6f829d",
+          name: "Obserwator",
+          stars: 1,
+        },
+        {
+          id: "48cb9aa0-9e86-11e9-9580-59e2b0953aa1",
+          name: "Higienista",
+          stars: 1,
+        },
+        {
+          id: "d5af56a0-0808-11ea-942d-ff5228a2c1bf",
+          name: "Mistrz musztry",
+          stars: 1,
+        },
+        {
+          id: "db6e34d0-9788-11e9-8a39-0d34c0c1cd2b",
+          name: "Łącznik",
+          stars: 1,
+        },
+        {
+          id: "88ba1d00-07f2-11ea-9ee4-79526a865591",
+          name: "Biwakowicz",
+          stars: 1,
+        },
+        {
+          id: "626ad440-a281-11e9-a95a-458191ecc476",
+          name: "Sobieradek obozowy",
+          stars: 1,
+        },
+        {
+          id: "57cd5080-f4fc-11e9-9431-9f06e19584fa",
+          name: "Bystre oko",
+          stars: 1,
+        },
+        {
+          id: "fec806b0-a807-11e9-95ba-03b2681d012f",
+          name: "Przyrodnik",
+          stars: 1,
+        },
+        {
+          id: "67aa8320-a63b-11e9-8fd6-93ee8be88c81",
+          name: "Chatka Robinsona",
+          stars: 1,
+        },
+        {
+          id: "abb5ff40-fe79-11e9-a44d-295a22c78dab",
+          name: "Kuchcik",
+          stars: 1,
+        },
+        {
+          id: "08156b20-02e1-11ea-9362-8f348ecb4b2c",
+          name: "Rowerzysta",
+          stars: 1,
+        },
+      ],
+      individualTasksCount: "1-3",
+      expectedTime: "do 2 miesięcy",
     },
     {
       name: "wywiadowca",
       shortName: "wyw.",
       age: "12-14 lat",
       badge: "srebrna lilijka na Krzyżu",
-      variant: "outline" as const,
+      description:
+        "Wywiadowca zasługuje na miano harcerskiego wygi. Doskonali się w technikach harcerskich. Potrafi zadbać o siebie, a także pomaga młodszym w przeżywaniu harcerskiej przygody, nawet podczas złej pogody. Można mu powierzyć samodzielne obowiązki w drużynie. Harcerzem jest nie tylko wtedy, kiedy ma na sobie mundur. Wypełnia powinności, jakie stawia przed nim Prawo Harcerskie. Zna swoje wady i zalety, próbuje pracować nad sobą.",
+      requirements: [
+        "Ma wiedzę potrzebną do harcerskich działań:",
+        "• Rozpoznaje inne drużyny działające w jego środowisku harcerskim",
+        "• Wie, kim był bł. ks. phm. S. W. Frelichowski i zna kilka innych postaci z historii ruchu harcerskiego",
+        "• Zna kilka najważniejszych faktów z historii drużyny i harcerstwa",
+        "• Zna kilka piosenek śpiewanych w drużynie",
+        "• Zna strukturę Organizacji Harcerzy ZHR i nazwiska swoich przełożonych do poziomu hufcowego",
+        "• Rozpoznaje oznaczenia funkcji do poziomu chorągwi włącznie",
+        "Zdobył wymagane sprawności",
+        "Zdobył wybrane przez siebie sprawności dodatkowe o sumie pięciu gwiazdek",
+      ],
+      badges: [
+        {
+          id: "e84068c0-a63a-11e9-978c-e1f8b14ef979",
+          name: "Strażnik ognia",
+          stars: 2,
+        },
+        {
+          id: "a54d68c0-a283-11e9-a233-a740fc6f829d",
+          name: "Terenoznawca",
+          stars: 2,
+        },
+        {
+          id: "636991a0-9e86-11e9-9580-59e2b0953aa1",
+          name: "Sanitariusz",
+          stars: 2,
+        },
+        {
+          id: "8701cf60-9788-11e9-8a39-0d34c0c1cd2b",
+          name: "Sygnalista",
+          stars: 2,
+        },
+        {
+          id: "9b0ecd20-07f2-11ea-9ee4-79526a865591",
+          name: "Traper",
+          stars: 2,
+        },
+        {
+          id: "4d309060-a281-11e9-a95a-458191ecc476",
+          name: "Technik obozowy",
+          stars: 2,
+        },
+        {
+          id: "a9e76070-f35a-11e9-93ff-c9dbb0aa0609",
+          name: "Wartownik",
+          stars: 2,
+        },
+        {
+          id: "934e7800-f4fc-11e9-9431-9f06e19584fa",
+          name: "Tropiciel zwierzyny",
+          stars: 2,
+        },
+        {
+          id: "06185220-a809-11e9-95ba-03b2681d012f",
+          name: "Botanik",
+          stars: 2,
+        },
+        {
+          id: "21691950-fe77-11e9-9701-1983a55cc876",
+          name: "Zgodny",
+          stars: 1,
+        },
+        {
+          id: "97462b40-f11b-11e9-ba1c-bdd69a7a94b9",
+          name: "Kamyk",
+          stars: 1,
+        },
+      ],
+      individualTasksCount: "2-4",
+      expectedTime: "do 4 miesięcy",
     },
     {
       name: "ćwik",
       shortName: "ćw.",
       age: "13-16 lat",
       badge: "złota lilijka na Krzyżu",
-      variant: "default" as const,
+      description:
+        "Ćwik daje sobie radę w każdej sytuacji. To mistrz w technikach harcerskich. Jest pogodny i zaradny, nie załamują go trudności. Odpowiedzialnie wywiązuje się z przyjętych na siebie obowiązków. Jest godny zaufania. Potrafi kierować i zgodnie współpracować w zespole. Jest gotów na każde wezwanie do służby. Daje dobry przykład młodszym. Prawo Harcerskie jest dla niego drogowskazem w każdej sferze życia. Osiąga widoczne efekty w pracy nad sobą.",
+      requirements: [
+        "Ma wiedzę potrzebną do harcerskich działań:",
+        "• Potrafi wyjaśnić, czym ZHR różni się od innych organizacji harcerskich w Polsce",
+        "• Potrafi scharakteryzować wybrane okresy z historii harcerstwa (np. do 1918 r., XX-lecie międzywojenne, druga wojna światowa, PRL, po 1989 r.)",
+        "• Zna strukturę całego ZHR i nazwiska Komendanta Chorągwi, Naczelnika Harcerzy oraz Przewodniczącej/go",
+        "• Rozpoznaje oznaczenia funkcji we władzach naczelnych ZHR",
+        "Zdobył wymagane sprawności",
+        "Zdobył trzy sprawności (***) z działu obozownictwo i przyroda (każdą z innej ścieżki), wykazując mistrzostwo w wybranych technikach harcerskich",
+        "Zdobył wybrane przez siebie sprawności dodatkowe o sumie sześciu gwiazdek",
+      ],
+      badges: [
+        {
+          id: "e42e0570-fe79-11e9-a44d-295a22c78dab",
+          name: "Kucharz",
+          stars: 2,
+        },
+        {
+          id: "c280fd10-02de-11ea-9362-8f348ecb4b2c",
+          name: "Włóczęga",
+          stars: 2,
+        },
+        {
+          id: "26355cf0-02e1-11ea-9362-8f348ecb4b2c",
+          name: "Cyklista",
+          stars: 2,
+        },
+        {
+          id: "74e48f10-fe77-11e9-9701-1983a55cc876",
+          name: "Rozjemca",
+          stars: 2,
+        },
+        {
+          id: "b8fff790-f119-11e9-ba1c-bdd69a7a94b9",
+          name: "Głaz",
+          stars: 2,
+        },
+      ],
+      individualTasksCount: "3-5",
+      expectedTime: "do 6 miesięcy",
     },
     {
       name: "harcerz orli",
       shortName: "HO",
       age: "15-18 lat",
       badge: "złota lilijka i krąg na Krzyżu",
-      variant: "destructive" as const,
+      description:
+        "Harcerz orli mierzy wysoko i wyrasta ponad przeciętność - orla jest jego lotów potęga! Poszukuje i sprawdza, odważnie próbuje nowych rzeczy. Próbuje na nowo, w dojrzały sposób, zrozumieć swoje powinności wynikające z Prawa Harcerskiego, Dekalogu i Przykazania Miłości. Stara się swoim przykładem oddziaływać na otoczenie. Rozwija kompetencje przydatne w aktywnym życiu społecznym i buduje własne opinie o otaczającym go świecie. Jest wrażliwy, potrafi stanąć po stronie słabszego i pokrzywdzonego. Ma własne pole służby, którą pełni z oddaniem, systematycznie i rzetelnie. Wprawia się w planowaniu swojego rozwoju i konsekwentnie zmierza do postawionych sobie celów.",
+      requirements: [
+        "Spełnił wymagania z kategorii:",
+        "Wędrowanie (2 wybrane wymagania):",
+        "• Ma umiejętności niezbędne do wzięcia udziału w wybranej specjalistycznej formie kilkudniowej wędrówki (np. rowerowej, kajakowej, górskiej, wspinaczkowej, żeglarskiej, narciarskiej)",
+        "• Umie zorganizować sobie nocleg w bardzo trudnych warunkach (np. jama śnieżna, legowisko na drzewie, szałas)",
+        "• Umie zaplanować i zorganizować jeden z elementów kilkudniowej wędrówki np. noclegi, wyżywienie, trasa",
+        "Praca nad sobą (2 wybrane wymagania):",
+        "• Potrafi stosować wybraną formę zarządzania czasem",
+        "• Umie skutecznie wypracować w sobie pozytywny nawyk",
+        "• Umie w sposób umiarkowany i rozsądny korzystać z technologii (np. urządzeń mobilnych, internetu)",
+        "Miejsce w społeczeństwie (2 wybrane wymagania):",
+        "• Potrafi wykorzystać w praktyce znajomość języka obcego",
+        "• Zna założenia programowe największych partii politycznych w kraju. Potrafi omówić główne ugrupowania i postacie w samorządzie lokalnym (gmina, powiat) i regionalnym (województwo)",
+        "• Umie brać udział w dyskusji lub debacie, unikając błędów w argumentacji oraz z szacunkiem odnosząc się do rozmówców (np. stosuje założenia komunikacji bez przemocy)",
+        "• Umie wygłosić krótkie (3–5 minut) przemówienie popierające jakąś tezę. Umie znaleźć argumenty za tezą, z którą się nie zgadza",
+        "• Potrafi wykonać pracę budowlaną lub remontową z użyciem elektronarzędzi (np. wymiana syfonu, układanie płytek, szpachlowanie, stolarka ogrodowa, ścianka z płyt g-k, skrzynia)",
+        "• Potrafi zarobić i zaoszczędzić pieniądze na wybrany przez siebie cel (np. obóz, rower, sprzęt elektroniczny)",
+        "• Umie ocenić wiarygodność informacji medialnej oraz dotrzeć do pierwotnego źródła danej informacji. Zna kilka najczęściej popełnianych błędów poznawczych i popularnych technik manipulacyjnych",
+        "Służba (co najmniej 1 zadanie):",
+        "• Dotrzymanie zobowiązania do regularnej służby - zgodnie z ustaleniami z drużynowym lub kapitułą stopnia",
+        "Wyczyn:",
+        "• Zaproponowany przez samego zdobywającego i przeprowadzany zgodnie ze zwyczajem przyjętym w drużynie lub kapitule",
+      ],
+      badges: [],
+      individualTasksCount: "4-6",
+      expectedTime: "do 10 miesięcy",
     },
     {
       name: "harcerz Rzeczypospolitej",
       shortName: "HR",
       age: "powyżej 17 lat",
       badge: "złota lilijka, krąg i wieniec na Krzyżu",
-      variant: "destructive" as const,
+      description:
+        "Harcerz Rzeczypospolitej wymaga od siebie nawet wtedy, gdy inni od niego nie wymagają. Wstępuje w dorosłe życie jako świadomy i aktywny obywatel. W swoich wyborach kieruje się wiarą i chrześcijańskim systemem wartości. Ma marzenia i je realizuje. Wyróżniającą się postawą i działaniem krzewi harcerskie ideały. Jego życie przepełnione jest miłością do Polski, pożyteczną służbą Ojczyźnie i bliźnim oraz harmonijnym, wszechstronnym rozwojem własnej osoby. Wytrwale podąża obraną drogą.",
+      requirements: [
+        "Brak. Zdobywanie harcerza Rzeczypospolitej opiera się w pełni o pracę indywidualną.",
+      ],
+      badges: [],
+      individualTasksCount: "5-8",
+      expectedTime: "do 12 miesięcy",
     },
   ];
 
-  const profiles = [
-    {
-      rank: "MŁODZIK",
-      description:
-        "Młodzik wie, co to znaczy być harcerzem, i chce nim zostać. Potrafi zadbać o siebie. Jest dzielny. Pomaga innym, szczególnie słabszym. Jest dobrym kolegą, synem i uczniem. Odróżnia dobro od zła i stara się być lepszy, niż jest.",
-    },
-    {
-      rank: "WYWIADOWCA",
-      description:
-        "Wywiadowca zasługuje na miano harcerskiego wygi. Doskonali się w technikach harcerskich. Potrafi zadbać o siebie, a także pomaga młodszym w przeżywaniu harcerskiej przygody, nawet podczas złej pogody. Można mu powierzyć samodzielne obowiązki w drużynie. Harcerzem jest nie tylko wtedy, kiedy ma na sobie mundur. Wypełnia powinności, jakie stawia przed nim Prawo Harcerskie. Zna swoje wady i zalety, próbuje pracować nad sobą.",
-    },
-    {
-      rank: "ĆWIK",
-      description:
-        "Ćwik daje sobie radę w każdej sytuacji. To mistrz w technikach harcerskich. Jest pogodny i zaradny, nie załamują go trudności. Odpowiedzialnie wywiązuje się z przyjętych na siebie obowiązków. Jest godny zaufania. Potrafi kierować i zgodnie współpracować w zespole. Jest gotów na każde wezwanie do służby. Daje dobry przykład młodszym. Prawo Harcerskie jest dla niego drogowskazem w każdej sferze życia. Osiąga widoczne efekty w pracy nad sobą.",
-    },
-    {
-      rank: "HARCERZ ORLI",
-      description:
-        "Harcerz orli mierzy wysoko i wyrasta ponad przeciętność - orla jest jego lotów potęga! Poszukuje i sprawdza, odważnie próbuje nowych rzeczy. Próbuje na nowo, w dojrzały sposób, zrozumieć swoje powinności wynikające z Prawa Harcerskiego, Dekalogu i Przykazania Miłości. Stara się swoim przykładem oddziaływać na otoczenie. Rozwija kompetencje przydatne w aktywnym życiu społecznym i buduje własne opinie o otaczającym go świecie. Jest wrażliwy, potrafi stanąć po stronie słabszego i pokrzywdzonego. Ma własne pole służby, którą pełni z oddaniem, systematycznie i rzetelnie. Wprawia się w planowaniu swojego rozwoju i konsekwentnie zmierza do postawionych sobie celów.",
-    },
-    {
-      rank: "HARCERZ RZECZYPOSPOLITEJ",
-      description:
-        "Harcerz Rzeczypospolitej wymaga od siebie nawet wtedy, gdy inni od niego nie wymagają. Wstępuje w dorosłe życie jako świadomy i aktywny obywatel. W swoich wyborach kieruje się wiarą i chrześcijańskim systemem wartości. Ma marzenia i je realizuje. Wyróżniającą się postawą i działaniem krzewi harcerskie ideały. Jego życie przepełnione jest miłością do Polski, pożyteczną służbą Ojczyźnie i bliźnim oraz harmonijnym, wszechstronnym rozwojem własnej osoby. Wytrwale podąża obraną drogą.",
-    },
+  const individualTaskAreas = [
+    { name: "Bóg, wiara i duchowość", icon: HeartIcon },
+    { name: "Siła charakteru", icon: ShieldIcon },
+    { name: "Rozum i intelekt", icon: BrainIcon },
+    { name: "Zdrowie i sprawność fizyczna", icon: StarIcon },
+    { name: "Małe ojczyzny, Polska i świat", icon: GlobeIcon },
+    { name: "Rodzina i wybór życiowej drogi", icon: HomeIcon },
+    { name: "Służba", icon: HandIcon },
+    { name: "Pasje i umiejętności", icon: TargetIcon },
+    { name: "Kultura i komunikacja", icon: PaletteIcon },
+    { name: "Przyroda i puszczaństwo", icon: LeafIcon },
   ];
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       {/* Header Section */}
-      <div className="text-center mb-12">
+      <div className="text-center mb-6">
         <div className="mb-6">
-          <img
-            src="https://static.djangoproject.com/img/fundraising-heart.cd6bb84ffd33.svg"
-            alt="Herb harcerski"
+          <Image
+            src="/rank-regulations/male/logo.svg"
+            alt="Logo regulaminu stopni harcerzy"
             width={218}
             height={219}
-            className="mx-auto rounded-lg shadow-md"
+            className="mx-auto rounded-full dark:invert"
           />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           STOPNIE HARCERZY
         </h1>
-        <p className="text-xl text-gray-600 dark:text-gray-400">
+        <p className="text-xl text-muted-foreground mb-4">
           Projekt nowego regulaminu stopni harcerzy
         </p>
+        <Button
+          variant="outline"
+          size="lg"
+          className="inline-flex items-center gap-2"
+          asChild
+        >
+          <a
+            href="/rank-regulations/male/regulations.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <DownloadIcon className="w-4 h-4" />
+            Pobierz regulamin PDF
+          </a>
+        </Button>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-5">
+        <TabsList className="flex flex-wrap justify-between w-full gap-2 h-auto">
           <TabsTrigger value="overview" className="flex items-center gap-2">
-            <Award className="w-4 h-4" />
+            <AwardIcon className="w-4 h-4" />
             Przegląd
           </TabsTrigger>
-          <TabsTrigger value="profiles" className="flex items-center gap-2">
-            <Users className="w-4 h-4" />
+          <TabsTrigger value="ranks" className="flex items-center gap-2">
+            <UsersIcon className="w-4 h-4" />
             Sylwetki
           </TabsTrigger>
-          <TabsTrigger value="requirements" className="flex items-center gap-2">
-            <Target className="w-4 h-4" />
-            Wymagania
+          <TabsTrigger
+            value="individual-tasks"
+            className="flex items-center gap-2"
+          >
+            <CheckCircleIcon className="w-4 h-4" />
+            Zadania indywidualne
           </TabsTrigger>
           <TabsTrigger value="process" className="flex items-center gap-2">
-            <Shield className="w-4 h-4" />
+            <ShieldIcon className="w-4 h-4" />
             Proces
           </TabsTrigger>
           <TabsTrigger value="regulations" className="flex items-center gap-2">
-            <BookOpen className="w-4 h-4" />
+            <BookOpenIcon className="w-4 h-4" />
             Regulacje
           </TabsTrigger>
         </TabsList>
@@ -133,16 +451,19 @@ export default function MaleRegulationsPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Award className="w-5 h-5" />
+                <AwardIcon className="w-5 h-5" />
                 Stopnie harcerskie
               </CardTitle>
               <CardDescription>
                 Stopień harcerski stanowi potwierdzenie rzetelnej pracy nad sobą
-                oraz wyrobienia harcerskiego.
+                oraz wyrobienia harcerskiego. Kierunki pracy nad sobą są
+                określone w sylwetkach stopni, a poziom wyrobienia harcerskiego
+                w wymaganiach ogólnych. Sylwetki i wymagania na stopnie
+                wprowadza rozkazem Naczelnik Harcerzy.
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="rounded-md border">
+              <div>
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -157,9 +478,7 @@ export default function MaleRegulationsPage() {
                         <TableCell className="font-medium">
                           <div className="flex items-center gap-2">
                             {rank.name}
-                            <Badge variant={rank.variant}>
-                              {rank.shortName}
-                            </Badge>
+                            <Badge variant="secondary">{rank.shortName}</Badge>
                           </div>
                         </TableCell>
                         <TableCell>{rank.age}</TableCell>
@@ -167,7 +486,76 @@ export default function MaleRegulationsPage() {
                       </TableRow>
                     ))}
                   </TableBody>
+                  <TableCaption>
+                    Harcerz może zdobyć stopnie wymienione w tej tabeli
+                  </TableCaption>
                 </Table>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Wymagania ogólne</CardTitle>
+              <CardDescription>
+                Stopień jest przyznawany harcerzowi, który spełnia wszystkie
+                poniższe warunki
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <StarIcon className="w-6 h-6 sm:w-5 sm:h-5 text-yellow-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Praca nad sobą</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Wykazał się efektywną pracą nad sobą przybliżającą go do
+                      sylwetki stopnia, realizując zadania indywidualne
+                      zaakceptowane przez drużynowego
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <TargetIcon className="w-6 h-6 sm:w-5 sm:h-5 text-blue-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Wiedza i umiejętności</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Wykazał się wymaganą wiedzą i umiejętnościami oraz zdobył
+                      sprawności wymienione w wymaganiach ogólnych
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <AwardIcon className="w-6 h-6 sm:w-5 sm:h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Sprawności dodatkowe</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Zdobył sprawności wybrane przez siebie, inne niż wymagane,
+                      o łącznej liczbie gwiazdek określonej w załączniku
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <UsersIcon className="w-6 h-6 sm:w-5 sm:h-5 text-purple-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Aktywność</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Brał aktywny udział w życiu zastępu i drużyny w okresie
+                      zdobywania stopnia
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <ShieldIcon className="w-6 h-6 sm:w-5 sm:h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-medium">Próba końcowa</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Po spełnieniu warunków zaliczył próbę końcową wyznaczoną
+                      przez drużynowego (dotyczy stopni młodzika, wywiadowcy i
+                      ćwika)
+                    </p>
+                  </div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -180,21 +568,14 @@ export default function MaleRegulationsPage() {
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                    <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   </div>
                   <p className="text-sm">
-                    Kierunki pracy nad sobą określają sylwetki stopni, a poziom
-                    wyrobienia harcerskiego wymagania ogólne dla poszczególnych
-                    stopni.
-                  </p>
-                </div>
-                <div className="flex items-start gap-3">
-                  <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
-                    <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                  </div>
-                  <p className="text-sm">
-                    Oznaczenia stopni na mundurze mogą być dodatkowo oznaczone
-                    na bluzach mundurowych za pomocą naszywek.
+                    Oznaczenia stopni na mundurze wskazane są w tabeli powyżej.
+                    Stopnie mogą być dodatkowo oznaczone na bluzach mundurowych,
+                    mundurach polowych i okryciach wierzchnich za pomocą
+                    naszywek, których wzory i umiejscowienie określa rozkazem
+                    Naczelnik Harcerzy.
                   </p>
                 </div>
               </div>
@@ -202,228 +583,266 @@ export default function MaleRegulationsPage() {
           </Card>
         </TabsContent>
 
-        <TabsContent value="profiles" className="space-y-4 mt-6">
-          {profiles.map((profile, index) => (
-            <Card key={index}>
+        <TabsContent value="ranks" className="space-y-4 mt-6">
+          {ranks.map((rank, index) => (
+            <Card key={index} className="gap-2">
               <CardHeader>
-                <CardTitle className="text-lg">{profile.rank}</CardTitle>
+                <CardTitle className="text-lg">
+                  {capitalizeFirstLetter(rank.name)}
+                </CardTitle>
+                <CardDescription>{rank.description}</CardDescription>
+                <CardDescription className="text-xs">
+                  Sugerowany czas na wykonanie: {rank.expectedTime}
+                </CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm leading-relaxed">{profile.description}</p>
+              <CardContent className="space-y-4">
+                <div>
+                  <h4 className="font-medium mb-2">Wymagania ogólne:</h4>
+                  <ul className="text-sm space-y-1 ml-4">
+                    {rank.requirements.map((req, i) => (
+                      <li key={i}>{req}</li>
+                    ))}
+                  </ul>
+                </div>
+
+                {rank.badges.length > 0 && (
+                  <div className="mt-4">
+                    <h4 className="font-medium mb-2">Wymagane sprawności:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {rank.badges.map((rankBadge) => {
+                        const badgeData = badgeMap.get(rankBadge.id);
+                        if (!badgeData) return null;
+
+                        return (
+                          <BadgePopover
+                            key={rankBadge.id}
+                            badge={badgeData}
+                            imageUrl={`https://stamps.zhr.pl/img/form/${badgeIcons[rankBadge.id]}`}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+
+                <div className="mt-4">
+                  <h4 className="font-medium mb-2">Zadania indywidualne:</h4>
+                  <div className="flex items-center gap-2 text-sm">
+                    <span>
+                      Proponowana liczba zadań: {rank.individualTasksCount}
+                    </span>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           ))}
         </TabsContent>
 
-        <TabsContent value="requirements" className="space-y-6 mt-6">
+        <TabsContent value="individual-tasks" className="space-y-6 mt-6">
           <Card>
             <CardHeader>
-              <CardTitle>Wymagania ogólne</CardTitle>
+              <CardTitle>Zadania indywidualne</CardTitle>
               <CardDescription>
-                Stopień jest przyznawany harcerzowi, który spełnia wszystkie
-                poniższe warunki
+                Kluczowy element rozwoju harcerskiego w dążeniu do ideałów
+                wskazanych w Prawie Harcerskim
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Star className="w-5 h-5 text-yellow-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">Praca nad sobą</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Wykazał się efektywną pracą nad sobą przybliżającą go do
-                      sylwetki stopnia, realizując zadania indywidualne
-                      zaakceptowane przez drużynowego
-                    </p>
-                  </div>
+                <div className="border-l-4 border-green-500 pl-4">
+                  <h4 className="font-medium">Cel zadań</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Dążenie do ideałów wskazanych w Prawie Harcerskim poprzez
+                    kształtowanie postaw, cnót i cech charakteru, tworzenie
+                    pożytecznych nawyków, zgodnie z potrzebami i możliwościami
+                    harcerza.
+                  </p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Target className="w-5 h-5 text-blue-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">Wiedza i umiejętności</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Wykazał się wymaganą wiedzą i umiejętnościami oraz zdobył
-                      sprawności wymienione w wymaganiach ogólnych
-                    </p>
-                  </div>
+                <div className="border-l-4 border-blue-500 pl-4">
+                  <h4 className="font-medium">Proces wyznaczania</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Harcerz, z pomocą drużynowego lub opiekuna próby, dokonuje
+                    samooceny, wskazuje cele i techniki pracy nad sobą i
+                    wyznacza zadania indywidualne - zgodnie ze swoją wizją
+                    dalszego rozwoju. Liczba zadań powinna być dostosowana do
+                    zdobywanego stopnia oraz indywidualnych potrzeb i możliwości
+                    harcerza.
+                  </p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <Award className="w-5 h-5 text-green-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">Sprawności dodatkowe</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Zdobył sprawności wybrane przez siebie, inne niż wymagane,
-                      o łącznej liczbie gwiazdek określonej w załączniku
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Users className="w-5 h-5 text-purple-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">Aktywność</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Brał aktywny udział w życiu zastępu i drużyny w okresie
-                      zdobywania stopnia
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Shield className="w-5 h-5 text-red-500 mt-0.5" />
-                  <div>
-                    <h4 className="font-medium">Próba końcowa</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Po spełnieniu warunków zaliczył próbę końcową wyznaczoną
-                      przez drużynowego (dotyczy stopni młodzika, wywiadowcy i
-                      ćwika)
-                    </p>
-                  </div>
+                <div className="border-l-4 border-yellow-500 pl-4">
+                  <h4 className="font-medium">Elastyczność</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Istnieje możliwość zmiany zadania indywidualnego, jeśli
+                    przestało ono odpowiadać postawionym celom lub wizji
+                    dalszego rozwoju.
+                  </p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Młodzik</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <h4 className="font-medium mb-2">Wymagane sprawności:</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {[
-                      "Płomień*",
-                      "Obserwator*",
-                      "Higienista*",
-                      "Mistrz musztry*",
-                      "Łącznik*",
-                      "Biwakowicz*",
-                      "Sobieradek obozowy*",
-                      "Bystre oko*",
-                      "Przyrodnik*",
-                      "Chatka Robinsona*",
-                      "Kuchcik*",
-                      "Rowerzysta*",
-                    ].map((sprawnosc, i) => (
-                      <Badge key={i} variant="outline" className="text-xs">
-                        {sprawnosc}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-                <p className="text-sm">
-                  Sprawności dodatkowe: <Badge>4 gwiazdki</Badge>
-                </p>
-              </CardContent>
-            </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Obszary zadań indywidualnych</CardTitle>
+              <CardDescription>
+                Zadania indywidualne dotyczą następujących dziedzin rozwoju
+                osobowego
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4">
+                {individualTaskAreas.map((area, index) => {
+                  const IconComponent = area.icon;
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-start gap-3 p-3 border rounded-lg"
+                    >
+                      <IconComponent className="w-5 h-5 text-blue-500 mt-0.5" />
+                      <div>
+                        <h4 className="font-medium text-sm">{area.name}</h4>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
+          </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Wywiadowca</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <div>
-                  <h4 className="font-medium mb-2">Wymagane sprawności:</h4>
-                  <div className="flex flex-wrap gap-1">
-                    {[
-                      "Strażnik ognia**",
-                      "Terenoznawca**",
-                      "Sanitariusz**",
-                      "Sygnalista**",
-                      "Traper**",
-                      "Technik obozowy**",
-                      "Wartownik**",
-                      "Tropiciel zwierzyny**",
-                      "Botanik**",
-                      "Zgodny*",
-                      "Kamyk*",
-                    ].map((sprawnosc, i) => (
-                      <Badge key={i} variant="outline" className="text-xs">
-                        {sprawnosc}
-                      </Badge>
-                    ))}
-                  </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Zaliczanie zadań</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <CheckCircleIcon className="w-5 h-5 text-green-500 mt-0.5" />
+                  <p className="text-sm">
+                    Harcerz, który spełnił wymaganie lub zrealizował zadanie
+                    indywidualne zgłasza to drużynowemu, wyznaczonej przez niego
+                    osobie, opiekunowi lub kapitule w celu potwierdzenia
+                    zaliczenia.
+                  </p>
                 </div>
-                <p className="text-sm">
-                  Sprawności dodatkowe: <Badge>5 gwiazdek</Badge>
-                </p>
-              </CardContent>
-            </Card>
-          </div>
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         <TabsContent value="process" className="space-y-6 mt-6">
-          <div className="grid md:grid-cols-2 gap-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Zdobywanie stopni</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                    </div>
-                    <p className="text-sm">
-                      Zdobywanie pierwszego stopnia rozpoczyna się z chwilą
-                      wstąpienia do drużyny, a każdego kolejnego z chwilą
-                      zdobycia poprzedniego.
-                    </p>
+          <Card>
+            <CardHeader>
+              <CardTitle>Zdobywanie stopni</CardTitle>
+              <CardDescription>
+                Podstawowe zasady procesu zdobywania stopni harcerskich
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
-                      <div className="w-2 h-2 bg-green-600 rounded-full"></div>
-                    </div>
-                    <p className="text-sm">
-                      Harcerz nie może rozpocząć zdobywania innego stopnia niż
-                      przewidziany dla jego wieku.
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-full">
-                      <div className="w-2 h-2 bg-yellow-600 rounded-full"></div>
-                    </div>
-                    <p className="text-sm">
-                      Jeśli harcerz pomija stopnie, musi wykazać się wiedzą i
-                      umiejętnościami na dany stopień oraz wszystkie pominięte.
-                    </p>
-                  </div>
+                  <p className="text-sm">
+                    Zdobywanie pierwszego stopnia rozpoczyna się z chwilą
+                    wstąpienia do drużyny, a każdego kolejnego z chwilą zdobycia
+                    poprzedniego.
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex items-start gap-3">
+                  <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  </div>
+                  <p className="text-sm">
+                    Harcerz nie może rozpocząć zdobywania innego stopnia niż
+                    przewidziany dla jego wieku (zgodnie z tabelą stopni).
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-full">
+                    <div className="w-2 h-2 bg-yellow-500 rounded-full"></div>
+                  </div>
+                  <p className="text-sm">
+                    Harcerz, który zdobywa stopień z pominięciem jednego lub
+                    kilku poprzednich, musi wykazać się wiedzą i wszystkimi
+                    umiejętnościami określonymi w wymaganiach ogólnych na
+                    zdobywany stopień oraz wszystkie poprzednie.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Przyznawanie stopni</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-3">
-                  <div className="flex items-start gap-3">
-                    <Shield className="w-5 h-5 text-blue-500 mt-0.5" />
-                    <p className="text-sm">
-                      Drużynowy przyznaje stopnie rozkazem, po stwierdzeniu
-                      spełnienia wszystkich warunków.
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Target className="w-5 h-5 text-yellow-500 mt-0.5" />
-                    <p className="text-sm">
-                      Jeśli postawa harcerza jest sprzeczna z Prawem Harcerskim,
-                      drużynowy może nie przyznać stopnia mimo spełnienia
-                      warunków.
-                    </p>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <Award className="w-5 h-5 text-green-500 mt-0.5" />
-                    <p className="text-sm">
-                      Po przyznaniu pierwszego stopnia drużynowy dopuszcza
-                      harcerza do złożenia Przyrzeczenia Harcerskiego.
-                    </p>
-                  </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Przyznawanie stopni</CardTitle>
+              <CardDescription>
+                Zasady przyznawania stopni harcerskich
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <ShieldIcon className="w-5 h-5 text-blue-500 mt-0.5" />
+                  <p className="text-sm">
+                    Drużynowy przyznaje stopnie rozkazem, po stwierdzeniu
+                    spełnienia przez harcerza wszystkich warunków.
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div className="flex items-start gap-3">
+                  <TargetIcon className="w-5 h-5 text-yellow-500 mt-0.5" />
+                  <p className="text-sm">
+                    Jeśli postawa harcerza jest sprzeczna z Prawem Harcerskim,
+                    drużynowy może nie przyznać mu stopnia i wyznaczyć dodatkowe
+                    zadania, pomimo spełnienia wszystkich warunków.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <AwardIcon className="w-5 h-5 text-green-500 mt-0.5" />
+                  <p className="text-sm">
+                    Bezpośrednio po przyznaniu pierwszego stopnia drużynowy
+                    dopuszcza harcerza do złożenia Przyrzeczenia Harcerskiego.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Specjalne przypadki</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="bg-red-50 dark:bg-red-900/20 p-3 rounded-lg">
+                  <h4 className="font-medium text-sm mb-1">
+                    Harcerz Rzeczypospolitej
+                  </h4>
+                  <p className="text-xs">
+                    Drużynowy przyznaje stopień harcerza Rzeczypospolitej na
+                    wniosek kapituły, przed którą harcerz realizował stopień.
+                  </p>
+                  <p className="text-xs">
+                    Drużynowy w stopniu min. podharcmistrza może, w szczególnych
+                    sytuacjach i za zgodą hufcowego, przyznawać stopień harcerza
+                    Rzeczypospolitej z własnej inicjatywy, po wykonaniu przez
+                    harcerza wyznaczonych zadań.
+                  </p>
+                </div>
+                <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg">
+                  <h4 className="font-medium text-sm mb-1">
+                    Brak stopnia HR u drużynowego
+                  </h4>
+                  <p className="text-xs">
+                    Jeżeli drużynowy nie posiada stopnia harcerza
+                    Rzeczypospolitej, stopień ten przyznaje odpowiedni hufcowy
+                    na wniosek kapituły lub z własnej inicjatywy po wykonaniu
+                    przez harcerza wyznaczonych zadań.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader>
@@ -437,32 +856,92 @@ export default function MaleRegulationsPage() {
                 <h4 className="font-medium">
                   Harcerz orli i Harcerz Rzeczypospolitej
                 </h4>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                  Zdobywający wybiera sobie opiekuna spośród harcerzy i
-                  instruktorów, którzy już ten stopień posiadają.
+                <p className="text-sm text-muted-foreground mt-1">
+                  W ramach zdobywania stopni harcerza orlego i harcerza
+                  Rzeczypospolitej zdobywający wybiera sobie opiekuna spośród
+                  harcerzy, którzy już ten stopień posiadają. Do zadań opiekuna
+                  należą:
                 </p>
               </div>
+
               <div className="grid md:grid-cols-3 gap-4 mt-4">
                 <div className="text-center p-4 border rounded-lg">
-                  <Target className="w-8 h-8 mx-auto mb-2 text-blue-500" />
+                  <TargetIcon className="w-8 h-8 mx-auto mb-2 text-blue-500" />
                   <h5 className="font-medium">Cele rozwojowe</h5>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    Pomoc w wyznaczeniu celów i określaniu zadań
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Pomoc w wyznaczeniu celów rozwojowych i określaniu zadań
+                    indywidualnych
                   </p>
                 </div>
                 <div className="text-center p-4 border rounded-lg">
-                  <Users className="w-8 h-8 mx-auto mb-2 text-green-500" />
+                  <UsersIcon className="w-8 h-8 mx-auto mb-2 text-green-500" />
                   <h5 className="font-medium">Kontakt</h5>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    Regularne monitorowanie postępów
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Utrzymywanie regularnego kontaktu ze zdobywającym stopień i
+                    monitorowanie jego postępów
                   </p>
                 </div>
                 <div className="text-center p-4 border rounded-lg">
-                  <Shield className="w-8 h-8 mx-auto mb-2 text-purple-500" />
+                  <ShieldIcon className="w-8 h-8 mx-auto mb-2 text-purple-500" />
                   <h5 className="font-medium">Wsparcie</h5>
-                  <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                    Pomoc w realizacji zadań
+                  <p className="text-xs text-muted-foreground mt-1">
+                    Wsparcie zdobywającego stopień w realizacji zadań
                   </p>
+                </div>
+              </div>
+
+              <div className="mt-6 space-y-4">
+                <h4 className="font-medium">Kapituły stopni</h4>
+                <p className="text-sm text-muted-foreground">
+                  Do pomocy w realizacji procesu zdobywania stopni harcerza
+                  orlego i harcerza Rzeczypospolitej drużynowy może powołać
+                  kapitułę danego stopnia złożoną z minimum trzech harcerzy
+                  posiadających ten stopień, w tym instruktora.
+                </p>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div className="p-4 border rounded-lg">
+                    <h5 className="font-medium text-sm mb-2">Kapituła HO</h5>
+                    <ul className="text-xs space-y-1 list-disc pl-5">
+                      <li>
+                        Przewodniczy drużynowy lub wyznaczony przez niego
+                        instruktor
+                      </li>
+                      <li>Min. 3 harcerzy posiadających stopień HO</li>
+                      <li>Zawiera instruktora</li>
+                    </ul>
+                  </div>
+                  <div className="p-4 border rounded-lg">
+                    <h5 className="font-medium text-sm mb-2">Kapituła HR</h5>
+                    <ul className="text-xs space-y-1 list-disc pl-5">
+                      <li>
+                        Przewodniczy instruktor w stopniu co najmniej
+                        podharcmistrza – drużynowy lub inny wyznaczony przez
+                        niego instruktor
+                      </li>
+                      <li>Min. 3 harcerzy posiadających stopień HR</li>
+                      <li>
+                        Jeśli drużynowy nie jest harcerzem Rzeczypospolitej,
+                        kapitułę harcerza Rzeczypospolitej, powołuje hufcowy na
+                        wniosek drużynowego
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                  <h5 className="font-medium text-sm mb-2">Zadania kapituł:</h5>
+                  <ul className="text-xs space-y-1 list-disc pl-5">
+                    <li>Zatwierdzanie kształtu zadań indywidualnych</li>
+                    <li>Ocena i zatwierdzenie wykonania zadań</li>
+                    <li>
+                      Wnioskowanie o przyznanie stopnia - do drużynowego, ew.
+                      hufcowego
+                    </li>
+                    <li>
+                      Dbanie o ciągłość procesu wychowawczego w drużynie lub
+                      środowisku harcerskim
+                    </li>
+                  </ul>
                 </div>
               </div>
             </CardContent>
@@ -478,11 +957,11 @@ export default function MaleRegulationsPage() {
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                    <Shield className="w-4 h-4 text-blue-600" />
+                    <ShieldIcon className="w-4 h-4 text-blue-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">Organizacja procesu</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground">
                       Za organizację procesu zdobywania stopni odpowiada
                       drużynowy.
                     </p>
@@ -490,11 +969,11 @@ export default function MaleRegulationsPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
-                    <Target className="w-4 h-4 text-green-600" />
+                    <TargetIcon className="w-4 h-4 text-green-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">Rozstrzyganie sporów</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground">
                       Drużynowy rozstrzyga sytuacje sporne oraz decyduje w
                       sprawach wyjątkowych.
                     </p>
@@ -502,13 +981,26 @@ export default function MaleRegulationsPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-full">
-                    <BookOpen className="w-4 h-4 text-yellow-600" />
+                    <BookOpenIcon className="w-4 h-4 text-yellow-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">Dodatkowe wymagania</h4>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="text-sm text-muted-foreground">
                       Drużynowy może określić rozkazem dodatkowe wymagania
                       ogólne obowiązujące wszystkich harcerzy w drużynie.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="bg-purple-100 dark:bg-purple-900 p-2 rounded-full">
+                    <UsersIcon className="w-4 h-4 text-purple-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">P.o. drużynowego</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Jeżeli drużynę prowadzi pełniący obowiązki drużynowego,
+                      zakres jego uprawnień w ramach regulaminu stopni określa
+                      hufcowy rozkazem powierzającym obowiązki.
                     </p>
                   </div>
                 </div>
@@ -518,36 +1010,32 @@ export default function MaleRegulationsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Zadania indywidualne</CardTitle>
-              <CardDescription>
-                Kluczowy element rozwoju harcerskiego
-              </CardDescription>
+              <CardTitle>Współpraca i koordynacja</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 <div className="border-l-4 border-green-500 pl-4">
-                  <h4 className="font-medium">Cel zadań</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Dążenie do ideałów wskazanych w Prawie Harcerskim poprzez
-                    kształtowanie postaw i cech charakteru, tworzenie
-                    pożytecznych nawyków, rozwój duchowy, intelektualny oraz
-                    wzmacnianie tężyzny fizycznej.
+                  <h4 className="font-medium">Wspólne kapituły</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Na wniosek zainteresowanych drużynowych hufcowy lub
+                    komendant chorągwi powołuje wspólną kapitułę dla danych
+                    drużyn.
                   </p>
                 </div>
                 <div className="border-l-4 border-blue-500 pl-4">
-                  <h4 className="font-medium">Proces wyznaczania</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Harcerz dokonuje samooceny, wskazuje cele i techniki pracy
-                    nad sobą zgodnie ze swoją wizją dalszego rozwoju i z pomocą
-                    drużynowego.
+                  <h4 className="font-medium">Współpraca kapitół HR</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Przewodniczący kapituły harcerza Rzeczypospolitej jest
+                    odpowiedzialny za współpracę z innymi kapitułami tego
+                    stopnia, działającymi na terenie chorągwi, w celu wymiany
+                    doświadczeń i promowania dobrych wzorców.
                   </p>
                 </div>
                 <div className="border-l-4 border-yellow-500 pl-4">
-                  <h4 className="font-medium">Elastyczność</h4>
-                  <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-                    Istnieje możliwość zmiany zadania indywidualnego, jeśli
-                    przestało ono odpowiadać postawionym celom lub wizji
-                    dalszego rozwoju.
+                  <h4 className="font-medium">Zakres współpracy</h4>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Zakres i formę współpracy określa właściwy komendant
+                    chorągwi.
                   </p>
                 </div>
               </div>

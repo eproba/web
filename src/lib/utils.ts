@@ -19,3 +19,7 @@ export const displayNameFromUser = (
     .filter(Boolean)
     .join(" ");
 };
+
+export const capitalizeFirstLetter = (val: string): string => {
+  return val.charAt(0).toUpperCase() + String(val).slice(1);
+};
