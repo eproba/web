@@ -73,7 +73,10 @@ export const useTemplateForm = ({
 
       // Validate that we have at least one task with content
       const validTasks = data.tasks.filter(
-        (task) => task.name.trim() !== "" || task.description.trim() !== "",
+        (task) =>
+          task.name.trim() !== "" ||
+          task.description.trim() ||
+          task.templateNotes?.trim(),
       );
       if (validTasks.length === 0) {
         toast.error("Dodaj przynajmniej jedno zadanie");

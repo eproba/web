@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { User } from "@/types/user";
 import { TemplateTask } from "@/types/template";
 import { motion } from "framer-motion";
+import { InfoIcon } from "lucide-react";
 
 export function TaskTableRow({
   task,
@@ -64,9 +65,21 @@ export function TaskTableRow({
             {index + 1}
           </TableCell>
           <TableCell>
-            <p className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}>
-              {task.name}
-            </p>
+            {variant === "template" &&
+            !task.name &&
+            "templateNotes" in task &&
+            task.templateNotes ? (
+              <p className="text-wrap text-muted-foreground italic flex items-center gap-2">
+                <InfoIcon className="size-4 flex-shrink-0" />
+                {task.templateNotes}
+              </p>
+            ) : (
+              <p
+                className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}
+              >
+                {task.name}
+              </p>
+            )}
             {task.description && (
               <p className="text-sm text-muted-foreground text-wrap line-clamp-3">
                 {task.description}
@@ -101,9 +114,19 @@ export function TaskTableRow({
           {index + 1}
         </TableCell>
         <TableCell>
-          <p className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}>
-            {task.name}
-          </p>
+          {variant === "template" &&
+          !task.name &&
+          "templateNotes" in task &&
+          task.templateNotes ? (
+            <p className="text-wrap text-muted-foreground italic flex items-center gap-2">
+              <InfoIcon className="size-4 flex-shrink-0" />
+              {task.templateNotes}
+            </p>
+          ) : (
+            <p className={`text-wrap ${isHighlightedTask ? "font-bold" : ""}`}>
+              {task.name}
+            </p>
+          )}
           {task.description && (
             <p className="text-sm text-muted-foreground text-wrap">
               {task.description}
@@ -138,7 +161,19 @@ export function TaskTableRow({
         }}
       >
         <DrawerHeader>
-          <DrawerTitle>{task.name}</DrawerTitle>
+          <DrawerTitle>
+            {variant === "template" &&
+            !task.name &&
+            "templateNotes" in task &&
+            task.templateNotes ? (
+              <>
+                <InfoIcon className="inline-block mr-2 size-4" />
+                {task.templateNotes}
+              </>
+            ) : (
+              task.name
+            )}
+          </DrawerTitle>
           <DrawerDescription className="max-h-80 overflow-y-auto text-wrap">
             {task.description}
           </DrawerDescription>

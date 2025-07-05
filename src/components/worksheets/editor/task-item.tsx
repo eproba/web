@@ -107,7 +107,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   );
 
   const handleDelete = () => {
-    if (!task.name && !task.description) {
+    if (!task.name && !task.description && !task.templateNotes) {
       onRemove();
     } else {
       setShowDeleteDialog(true);
@@ -256,7 +256,15 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     );
 
     return () => cleanup.forEach((fn) => fn());
-  }, [task.id, task.category, setDragState, task.name, index]);
+  }, [
+    task.id,
+    task.category,
+    task.name,
+    task.templateNotes,
+    setDragState,
+    index,
+    variant,
+  ]);
 
   const isBeingDragged = dragState.draggedItem === task.id;
   const showTopIndicator = draggedOver === "top";
@@ -416,7 +424,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                         onChange={(e) => {
                           field.onChange(e.target.value);
                           debouncedUpdate([
-                            { field: "description", value: e.target.value },
+                            { field: "templateNotes", value: e.target.value },
                           ]);
                         }}
                       />

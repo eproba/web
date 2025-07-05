@@ -37,6 +37,8 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
               updatedTask.name = update.value;
             } else if (update.field === "description") {
               updatedTask.description = update.value;
+            } else if (update.field === "templateNotes") {
+              updatedTask.templateNotes = update.value;
             }
           });
           return updatedTask;
@@ -62,6 +64,7 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
         description: "",
         category: category as "general" | "individual",
         order: newOrder,
+        templateNotes: "",
       };
 
       const updatedTasks = [...watchedTasks, newTask];
