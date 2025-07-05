@@ -100,7 +100,7 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
           {form.getValues("templateNotes") && (
             <Alert>
               <InfoIcon />
-              <AlertDescription>
+              <AlertDescription className="whitespace-pre-wrap">
                 {form.getValues("templateNotes")}
               </AlertDescription>
             </Alert>

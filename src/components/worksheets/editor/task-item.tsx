@@ -364,7 +364,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               form.getValues(`tasks.${taskIndex}.templateNotes`) && (
                 <Alert>
                   <InfoIcon />
-                  <AlertDescription>
+                  <AlertDescription className="whitespace-pre-wrap">
                     {form.getValues(`tasks.${taskIndex}.templateNotes`)}
                   </AlertDescription>
                 </Alert>

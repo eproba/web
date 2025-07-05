@@ -61,7 +61,7 @@ export function WorksheetItem({
           />
         </div>
         {worksheet.description && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
             {worksheet.description}
           </p>
         )}
