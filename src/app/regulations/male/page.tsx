@@ -414,7 +414,7 @@ export default async function MaleRegulationsPage() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <DownloadIcon className="w-4 h-4" />
+            <DownloadIcon className="size-4" />
             Pobierz regulamin PDF
           </a>
         </Button>
@@ -422,27 +422,24 @@ export default async function MaleRegulationsPage() {
 
       <Tabs defaultValue="overview" className="w-full">
         <TabsList className="flex flex-wrap justify-between w-full gap-2 h-auto">
-          <TabsTrigger value="overview" className="flex items-center gap-2">
-            <AwardIcon className="w-4 h-4" />
+          <TabsTrigger value="overview">
+            <AwardIcon className="size-4" />
             Przegląd
           </TabsTrigger>
-          <TabsTrigger value="ranks" className="flex items-center gap-2">
-            <UsersIcon className="w-4 h-4" />
+          <TabsTrigger value="ranks">
+            <UsersIcon className="size-4" />
             Sylwetki
           </TabsTrigger>
-          <TabsTrigger
-            value="individual-tasks"
-            className="flex items-center gap-2"
-          >
-            <CheckCircleIcon className="w-4 h-4" />
+          <TabsTrigger value="individual-tasks">
+            <CheckCircleIcon className="size-4" />
             Zadania indywidualne
           </TabsTrigger>
-          <TabsTrigger value="process" className="flex items-center gap-2">
-            <ShieldIcon className="w-4 h-4" />
+          <TabsTrigger value="process">
+            <ShieldIcon className="size-4" />
             Proces
           </TabsTrigger>
-          <TabsTrigger value="regulations" className="flex items-center gap-2">
-            <BookOpenIcon className="w-4 h-4" />
+          <TabsTrigger value="regulations">
+            <BookOpenIcon className="size-4" />
             Regulacje
           </TabsTrigger>
         </TabsList>
@@ -957,7 +954,7 @@ export default async function MaleRegulationsPage() {
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="bg-blue-100 dark:bg-blue-900 p-2 rounded-full">
-                    <ShieldIcon className="w-4 h-4 text-blue-500" />
+                    <ShieldIcon className="size-4 text-blue-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">Organizacja procesu</h4>
@@ -969,7 +966,7 @@ export default async function MaleRegulationsPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="bg-green-100 dark:bg-green-900 p-2 rounded-full">
-                    <TargetIcon className="w-4 h-4 text-green-500" />
+                    <TargetIcon className="size-4 text-green-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">Rozstrzyganie sporów</h4>
@@ -981,7 +978,7 @@ export default async function MaleRegulationsPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="bg-yellow-100 dark:bg-yellow-900 p-2 rounded-full">
-                    <BookOpenIcon className="w-4 h-4 text-yellow-500" />
+                    <BookOpenIcon className="size-4 text-yellow-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">Dodatkowe wymagania</h4>
@@ -993,7 +990,7 @@ export default async function MaleRegulationsPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="bg-purple-100 dark:bg-purple-900 p-2 rounded-full">
-                    <UsersIcon className="w-4 h-4 text-purple-500" />
+                    <UsersIcon className="size-4 text-purple-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">P.o. drużynowego</h4>

@@ -6,6 +6,7 @@ import { PublicUser, User } from "@/types/user";
 import { Team } from "@/types/team";
 import { TemplateWorksheet } from "@/types/template";
 import { Post } from "@/types/news";
+import { TeamStatistics } from "@/types/team-statistics";
 import {
   ApiWorksheetResponse,
   worksheetSerializer,
@@ -21,6 +22,10 @@ import {
   templateSerializer,
 } from "@/lib/serializers/templates";
 import { ApiPostResponse, postSerializer } from "@/lib/serializers/news";
+import {
+  ApiTeamStatisticsResponse,
+  teamStatisticsSerializer,
+} from "@/lib/serializers/team-statistics";
 import { JSX } from "react";
 import { ApiConfig } from "@/types/api-config";
 import {
@@ -520,4 +525,27 @@ export async function verifyEmail(
     },
     allowUnauthorized: true,
   });
+}
+
+/**
+ * Get team statistics
+ */
+export async function getTeamStatistics(): Promise<{
+  data?: TeamStatistics;
+  error?: JSX.Element;
+}> {
+  const result =
+    await apiRequest<ApiTeamStatisticsResponse>("/team-statistics/");
+
+  if (result.error) {
+    return { error: result.error };
+  }
+
+  if (result.data) {
+    return {
+      data: teamStatisticsSerializer(result.data),
+    };
+  }
+
+  return { data: undefined };
 }
