@@ -68,33 +68,35 @@ export function TaskTable({
 
   const renderTaskList = (tasks: (Task | TemplateTask)[]) => (
     <TableBody>
-      {tasks.map((task, index) => {
-        if (variant === "template") {
-          return (
-            <TaskTableRow
-              key={task.id}
-              task={task as TemplateTask}
-              index={index}
-              variant={variant}
-              worksheetId={worksheet.id}
-              updateTask={updateTask}
-              currentUser={currentUser}
-            />
-          );
-        } else {
-          return (
-            <TaskTableRow
-              key={task.id}
-              task={task as Task}
-              index={index}
-              variant={variant}
-              worksheetId={worksheet.id}
-              updateTask={updateTask}
-              currentUser={currentUser}
-            />
-          );
-        }
-      })}
+      {tasks
+        .sort((a, b) => a.order - b.order)
+        .map((task, index) => {
+          if (variant === "template") {
+            return (
+              <TaskTableRow
+                key={task.id}
+                task={task as TemplateTask}
+                index={index}
+                variant={variant}
+                worksheetId={worksheet.id}
+                updateTask={updateTask}
+                currentUser={currentUser}
+              />
+            );
+          } else {
+            return (
+              <TaskTableRow
+                key={task.id}
+                task={task as Task}
+                index={index}
+                variant={variant}
+                worksheetId={worksheet.id}
+                updateTask={updateTask}
+                currentUser={currentUser}
+              />
+            );
+          }
+        })}
       {tasks.length === 0 && (
         <TableRow>
           <TableCell

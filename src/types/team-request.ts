@@ -1,10 +1,10 @@
 import { Team } from "@/types/team";
-import { PublicUser } from "@/types/user";
+import { User } from "@/types/user";
 
 export interface TeamRequest {
   id: string;
   team: Team;
-  createdBy: PublicUser;
+  createdBy: User;
   acceptedById: string | null;
   status: "submitted" | "approved" | "rejected" | "pending_verification";
   createdAt: Date;

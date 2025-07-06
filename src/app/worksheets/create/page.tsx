@@ -38,10 +38,10 @@ const WorksheetCreatePage = async ({
                 alt={template.name}
                 width={48}
                 height={48}
-                className="size-12 rounded-md object-cover m-2"
+                className="size-12 rounded-md object-cover m-2 dark:invert dark:grayscale"
               />
             )}
-            <div className={cn("my-2", !template?.image && "mx-6")}>
+            <div className={cn("my-4", !template?.image && "mx-6")}>
               <CardTitle>{template?.name}</CardTitle>
               <CardDescription>
                 <span className="hidden sm:inline">

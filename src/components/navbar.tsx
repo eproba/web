@@ -75,7 +75,6 @@ const MAIN_NAV_ITEMS: NavItem[] = [
         href: `${process.env.NEXT_PUBLIC_SERVER_URL}/admin`,
         external: true,
       },
-      { title: "Zarządzaj stroną", href: "/admin/site-management" },
       { title: "Zgłoszenia drużyn", href: "/admin/team-requests" },
     ],
     external: true,

@@ -338,7 +338,7 @@ export function PatrolComparisonChart({ statistics }: ChartsProps) {
       <CardContent>
         <ChartContainer
           config={patrolComparisonConfig}
-          className="min-h-80 w-full"
+          className="min-h-80 h-full w-full"
         >
           <BarChart
             accessibilityLayer

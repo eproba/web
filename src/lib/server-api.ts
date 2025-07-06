@@ -7,6 +7,7 @@ import { Team } from "@/types/team";
 import { TemplateWorksheet } from "@/types/template";
 import { Post } from "@/types/news";
 import { TeamStatistics } from "@/types/team-statistics";
+import { TeamRequest } from "@/types/team-request";
 import {
   ApiWorksheetResponse,
   worksheetSerializer,
@@ -26,6 +27,10 @@ import {
   ApiTeamStatisticsResponse,
   teamStatisticsSerializer,
 } from "@/lib/serializers/team-statistics";
+import {
+  ApiTeamRequestResponse,
+  teamRequestSerializer,
+} from "@/lib/serializers/team-request";
 import { JSX } from "react";
 import { ApiConfig } from "@/types/api-config";
 import {
@@ -548,4 +553,34 @@ export async function getTeamStatistics(): Promise<{
   }
 
   return { data: undefined };
+}
+
+/**
+ * ===================================================================
+ * TEAM REQUESTS MANAGEMENT
+ * ===================================================================
+ */
+
+/**
+ * Get team requests
+ */
+export async function getTeamRequests(
+  endpoint: string = "/team-requests/",
+): Promise<{
+  data?: TeamRequest[];
+  error?: JSX.Element;
+}> {
+  const result = await apiRequest<ApiTeamRequestResponse[]>(endpoint);
+
+  if (result.error) {
+    return { error: result.error };
+  }
+
+  if (result.data) {
+    return {
+      data: result.data.map(teamRequestSerializer),
+    };
+  }
+
+  return { data: [] };
 }
