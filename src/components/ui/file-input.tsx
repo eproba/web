@@ -146,7 +146,7 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
               }}
               className="absolute top-3 right-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
             >
-              <XIcon className="h-4 w-4" />
+              <XIcon className="size-4" />
             </Button>
           )}
 

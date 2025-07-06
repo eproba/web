@@ -371,7 +371,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
                         title="Ustaw jako mój zastęp"
                         disabled={!patrol.trim()}
                       >
-                        <UserIcon className="h-4 w-4" />
+                        <UserIcon className="size-4" />
                       </Button>
                       <Button
                         type="button"
@@ -381,7 +381,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
                         disabled={watchedPatrols.length <= 1}
                         title="Usuń zastęp"
                       >
-                        <TrashIcon className="h-4 w-4" />
+                        <TrashIcon className="size-4" />
                       </Button>
                     </div>
                   ))}
@@ -393,7 +393,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
                   onClick={addPatrol}
                   className="w-full border-dashed"
                 >
-                  <PlusIcon className="h-4 w-4 mr-2" />
+                  <PlusIcon className="size-4 mr-2" />
                   Dodaj zastęp
                 </Button>
 

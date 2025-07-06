@@ -27,12 +27,12 @@ export const WorksheetSubmitButton: React.FC<WorksheetSubmitButtonProps> = ({
         >
           {isSubmitting ? (
             <>
-              <Loader2Icon className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2Icon className="size-4 mr-2 animate-spin" />
               {mode === "create" ? "Tworzenie..." : "Zapisywanie..."}
             </>
           ) : (
             <>
-              <PenIcon className="w-4 h-4 mr-2" />
+              <PenIcon className="size-4 mr-2" />
               {mode === "create"
                 ? `Utwórz ${variant === "worksheet" ? "próbę" : "szablon"}`
                 : "Zapisz zmiany"}

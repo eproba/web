@@ -169,7 +169,7 @@ export const TaskList: React.FC<TaskListProps> = ({
               onClick={handleAddTask}
               className="w-full border-2 border-dashed border-muted-foreground/30 "
             >
-              <PlusIcon className="w-4 h-4 mr-2" />
+              <PlusIcon className="size-4 mr-2" />
               Dodaj zadanie
             </Button>
           </motion.div>
@@ -255,7 +255,7 @@ export const TaskList: React.FC<TaskListProps> = ({
               onClick={handleAddTask}
               className="w-full hover:scale-105 transition-transform"
             >
-              <PlusIcon className="w-4 h-4 mr-2" />
+              <PlusIcon className="size-4 mr-2" />
               Dodaj pierwsze zadanie
             </Button>
           </motion.div>
@@ -299,7 +299,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <InfoIcon className="w-4 h-4 text-muted-foreground" />
+                      <InfoIcon className="size-4 text-muted-foreground" />
                     </TooltipTrigger>
                     <TooltipContent>
                       {category === "general"

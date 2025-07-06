@@ -457,7 +457,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                   )}
                   title="Pomysły na zadania"
                 >
-                  <SparklesIcon className="w-4 h-4" />
+                  <SparklesIcon className="size-4" />
                 </Button>
               )}
 
@@ -469,7 +469,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               className="hidden md:flex md:opacity-0 md:pointer-coarse:opacity-100 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
               onClick={() => handleDelete()}
             >
-              <Trash2Icon className="w-4 h-4" />
+              <Trash2Icon className="size-4" />
             </Button>
 
             <motion.div

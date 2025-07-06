@@ -299,7 +299,7 @@ export function WorksheetActions({
                       format="mobile"
                     >
                       <div className="flex items-center justify-start w-full h-auto px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground">
-                        <StickyNoteIcon className="h-4 w-4 mr-2" />
+                        <StickyNoteIcon className="size-4 mr-2" />
                         {worksheet.notes ? "Notatka" : "Dodaj notatkę"}
                       </div>
                     </WorksheetNotesDialog>
@@ -315,12 +315,12 @@ export function WorksheetActions({
                 >
                   {action.href ? (
                     <Link href={action.href} className="flex items-center">
-                      <action.icon className="h-4 w-4" />
+                      <action.icon className="size-4" />
                       {action.label}
                     </Link>
                   ) : (
                     <div className="flex items-center">
-                      <action.icon className="mr-2 h-4 w-4" />
+                      <action.icon className="mr-2 size-4" />
                       {action.label}
                     </div>
                   )}

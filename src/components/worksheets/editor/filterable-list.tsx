@@ -68,7 +68,7 @@ export function FilterableList<T extends FilterableItem>({
         <h3 className="font-semibold text-lg">{item.name}</h3>
         {showSelectButton && onSelect && (
           <Button size="sm" onClick={onSelect} className="ml-2 flex-shrink-0">
-            <PlusIcon className="w-4 h-4 mr-1" />
+            <PlusIcon className="size-4 mr-1" />
             {selectButtonText}
           </Button>
         )}
@@ -101,7 +101,7 @@ export function FilterableList<T extends FilterableItem>({
         {availableTags.length > 0 && (
           <div className="space-y-2">
             <div className="flex items-center gap-2 text-sm font-medium">
-              <TagIcon className="w-4 h-4" />
+              <TagIcon className="size-4" />
               Tag filters:
             </div>
             <div className="flex flex-wrap gap-2">

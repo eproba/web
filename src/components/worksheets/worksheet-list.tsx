@@ -130,7 +130,7 @@ export function WorksheetList({
       {showFilters ? (
         <div className="flex items-center justify-between gap-2">
           <div className="relative">
-            <SearchIcon className="h-4 w-4 text-muted-foreground absolute left-3 top-1/2 transform -translate-y-1/2" />
+            <SearchIcon className="size-4 text-muted-foreground absolute left-3 top-1/2 transform -translate-y-1/2" />
             <Input
               type="text"
               placeholder="Wyszukaj próbę"
@@ -140,7 +140,7 @@ export function WorksheetList({
             />
             {isFiltering && searchQuery && (
               <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin h-4 w-4 border-2 border-muted-foreground border-t-transparent rounded-full" />
+                <div className="animate-spin size-4 border-2 border-muted-foreground border-t-transparent rounded-full" />
               </div>
             )}
           </div>
@@ -251,9 +251,11 @@ export function WorksheetList({
                 Nie znaleziono prób pasujących do podanych kryteriów.
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <CreateWorksheetButton />
-            </CardContent>
+            {variant !== "archived" && (
+              <CardContent>
+                <CreateWorksheetButton />
+              </CardContent>
+            )}
           </Card>
         )
       ) : (

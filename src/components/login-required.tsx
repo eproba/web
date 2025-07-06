@@ -81,7 +81,7 @@ export function LoginRequired({ returnUrl, error }: LoginRequiredProps) {
         <CardTitle className="text-2xl font-bold">Wymagane logowanie</CardTitle>
         {error && (
           <Alert variant="destructive" className="text-left">
-            <AlertCircleIcon className="h-4 w-4" />
+            <AlertCircleIcon className="size-4" />
             <AlertTitle>
               {errorMessages[error]?.title || "Nieznany błąd"}
             </AlertTitle>

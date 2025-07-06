@@ -28,7 +28,7 @@ export const TaskControls: React.FC<TaskControlsProps> = ({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <InfoIcon className="w-4 h-4 text-muted-foreground" />
+              <InfoIcon className="size-4 text-muted-foreground" />
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
               Dodaj zadania do swojej próby. Możesz je przeciągać, aby zmienić
@@ -45,7 +45,7 @@ export const TaskControls: React.FC<TaskControlsProps> = ({
           size="sm"
           onClick={onToggleCategories}
         >
-          <TagsIcon className="w-4 h-4" />
+          <TagsIcon className="size-4" />
           <span className="text-sm hidden sm:block">Kategorie</span>
         </Button>
 
@@ -55,7 +55,7 @@ export const TaskControls: React.FC<TaskControlsProps> = ({
           size="sm"
           onClick={onToggleDescriptions}
         >
-          <AlignLeftIcon className="w-4 h-4" />
+          <AlignLeftIcon className="size-4" />
           <span className="text-sm hidden sm:block">Opisy zadań</span>
         </Button>
       </div>

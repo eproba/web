@@ -1,6 +1,11 @@
 "use client";
 
-import { Check, ChevronsUpDown, Search, User } from "lucide-react";
+import {
+  CheckIcon,
+  ChevronsUpDownIcon,
+  SearchIcon,
+  UserIcon,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -113,7 +118,7 @@ export function UserCombobox({
           disabled={disabled}
         >
           <div className="flex items-center gap-2">
-            <User className="h-4 w-4 text-muted-foreground" />
+            <UserIcon className="size-4 text-muted-foreground" />
             {selectedUser ? (
               <span className="truncate">{selectedUser.displayName}</span>
             ) : value ? (
@@ -128,7 +133,7 @@ export function UserCombobox({
               <span className="text-muted-foreground">{placeholder}</span>
             )}
           </div>
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -137,7 +142,7 @@ export function UserCombobox({
       >
         <Command shouldFilter={false}>
           <div className="flex items-center border-b px-3 [&>[data-slot=command-input-wrapper]]:w-full">
-            <Search className="mr-2 h-4 w-4 shrink-0 opacity-50" />
+            <SearchIcon className="mr-2 size-4 shrink-0 opacity-50" />
             <CommandInput
               placeholder="Wyszukaj użytkownika..."
               value={searchQuery}
@@ -169,7 +174,7 @@ export function UserCombobox({
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <User className="h-4 w-4 text-muted-foreground" />
+                      <UserIcon className="size-4 text-muted-foreground" />
                       <div className="flex flex-col">
                         <span className="font-medium">{user.displayName}</span>
                         {user.patrolName && (
@@ -181,9 +186,9 @@ export function UserCombobox({
                         )}
                       </div>
                     </div>
-                    <Check
+                    <CheckIcon
                       className={cn(
-                        "h-4 w-4",
+                        "size-4",
                         value === user.id ? "opacity-100" : "opacity-0",
                       )}
                     />

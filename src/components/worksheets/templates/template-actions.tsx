@@ -157,12 +157,12 @@ export function TemplateActions({
               >
                 {action.href ? (
                   <Link href={action.href} className="flex items-center">
-                    <action.icon className="h-4 w-4" />
+                    <action.icon className="size-4" />
                     {action.label}
                   </Link>
                 ) : (
                   <div className="flex items-center">
-                    <action.icon className="mr-2 h-4 w-4" />
+                    <action.icon className="mr-2 size-4" />
                     {action.label}
                   </div>
                 )}

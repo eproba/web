@@ -89,7 +89,7 @@ export default async function TemplatesPage() {
             itemType="template"
             parentClassName="flex justify-center mt-8"
           >
-            <PlusIcon className="w-4 h-4" />
+            <PlusIcon className="size-4" />
             Utwórz szablon dla drużyny
           </CreateWorksheetButton>
         )}

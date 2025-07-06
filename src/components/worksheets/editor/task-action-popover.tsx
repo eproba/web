@@ -98,7 +98,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
           className="h-8 w-8 p-0 md:hidden hover:bg-gray-100 dark:hover:bg-gray-800"
           title="Opcje zadania"
         >
-          <MoreVerticalIcon className="w-4 h-4" />
+          <MoreVerticalIcon className="size-4" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-48 p-2" align="end">
@@ -112,7 +112,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
             disabled={!canMoveUp}
             className="w-full justify-start h-8 px-2"
           >
-            <ChevronUpIcon className="w-4 h-4 mr-2" />
+            <ChevronUpIcon className="size-4 mr-2" />
             Przenieś w górę
           </Button>
 
@@ -125,7 +125,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
             disabled={!canMoveDown}
             className="w-full justify-start h-8 px-2"
           >
-            <ChevronDownIcon className="w-4 h-4 mr-2" />
+            <ChevronDownIcon className="size-4 mr-2" />
             Przenieś w dół
           </Button>
 
@@ -138,7 +138,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
               onClick={handleMoveToDifferentCategory}
               className="w-full justify-start h-8 px-2"
             >
-              <ArrowRightLeftIcon className="w-4 h-4 mr-2" />
+              <ArrowRightLeftIcon className="size-4 mr-2" />
               <span className="truncate">
                 {task.category === "general"
                   ? "Do indywidualnych"
@@ -162,7 +162,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
                 onClick={handleShowSuggestions}
                 className="w-full justify-start h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
               >
-                <SparklesIcon className="w-4 h-4 mr-2" />
+                <SparklesIcon className="size-4 mr-2" />
                 Pomysły na zadania
               </Button>
             )}
@@ -175,7 +175,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
             onClick={handleShowDeleteDialog}
             className="w-full justify-start h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
           >
-            <Trash2Icon className="w-4 h-4 mr-2" />
+            <Trash2Icon className="size-4 mr-2" />
             Usuń zadanie
           </Button>
         </div>

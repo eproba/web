@@ -90,11 +90,11 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
         >
           {/*<TabsList className="grid w-full grid-cols-2 flex-shrink-0">*/}
           {/*  <TabsTrigger value="browse" className="flex items-center gap-2">*/}
-          {/*    <SearchIcon className="w-4 h-4" />*/}
+          {/*    <SearchIcon className="size-4" />*/}
           {/*    Przeglądaj pomysły*/}
           {/*  </TabsTrigger>*/}
           {/*  <TabsTrigger value="ai-chat" className="flex items-center gap-2">*/}
-          {/*    <SparklesIcon className="w-4 h-4" />*/}
+          {/*    <SparklesIcon className="size-4" />*/}
           {/*    Czat z AI*/}
           {/*  </TabsTrigger>*/}
           {/*</TabsList>*/}

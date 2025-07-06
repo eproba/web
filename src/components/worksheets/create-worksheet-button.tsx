@@ -44,7 +44,7 @@ export function CreateWorksheetButton({
 
   const defaultContent = (
     <>
-      <PlusIcon className="w-4 h-4" />
+      <PlusIcon className="size-4" />
       {size !== "icon" &&
         (itemType === "template" ? "Utwórz szablon" : "Utwórz próbę")}
     </>

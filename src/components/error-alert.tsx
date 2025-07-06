@@ -10,7 +10,7 @@ export function ErrorAlert({ error }: { error: Response | ApiError }) {
   const errorMessage = "message" in error ? error.message : error.toString();
   return (
     <Alert variant="destructive">
-      <AlertCircleIcon className="h-4 w-4" />
+      <AlertCircleIcon className="size-4" />
       <AlertTitle>
         Wystąpił błąd i ta strona nie może być wyświetlona
       </AlertTitle>

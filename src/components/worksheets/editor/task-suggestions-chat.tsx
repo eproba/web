@@ -185,7 +185,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
               >
                 {message.role === "assistant" && (
                   <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                    <BotIcon className="w-4 h-4 text-blue-600" />
+                    <BotIcon className="size-4 text-blue-600" />
                   </div>
                 )}
 
@@ -250,7 +250,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
 
                 {message.role === "user" && (
                   <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
-                    <UserIcon className="w-4 h-4 text-gray-600" />
+                    <UserIcon className="size-4 text-gray-600" />
                   </div>
                 )}
               </div>
@@ -260,11 +260,11 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
             {isLoading && (
               <div className="flex gap-3 justify-start">
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
-                  <BotIcon className="w-4 h-4 text-blue-600" />
+                  <BotIcon className="size-4 text-blue-600" />
                 </div>
                 <Card className="p-3 bg-muted">
                   <div className="flex items-center gap-2">
-                    <Loader2Icon className="w-4 h-4 animate-spin" />
+                    <Loader2Icon className="size-4 animate-spin" />
                     <span className="text-sm text-muted-foreground">
                       AI pracuje nad odpowiedzią...
                     </span>
@@ -297,7 +297,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                 disabled={!inputMessage.trim() || isLoading}
                 className="h-8 w-8 p-0"
               >
-                <SendIcon className="w-4 h-4" />
+                <SendIcon className="size-4" />
               </Button>
             </div>
           </div>
