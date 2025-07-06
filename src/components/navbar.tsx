@@ -4,7 +4,14 @@ import { AppLogo } from "@/components/app-logo";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
+import {
+  AlertCircleIcon,
+  LogInIcon,
+  LogOutIcon,
+  MenuIcon,
+  UserIcon,
+  XIcon,
+} from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -26,13 +33,8 @@ import { User } from "@/types/user";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { fetchCurrentUser } from "@/lib/server-api";
 import { Organization } from "@/types/team";
-
-interface NavbarProps {
-  messages?: Array<{
-    tags: string;
-    message: string;
-  }>;
-}
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
 
 type NavItem = {
   title: string;
@@ -121,13 +123,13 @@ const AuthButtons = ({ user }: { user?: User }) => (
           }}
         >
           <Button variant="destructive" className="w-full">
-            <LogOutIcon className="mr-2 h-4 w-4" />
+            <LogOutIcon className="mr-2 size-4" />
             Wyloguj
           </Button>
         </form>
         <Link href="/profile" className="flex-1">
           <Button className="w-full bg-[#1abc9c] hover:bg-[#16a085]">
-            <UserIcon className="mr-2 h-4 w-4" />
+            <UserIcon className="mr-2 size-4" />
             Profil
           </Button>
         </Link>
@@ -141,7 +143,7 @@ const AuthButtons = ({ user }: { user?: User }) => (
         }}
       >
         <Button className="w-full">
-          <LogInIcon className="mr-2 h-4 w-4" />
+          <LogInIcon className="mr-2 size-4" />
           Zaloguj się
         </Button>
       </form>
@@ -215,7 +217,7 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => (
   </NavigationMenuItem>
 );
 
-export async function Navbar({ messages }: NavbarProps) {
+export async function Navbar() {
   let user: User | undefined = undefined;
   const session = await auth();
 
@@ -235,129 +237,132 @@ export async function Navbar({ messages }: NavbarProps) {
   const filteredMoreNav = MORE_NAV_ITEMS.filter((item) => item.access?.(user));
 
   return (
-    <nav className="flex items-center p-4 px-5 container mx-auto gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
-      <div className="flex items-center gap-4 justify-between w-full md:w-auto">
-        <AppLogo />
+    <>
+      <nav className="flex items-center p-4 px-5 container mx-auto gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
+        <div className="flex items-center gap-4 justify-between w-full md:w-auto">
+          <AppLogo />
 
-        {/* Mobile Navigation */}
-        <Drawer direction="right">
-          <DrawerTrigger asChild>
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <MenuIcon className="size-6" />
-            </Button>
-          </DrawerTrigger>
-          <DrawerContent className="h-full w-[300px] ml-auto rounded-l-lgflex flex-col p-4">
-            <DrawerHeader className="p-0 mb-4">
-              <DrawerTitle className="flex justify-between items-center">
-                <AppLogo />
-                <DrawerClose asChild>
-                  <Button variant="ghost" size="icon">
-                    <XIcon className="h-5 w-5" />
-                  </Button>
-                </DrawerClose>
-              </DrawerTitle>
-            </DrawerHeader>
-
-            <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
-              {filteredMainNav.map((item) => (
-                <div key={item.href} className="flex flex-col gap-1">
+          {/* Mobile Navigation */}
+          <Drawer direction="right">
+            <DrawerTrigger asChild>
+              <Button variant="ghost" size="icon" className="md:hidden">
+                <MenuIcon className="size-6" />
+              </Button>
+            </DrawerTrigger>
+            <DrawerContent className="h-full w-[300px] ml-auto rounded-l-lgflex flex-col p-4">
+              <DrawerHeader className="p-0 mb-4">
+                <DrawerTitle className="flex justify-between items-center">
+                  <AppLogo />
                   <DrawerClose asChild>
-                    <MobileNavItem
-                      item={item}
-                      header={(item.subItems?.length ?? 0) > 0}
-                    />
+                    <Button variant="ghost" size="icon">
+                      <XIcon className="h-5 w-5" />
+                    </Button>
                   </DrawerClose>
-                  {item.subItems?.map((subItem) => (
-                    <DrawerClose key={subItem.href} asChild>
-                      <MobileNavItem item={subItem} />
+                </DrawerTitle>
+              </DrawerHeader>
+
+              <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+                {filteredMainNav.map((item) => (
+                  <div key={item.href} className="flex flex-col gap-1">
+                    <DrawerClose asChild>
+                      <MobileNavItem
+                        item={item}
+                        header={(item.subItems?.length ?? 0) > 0}
+                      />
                     </DrawerClose>
-                  ))}
+                    {item.subItems?.map((subItem) => (
+                      <DrawerClose key={subItem.href} asChild>
+                        <MobileNavItem item={subItem} />
+                      </DrawerClose>
+                    ))}
+                  </div>
+                ))}
+
+                <div className="mt-4 border-t pt-2">
+                  <h5 className="text-xs text-muted-foreground px-3 mb-2">
+                    Więcej
+                  </h5>
+                  <div className="flex flex-col gap-1">
+                    {filteredMoreNav.map((item) => (
+                      <DrawerClose key={item.href} asChild>
+                        <MobileNavItem item={item} />
+                      </DrawerClose>
+                    ))}
+                  </div>
                 </div>
+              </div>
+
+              <div className="mt-auto pt-4 border-t">
+                <div className="flex flex-col gap-2">
+                  <div className="flex gap-2 justify-between items-center px-2">
+                    <AuthButtons user={user} />
+                  </div>
+                </div>
+              </div>
+            </DrawerContent>
+          </Drawer>
+        </div>
+
+        {/* Desktop Navigation */}
+        <div className="hidden md:flex flex-1 items-center justify-between">
+          <NavigationMenu viewport={false}>
+            <NavigationMenuList className="hidden md:flex">
+              {filteredMainNav.map((item) => (
+                <DesktopNavItem key={item.href} item={item} />
               ))}
 
-              <div className="mt-4 border-t pt-2">
-                <h5 className="text-xs text-muted-foreground px-3 mb-2">
+              <NavigationMenuItem>
+                <NavigationMenuTrigger className="bg-transparent">
                   Więcej
-                </h5>
-                <div className="flex flex-col gap-1">
-                  {filteredMoreNav.map((item) => (
-                    <DrawerClose key={item.href} asChild>
-                      <MobileNavItem item={item} />
-                    </DrawerClose>
-                  ))}
-                </div>
-              </div>
-            </div>
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className="dark:bg-[#161b22] z-50">
+                  <ul className="grid gap-1 p-2 w-[240px]">
+                    {filteredMoreNav.map((item) => (
+                      <NavigationMenuItem key={item.href}>
+                        <NavigationMenuLink asChild>
+                          <Link
+                            href={item.href}
+                            className={cn(
+                              navigationMenuTriggerStyle(),
+                              "bg-transparent w-full items-start",
+                            )}
+                            target={item.external ? "_blank" : undefined}
+                          >
+                            {item.title}
+                          </Link>
+                        </NavigationMenuLink>
+                      </NavigationMenuItem>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            </NavigationMenuList>
+          </NavigationMenu>
 
-            <div className="mt-auto pt-4 border-t">
-              <div className="flex flex-col gap-2">
-                <div className="flex gap-2 justify-between items-center px-2">
-                  <AuthButtons user={user} />
-                </div>
-              </div>
-            </div>
-          </DrawerContent>
-        </Drawer>
-      </div>
-
-      {/* Desktop Navigation */}
-      <div className="hidden md:flex flex-1 items-center justify-between">
-        <NavigationMenu viewport={false}>
-          <NavigationMenuList className="hidden md:flex">
-            {filteredMainNav.map((item) => (
-              <DesktopNavItem key={item.href} item={item} />
-            ))}
-
-            <NavigationMenuItem>
-              <NavigationMenuTrigger className="bg-transparent">
-                Więcej
-              </NavigationMenuTrigger>
-              <NavigationMenuContent className="dark:bg-[#161b22] z-50">
-                <ul className="grid gap-1 p-2 w-[240px]">
-                  {filteredMoreNav.map((item) => (
-                    <NavigationMenuItem key={item.href}>
-                      <NavigationMenuLink asChild>
-                        <Link
-                          href={item.href}
-                          className={cn(
-                            navigationMenuTriggerStyle(),
-                            "bg-transparent w-full items-start",
-                          )}
-                          target={item.external ? "_blank" : undefined}
-                        >
-                          {item.title}
-                        </Link>
-                      </NavigationMenuLink>
-                    </NavigationMenuItem>
-                  ))}
-                </ul>
-              </NavigationMenuContent>
-            </NavigationMenuItem>
-          </NavigationMenuList>
-        </NavigationMenu>
-
-        <div className="hidden md:flex gap-2">
-          <AuthButtons user={user} />
+          <div className="hidden md:flex gap-2">
+            <AuthButtons user={user} />
+          </div>
         </div>
-      </div>
+      </nav>
 
-      {messages && messages.length > 0 && (
-        <div className="absolute top-full left-0 right-0">
-          {messages.map((message, index) => (
-            <div
-              key={index}
-              className={cn(
-                "p-4 mx-4 my-2 rounded-lg",
-                message.tags === "error"
-                  ? "bg-red-100 text-red-800"
-                  : `bg-${message.tags}-100 text-${message.tags}-800`,
-              )}
-            >
-              {message.message}
-            </div>
-          ))}
-        </div>
+      {user && !user.patrol && (
+        <Alert
+          variant="destructive"
+          className="mx-auto container mt-4 bg-red-500/10 border-red-500/20"
+        >
+          <AlertCircleIcon className="size-4" />
+          <AlertTitle className="font-semibold">
+            Nie jesteś przypisany do żadnej drużyny!
+          </AlertTitle>
+          <AlertDescription className="text-sm text-gray-500">
+            <PatrolSelectDialog userGender={user.gender} variant="set">
+              <Button variant="outline" size="sm" className="mt-1">
+                Wybierz swoją drużynę
+              </Button>
+            </PatrolSelectDialog>
+          </AlertDescription>
+        </Alert>
       )}
-    </nav>
+    </>
   );
 }
