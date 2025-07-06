@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 import { useApi } from "@/lib/api-client";
 import { TeamRequest } from "@/types/team-request";
-import { UserFunction } from "@/types/user";
+import { FieldInfo, UserFunction } from "@/types/user";
 import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -200,8 +200,11 @@ export function TeamRequestsClient({
     });
   };
 
-  const getFunctionLevelName = (level: number) => {
-    return UserFunction.fromValue(level).fullName;
+  const getFunctionLevelName = (
+    level: number,
+    gender: FieldInfo<string> | null,
+  ) => {
+    return UserFunction.fromValue(level, gender).fullName;
   };
 
   return (
@@ -318,7 +321,10 @@ interface TeamRequestCardProps {
   ) => void;
   isProcessing: boolean;
   formatDate: (date: Date) => string;
-  getFunctionLevelName: (level: number) => string;
+  getFunctionLevelName: (
+    level: number,
+    gender: FieldInfo<string> | null,
+  ) => string;
 }
 
 function TeamRequestCard({
@@ -398,7 +404,10 @@ function TeamRequestCard({
             <div>
               <span className="font-medium">Funkcja:</span>
               <div className="mt-1">
-                {getFunctionLevelName(request.requestedFunctionLevel)}
+                {getFunctionLevelName(
+                  request.requestedFunctionLevel,
+                  request.createdBy.gender,
+                )}
               </div>
             </div>
             <div>

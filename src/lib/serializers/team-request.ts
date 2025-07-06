@@ -10,7 +10,7 @@ export interface ApiTeamRequestResponse {
   status: "submitted" | "approved" | "rejected" | "pending_verification";
   created_at: string;
   notes: string;
-  requested_function_level: number;
+  function_level: number;
 }
 
 export function teamRequestSerializer(
@@ -24,6 +24,6 @@ export function teamRequestSerializer(
     status: apiResponse.status,
     createdAt: new Date(apiResponse.created_at),
     notes: apiResponse.notes,
-    requestedFunctionLevel: apiResponse.requested_function_level,
+    requestedFunctionLevel: apiResponse.function_level,
   };
 }
