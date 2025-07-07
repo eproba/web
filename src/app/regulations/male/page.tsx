@@ -195,6 +195,7 @@ export default async function MaleRegulationsPage() {
       ],
       individualTasksCount: "1-3",
       expectedTime: "do 2 miesięcy",
+      icon: "/rank-regulations/male/icons/mlodzik.svg",
     },
     {
       name: "wywiadowca",
@@ -273,6 +274,7 @@ export default async function MaleRegulationsPage() {
       ],
       individualTasksCount: "2-4",
       expectedTime: "do 4 miesięcy",
+      icon: "/rank-regulations/male/icons/wywiadowca.svg",
     },
     {
       name: "ćwik",
@@ -320,6 +322,7 @@ export default async function MaleRegulationsPage() {
       ],
       individualTasksCount: "3-5",
       expectedTime: "do 6 miesięcy",
+      icon: "/rank-regulations/male/icons/cwik.svg",
     },
     {
       name: "harcerz orli",
@@ -354,6 +357,7 @@ export default async function MaleRegulationsPage() {
       badges: [],
       individualTasksCount: "4-6",
       expectedTime: "do 10 miesięcy",
+      icon: "/rank-regulations/male/icons/harcerz-orli.svg",
     },
     {
       name: "harcerz Rzeczypospolitej",
@@ -368,6 +372,7 @@ export default async function MaleRegulationsPage() {
       badges: [],
       individualTasksCount: "5-8",
       expectedTime: "do 12 miesięcy",
+      icon: "/rank-regulations/male/icons/harcerz-rzeczypospolitej.svg",
     },
   ];
 
@@ -584,8 +589,17 @@ export default async function MaleRegulationsPage() {
           {ranks.map((rank, index) => (
             <Card key={index} className="gap-2">
               <CardHeader>
-                <CardTitle className="text-lg">
-                  {capitalizeFirstLetter(rank.name)}
+                <CardTitle className="text-xl">
+                  <div className="flex items-center gap-2">
+                    <Image
+                      src={rank.icon}
+                      alt={`${rank.name} ikona`}
+                      width={40}
+                      height={40}
+                      className="w-10 h-auto rounded-md"
+                    />
+                    {capitalizeFirstLetter(rank.name)}
+                  </div>
                 </CardTitle>
                 <CardDescription>{rank.description}</CardDescription>
                 <CardDescription className="text-xs">
