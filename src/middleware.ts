@@ -66,7 +66,7 @@ export default async function middleware(request: NextRequest) {
   if (!session?.user) {
     // Redirect to login-required page with the original URL as a parameter
     const loginUrl = new URL("/login-required", request.url);
-    loginUrl.searchParams.set("returnUrl", pathname);
+    loginUrl.searchParams.set("redirectTo", pathname);
     return NextResponse.redirect(loginUrl);
   }
 

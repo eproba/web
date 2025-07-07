@@ -6,7 +6,7 @@ import { ErrorPageParam, SignInPageErrorParam } from "@auth/core/types";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface LoginRequiredProps {
-  returnUrl?: string;
+  redirectTo?: string;
   error?: ErrorPageParam | SignInPageErrorParam;
 }
 
@@ -74,7 +74,7 @@ const errorMessages: Record<string, { title: string; description: string }> = {
   },
 };
 
-export function LoginRequired({ returnUrl, error }: LoginRequiredProps) {
+export function LoginRequired({ redirectTo, error }: LoginRequiredProps) {
   return (
     <Card className="w-full max-w-md shadow-xl">
       <CardHeader className="text-center">
@@ -100,7 +100,7 @@ export function LoginRequired({ returnUrl, error }: LoginRequiredProps) {
           action={async () => {
             "use server";
             await signIn("eproba", {
-              redirectTo: returnUrl || "/",
+              redirectTo: redirectTo || "/",
             });
           }}
         >

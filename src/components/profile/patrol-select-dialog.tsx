@@ -18,16 +18,18 @@ import { FieldInfo } from "@/types/user";
 import { toast } from "react-toastify";
 import { ToastMsg } from "@/lib/toast-msg";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 export const PatrolSelectDialog = ({
   variant = "change",
   userGender,
   children,
+  ...props
 }: {
   variant?: "change" | "set";
   userGender: FieldInfo | null;
   children: React.ReactNode;
-}) => {
+} & React.ComponentProps<typeof Dialog>) => {
   const { apiClient } = useApi();
   const router = useRouter();
   const [selectedPatrol, setSelectedPatrol] = useState<string>("");
@@ -60,7 +62,15 @@ export const PatrolSelectDialog = ({
     }
   };
   return (
-    <Dialog onOpenChange={(open) => open && setSelectedPatrol("")}>
+    <Dialog
+      {...props}
+      onOpenChange={(open) => {
+        if (open) {
+          setSelectedPatrol("");
+        }
+        props.onOpenChange?.(open);
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="">
         <DialogHeader>
@@ -78,6 +88,19 @@ export const PatrolSelectDialog = ({
           selectedPatrol={selectedPatrol}
           setSelectedPatrol={setSelectedPatrol}
         />
+        <span className="text-xs text-gray-500">
+          Chcesz dodać swoją drużynę? Jeśli należysz do kadry, możesz to zrobić
+          klikając{" "}
+          <DialogClose asChild>
+            <Link
+              href="/team/request"
+              className="text-blue-500 hover:underline"
+            >
+              tutaj
+            </Link>
+          </DialogClose>
+          .
+        </span>
         <DialogFooter className="flex flex-row justify-end gap-2 mt-4">
           <DialogClose asChild>
             <Button variant="outline">Anuluj</Button>

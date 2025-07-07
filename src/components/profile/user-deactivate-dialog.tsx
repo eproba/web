@@ -34,7 +34,7 @@ export const UserDeactivateDialog = ({
         body: JSON.stringify({ is_active: false }),
       });
       toast.success("Twoje konto zostało dezaktywowane");
-      await signOut({ redirectTo: "/" });
+      await signOut({ redirectTo: "/signout" });
     } catch (error) {
       toast.error(
         ToastMsg({

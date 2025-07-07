@@ -9,7 +9,7 @@ import { ErrorPageParam, SignInPageErrorParam } from "@auth/core/types";
 
 interface LoginRequiredPageProps {
   searchParams: Promise<{
-    returnUrl?: string;
+    redirectTo?: string;
     error?: ErrorPageParam | SignInPageErrorParam;
   }>;
 }
@@ -27,11 +27,11 @@ export default async function LoginRequiredPage({
 }
 
 async function LoginRequiredContent({ searchParams }: LoginRequiredPageProps) {
-  const { returnUrl, error } = await searchParams;
+  const { redirectTo, error } = await searchParams;
   const session = await auth();
 
   if (session?.user) {
-    const redirectUrl = returnUrl || "/";
+    const redirectUrl = redirectTo || "/";
     return (
       <div className="flex flex-col items-center justify-center min-h-96">
         <Card className="w-full max-w-md shadow-xl">
@@ -62,5 +62,5 @@ async function LoginRequiredContent({ searchParams }: LoginRequiredPageProps) {
     );
   }
 
-  return <LoginRequired returnUrl={returnUrl} error={error} />;
+  return <LoginRequired redirectTo={redirectTo} error={error} />;
 }

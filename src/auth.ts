@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import { userSerializer } from "@/lib/serializers/user";
+import { User } from "@/types/user";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -9,6 +10,7 @@ declare module "next-auth" {
   interface Session {
     accessToken: string;
     error?: "RefreshTokenError";
+    user?: User;
   }
 }
 
@@ -108,6 +110,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           ...userSerializer({ ...token, id: token.sub as string } as any),
         },
       };
+    },
+    async redirect({ url, baseUrl }) {
+      let finalUrl = url;
+
+      // If already a callback URL, extract the redirectTo parameter
+      if (url.startsWith(`${baseUrl}/api/auth/callback`)) {
+        const urlObj = new URL(url);
+        const redirectTo = urlObj.searchParams.get("redirectTo");
+        if (redirectTo) {
+          finalUrl = decodeURIComponent(redirectTo);
+        }
+      } else if (url === "/signout") {
+        return baseUrl; // Redirect to home on sign out
+      }
+
+      return `${baseUrl}/api/auth/callback?redirectTo=${encodeURIComponent(finalUrl)}`;
     },
   },
   pages: {

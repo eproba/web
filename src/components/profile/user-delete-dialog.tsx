@@ -44,7 +44,7 @@ export const UserDeleteDialog = ({
         method: "DELETE",
       });
       toast.success("Twoje konto zostało usunięte");
-      await signOut({ redirectTo: "/" });
+      await signOut({ redirectTo: "/signout" });
     } catch (error) {
       toast.error(
         ToastMsg({

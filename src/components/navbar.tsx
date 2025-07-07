@@ -4,14 +4,7 @@ import { AppLogo } from "@/components/app-logo";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import {
-  AlertCircleIcon,
-  LogInIcon,
-  LogOutIcon,
-  MenuIcon,
-  UserIcon,
-  XIcon,
-} from "lucide-react";
+import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -33,8 +26,7 @@ import { User } from "@/types/user";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { fetchCurrentUser } from "@/lib/server-api";
 import { Organization } from "@/types/team";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
+import { PatrolAlert } from "@/components/patrol-alert";
 
 type NavItem = {
   title: string;
@@ -119,7 +111,7 @@ const AuthButtons = ({ user }: { user?: User }) => (
           className="flex-1"
           action={async () => {
             "use server";
-            await signOut({ redirectTo: "/" });
+            await signOut({ redirectTo: "/signout" });
           }}
         >
           <Button variant="destructive" className="w-full">
@@ -222,7 +214,7 @@ export async function Navbar() {
   const session = await auth();
 
   // if (session?.error === "RefreshTokenError") {
-  //   await signOut();
+  //   await signOut({ redirectTo: "/signout" });
   //   console.error("Refresh token error");
   // }
 
@@ -345,24 +337,7 @@ export async function Navbar() {
         </div>
       </nav>
 
-      {user && !user.patrol && (
-        <Alert
-          variant="destructive"
-          className="mx-auto container mt-4 bg-red-500/10 border-red-500/20"
-        >
-          <AlertCircleIcon className="size-4" />
-          <AlertTitle className="font-semibold">
-            Nie jesteś przypisany do żadnej drużyny!
-          </AlertTitle>
-          <AlertDescription className="text-sm text-gray-500">
-            <PatrolSelectDialog userGender={user.gender} variant="set">
-              <Button variant="outline" size="sm" className="mt-1">
-                Wybierz swoją drużynę
-              </Button>
-            </PatrolSelectDialog>
-          </AlertDescription>
-        </Alert>
-      )}
+      {user && !user.patrol && <PatrolAlert user={user} />}
     </>
   );
 }

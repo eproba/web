@@ -279,7 +279,10 @@ export function FunctionsChart({ statistics }: ChartsProps) {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={functionsConfig} className="min-h-80 w-full">
+        <ChartContainer
+          config={functionsConfig}
+          className="min-h-80 h-full w-full"
+        >
           <BarChart
             accessibilityLayer
             data={transformedData}
