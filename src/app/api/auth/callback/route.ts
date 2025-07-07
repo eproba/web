@@ -13,9 +13,11 @@ export async function GET(request: NextRequest) {
   }
 
   if (!session.user.patrol) {
-    const url = new URL(redirectTo, request.nextUrl.origin);
-    url.searchParams.set("openSelectPatrolDialog", "true");
-    redirect(url.toString(), RedirectType.replace);
+    const separator = redirectTo.includes("?") ? "&" : "?";
+    redirect(
+      `${redirectTo}${separator}openSelectPatrolDialog=true`,
+      RedirectType.replace,
+    );
   }
 
   redirect(redirectTo, RedirectType.replace);

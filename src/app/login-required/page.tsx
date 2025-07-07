@@ -11,6 +11,7 @@ interface LoginRequiredPageProps {
   searchParams: Promise<{
     redirectTo?: string;
     error?: ErrorPageParam | SignInPageErrorParam;
+    openSelectPatrolDialog?: boolean;
   }>;
 }
 
@@ -27,11 +28,14 @@ export default async function LoginRequiredPage({
 }
 
 async function LoginRequiredContent({ searchParams }: LoginRequiredPageProps) {
-  const { redirectTo, error } = await searchParams;
+  const { redirectTo, openSelectPatrolDialog, error } = await searchParams;
   const session = await auth();
 
+  const redirectUrl = openSelectPatrolDialog
+    ? `${redirectTo || "/"}${redirectTo?.includes("?") ? "&" : "?"}openSelectPatrolDialog=true`
+    : redirectTo || "/";
+
   if (session?.user) {
-    const redirectUrl = redirectTo || "/";
     return (
       <div className="flex flex-col items-center justify-center min-h-96">
         <Card className="w-full max-w-md shadow-xl">
