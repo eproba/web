@@ -1,5 +1,6 @@
 import { Task, Worksheet } from "@/types/worksheet";
 import { ApiUserResponse, publicUserSerializer } from "@/lib/serializers/user";
+import { templateMetadataSerializer } from "@/lib/serializers/templates";
 
 export interface ApiTaskResponse {
   id: string;
@@ -32,7 +33,7 @@ export interface ApiWorksheetResponse {
     name: string;
     description: string;
     image?: string | null;
-  };
+  } | null;
 }
 
 export function worksheetSerializer(
@@ -55,7 +56,9 @@ export function worksheetSerializer(
     isArchived: apiResponse.is_archived,
     isDeleted: apiResponse.is_deleted,
     notes: apiResponse.notes,
-    template: apiResponse.template,
+    template: apiResponse.template
+      ? templateMetadataSerializer(apiResponse.template)
+      : null,
   };
 }
 
