@@ -2,7 +2,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { toast } from "react-toastify";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
@@ -18,6 +17,8 @@ import {
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
+import { Switch } from "@/components/ui/switch";
+import { User } from "@/types/user";
 
 type DeviceInfo = {
   os?: { name: string; version: string };
@@ -35,10 +36,14 @@ type Device = {
   type: string;
 };
 
-export function ProfileNotificationsTab() {
+export function ProfileNotificationsTab({ user }: { user: User }) {
   const [devices, setDevices] = useState<Device[]>([]);
   // const [emailNotifications, setEmailNotifications] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
+  console.log(user.emailNotifications);
+  const [emailNotifications, setEmailNotifications] = useState<boolean>(
+    user.emailNotifications,
+  );
   const { apiClient } = useApi();
 
   const fetchDevices = useCallback(async () => {
@@ -93,6 +98,28 @@ export function ProfileNotificationsTab() {
         ToastMsg({
           data: {
             title: "Nie udało się wykonać operacji",
+            description: error as Error,
+          },
+        }),
+      );
+    }
+  };
+
+  const handleEmailNotificationsToggle = async (enabled: boolean) => {
+    try {
+      await apiClient(`/user/`, {
+        method: "PATCH",
+        body: JSON.stringify({ email_notifications: enabled }),
+      });
+      setEmailNotifications(enabled);
+      toast.success(
+        `Powiadomienia e-mail zostały ${enabled ? "włączone" : "wyłączone"}`,
+      );
+    } catch (error) {
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie udało się zaktualizować powiadomień e-mail",
             description: error as Error,
           },
         }),
@@ -160,7 +187,13 @@ export function ProfileNotificationsTab() {
             </div>
 
             <div className="flex items-center gap-2">
-              <Badge variant="info">Wkrótce</Badge>
+              <Switch
+                checked={emailNotifications}
+                onCheckedChange={(checked) =>
+                  handleEmailNotificationsToggle(checked)
+                }
+                aria-label={`${emailNotifications ? "Wyłącz" : "Włącz"} powiadomienia e-mail`}
+              />
             </div>
           </div>
 

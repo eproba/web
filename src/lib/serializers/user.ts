@@ -30,6 +30,7 @@ export interface ApiUserResponse {
   is_superuser: boolean;
   email?: string;
   email_verified?: boolean;
+  email_notifications?: boolean;
   has_password?: boolean;
 }
 
@@ -82,6 +83,7 @@ export function userSerializer(
     ...publicUser,
     email: apiResponse.email ?? "",
     emailVerified: apiResponse.email_verified ?? false,
+    emailNotifications: apiResponse.email_notifications ?? false,
     hasPassword: apiResponse.has_password ?? false,
   };
 }

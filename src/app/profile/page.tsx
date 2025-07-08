@@ -301,7 +301,7 @@ export default async function UserProfilePage() {
         </Card>
       </TabsContent>
       <TabsContent value="notifications" className="flex flex-col gap-2">
-        <ProfileNotificationsTab />
+        <ProfileNotificationsTab user={user} />
       </TabsContent>
     </Tabs>
   );

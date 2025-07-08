@@ -200,5 +200,6 @@ export interface PublicUser {
 export interface User extends PublicUser {
   email: string;
   emailVerified: boolean;
+  emailNotifications: boolean;
   hasPassword: boolean;
 }
