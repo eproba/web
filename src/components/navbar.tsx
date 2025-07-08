@@ -102,7 +102,13 @@ const MORE_NAV_ITEMS: NavItem[] = [
   },
 ];
 
-const AuthButtons = ({ user }: { user?: User }) => (
+const AuthButtons = ({
+  user,
+  mobile = false,
+}: {
+  user?: User;
+  mobile?: boolean;
+}) => (
   <>
     <ThemeSwitch />
     {user ? (
@@ -119,12 +125,23 @@ const AuthButtons = ({ user }: { user?: User }) => (
             Wyloguj
           </Button>
         </form>
-        <Link href="/profile" className="flex-1">
-          <Button className="w-full bg-[#1abc9c] hover:bg-[#16a085]">
-            <UserIcon className="mr-2 size-4" />
-            Profil
-          </Button>
-        </Link>
+        {mobile ? (
+          <DrawerClose asChild>
+            <Link href="/profile" className="flex-1">
+              <Button className="w-full bg-[#1abc9c] hover:bg-[#16a085]">
+                <UserIcon className="mr-2 size-4" />
+                Profil
+              </Button>
+            </Link>
+          </DrawerClose>
+        ) : (
+          <Link href="/profile" className="flex-1">
+            <Button className="w-full bg-[#1abc9c] hover:bg-[#16a085]">
+              <UserIcon className="mr-2 size-4" />
+              Profil
+            </Button>
+          </Link>
+        )}
       </>
     ) : (
       <form
@@ -170,11 +187,18 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => (
   <NavigationMenuItem>
     {item.subItems ? (
       <>
-        <Link href={item.href} target={item.external ? "_blank" : undefined}>
+        <Link
+          href={item.href}
+          target={item.external ? "_blank" : undefined}
+          className="pointer-coarse:hidden"
+        >
           <NavigationMenuTrigger className="bg-transparent">
             {item.title}
           </NavigationMenuTrigger>
         </Link>
+        <NavigationMenuTrigger className="bg-transparent pointer-fine:hidden">
+          {item.title}
+        </NavigationMenuTrigger>
         <NavigationMenuContent className="dark:bg-[#161b22] z-50">
           <ul className="grid gap-1 p-2 w-[240px]">
             {item.subItems.map((subItem) => (
@@ -287,7 +311,7 @@ export async function Navbar() {
               <div className="mt-auto pt-4 border-t">
                 <div className="flex flex-col gap-2">
                   <div className="flex gap-2 justify-between items-center px-2">
-                    <AuthButtons user={user} />
+                    <AuthButtons user={user} mobile={true} />
                   </div>
                 </div>
               </div>
@@ -332,7 +356,7 @@ export async function Navbar() {
           </NavigationMenu>
 
           <div className="hidden md:flex gap-2">
-            <AuthButtons user={user} />
+            <AuthButtons user={user} mobile={false} />
           </div>
         </div>
       </nav>
