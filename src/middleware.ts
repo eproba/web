@@ -27,6 +27,7 @@ const ALWAYS_ACCESSIBLE = [
   "^/static/.*", // Static assets
   "^/sw\\.js$", // Service worker
   "^/manifest\\.webmanifest$", // PWA manifest
+  "^/offline$", // Offline page
   "^/robots\\.txt$", // Robots.txt
   "^/sitemap\\.xml$", // Sitemap
   ".*\\.(png|jpg|jpeg|gif|svg|ico|css|js|webp|woff|woff2|ttf|eot)$", // Static file extensions

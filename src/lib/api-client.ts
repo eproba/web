@@ -1,4 +1,3 @@
-// lib/api-client.ts
 import { API_URL, ApiError } from "@/lib/api";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
@@ -20,6 +19,11 @@ export function createApiClient(
     accessToken = session?.accessToken || "";
 
     const executeRequest = async (): Promise<Response> => {
+      // Check if offline before making request
+      if (!navigator.onLine) {
+        throw new ApiError("Brak połączenia z internetem", 0, "Offline");
+      }
+
       const headers: HeadersInit = {
         Authorization: `Bearer ${accessToken}`,
         ...(init?.headers || {}),
@@ -31,37 +35,46 @@ export function createApiClient(
           "application/json";
       }
 
-      const response = await fetch(API_URL + input, {
-        ...init,
-        headers,
-      });
+      try {
+        const response = await fetch(API_URL + input, {
+          ...init,
+          headers,
+        });
 
-      if (response.status === 401 && updateSession && !isRefreshing) {
-        isRefreshing = true;
-        try {
-          const newSession = await updateSession();
-          accessToken = newSession?.accessToken || "";
-          isRefreshing = false;
-          return executeRequest(); // Retry with new token
-        } catch (error) {
-          isRefreshing = false;
-          throw error;
+        if (response.status === 401 && updateSession && !isRefreshing) {
+          isRefreshing = true;
+          try {
+            const newSession = await updateSession();
+            accessToken = newSession?.accessToken || "";
+            isRefreshing = false;
+            return executeRequest(); // Retry with new token
+          } catch (error) {
+            isRefreshing = false;
+            throw error;
+          }
         }
-      }
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new ApiError(
-          Object.keys(errorData).length > 0
-            ? errorData.detail || JSON.stringify(errorData)
-            : response.statusText,
-          response.status,
-          response.statusText,
-          errorData,
-        );
-      }
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new ApiError(
+            Object.keys(errorData).length > 0
+              ? errorData.detail || JSON.stringify(errorData)
+              : response.statusText,
+            response.status,
+            response.statusText,
+            errorData,
+          );
+        }
 
-      return response;
+        return response;
+      } catch (error) {
+        // If it's a network error and we're offline, throw offline error
+        if (!navigator.onLine) {
+          throw new ApiError("Brak połączenia z internetem", 0, "Offline");
+        }
+        // Re-throw other errors
+        throw error;
+      }
     };
 
     return executeRequest();

@@ -4,6 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "Epróba",
     short_name: "Epróba",
+    id: "pl.zhr.eproba",
     description:
       "Epróba – kompleksowy system zarządzania próbami na stopnie w drużynie harcerskiej.",
     start_url: "/",
@@ -13,7 +14,7 @@ export default function manifest(): MetadataRoute.Manifest {
     orientation: "portrait-primary",
     scope: "/",
     icons: [
-      { src: "/favicon.ico", type: "image/x-icon", sizes: "16x16 32x32" },
+      { src: "/favicon.ico", type: "image/x-icon", sizes: "32x32" },
       { src: "/icon-192.png", type: "image/png", sizes: "192x192" },
       { src: "/icon-512.png", type: "image/png", sizes: "512x512" },
       {

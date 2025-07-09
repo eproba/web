@@ -13,10 +13,27 @@ import { ToastMsg } from "@/lib/toast-msg";
 
 export function AutoNotificationSetup() {
   const [hasAttemptedSetup, setHasAttemptedSetup] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
   const { apiClient, isApiReady } = useApi();
 
+  // Track online/offline status
   useEffect(() => {
-    if (isApiReady && !hasAttemptedSetup) {
+    const updateOnlineStatus = () => {
+      setIsOnline(navigator.onLine);
+    };
+
+    updateOnlineStatus();
+    window.addEventListener("online", updateOnlineStatus);
+    window.addEventListener("offline", updateOnlineStatus);
+
+    return () => {
+      window.removeEventListener("online", updateOnlineStatus);
+      window.removeEventListener("offline", updateOnlineStatus);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isApiReady && !hasAttemptedSetup && isOnline) {
       const setupNotifications = async () => {
         try {
           if (!("Notification" in window) || !("serviceWorker" in navigator)) {
@@ -30,7 +47,7 @@ export function AutoNotificationSetup() {
             const existingToken = await getExistingToken();
             if (existingToken) {
               const registered = await registerDevice(existingToken, apiClient);
-              if (!registered) {
+              if (!registered && isOnline) {
                 toast.warn(
                   ToastMsg({
                     data: {
@@ -50,7 +67,7 @@ export function AutoNotificationSetup() {
               console.log("Auto setup - Got new FCM token:", token);
 
               const registered = await registerDevice(token, apiClient);
-              if (!registered) {
+              if (!registered && isOnline) {
                 toast.warn(
                   ToastMsg({
                     data: {
@@ -66,13 +83,24 @@ export function AutoNotificationSetup() {
           }
         } catch (error) {
           console.error("Auto setup - Error setting up notifications:", error);
+          // Only show error toast if we're online (network errors when offline are expected)
+          if (isOnline) {
+            toast.error(
+              ToastMsg({
+                data: {
+                  title: "Błąd powiadomień",
+                  description: "Wystąpił problem z konfiguracją powiadomień.",
+                },
+              }),
+            );
+          }
         }
       };
 
       setupNotifications();
       setHasAttemptedSetup(true);
     }
-  }, [isApiReady, hasAttemptedSetup, apiClient]);
+  }, [isApiReady, hasAttemptedSetup, apiClient, isOnline]);
 
   useEffect(() => {
     const setupMessageListener = async () => {

@@ -4,6 +4,7 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Providers } from "@/components/providers";
 import { ThemedToastContainer } from "@/components/themed-toast-container";
+import { OfflineStatus } from "@/components/offline-status";
 import NextTopLoader from "nextjs-toploader";
 import { GoogleTagManager } from "@next/third-parties/google";
 
@@ -72,6 +73,7 @@ export default function RootLayout({
       </head>
       <body className="flex flex-col min-h-screen">
         <Providers>
+          <OfflineStatus />
           <NextTopLoader color="#1abc9c" />
           {/*{devMode && (*/}
           {/*    <div*/}

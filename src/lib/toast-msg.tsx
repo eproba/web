@@ -17,7 +17,11 @@ export function ToastMsg({
       break;
     case "object":
       if ("status" in data.description && "statusText" in data.description) {
-        description = `${data.description.status} ${data.description.statusText}\n${data.description.message}`;
+        if (data.description.status === 0) {
+          description = "Jesteś offline. Sprawdź połączenie z internetem.";
+        } else {
+          description = `${data.description.status} ${data.description.statusText}\n${data.description.message}`;
+        }
       } else if (data.description.message) {
         description = data.description.message;
       } else {
