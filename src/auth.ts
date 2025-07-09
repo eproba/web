@@ -15,6 +15,7 @@ declare module "next-auth" {
 }
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
+  basePath: "/auth",
   providers: [
     {
       id: "eproba",
@@ -115,7 +116,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       let finalUrl = url;
 
       // If already a callback URL, extract the redirectTo parameter
-      if (url.startsWith(`${baseUrl}/api/auth/callback`)) {
+      if (url.startsWith(`${baseUrl}/auth/callback`)) {
         const urlObj = new URL(url);
         const redirectTo = urlObj.searchParams.get("redirectTo");
         if (redirectTo) {
@@ -125,7 +126,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return baseUrl; // Redirect to home on sign out
       }
 
-      return `${baseUrl}/api/auth/callback?redirectTo=${encodeURIComponent(finalUrl)}`;
+      return `${baseUrl}/auth/callback?redirectTo=${encodeURIComponent(finalUrl)}`;
     },
   },
   pages: {

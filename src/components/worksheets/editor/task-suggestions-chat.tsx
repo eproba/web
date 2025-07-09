@@ -95,7 +95,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
 
   const simulateAIResponse = async (userInput: string) => {
     try {
-      const response = await fetch("/api/ai/task-suggestions", {
+      const response = await fetch("/ai/api/task-suggestions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

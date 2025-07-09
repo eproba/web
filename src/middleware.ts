@@ -16,8 +16,8 @@ const PUBLIC_ROUTES = [
 ];
 
 const AUTH_ROUTES = [
-  "^/api/auth$", // Auth API root
-  "^/api/auth/.*", // All auth API endpoints
+  "^/auth$", // Auth API root
+  "^/auth/.*", // All auth API endpoints
 ];
 
 const ALWAYS_ACCESSIBLE = [
