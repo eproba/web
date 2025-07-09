@@ -189,7 +189,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
           <h2 className="text-xl font-semibold">Powiadomienia</h2>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg p-4 flex flex-col sm:flex-row justify-between gap-4">
+          <div className="border rounded-lg p-4 flex flex-row justify-between gap-4">
             <div className="flex items-center gap-3">
               <MailIcon className="size-8" />
               <div>

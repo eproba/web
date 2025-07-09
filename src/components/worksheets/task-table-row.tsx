@@ -81,7 +81,7 @@ export function TaskTableRow({
               </p>
             )}
             {task.description && (
-              <p className="text-sm text-muted-foreground text-wrap line-clamp-3">
+              <p className="text-sm text-muted-foreground text-wrap line-clamp-3 whitespace-pre-wrap">
                 {task.description}
               </p>
             )}
@@ -100,7 +100,7 @@ export function TaskTableRow({
           rowStyle,
         )}
       >
-        <TableCell className="font-medium align-text-top w-8">
+        <TableCell className="font-medium align-text-top w-8 relative">
           {["managed", "review", "archived"].includes(variant) && (
             <div className="absolute -left-8 top-0 py-0.5 z-50 pointer-events-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible has-[[data-state=open]]:opacity-100 has-[[data-state=open]]:visible transition-all duration-300 ease-out transform translate-x-2 group-hover:translate-x-0 has-[[data-state=open]]:translate-x-0">
               <TaskNotes
@@ -128,7 +128,7 @@ export function TaskTableRow({
             </p>
           )}
           {task.description && (
-            <p className="text-sm text-muted-foreground text-wrap">
+            <p className="text-sm text-muted-foreground text-wrap whitespace-pre-wrap">
               {task.description}
             </p>
           )}
@@ -174,7 +174,7 @@ export function TaskTableRow({
               task.name
             )}
           </DrawerTitle>
-          <DrawerDescription className="max-h-80 overflow-y-auto text-wrap">
+          <DrawerDescription className="max-h-80 overflow-y-auto text-wrap whitespace-pre-wrap">
             {task.description}
           </DrawerDescription>
         </DrawerHeader>
