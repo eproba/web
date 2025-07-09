@@ -1,5 +1,5 @@
 import "./globals.css";
-import { Metadata } from "next";
+import { Metadata, Viewport } from "next";
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Providers } from "@/components/providers";
@@ -7,10 +7,48 @@ import { ThemedToastContainer } from "@/components/themed-toast-container";
 import NextTopLoader from "nextjs-toploader";
 import { GoogleTagManager } from "@next/third-parties/google";
 
+const APP_NAME = "Epróba";
+const APP_DEFAULT_TITLE = "Epróba";
+const APP_TITLE_TEMPLATE = "%s - Epróba";
+const APP_DESCRIPTION =
+  "Epróba – kompleksowy system zarządzania próbami na stopnie w drużynie harcerskiej.";
+
 export const metadata: Metadata = {
-  title: "Epróba",
-  description:
-    "Epróba – kompleksowy system zarządzania próbami na stopnie w drużynie harcerskiej.",
+  applicationName: APP_NAME,
+  title: {
+    default: APP_DEFAULT_TITLE,
+    template: APP_TITLE_TEMPLATE,
+  },
+  description: APP_DESCRIPTION,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_DEFAULT_TITLE,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1abc9c",
 };
 
 export default function RootLayout({
@@ -28,11 +66,8 @@ export default function RootLayout({
           name="google-site-verification"
           content="Oa-8rANmBab3FrKyY44hIe4K1937-KdaX9UEZLJs9bg"
         />
-        <link
-          rel="icon"
-          href="/images/icons/favicon.svg"
-          type="image/svg+xml"
-        />
+        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <GoogleTagManager gtmId="GTM-NN3D54WV" />
       </head>
       <body className="flex flex-col min-h-screen">

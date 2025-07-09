@@ -29,10 +29,12 @@ export function ToastMsg({
   }
   if (data.href) {
     return (
-      <Link href={data.href}>
-        <p className="font-semibold">{data.title}</p>
-        <p className="text-sm">{description}</p>
-      </Link>
+      <div>
+        <Link href={data.href}>
+          <p className="font-semibold">{data.title}</p>
+          <p className="text-sm">{description}</p>
+        </Link>
+      </div>
     );
   }
   return (

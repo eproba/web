@@ -18,7 +18,9 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Toggle } from "@/components/ui/toggle";
 import { Switch } from "@/components/ui/switch";
+import { Badge } from "@/components/ui/badge";
 import { User } from "@/types/user";
+import { getExistingToken } from "@/lib/firebase";
 
 type DeviceInfo = {
   os?: { name: string; version: string };
@@ -40,7 +42,9 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
   const [devices, setDevices] = useState<Device[]>([]);
   // const [emailNotifications, setEmailNotifications] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
-  console.log(user.emailNotifications);
+  const [currentDeviceToken, setCurrentDeviceToken] = useState<string | null>(
+    null,
+  );
   const [emailNotifications, setEmailNotifications] = useState<boolean>(
     user.emailNotifications,
   );
@@ -70,6 +74,9 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
 
   useEffect(() => {
     fetchDevices();
+    getExistingToken().then((token) => {
+      setCurrentDeviceToken(token);
+    });
   }, [fetchDevices]);
 
   const handleDeviceAction = async (
@@ -171,6 +178,10 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
     return [deviceModel, os, browser].filter(Boolean).join(" • ");
   };
 
+  const isCurrentDevice = (device: Device) => {
+    return currentDeviceToken && device.registration_id === currentDeviceToken;
+  };
+
   return (
     <>
       <Card className="gap-2">
@@ -215,13 +226,20 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
                         <p className="font-medium">
                           {formatDeviceName(device)}
                         </p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(device.date_created).toLocaleDateString()}
-                        </p>
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm text-muted-foreground">
+                            {new Date(device.date_created).toLocaleDateString()}
+                          </p>
+                          {isCurrentDevice(device) && (
+                            <Badge variant="info" className="text-xs">
+                              To urządzenie
+                            </Badge>
+                          )}
+                        </div>
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 justify-end">
                       <Toggle
                         pressed={device.active}
                         onPressedChange={() =>

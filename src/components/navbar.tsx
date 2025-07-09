@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth, signIn, signOut } from "@/auth";
 import { AppLogo } from "@/components/app-logo";
 import { ThemeSwitch } from "@/components/theme-switch";
+import AutoNotificationSetup from "@/components/auto-notification-setup";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
@@ -362,6 +363,9 @@ export async function Navbar() {
       </nav>
 
       {user && !user.patrol && <PatrolAlert user={user} />}
+
+      {/* Auto notification setup for authenticated users */}
+      {user && <AutoNotificationSetup />}
     </>
   );
 }
