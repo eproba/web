@@ -1,6 +1,6 @@
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist, BroadcastUpdatePlugin, StaleWhileRevalidate } from "serwist";
+import { Serwist } from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -16,10 +16,14 @@ declare const self: ServiceWorkerGlobalScope;
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
+  precacheOptions: {
+    cleanupOutdatedCaches: true,
+  },
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching: defaultCache,
+  disableDevLogs: true,
   fallbacks: {
     entries: [
       {
@@ -31,23 +35,5 @@ const serwist = new Serwist({
     ],
   },
 });
-
-// Register broadcast updates for API calls
-serwist.registerCapture(
-  ({ url }) => url.pathname.startsWith("/api/"),
-  new StaleWhileRevalidate({
-    cacheName: "api-cache",
-    plugins: [new BroadcastUpdatePlugin()],
-  })
-);
-
-// Register broadcast updates for page navigation with cache-first strategy for better offline support
-serwist.registerCapture(
-  ({ request }) => request.mode === "navigate",
-  new StaleWhileRevalidate({
-    cacheName: "pages-cache", 
-    plugins: [new BroadcastUpdatePlugin()],
-  })
-);
 
 serwist.addEventListeners();

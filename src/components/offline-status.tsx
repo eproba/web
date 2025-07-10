@@ -92,7 +92,7 @@ export function OfflineStatus({ className }: OfflineStatusProps) {
               {" "}
               {!isOnline ? (
                 <span className="text-red-700 dark:text-red-300">
-                  Jesteś offline. Niektóre funkcje są niedostępne.
+                  Jesteś offline. Dane mogą być nieaktualne.
                 </span>
               ) : isFromCache ? (
                 <span className="text-yellow-700 dark:text-yellow-300">
