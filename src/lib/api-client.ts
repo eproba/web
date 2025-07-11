@@ -14,6 +14,9 @@ export function createApiClient(
     // Ensure we have the latest session
     const session = await getSession();
     if (!session) {
+      if (!navigator.onLine) {
+        throw new ApiError("Brak połączenia z internetem", 0, "Offline");
+      }
       throw new ApiError("Session not found", 401, "Unauthorized");
     }
     accessToken = session?.accessToken || "";

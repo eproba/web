@@ -80,15 +80,18 @@ self.addEventListener("install", (event) => {
 self.addEventListener("fetch", (event) => {
   if (event.request.method === "GET") {
     const url = new URL(event.request.url);
-    if (url.pathname === "/auth/callback" || url.pathname === "/") {
+    if (
+      (url.pathname === "/auth/callback" || url.pathname === "/") &&
+      navigator.onLine
+    ) {
       // Reload cached pages on login or / (logout)
-      Promise.all(
-        urlsToCache.map((entry) => {
-          return serwist.handleRequest({
+      void Promise.all(
+        urlsToCache.map((entry) =>
+          serwist.handleRequest({
             request: new Request(entry),
             event,
-          });
-        }),
+          }),
+        ),
       );
     }
   }
