@@ -1,6 +1,12 @@
 import { defaultCache } from "@serwist/next/worker";
-import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import {
+  ExpirationPlugin,
+  NetworkFirst,
+  NetworkOnly,
+  PrecacheEntry,
+  Serwist,
+  SerwistGlobalConfig,
+} from "serwist";
 
 // This declares the value of `injectionPoint` to TypeScript.
 // `injectionPoint` is the string that will be replaced by the
@@ -22,7 +28,27 @@ const serwist = new Serwist({
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: [
+    {
+      matcher: /\/auth\/.*/,
+      handler: new NetworkOnly({
+        networkTimeoutSeconds: 10,
+      }),
+    },
+    {
+      matcher: /\/worksheets\/?(?:manage|archive|templates)?\/?$/,
+      handler: new NetworkFirst({
+        cacheName: "worksheets",
+        plugins: [
+          new ExpirationPlugin({
+            maxEntries: 20,
+            maxAgeSeconds: 7 * 24 * 60 * 60,
+          }),
+        ],
+      }),
+    },
+    ...defaultCache,
+  ],
   disableDevLogs: true,
   fallbacks: {
     entries: [
@@ -34,6 +60,38 @@ const serwist = new Serwist({
       },
     ],
   },
+});
+
+const urlsToCache = ["/", "/offline", "/about", "/regulations/male"] as const;
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    Promise.all(
+      urlsToCache.map((entry) => {
+        return serwist.handleRequest({
+          request: new Request(entry),
+          event,
+        });
+      }),
+    ),
+  );
+});
+
+self.addEventListener("fetch", (event) => {
+  if (event.request.method === "GET") {
+    const url = new URL(event.request.url);
+    if (url.pathname === "/auth/callback" || url.pathname === "/") {
+      // Reload cached pages on login or / (logout)
+      Promise.all(
+        urlsToCache.map((entry) => {
+          return serwist.handleRequest({
+            request: new Request(entry),
+            event,
+          });
+        }),
+      );
+    }
+  }
 });
 
 serwist.addEventListeners();

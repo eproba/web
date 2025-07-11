@@ -7,24 +7,6 @@ const withSerwist = withSerwistInit({
   cacheOnNavigation: true,
   reloadOnOnline: true,
   disable: process.env.NODE_ENV !== "production",
-  additionalPrecacheEntries: [
-    {
-      url: "/offline",
-      revision: null,
-    },
-    {
-      url: "/about",
-      revision: null,
-    },
-    {
-      url: "/regulations/male",
-      revision: null,
-    },
-    {
-      url: "/",
-      revision: null,
-    },
-  ],
 });
 
 const nextConfig: NextConfig = {

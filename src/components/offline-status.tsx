@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ClockIcon, RefreshCwIcon, WifiIcon, WifiOffIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useOnlineStatus } from "@/lib/hooks/use-online-status";
 
 interface OfflineStatusProps {
   className?: string;
 }
 
 export function OfflineStatus({ className }: OfflineStatusProps) {
-  const [isOnline, setIsOnline] = useState(true);
+  const isOnline = useOnlineStatus();
   const [isFromCache, setIsFromCache] = useState(false);
   const [showCacheWarning, setShowCacheWarning] = useState(true);
 
@@ -31,23 +32,8 @@ export function OfflineStatus({ className }: OfflineStatusProps) {
       }
     };
 
-    // Check online status
-    const updateOnlineStatus = () => {
-      setIsOnline(navigator.onLine);
-    };
-
-    // Initial checks
-    updateOnlineStatus();
+    // Initial check
     checkCacheStatus();
-
-    // Listen for online/offline events
-    window.addEventListener("online", updateOnlineStatus);
-    window.addEventListener("offline", updateOnlineStatus);
-
-    return () => {
-      window.removeEventListener("online", updateOnlineStatus);
-      window.removeEventListener("offline", updateOnlineStatus);
-    };
   }, []);
 
   const handleRefresh = () => {
@@ -58,8 +44,8 @@ export function OfflineStatus({ className }: OfflineStatusProps) {
     setShowCacheWarning(false);
   };
 
-  // Don't show anything if online and not from cache
-  if (isOnline && !isFromCache) {
+  // Don't show anything if online and not from cache, or if still loading
+  if ((isOnline && !isFromCache) || isOnline === undefined) {
     return null;
   }
 
@@ -71,7 +57,7 @@ export function OfflineStatus({ className }: OfflineStatusProps) {
   return (
     <div
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 bg-yellow-50 border-b border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800 pointer-events-none backdrop-blur-sm",
+        "sticky md:-mb-2 top-0 left-0 right-0 z-50 bg-yellow-50 border-b border-yellow-200 dark:bg-yellow-900/20 dark:border-yellow-800 pointer-events-none backdrop-blur-sm",
         !isOnline &&
           "bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800",
         className,
@@ -108,7 +94,7 @@ export function OfflineStatus({ className }: OfflineStatusProps) {
                 variant="ghost"
                 size="sm"
                 onClick={handleRefresh}
-                className="h-8 px-3 text-xs"
+                className="h-8 px-3 text-xs pointer-events-auto"
               >
                 <RefreshCwIcon className="w-3 h-3 mr-1" />
                 Odśwież

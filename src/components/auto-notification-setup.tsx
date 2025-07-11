@@ -10,27 +10,13 @@ import {
 import { toast } from "react-toastify";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useOnlineStatus } from "@/lib/hooks/use-online-status";
+import { ApiError } from "@/lib/api";
 
 export function AutoNotificationSetup() {
   const [hasAttemptedSetup, setHasAttemptedSetup] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
+  const isOnline = useOnlineStatus();
   const { apiClient, isApiReady } = useApi();
-
-  // Track online/offline status
-  useEffect(() => {
-    const updateOnlineStatus = () => {
-      setIsOnline(navigator.onLine);
-    };
-
-    updateOnlineStatus();
-    window.addEventListener("online", updateOnlineStatus);
-    window.addEventListener("offline", updateOnlineStatus);
-
-    return () => {
-      window.removeEventListener("online", updateOnlineStatus);
-      window.removeEventListener("offline", updateOnlineStatus);
-    };
-  }, []);
 
   useEffect(() => {
     if (isApiReady && !hasAttemptedSetup && isOnline) {
@@ -84,7 +70,7 @@ export function AutoNotificationSetup() {
         } catch (error) {
           console.error("Auto setup - Error setting up notifications:", error);
           // Only show error toast if we're online (network errors when offline are expected)
-          if (isOnline) {
+          if (isOnline && (error as ApiError)?.status !== 0) {
             toast.error(
               ToastMsg({
                 data: {
