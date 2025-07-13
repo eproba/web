@@ -14,7 +14,7 @@ export const displayNameFromUser = (
     user.firstName,
     user.lastName,
     user.nickname && `„${user.nickname}”`,
-    user.instructorRank.value && user.scoutRank.shortName,
+    user.instructorRank.numberValue && user.scoutRank.shortName,
   ]
     .filter(Boolean)
     .join(" ");

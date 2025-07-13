@@ -43,11 +43,11 @@ export function WorksheetItem({
               {worksheet.name}
               {(variant === "managed" || variant === "archived") && (
                 <a
-                  href={`/profile/${worksheet.user?.id}`}
+                  href={`/profile/${worksheet.user.id}`}
                   className="text-primary"
                 >
                   {" "}
-                  - {worksheet.user?.displayName}
+                  - {worksheet.user.displayName}
                 </a>
               )}
             </div>

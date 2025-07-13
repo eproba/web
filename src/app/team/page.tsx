@@ -1,32 +1,47 @@
-import { IframeRenderer } from "@/components/iframe-renderer";
+import {
+  fetchCurrentUser,
+  fetchUsersByTeamId,
+  fetchUserTeam,
+} from "@/lib/server-api";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircleIcon } from "lucide-react";
+import { TeamManagementClient } from "@/components/team/management/team-management-client";
+import { User } from "@/types/user";
 
-export default function TeamPage() {
-  return (
-    <>
-      <IframeRenderer src="/proxy/team" />
-      <Alert>
-        <AlertCircleIcon />
-        <AlertTitle>Uwaga!</AlertTitle>
+export default async function TeamPage() {
+  const { team, error: teamsError } = await fetchUserTeam();
+  if (teamsError) {
+    return teamsError;
+  }
+
+  const { users, error: usersError } = await fetchUsersByTeamId(team!.id);
+
+  if (usersError) {
+    return usersError;
+  }
+
+  const { user: currentUser, error: currentUserError } =
+    await fetchCurrentUser();
+
+  if (currentUserError) {
+    return currentUserError;
+  }
+
+  if (!team || !users || !currentUser) {
+    return (
+      <Alert variant="destructive">
+        <AlertTitle>Błąd</AlertTitle>
         <AlertDescription>
-          <p>
-            Ta strona korzysta ze starej wersji aplikacji. Jeśli występują
-            problemy z wyświetlaniem tej strony, spróbuj otworzyć ją w nowej
-            karcie klikając
-            <a
-              href={`${process.env.NEXT_PUBLIC_SERVER_URL}/team`}
-              target="_blank"
-              className="text-blue-500 hover:underline"
-              rel="noopener noreferrer"
-            >
-              {" "}
-              tutaj
-            </a>
-            .
-          </p>
+          Nie udało się załadować danych drużyny.
         </AlertDescription>
       </Alert>
-    </>
+    );
+  }
+
+  return (
+    <TeamManagementClient
+      team={team}
+      users={users as User[]}
+      currentUser={currentUser}
+    />
   );
 }

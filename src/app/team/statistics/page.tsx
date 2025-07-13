@@ -1,4 +1,4 @@
-import { getTeamStatistics } from "@/lib/server-api";
+import { fetchTeamStatistics } from "@/lib/server-api";
 import {
   Card,
   CardContent,
@@ -17,7 +17,7 @@ import {
   PatrolComparisonChart,
   PatrolPerformanceRadarChart,
   ScoutRanksChart,
-} from "@/components/team/statistics-charts";
+} from "@/components/team/statistics/statistics-charts";
 import {
   ActivityIcon,
   AlertTriangleIcon,
@@ -39,7 +39,7 @@ import {
 } from "@/components/ui/table";
 
 export default async function TeamStatisticsPage() {
-  const { data: statistics, error } = await getTeamStatistics();
+  const { data: statistics, error } = await fetchTeamStatistics();
 
   if (error) {
     return error;
@@ -47,18 +47,16 @@ export default async function TeamStatisticsPage() {
 
   if (!statistics) {
     return (
-      <div className="container mx-auto p-6">
-        <Alert>
-          <AlertDescription>
-            Brak danych statystycznych do wyświetlenia.
-          </AlertDescription>
-        </Alert>
-      </div>
+      <Alert>
+        <AlertDescription>
+          Brak danych statystycznych do wyświetlenia.
+        </AlertDescription>
+      </Alert>
     );
   }
 
   return (
-    <div className="container mx-auto p-4 md:p-6 space-y-6">
+    <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

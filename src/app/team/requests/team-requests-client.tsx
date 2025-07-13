@@ -33,6 +33,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { ToastMsg } from "@/lib/toast-msg";
 
 type FilterStatus =
   | "all"
@@ -152,7 +153,7 @@ export function TeamRequestsClient({
     try {
       setProcessingIds((prev) => new Set(prev).add(requestId));
 
-      const response = await apiClient(`/team-requests/${requestId}/`, {
+      await apiClient(`/team-requests/${requestId}/`, {
         method: "PATCH",
         body: JSON.stringify({
           status: newStatus,
@@ -162,24 +163,27 @@ export function TeamRequestsClient({
         }),
       });
 
-      if (response.ok) {
-        toast.success("Zgłoszenie zostało zaktualizowane");
-        setRequests((prev) =>
-          prev.map((req) =>
-            req.id === requestId
-              ? {
-                  ...req,
-                  status: newStatus as TeamRequest["status"],
-                  notes: note,
-                }
-              : req,
-          ),
-        );
-      } else {
-        toast.error("Nie udało się zaktualizować zgłoszenia");
-      }
+      toast.success("Zgłoszenie zostało zaktualizowane");
+      setRequests((prev) =>
+        prev.map((req) =>
+          req.id === requestId
+            ? {
+                ...req,
+                status: newStatus as TeamRequest["status"],
+                notes: note,
+              }
+            : req,
+        ),
+      );
     } catch (error) {
-      toast.error("Wystąpił błąd podczas aktualizacji");
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie udało się zaktualizować zgłoszenia",
+            description: error as Error,
+          },
+        }),
+      );
       console.error("Error updating team request:", error);
     } finally {
       setProcessingIds((prev) => {

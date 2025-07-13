@@ -46,7 +46,7 @@ export function UserCombobox({
 }: UserComboboxProps) {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<PublicUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOutsideTeam, setSearchOutsideTeam] = useState(false);
   const { apiClient, isApiReady } = useApi();
@@ -54,7 +54,7 @@ export function UserCombobox({
   const selectedUser = users.find((user) => user.id === value);
 
   const debouncedSearch = useDebouncedCallback(async (query: string) => {
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const response = await apiClient(
@@ -66,7 +66,7 @@ export function UserCombobox({
       console.error("Failed to search users:", error);
       setUsers([]);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, 300);
 
@@ -75,7 +75,7 @@ export function UserCombobox({
       if (!isApiReady || searchQuery.trim().length < 3) {
         setUsers([]);
       } else if (searchQuery.trim().length >= 3) {
-        setLoading(true);
+        setIsLoading(true);
         debouncedSearch(searchQuery);
       }
     } else {
@@ -86,7 +86,7 @@ export function UserCombobox({
   // If we have a selected value but no user data, try to fetch it
   useEffect(() => {
     if (value && !selectedUser && isApiReady) {
-      setLoading(true);
+      setIsLoading(true);
       const fetchSelectedUser = async () => {
         try {
           const response = await apiClient(`/users/${value}/`);
@@ -98,12 +98,12 @@ export function UserCombobox({
         } catch (error) {
           console.error("Failed to fetch selected user:", error);
         } finally {
-          setLoading(false);
+          setIsLoading(false);
         }
       };
       fetchSelectedUser();
     } else if (!value) {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, [value, selectedUser, isApiReady, apiClient]);
 
@@ -122,7 +122,7 @@ export function UserCombobox({
             {selectedUser ? (
               <span className="truncate">{selectedUser.displayName}</span>
             ) : value ? (
-              loading ? (
+              isLoading ? (
                 <span className="text-muted-foreground">Ładowanie...</span>
               ) : (
                 <span className="text-muted-foreground">
@@ -151,7 +151,7 @@ export function UserCombobox({
             />
           </div>
           <CommandList>
-            {loading ? (
+            {isLoading ? (
               <div className="p-4 text-center text-sm text-muted-foreground">
                 Wyszukiwanie...
               </div>

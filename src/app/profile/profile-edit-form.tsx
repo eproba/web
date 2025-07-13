@@ -215,7 +215,7 @@ export function ProfileEditForm({ user }: { user: User }) {
                     ))}
                   </SelectContent>
                 </Select>
-                {[1, 2].includes(user.function.value) && (
+                {[1, 2].includes(user.function.numberValue) && (
                   <FormDescription>
                     Po zmianie zastępu twoja funkcja ({user.function.fullName})
                     zostanie zresetowana.

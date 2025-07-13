@@ -23,7 +23,7 @@ export interface Task {
 
 export interface Worksheet {
   id: string;
-  user: PublicUser | undefined;
+  user: PublicUser;
   userId: string;
   name: string;
   description: string;

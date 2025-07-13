@@ -37,34 +37,57 @@ export class Gender {
 }
 
 export class ScoutRank {
-  private static readonly ranks = new Map<
-    number,
-    { male: string; female: string }
-  >([
-    [0, { male: "brak stopnia", female: "brak stopnia" }],
-    [1, { male: "biszkopt", female: "biszkopt" }],
-    [2, { male: "młodzik", female: "ochotniczka" }],
-    [3, { male: "wywiadowca", female: "tropicielka" }],
-    [4, { male: "ćwik", female: "samarytanka" }],
-    [5, { male: "harcerz orli", female: "wędrowniczka" }],
-    [
-      6,
-      { male: "harcerz Rzeczypospolitej", female: "harcerka Rzeczypospolitej" },
-    ],
-  ]);
-
-  private static readonly shortNames = new Map<
-    number,
-    { male: string; female: string }
-  >([
-    [0, { male: "", female: "" }],
-    [1, { male: "biszkopt", female: "biszkopt" }],
-    [2, { male: "mł.", female: "och." }],
-    [3, { male: "wyw.", female: "trop." }],
-    [4, { male: "ćwik", female: "sam." }],
-    [5, { male: "HO", female: "węd." }],
-    [6, { male: "HR", female: "HR" }],
-  ]);
+  static readonly values = [
+    {
+      value: 0,
+      male: "brak stopnia",
+      female: "brak stopnia",
+      maleShort: "",
+      femaleShort: "",
+    },
+    {
+      value: 1,
+      male: "biszkopt",
+      female: "biszkopt",
+      maleShort: "biszkopt",
+      femaleShort: "biszkopt",
+    },
+    {
+      value: 2,
+      male: "młodzik",
+      female: "ochotniczka",
+      maleShort: "mł.",
+      femaleShort: "och.",
+    },
+    {
+      value: 3,
+      male: "wywiadowca",
+      female: "tropicielka",
+      maleShort: "wyw.",
+      femaleShort: "trop.",
+    },
+    {
+      value: 4,
+      male: "ćwik",
+      female: "samarytanka",
+      maleShort: "ćwik",
+      femaleShort: "sam.",
+    },
+    {
+      value: 5,
+      male: "harcerz orli",
+      female: "wędrowniczka",
+      maleShort: "HO",
+      femaleShort: "węd.",
+    },
+    {
+      value: 6,
+      male: "harcerz Rzeczypospolitej",
+      female: "harcerka Rzeczypospolitej",
+      maleShort: "HR",
+      femaleShort: "HR",
+    },
+  ];
 
   static fromValue(
     value: number,
@@ -72,35 +95,30 @@ export class ScoutRank {
   ): FieldInfo<number> {
     const normalizedValue = Math.max(0, Math.min(value, 6));
     const genderType = gender?.value === "female" ? "female" : "male";
-
+    const genderShort =
+      gender?.value === "female" ? "femaleShort" : "maleShort";
+    const rank = ScoutRank.values[normalizedValue];
     return {
       value: normalizedValue,
-      fullName:
-        ScoutRank.ranks.get(normalizedValue)?.[genderType] || "brak stopnia",
-      shortName:
-        ScoutRank.shortNames.get(normalizedValue)?.[genderType] || null,
+      fullName: rank[genderType],
+      shortName: rank[genderShort] || null,
       numberValue: normalizedValue,
     };
   }
 }
 
 export class InstructorRank {
-  private static readonly ranks = new Map<
-    number,
-    { male: string; female: string }
-  >([
-    [0, { male: "brak stopnia", female: "brak stopnia" }],
-    [1, { male: "przewodnik", female: "przewodniczka" }],
-    [2, { male: "podharcmistrz", female: "podharcmistrzyni" }],
-    [3, { male: "harcmistrz", female: "harcmistrzyni" }],
-  ]);
-
-  private static readonly shortNames = new Map<number, string>([
-    [0, ""],
-    [1, "pwd."],
-    [2, "phm."],
-    [3, "hm."],
-  ]);
+  static readonly values = [
+    { value: 0, male: "brak stopnia", female: "brak stopnia", short: "" },
+    { value: 1, male: "przewodnik", female: "przewodniczka", short: "pwd." },
+    {
+      value: 2,
+      male: "podharcmistrz",
+      female: "podharcmistrzyni",
+      short: "phm.",
+    },
+    { value: 3, male: "harcmistrz", female: "harcmistrzyni", short: "hm." },
+  ];
 
   static fromValue(
     value: number,
@@ -108,13 +126,11 @@ export class InstructorRank {
   ): FieldInfo<number> {
     const normalizedValue = Math.max(0, Math.min(value, 3));
     const genderType = gender?.value === "female" ? "female" : "male";
-
+    const rank = InstructorRank.values[normalizedValue];
     return {
       value: normalizedValue,
-      fullName:
-        InstructorRank.ranks.get(normalizedValue)?.[genderType] ||
-        "brak stopnia",
-      shortName: InstructorRank.shortNames.get(normalizedValue) || null,
+      fullName: rank[genderType],
+      shortName: rank.short || null,
       numberValue: normalizedValue,
     };
   }

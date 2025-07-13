@@ -129,10 +129,10 @@ const SubmitDialog = ({
   const { apiClient } = useApi();
   const [approvers, setApprovers] = React.useState<PublicUser[]>([]);
   const [selectedApprover, setSelectedApprover] = React.useState<string>();
-  const [loading, setLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const fetchApprovers = async () => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await apiClient(
         `/worksheets/${worksheetId}/tasks/${task.id}/approvers/`,
@@ -150,7 +150,7 @@ const SubmitDialog = ({
         }),
       );
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -171,12 +171,12 @@ const SubmitDialog = ({
           <Select
             value={selectedApprover ?? ""}
             onValueChange={setSelectedApprover}
-            disabled={!approvers.length || loading}
+            disabled={!approvers.length || isLoading}
           >
             <SelectTrigger className="w-full">
               <SelectValue
                 placeholder={
-                  loading
+                  isLoading
                     ? "Ładowanie..."
                     : approvers.length
                       ? "Wybierz osobę"
@@ -221,10 +221,10 @@ const useTaskActions = ({
   "worksheetId" | "task" | "updateTask" | "closeDrawer"
 >) => {
   const { apiClient } = useApi();
-  const [loading, setLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const handleAction = async (action: TaskAction, body?: object) => {
-    setLoading(true);
+    setIsLoading(true);
     try {
       const response = await apiClient(
         `/worksheets/${worksheetId}/tasks/${task.id}/${action === "clear" ? "clear-status" : action}/`,
@@ -245,11 +245,11 @@ const useTaskActions = ({
         }),
       );
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  return { loading, handleAction };
+  return { isLoading, handleAction };
 };
 
 export function TaskActions({
@@ -262,14 +262,14 @@ export function TaskActions({
   onClick,
   currentUser,
 }: TaskActionsProps) {
-  const { loading, handleAction } = useTaskActions({
+  const { isLoading, handleAction } = useTaskActions({
     worksheetId,
     task,
     updateTask,
     closeDrawer,
   });
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingIndicator format={format} />;
   }
 

@@ -142,60 +142,61 @@ export const PasswordChangeDialog = ({
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle>
-            {variant === "change" ? "Zmień hasło" : "Ustaw hasło"}
-          </DialogTitle>
-        </DialogHeader>
-
         <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className="space-y-4 py-4"
-          >
-            {variant === "change" && (
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>
+                {variant === "change" ? "Zmień hasło" : "Ustaw hasło"}
+              </DialogTitle>
+            </DialogHeader>
+
+            <div className="flex flex-col gap-4 py-4">
+              {variant === "change" && (
+                <FormField
+                  control={form.control}
+                  name="oldPassword"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel htmlFor="oldPassword">Obecne hasło</FormLabel>
+                      <FormControl>
+                        <Input id="oldPassword" type="password" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+
               <FormField
                 control={form.control}
-                name="oldPassword"
+                name="newPassword"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="oldPassword">Obecne hasło</FormLabel>
+                    <FormLabel htmlFor="newPassword">Nowe hasło</FormLabel>
                     <FormControl>
-                      <Input id="oldPassword" type="password" {...field} />
+                      <Input id="newPassword" type="password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            )}
 
-            <FormField
-              control={form.control}
-              name="newPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="newPassword">Nowe hasło</FormLabel>
-                  <FormControl>
-                    <Input id="newPassword" type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="confirmPassword"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel htmlFor="confirmPassword">Powtórz hasło</FormLabel>
-                  <FormControl>
-                    <Input id="confirmPassword" type="password" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name="confirmPassword"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="confirmPassword">
+                      Powtórz hasło
+                    </FormLabel>
+                    <FormControl>
+                      <Input id="confirmPassword" type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <DialogFooter className="flex flex-row justify-end gap-2 mt-4">
               <DialogClose asChild>

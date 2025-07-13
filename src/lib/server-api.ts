@@ -142,6 +142,27 @@ export async function fetchUser(userId: string): Promise<{
   return { user };
 }
 
+/**
+ * Fetch users by team ID
+ */
+export async function fetchUsersByTeamId(teamId: string): Promise<{
+  users?: PublicUser[] | User[];
+  error?: JSX.Element;
+}> {
+  const result = await apiRequest<ApiUserResponse[]>(`/users/?team=${teamId}`);
+
+  if (result.error) {
+    return { error: result.error };
+  }
+
+  const users = result.data!.map(userSerializer);
+  if (users.some((user) => user.email)) {
+    // If any user has an email, return full User objects
+    return { users: users as User[] };
+  }
+  return { users: users as PublicUser[] };
+}
+
 // ===================================================================
 // WORKSHEET MANAGEMENT
 // ===================================================================
@@ -356,8 +377,8 @@ export async function fetchTemplate(templateId: string): Promise<{
 /**
  * Fetch user teams
  */
-export async function fetchUserTeams(): Promise<{
-  teams?: Team[];
+export async function fetchUserTeam(): Promise<{
+  team?: Team;
   error?: JSX.Element;
 }> {
   const result = await apiRequest<ApiTeamResponse[]>("/teams/?user");
@@ -367,7 +388,17 @@ export async function fetchUserTeams(): Promise<{
   }
 
   const teams = result.data!.map(teamSerializer) as Team[];
-  return { teams };
+  if (teams.length === 0) {
+    return {
+      error: await handleError(
+        new Response(null, {
+          status: 404,
+          statusText: "No teams found for user",
+        }),
+      ),
+    };
+  }
+  return { team: teams[0] };
 }
 
 /**
@@ -492,30 +523,6 @@ export async function makeAuthenticatedRequest<T>(
 }
 
 /**
- * Utility function to get patrols from teams (commonly used pattern)
- */
-export function getPatrolsFromTeams(userTeams: Team[]) {
-  switch (userTeams.length) {
-    case 0:
-      return [];
-    case 1:
-      return userTeams[0].patrols || [];
-    default:
-      return userTeams
-        .map((team) => {
-          if (team.patrols) {
-            return team.patrols.map((patrol) => ({
-              id: patrol.id,
-              name: `${team.shortName} - ${patrol.name}`,
-            }));
-          }
-          return [];
-        })
-        .flat();
-  }
-}
-
-/**
  * Verify email with token
  */
 export async function verifyEmail(
@@ -533,9 +540,9 @@ export async function verifyEmail(
 }
 
 /**
- * Get team statistics
+ * Fetch team statistics
  */
-export async function getTeamStatistics(): Promise<{
+export async function fetchTeamStatistics(): Promise<{
   data?: TeamStatistics;
   error?: JSX.Element;
 }> {
@@ -562,9 +569,9 @@ export async function getTeamStatistics(): Promise<{
  */
 
 /**
- * Get team requests
+ * Fetch team requests
  */
-export async function getTeamRequests(
+export async function fetchTeamRequests(
   endpoint: string = "/team-requests/",
 ): Promise<{
   data?: TeamRequest[];

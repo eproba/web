@@ -1,9 +1,8 @@
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
 import {
   fetchCurrentUser,
-  fetchUserTeams,
+  fetchUserTeam,
   fetchWorksheets,
-  getPatrolsFromTeams,
 } from "@/lib/server-api";
 
 export default async function ManagedWorksheets() {
@@ -12,9 +11,9 @@ export default async function ManagedWorksheets() {
     return worksheetsError;
   }
 
-  const { teams, error: teamsError } = await fetchUserTeams();
-  if (teamsError) {
-    return teamsError;
+  const { team, error: teamError } = await fetchUserTeam();
+  if (teamError) {
+    return teamError;
   }
 
   const { user, error: userError } = await fetchCurrentUser();
@@ -22,11 +21,8 @@ export default async function ManagedWorksheets() {
     return userError;
   }
 
-  const patrols = getPatrolsFromTeams(teams ?? []).sort((a, b) => {
-    if (a.name < b.name) return -1;
-    if (a.name > b.name) return 1;
-    return 0;
-  });
+  const patrols =
+    team?.patrols?.sort((a, b) => a.name.localeCompare(b.name)) ?? [];
 
   return (
     <div className="">

@@ -1,27 +1,5 @@
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
-import { Team } from "@/types/team";
-import { fetchArchivedWorksheets, fetchUserTeams } from "@/lib/server-api";
-
-function getPatrolsFromTeams(userTeams: Team[]) {
-  switch (userTeams.length) {
-    case 0:
-      return [];
-    case 1:
-      return userTeams[0].patrols || [];
-    default:
-      return userTeams
-        .map((team) => {
-          if (team.patrols) {
-            return team.patrols.map((patrol) => ({
-              id: patrol.id,
-              name: `${team.shortName} - ${patrol.name}`,
-            }));
-          }
-          return [];
-        })
-        .flat();
-  }
-}
+import { fetchArchivedWorksheets, fetchUserTeam } from "@/lib/server-api";
 
 export default async function ArchivedWorksheets() {
   const { worksheets, error: worksheetsError } =
@@ -30,16 +8,14 @@ export default async function ArchivedWorksheets() {
     return worksheetsError;
   }
 
-  const { teams, error: teamsError } = await fetchUserTeams();
+  const { team, error: teamsError } = await fetchUserTeam();
   if (teamsError) {
     return teamsError;
   }
 
-  const patrols = getPatrolsFromTeams(teams ?? []).sort((a, b) => {
-    if (a.name < b.name) return -1;
-    if (a.name > b.name) return 1;
-    return 0;
-  });
+  const patrols =
+    team?.patrols?.sort((a, b) => a.name.localeCompare(b.name)) ?? [];
+
   return (
     <div className="">
       <WorksheetList

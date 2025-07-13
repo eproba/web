@@ -26,7 +26,7 @@ export default async function TemplatesPage() {
   return (
     <div className="space-y-4">
       {teamTemplates.length > 0 && (
-        <div className="space-y-4 mt-8">
+        <div className="space-y-4">
           <div className="flex justify-between flex-wrap items-center">
             <h2 className="text-2xl font-semibold">Szablony twojej drużyny</h2>
             {user!.function.numberValue >=

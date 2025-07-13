@@ -15,8 +15,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { User } from "@/types/user";
-import { LoaderCircleIcon, SearchIcon } from "lucide-react";
+import { LoaderCircleIcon, SearchIcon, XIcon } from "lucide-react";
 import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-button";
+import { Patrol } from "@/types/team";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export function WorksheetList({
   orgWorksheets,
@@ -28,7 +31,7 @@ export function WorksheetList({
   orgWorksheets: Worksheet[];
   variant?: "user" | "managed" | "shared" | "archived" | "review";
   showFilters?: boolean;
-  patrols?: Record<string, string>[];
+  patrols?: Patrol[];
   currentUser?: User;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -36,6 +39,8 @@ export function WorksheetList({
   const [selectedPatrol, setSelectedPatrol] = useState<string>("null");
   const [worksheets, setWorksheets] = useState<Worksheet[]>(orgWorksheets);
   const [isFiltering, setIsFiltering] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
   const debouncedSearch = useDebouncedCallback((query: string) => {
     setDebouncedSearchQuery(query);
@@ -57,8 +62,8 @@ export function WorksheetList({
   );
 
   const handlePatrolChange = useCallback((value: string) => {
-    setSelectedPatrol(value);
     setIsFiltering(true);
+    setSelectedPatrol(value);
 
     // Show loading state briefly for better UX
     const timer = setTimeout(() => {
@@ -67,6 +72,20 @@ export function WorksheetList({
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleClearUser = useCallback(() => {
+    setIsFiltering(true);
+    const params = new URLSearchParams(Array.from(searchParams.entries()));
+    params.delete("userId");
+    params.delete("userName");
+    router.replace(`?${params.toString()}`);
+
+    const timer = setTimeout(() => {
+      setIsFiltering(false);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [searchParams, router]);
 
   function updateTask(worksheetId: string, task: Task) {
     setWorksheets((prevWorksheets) =>
@@ -95,10 +114,14 @@ export function WorksheetList({
   }
 
   const filteredWorksheets = useMemo(() => {
+    if (searchParams.get("userId")) {
+      const userId = searchParams.get("userId");
+      return worksheets.filter((worksheet) => worksheet.user.id === userId);
+    }
     let filteredByPatrol = worksheets;
     if (selectedPatrol !== "null") {
       filteredByPatrol = worksheets.filter(
-        (worksheet) => worksheet.user?.patrol === selectedPatrol,
+        (worksheet) => worksheet.user.patrol === selectedPatrol,
       );
     }
 
@@ -123,7 +146,7 @@ export function WorksheetList({
     const searchResults = fuse.search(debouncedSearchQuery);
 
     return searchResults.map((result) => result.item);
-  }, [worksheets, debouncedSearchQuery, selectedPatrol]);
+  }, [searchParams, worksheets, selectedPatrol, debouncedSearchQuery]);
 
   return (
     <div className="space-y-4">
@@ -144,20 +167,37 @@ export function WorksheetList({
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2">
-            <Select onValueChange={handlePatrolChange} value={selectedPatrol}>
-              <SelectTrigger className="w-40">
-                <SelectValue placeholder="Wybierz zastęp" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="null">Wszystkie</SelectItem>
-                {patrols.map((patrol) => (
-                  <SelectItem key={patrol.id} value={patrol.id}>
-                    {patrol.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex items-center gap-2 min-w-0">
+            {searchParams.get("userId") ? (
+              <div className="flex items-center flex-nowrap border rounded-full pl-4 bg-accent/50 text-sm min-w-0">
+                <span className="truncate text-nowrap">
+                  {searchParams.get("userName") ||
+                    `Użytkownik ${searchParams.get("userId")}`}
+                </span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="rounded-l-none rounded-r-full"
+                  onClick={handleClearUser}
+                >
+                  <XIcon className="size-4" />
+                </Button>
+              </div>
+            ) : (
+              <Select onValueChange={handlePatrolChange} value={selectedPatrol}>
+                <SelectTrigger className="w-40">
+                  <SelectValue placeholder="Wybierz zastęp" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="null">Wszystkie</SelectItem>
+                  {patrols.map((patrol) => (
+                    <SelectItem key={patrol.id} value={patrol.id}>
+                      {patrol.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
             {(variant === "managed" || variant === "user") && (
               <CreateWorksheetButton size="icon" />
             )}
@@ -170,7 +210,7 @@ export function WorksheetList({
       ) : null}
 
       {showFilters && isFiltering && (
-        <div className="mb-4 flex items-center gap-2">
+        <div className="mb-4 flex items-center gap-2 px-2 sm:px-0">
           <p className="text-sm text-muted-foreground">
             <span className="flex items-center gap-2">
               <LoaderCircleIcon className="size-4 animate-spin" />

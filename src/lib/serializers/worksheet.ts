@@ -44,8 +44,8 @@ export function worksheetSerializer(
   }
   return {
     id: apiResponse.id,
-    user: apiResponse.user ? publicUserSerializer(apiResponse.user) : undefined,
-    userId: apiResponse.user?.id,
+    user: publicUserSerializer(apiResponse.user),
+    userId: apiResponse.user.id,
     name: apiResponse.name,
     description: apiResponse.description,
     supervisor: apiResponse.supervisor,
