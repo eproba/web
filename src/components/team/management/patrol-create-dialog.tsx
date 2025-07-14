@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/form";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Nazwa zastępu jest wymagana."),
+  name: z.string().min(1, { error: "Nazwa zastępu jest wymagana." }),
 });
 
 interface PatrolCreateDialogProps {
@@ -38,14 +38,14 @@ export function PatrolCreateDialog({
 }: PatrolCreateDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.input<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.output<typeof formSchema>) => {
     setIsLoading(true);
     const created = await onCreate(values.name);
     if (created) {

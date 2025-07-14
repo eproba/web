@@ -16,7 +16,7 @@ import { toast } from "react-toastify";
 import { ToastMsg } from "@/lib/toast-msg";
 import { useRouter } from "next/navigation";
 import { Input } from "@/components/ui/input";
-import * as z from "zod";
+import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import {
@@ -31,13 +31,13 @@ import {
 const getFormSchema = (variant: "change" | "set") => {
   const baseSchema = {
     oldPassword: z.string().min(variant === "change" ? 8 : 0, {
-      message: "Hasło musi zawierać co najmniej 8 znaków",
+      error: "Hasło musi zawierać co najmniej 8 znaków",
     }),
     newPassword: z
       .string()
-      .min(8, "Hasło musi zawierać co najmniej 8 znaków")
+      .min(8, { error: "Hasło musi zawierać co najmniej 8 znaków" })
       .refine((val) => !/^\d+$/.test(val), {
-        message: "Hasło nie może składać się wyłącznie z cyfr",
+        error: "Hasło nie może składać się wyłącznie z cyfr",
       }),
     confirmPassword: z.string(),
   };
@@ -47,7 +47,7 @@ const getFormSchema = (variant: "change" | "set") => {
       ...baseSchema,
     })
     .refine((data) => data.newPassword === data.confirmPassword, {
-      message: "Hasła nie są identyczne",
+      error: "Hasła nie są identyczne",
       path: ["confirmPassword"],
     });
 };

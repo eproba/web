@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Organization, Patrol } from "@/types/team";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -56,18 +56,16 @@ const formSchema = z.object({
   firstName: z.string().optional(),
   lastName: z.string().optional(),
   nickname: z.string().optional(),
-  email: z
-    .string()
-    .min(1, "Email jest wymagany.")
-    .email("Nieprawidłowy adres email."),
+  email: z.email({
+    error: (issue) =>
+      !issue.input ? "Email jest wymagany" : "Nieprawidłowy adres email",
+  }),
   patrol: z.string().optional(),
   function: z.coerce.number().min(0).max(5),
   scoutRank: z.coerce.number().min(0).max(6),
   instructorRank: z.coerce.number().min(0).max(3),
   isActive: z.boolean(),
 });
-
-type FormSchema = z.infer<typeof formSchema>;
 
 interface UserEditDialogProps {
   user: User;
@@ -89,7 +87,7 @@ export function UserEditDialog({
 }: UserEditDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<FormSchema>({
+  const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
       firstName: user.firstName ?? "",
@@ -97,14 +95,14 @@ export function UserEditDialog({
       nickname: user.nickname ?? "",
       email: user.email,
       patrol: user.patrol ?? undefined,
-      function: user.function.numberValue ?? 0,
-      scoutRank: user.scoutRank.numberValue ?? 0,
-      instructorRank: user.instructorRank.numberValue ?? 0,
+      function: (user.function.numberValue ?? 0).toString(),
+      scoutRank: (user.scoutRank.numberValue ?? 0).toString(),
+      instructorRank: (user.instructorRank.numberValue ?? 0).toString(),
       isActive: user.isActive ?? true,
     },
   });
 
-  const onSubmit = async (values: FormSchema) => {
+  const onSubmit = async (values: z.output<typeof formSchema>) => {
     setIsLoading(true);
     const updated = await onUserUpdate(user.id, {
       first_name: values.firstName ?? null,
@@ -281,7 +279,7 @@ export function UserEditDialog({
                       <div>
                         <Select
                           onValueChange={field.onChange}
-                          value={form.watch("function").toString()}
+                          value={String(form.watch("function"))} // Watch this field as it can be changed programmatically
                           disabled={
                             !form.watch("isActive") && field.value === 0
                           }
@@ -325,7 +323,7 @@ export function UserEditDialog({
                         <div>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value.toString()}
+                            defaultValue={String(field.value)}
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue placeholder="Wybierz stopień" />
@@ -351,7 +349,7 @@ export function UserEditDialog({
                     </FormItem>
                   )}
                 />
-                {form.watch("scoutRank") >= 5 && (
+                {Number(form.watch("scoutRank")) >= 5 && (
                   <FormField
                     control={form.control}
                     name="instructorRank"
@@ -364,7 +362,7 @@ export function UserEditDialog({
                           <div>
                             <Select
                               onValueChange={field.onChange}
-                              defaultValue={field.value.toString()}
+                              defaultValue={String(field.value)}
                             >
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Wybierz stopień" />

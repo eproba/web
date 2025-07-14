@@ -31,10 +31,13 @@ import { Patrol } from "@/types/team";
 import { userSerializer } from "@/lib/serializers/user";
 
 const formSchema = z.object({
-  firstName: z.string().min(1, { message: "Imię jest wymagane" }),
-  lastName: z.string().min(1, { message: "Nazwisko jest wymagane" }),
+  firstName: z.string().min(1, { error: "Imię jest wymagane" }),
+  lastName: z.string().min(1, { error: "Nazwisko jest wymagane" }),
   nickname: z.string().optional(),
-  email: z.string().email({ message: "Niepoprawny adres e-mail" }),
+  email: z.email({
+    error: (issue) =>
+      !issue.input ? "Email jest wymagany" : "Nieprawidłowy adres email",
+  }),
   patrol: z.string().optional(),
 });
 

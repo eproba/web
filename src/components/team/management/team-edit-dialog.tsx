@@ -12,7 +12,7 @@ import { Team } from "@/types/team";
 import { Input } from "@/components/ui/input";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
+import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -24,8 +24,8 @@ import {
 import { useEffect, useState } from "react";
 
 const formSchema = z.object({
-  name: z.string().min(1, "Nazwa drużyny jest wymagana."),
-  shortName: z.string().min(1, "Skrócona nazwa jest wymagana."),
+  name: z.string().min(1, { error: "Nazwa drużyny jest wymagana." }),
+  shortName: z.string().min(1, { error: "Skrócona nazwa jest wymagana." }),
 });
 
 interface TeamEditDialogProps {
@@ -41,7 +41,7 @@ export function TeamEditDialog({
 }: TeamEditDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const form = useForm<z.infer<typeof formSchema>>({
+  const form = useForm<z.input<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: team.name,
@@ -49,7 +49,7 @@ export function TeamEditDialog({
     },
   });
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.output<typeof formSchema>) => {
     setIsLoading(true);
     const updated = await onTeamUpdate(values.name, values.shortName);
     if (updated) {
