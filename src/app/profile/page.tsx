@@ -8,9 +8,9 @@ import {
   MailIcon,
   MailWarningIcon,
   ReplaceIcon,
-  UserRoundMinusIcon,
-  UserRoundXIcon,
-  UsersRoundIcon,
+  UserMinusIcon,
+  UserXIcon,
+  UsersIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
@@ -164,20 +164,20 @@ export default async function UserProfilePage() {
                 </Button>
               ) : (
                 <Button variant="outline">
-                  <UsersRoundIcon size={20} />
+                  <UsersIcon size={20} />
                   Znajdź swoją drużynę
                 </Button>
               )}
             </PatrolSelectDialog>
             <UserDeactivateDialog user={user}>
               <Button variant="destructive">
-                <UserRoundMinusIcon size={20} />
+                <UserMinusIcon size={20} />
                 Deaktywuj konto
               </Button>
             </UserDeactivateDialog>
             <UserDeleteDialog user={user}>
               <Button variant="destructive">
-                <UserRoundXIcon size={20} />
+                <UserXIcon size={20} />
                 Usuń konto
               </Button>
             </UserDeleteDialog>

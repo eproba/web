@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -22,7 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -31,7 +32,25 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ApiUserResponse } from "@/lib/serializers/user";
-import { capitalizeFirstLetter } from "@/lib/utils";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { UserCheckIcon, UserLockIcon, UserXIcon } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "react-toastify";
 
 const formSchema = z.object({
   firstName: z.string().optional(),
@@ -45,6 +64,7 @@ const formSchema = z.object({
   function: z.coerce.number().min(0).max(5),
   scoutRank: z.coerce.number().min(0).max(6),
   instructorRank: z.coerce.number().min(0).max(3),
+  isActive: z.boolean(),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
@@ -80,6 +100,7 @@ export function UserEditDialog({
       function: user.function.numberValue ?? 0,
       scoutRank: user.scoutRank.numberValue ?? 0,
       instructorRank: user.instructorRank.numberValue ?? 0,
+      isActive: user.isActive ?? true,
     },
   });
 
@@ -94,6 +115,7 @@ export function UserEditDialog({
       function: values.function,
       scout_rank: values.scoutRank,
       instructor_rank: values.scoutRank >= 5 ? values.instructorRank : 0,
+      is_active: values.isActive,
     });
     if (updated) {
       setIsOpen(false);
@@ -101,8 +123,40 @@ export function UserEditDialog({
     setIsLoading(false);
   };
 
+  const onPatrolClear = async () => {
+    setIsLoading(true);
+    const updated = await onUserUpdate(user.id, {
+      patrol: null,
+    });
+    if (updated) {
+      setIsOpen(false);
+      toast.success(`Usunięto ${user.displayName || user.email} z drużyny`);
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    form.reset({
+      firstName: user.firstName ?? "",
+      lastName: user.lastName ?? "",
+      nickname: user.nickname ?? "",
+      email: user.email,
+      patrol: user.patrol ?? undefined,
+      function: user.function.numberValue ?? 0,
+      scoutRank: user.scoutRank.numberValue ?? 0,
+      instructorRank: user.instructorRank.numberValue ?? 0,
+      isActive: user.isActive ?? true,
+    });
+  }, [user, form]);
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        form.reset();
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <Form {...form}>
@@ -114,6 +168,13 @@ export function UserEditDialog({
                   ? "harcerkę"
                   : "harcerza"}
               </DialogTitle>
+              {user.function.numberValue > currentUser.function.numberValue &&
+                currentUser.function.numberValue < 4 && (
+                  <DialogDescription>
+                    Nie możesz edytować tego użytkownika: Ta osoba ma wyższą
+                    funkcję niż Ty.
+                  </DialogDescription>
+                )}
               {!user.isActive && (
                 <DialogDescription>
                   Konto jest dezaktywowane: Ta osoba nie ma dostępu do
@@ -121,7 +182,14 @@ export function UserEditDialog({
                 </DialogDescription>
               )}
             </DialogHeader>
-            <div className="flex flex-col gap-4 py-4">
+            <div
+              className={cn(
+                "flex flex-col gap-4 py-4",
+                user.function.numberValue > currentUser.function.numberValue &&
+                  currentUser.function.numberValue < 4 &&
+                  "pointer-events-none opacity-50",
+              )}
+            >
               <FormField
                 control={form.control}
                 name="firstName"
@@ -213,29 +281,29 @@ export function UserEditDialog({
                       <div>
                         <Select
                           onValueChange={field.onChange}
-                          defaultValue={field.value.toString()}
+                          value={form.watch("function").toString()}
+                          disabled={
+                            !form.watch("isActive") && field.value === 0
+                          }
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Wybierz zastęp" />
                           </SelectTrigger>
                           <SelectContent>
-                            {UserFunction.values
-                              .filter(
-                                (fn) =>
-                                  fn.value <=
-                                    currentUser.function.numberValue ||
-                                  currentUser.function.value >= 4,
-                              )
-                              .map((fn) => (
-                                <SelectItem
-                                  key={fn.value}
-                                  value={fn.value.toString()}
-                                >
-                                  {user.organization === Organization.Female
-                                    ? fn.female
-                                    : fn.male}
-                                </SelectItem>
-                              ))}
+                            {UserFunction.values.map((fn) => (
+                              <SelectItem
+                                key={fn.value}
+                                value={fn.value.toString()}
+                                disabled={
+                                  fn.value > currentUser.function.numberValue &&
+                                  currentUser.function.value < 4
+                                }
+                              >
+                                {user.organization === Organization.Female
+                                  ? fn.female
+                                  : fn.male}
+                              </SelectItem>
+                            ))}
                           </SelectContent>
                         </Select>
                       </div>
@@ -250,8 +318,10 @@ export function UserEditDialog({
                   name="scoutRank"
                   render={({ field }) => (
                     <FormItem className="flex-1">
-                      <FormLabel>Stopień harcerski</FormLabel>
-                      <FormControl>
+                      <FormLabel className="truncate">
+                        Stopień harcerski
+                      </FormLabel>
+                      <FormControl className="overflow-hidden">
                         <div>
                           <Select
                             onValueChange={field.onChange}
@@ -287,8 +357,10 @@ export function UserEditDialog({
                     name="instructorRank"
                     render={({ field }) => (
                       <FormItem className="flex-1">
-                        <FormLabel>Stopień instruktorski</FormLabel>
-                        <FormControl>
+                        <FormLabel className="truncate">
+                          Stopień instruktorski
+                        </FormLabel>
+                        <FormControl className="overflow-hidden">
                           <div>
                             <Select
                               onValueChange={field.onChange}
@@ -322,9 +394,144 @@ export function UserEditDialog({
               </div>
             </div>
             <DialogFooter>
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? "Zapisywanie..." : "Zapisz"}
-              </Button>
+              {form.watch("isActive") !== user.isActive && (
+                <span className="text-sm text-muted-foreground sm:hidden">
+                  {form.watch("isActive")
+                    ? "Zapisz aby aktywować"
+                    : "Zapisz aby dezaktywować"}
+                </span>
+              )}
+              <div className="flex justify-between items-center w-full gap-4">
+                <div className="flex gap-2 flex-wrap items-center">
+                  <AlertDialog>
+                    <Tooltip>
+                      <AlertDialogTrigger asChild>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="destructive"
+                            size="icon"
+                          >
+                            <UserXIcon className="size-4" />
+                          </Button>
+                        </TooltipTrigger>
+                      </AlertDialogTrigger>
+                      <TooltipContent>
+                        Usuń użytkownika z drużyny
+                      </TooltipContent>
+                    </Tooltip>
+                    <AlertDialogContent className="">
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Usuń użytkownika z drużyny
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          Czy na pewno chcesz usunąć{" "}
+                          {user.displayName || user.email} z drużyny? Nie
+                          będziesz
+                          {currentUser.organization === Organization.Female
+                            ? " miała"
+                            : " miał"}{" "}
+                          możliwości samodzielnego przypisania{" "}
+                          {user.organization === Organization.Female
+                            ? "jej"
+                            : "go"}{" "}
+                          z powrotem do drużyny oraz utracisz dostęp do{" "}
+                          {user.organization === Organization.Female
+                            ? "jej"
+                            : "jego"}{" "}
+                          prób oraz danych.
+                          <br />
+                          <br />
+                          {user.nickname ||
+                            user.firstName ||
+                            user.email} będzie{" "}
+                          {user.organization === Organization.Female
+                            ? "mogła"
+                            : "mógł"}{" "}
+                          ponownie dołączyć do tej drużyny lub wybrać inną z
+                          poziomu edycji swojego profilu.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter className="flex flex-row justify-end gap-2 mt-4">
+                        <AlertDialogCancel>Anuluj</AlertDialogCancel>
+                        <AlertDialogAction
+                          variant="destructive"
+                          onClick={onPatrolClear}
+                        >
+                          Usuń
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      {form.watch("isActive") ? (
+                        <Button
+                          type="button"
+                          variant="warning"
+                          size="icon"
+                          onClick={() => {
+                            form.setValue("isActive", false);
+                            form.setValue("function", 0);
+                          }}
+                        >
+                          <UserLockIcon className="size-4" />
+                        </Button>
+                      ) : (
+                        <Button
+                          type="button"
+                          variant="info"
+                          size="icon"
+                          onClick={() => {
+                            form.setValue("isActive", true);
+                            form.setValue(
+                              "function",
+                              user.function.numberValue,
+                            );
+                          }}
+                        >
+                          <UserCheckIcon className="size-4" />
+                        </Button>
+                      )}
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      {form.watch("isActive")
+                        ? "Dezaktywuj konto użytkownika"
+                        : "Aktywuj konto użytkownika"}
+                    </TooltipContent>
+                  </Tooltip>
+                  {form.watch("isActive") !== user.isActive && (
+                    <span className="text-sm text-muted-foreground hidden sm:inline">
+                      {form.watch("isActive")
+                        ? "Zapisz aby aktywować"
+                        : "Zapisz aby dezaktywować"}
+                    </span>
+                  )}
+                </div>
+                <div className="flex gap-2 items-center">
+                  <DialogClose asChild>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      disabled={isLoading}
+                    >
+                      Anuluj
+                    </Button>
+                  </DialogClose>
+                  <Button
+                    type="submit"
+                    disabled={
+                      isLoading ||
+                      (user.function.numberValue >
+                        currentUser.function.numberValue &&
+                        currentUser.function.numberValue < 4)
+                    }
+                  >
+                    {isLoading ? "Zapisywanie..." : "Zapisz"}
+                  </Button>
+                </div>
+              </div>
             </DialogFooter>
           </form>
         </Form>

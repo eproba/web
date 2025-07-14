@@ -281,6 +281,7 @@ export function WorksheetActions({
           <DropdownMenuTrigger asChild>
             <Button
               variant="ghost"
+              size="icon"
               className="size-8 p-0 data-[state=open]:bg-muted"
             >
               <EllipsisVerticalIcon className="size-5" />

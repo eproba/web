@@ -6,6 +6,8 @@ import {
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { TeamManagementClient } from "@/components/team/management/team-management-client";
 import { User } from "@/types/user";
+import { RequiredFunctionLevel } from "@/lib/const";
+import { AlertCircleIcon } from "lucide-react";
 
 export default async function TeamPage() {
   const { team, error: teamsError } = await fetchUserTeam();
@@ -32,6 +34,20 @@ export default async function TeamPage() {
         <AlertTitle>Błąd</AlertTitle>
         <AlertDescription>
           Nie udało się załadować danych drużyny.
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  if (
+    currentUser.function.numberValue < RequiredFunctionLevel.TEAM_MANAGEMENT
+  ) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircleIcon className="size-4" />
+        <AlertTitle>Brak uprawnień</AlertTitle>
+        <AlertDescription>
+          Nie masz wystarczających uprawnień, aby zarządzać drużyną.
         </AlertDescription>
       </Alert>
     );

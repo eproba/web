@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import { Loader2Icon, PenIcon } from "lucide-react";
+import { LoaderCircleIcon, PenIcon } from "lucide-react";
 import { motion } from "framer-motion";
 
 interface WorksheetSubmitButtonProps {
@@ -27,7 +27,7 @@ export const WorksheetSubmitButton: React.FC<WorksheetSubmitButtonProps> = ({
         >
           {isSubmitting ? (
             <>
-              <Loader2Icon className="size-4 mr-2 animate-spin" />
+              <LoaderCircleIcon className="size-4 mr-2 animate-spin" />
               {mode === "create" ? "Tworzenie..." : "Zapisywanie..."}
             </>
           ) : (

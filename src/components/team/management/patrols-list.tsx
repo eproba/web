@@ -3,13 +3,15 @@ import { Button } from "@/components/ui/button";
 import { Patrol, Team } from "@/types/team";
 import { User } from "@/types/user";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { PatrolCreateDialog } from "./patrol-create-dialog";
 import { patrolSerializer } from "@/lib/serializers/team";
 import { toast } from "react-toastify";
 import { ToastMsg } from "@/lib/toast-msg";
 import { useApi } from "@/lib/api-client";
 import { ApiUserResponse, userSerializer } from "@/lib/serializers/user";
+import { LoaderCircleIcon } from "lucide-react";
+import { InactiveUsersCard } from "./inactive-users-card";
 
 interface PatrolsListProps {
   team: Team;
@@ -26,10 +28,12 @@ export function PatrolsList({
     team.patrols?.sort((a, b) => a.name.localeCompare(b.name)) ?? [],
   );
   const [users, setUsers] = useState<User[]>(initialUsers);
+  const [updatingUserIds, setUpdatingUserIds] = useState<string[]>([]);
   const { apiClient } = useApi();
 
   const handleUserUpdate = useCallback(
     async (userId: string, updatedUser: Partial<ApiUserResponse>) => {
+      setUpdatingUserIds((prev) => [...prev, userId]);
       try {
         const response = await apiClient(`/users/${userId}/`, {
           method: "PATCH",
@@ -37,9 +41,11 @@ export function PatrolsList({
         });
         const updated = userSerializer(await response.json());
         setUsers((prevUsers) =>
-          prevUsers.map((user) =>
-            user.id === userId ? { ...user, ...updated } : user,
-          ),
+          prevUsers
+            .map((user) =>
+              user.id === userId ? { ...user, ...updated } : user,
+            )
+            .filter((user) => user.team === team.id),
         );
         return true;
       } catch (error) {
@@ -53,9 +59,11 @@ export function PatrolsList({
         );
         console.error("Error updating user:", error);
         return false;
+      } finally {
+        setUpdatingUserIds((prev) => prev.filter((id) => id !== userId));
       }
     },
-    [apiClient],
+    [apiClient, team.id],
   );
 
   useEffect(() => {
@@ -148,10 +156,39 @@ export function PatrolsList({
     }
   };
 
+  const handleDeletePatrol = async (patrolId: string) => {
+    try {
+      await apiClient(`/patrols/${patrolId}/`, {
+        method: "DELETE",
+      });
+      setPatrols((prevPatrols) => prevPatrols.filter((p) => p.id !== patrolId));
+      return true;
+    } catch (error) {
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie udało się usunąć zastępu",
+            description: error as Error,
+          },
+        }),
+      );
+      console.error("Error deleting patrol:", error);
+      return false;
+    }
+  };
+
+  const inactiveUsers = users.filter((user) => !user.isActive);
+  const activeUsers = users.filter((user) => user.isActive);
+
   return (
     <div>
       <div className="flex items-center justify-between mb-4 px-2 sm:px-0">
-        <h2 className="text-2xl font-bold">Zastępy</h2>
+        <h2 className="text-2xl font-bold flex items-center gap-2">
+          Zastępy
+          {updatingUserIds.length > 0 && (
+            <LoaderCircleIcon className="size-4 mr-2 animate-spin" />
+          )}
+        </h2>
         <PatrolCreateDialog onCreate={handleCreatePatrol}>
           <Button>Dodaj zastęp</Button>
         </PatrolCreateDialog>
@@ -161,13 +198,24 @@ export function PatrolsList({
           <PatrolCard
             key={patrol.id}
             patrol={patrol}
-            users={users.filter((user) => user.patrol === patrol.id)}
+            users={activeUsers.filter((user) => user.patrol === patrol.id)}
             allPatrols={patrols}
             onPatrolUpdate={handlePatrolUpdate}
             onUserUpdate={handleUserUpdate}
+            onPatrolDelete={handleDeletePatrol}
             currentUser={currentUser}
+            updatingUserIds={updatingUserIds}
           />
         ))}
+        {inactiveUsers.length > 0 && (
+          <InactiveUsersCard
+            users={inactiveUsers}
+            allPatrols={patrols}
+            onUserUpdate={handleUserUpdate}
+            currentUser={currentUser}
+            updatingUserIds={updatingUserIds}
+          />
+        )}
       </div>
     </div>
   );

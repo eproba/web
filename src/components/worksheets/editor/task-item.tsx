@@ -446,7 +446,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="sm"
+                  size="icon"
                   onClick={() => {
                     setShowSuggestions(true);
                   }}
@@ -465,7 +465,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             <Button
               type="button"
               variant="ghost"
-              size="sm"
+              size="icon"
               className="hidden md:flex md:opacity-0 md:pointer-coarse:opacity-100 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
               onClick={() => handleDelete()}
             >

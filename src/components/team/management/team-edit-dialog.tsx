@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogFooter,
   DialogHeader,
@@ -20,7 +21,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const formSchema = z.object({
   name: z.string().min(1, "Nazwa drużyny jest wymagana."),
@@ -57,8 +58,21 @@ export function TeamEditDialog({
     setIsLoading(false);
   };
 
+  useEffect(() => {
+    form.reset({
+      name: team.name,
+      shortName: team.shortName,
+    });
+  }, [team, form]);
+
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        form.reset();
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <Form {...form}>
@@ -95,6 +109,11 @@ export function TeamEditDialog({
               />
             </div>
             <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline" disabled={isLoading}>
+                  Anuluj
+                </Button>
+              </DialogClose>
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? "Zapisywanie..." : "Zapisz"}
               </Button>

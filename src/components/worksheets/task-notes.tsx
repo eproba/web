@@ -180,7 +180,7 @@ export function TaskNotes({
                     <div className="flex gap-1">
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
                         onClick={handleStartEditing}
                         disabled={isLoading}
                       >
@@ -193,7 +193,7 @@ export function TaskNotes({
                         <DialogTrigger asChild>
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
                             disabled={isLoading}
                           >
                             <TrashIcon className="w-3 h-3" />
@@ -348,7 +348,7 @@ export function TaskNotes({
       <PopoverTrigger asChild>
         <Button
           variant="outline"
-          size="sm"
+          size="icon"
           className={cn(
             "h-8 w-8 p-0 shadow-lg hover:shadow-xl transition-all duration-200",
             "bg-white/95 backdrop-blur-sm border-2",
@@ -388,7 +388,7 @@ export function TaskNotes({
                 <div className="flex gap-1">
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size="icon"
                     onClick={handleStartEditing}
                     disabled={isLoading}
                     className="h-6 w-6 p-0"
@@ -402,7 +402,7 @@ export function TaskNotes({
                     <DialogTrigger asChild>
                       <Button
                         variant="ghost"
-                        size="sm"
+                        size="icon"
                         disabled={isLoading}
                         className="h-6 w-6 p-0"
                       >

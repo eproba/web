@@ -19,7 +19,9 @@ interface PatrolCardProps {
     userId: string,
     updatedUser: Partial<ApiUserResponse>,
   ) => Promise<boolean>;
+  onPatrolDelete: (id: string) => Promise<boolean>;
   currentUser: User;
+  updatingUserIds: string[];
 }
 
 export function PatrolCard({
@@ -28,7 +30,9 @@ export function PatrolCard({
   allPatrols,
   onPatrolUpdate,
   onUserUpdate,
+  onPatrolDelete,
   currentUser,
+  updatingUserIds,
 }: PatrolCardProps) {
   const ref = useRef(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
@@ -52,8 +56,14 @@ export function PatrolCard({
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>{patrol.name}</CardTitle>
         <div className="flex gap-2">
-          <PatrolEditDialog patrol={patrol} onPatrolUpdate={onPatrolUpdate}>
-            <Button variant="ghost" size="sm">
+          <PatrolEditDialog
+            patrol={patrol}
+            onPatrolUpdate={onPatrolUpdate}
+            onPatrolDelete={onPatrolDelete}
+            allowDelete={users.length === 0 && allPatrols.length > 1}
+            isLastPatrol={allPatrols.length === 1}
+          >
+            <Button variant="ghost" size="icon">
               <PenIcon className="size-4" />
             </Button>
           </PatrolEditDialog>
@@ -79,6 +89,7 @@ export function PatrolCard({
                   patrols={allPatrols}
                   onUserUpdate={onUserUpdate}
                   currentUser={currentUser}
+                  isUpdating={updatingUserIds.includes(user.id)}
                 />
               ))}
           </div>

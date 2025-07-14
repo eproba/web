@@ -1,4 +1,3 @@
-// lib/api-client.ts
 import { API_URL, ApiError } from "@/lib/api";
 import { Session } from "next-auth";
 import { useSession } from "next-auth/react";
@@ -13,7 +12,17 @@ export function createApiClient(
 
   return async (input: RequestInfo, init?: RequestInit): Promise<Response> => {
     // Ensure we have the latest session
-    const session = await getSession();
+    let session = await getSession();
+    if (!session && updateSession && !isRefreshing) {
+      isRefreshing = true;
+      try {
+        session = await updateSession();
+        isRefreshing = false;
+      } catch (error) {
+        isRefreshing = false;
+        throw error;
+      }
+    }
     if (!session) {
       throw new ApiError("Session not found", 401, "Unauthorized");
     }

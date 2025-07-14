@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/tooltip";
 import Link from "next/link";
 import { ApiUserResponse } from "@/lib/serializers/user";
+import { cn } from "@/lib/utils";
 
 interface DraggableUserRowProps {
   user: User;
@@ -22,6 +23,7 @@ interface DraggableUserRowProps {
     updatedUser: Partial<ApiUserResponse>,
   ) => Promise<boolean>;
   currentUser: User;
+  isUpdating?: boolean;
 }
 
 export function DraggableUserRow({
@@ -29,11 +31,13 @@ export function DraggableUserRow({
   patrols,
   onUserUpdate,
   currentUser,
+  isUpdating = false,
 }: DraggableUserRowProps) {
   const ref = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (isUpdating || !user.isActive) return;
     const el = ref.current;
     const handle = handleRef.current;
     if (el && handle) {
@@ -43,7 +47,7 @@ export function DraggableUserRow({
         getInitialData: () => ({ type: "user", userId: user.id }),
       });
     }
-  }, [user.id]);
+  }, [user.id, isUpdating, user.isActive]);
 
   return (
     <UserEditDialog
@@ -54,16 +58,21 @@ export function DraggableUserRow({
     >
       <div
         ref={ref}
-        className="flex items-center justify-between gap-2 p-2 rounded-md hover:bg-muted data-[state=open]:bg-muted"
+        className={cn(
+          "flex items-center justify-between gap-2 p-2 rounded-md hover:bg-muted data-[state=open]:bg-muted",
+          isUpdating && "opacity-50 pointer-events-none select-none",
+        )}
       >
         <div className="flex items-center gap-2">
-          <div
-            ref={handleRef}
-            className="cursor-grab pointer-coarse:hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <GripVerticalIcon className="h-5 w-5 text-muted-foreground" />
-          </div>
+          {user.isActive && (
+            <div
+              ref={handleRef}
+              className="cursor-grab pointer-coarse:hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <GripVerticalIcon className="h-5 w-5 text-muted-foreground" />
+            </div>
+          )}
           <div className="cursor-pointer">
             <p className="font-medium">
               {user.firstName && user.firstName + " "}

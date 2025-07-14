@@ -185,7 +185,7 @@ export function WorksheetNotesDialog({
             <div className="flex gap-1">
               <Button
                 variant="ghost"
-                size="sm"
+                size="icon"
                 onClick={handleStartEditing}
                 disabled={isLoading}
                 className="h-6 w-6 p-0"
@@ -199,7 +199,7 @@ export function WorksheetNotesDialog({
                 <DialogTrigger asChild>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size="icon"
                     disabled={isLoading}
                     className="h-6 w-6 p-0"
                   >

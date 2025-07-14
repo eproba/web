@@ -1,5 +1,6 @@
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -49,13 +50,18 @@ export function PatrolCreateDialog({
     const created = await onCreate(values.name);
     if (created) {
       setIsOpen(false);
-      form.reset();
     }
     setIsLoading(false);
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        setIsOpen(open);
+        form.reset();
+      }}
+    >
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <Form {...form}>
@@ -82,6 +88,11 @@ export function PatrolCreateDialog({
               />
             </div>
             <DialogFooter>
+              <DialogClose asChild>
+                <Button type="button" variant="outline" disabled={isLoading}>
+                  Anuluj
+                </Button>
+              </DialogClose>
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? "Tworzenie..." : "Utwórz"}
               </Button>

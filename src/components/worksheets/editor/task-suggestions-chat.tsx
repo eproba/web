@@ -5,7 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
 import {
   BotIcon,
-  Loader2Icon,
+  LoaderCircleIcon,
   PlusIcon,
   SendIcon,
   SparklesIcon,
@@ -264,7 +264,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                 </div>
                 <Card className="p-3 bg-muted">
                   <div className="flex items-center gap-2">
-                    <Loader2Icon className="size-4 animate-spin" />
+                    <LoaderCircleIcon className="size-4 animate-spin" />
                     <span className="text-sm text-muted-foreground">
                       AI pracuje nad odpowiedzią...
                     </span>
@@ -291,7 +291,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
             />
             <div className="absolute bottom-2 right-2 flex gap-1">
               <Button
-                size="sm"
+                size="icon"
                 variant="ghost"
                 onClick={handleSendMessage}
                 disabled={!inputMessage.trim() || isLoading}

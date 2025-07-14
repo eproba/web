@@ -79,7 +79,11 @@ const LoadingIcon = () => (
 
 const LoadingIndicator = ({ format }: { format: "icon" | "button" }) =>
   format === "button" ? (
-    <Button variant="outline" className="w-full pointer-events-none">
+    <Button
+      variant="outline"
+      className="w-full pointer-events-none"
+      size="icon"
+    >
       <LoadingIcon />
     </Button>
   ) : (
