@@ -14,6 +14,7 @@ interface InactiveUsersCardProps {
   ) => Promise<boolean>;
   currentUser: User;
   updatingUserIds: string[];
+  allowEditForLowerFunction: boolean;
 }
 
 export function InactiveUsersCard({
@@ -22,6 +23,7 @@ export function InactiveUsersCard({
   onUserUpdate,
   currentUser,
   updatingUserIds,
+  allowEditForLowerFunction,
 }: InactiveUsersCardProps) {
   return (
     <Card className="bg-muted/50 border shadow-none">
@@ -52,6 +54,7 @@ export function InactiveUsersCard({
                 onUserUpdate={onUserUpdate}
                 currentUser={currentUser}
                 isUpdating={updatingUserIds.includes(user.id)}
+                allowEditForLowerFunction={allowEditForLowerFunction}
               />
             ))}
         </div>

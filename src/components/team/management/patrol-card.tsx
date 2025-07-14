@@ -22,6 +22,7 @@ interface PatrolCardProps {
   onPatrolDelete: (id: string) => Promise<boolean>;
   currentUser: User;
   updatingUserIds: string[];
+  allowEditForLowerFunction: boolean;
 }
 
 export function PatrolCard({
@@ -33,6 +34,7 @@ export function PatrolCard({
   onPatrolDelete,
   currentUser,
   updatingUserIds,
+  allowEditForLowerFunction,
 }: PatrolCardProps) {
   const ref = useRef(null);
   const [isDraggedOver, setIsDraggedOver] = useState(false);
@@ -90,6 +92,7 @@ export function PatrolCard({
                   onUserUpdate={onUserUpdate}
                   currentUser={currentUser}
                   isUpdating={updatingUserIds.includes(user.id)}
+                  allowEditForLowerFunction={allowEditForLowerFunction}
                 />
               ))}
           </div>

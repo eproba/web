@@ -76,6 +76,7 @@ interface UserEditDialogProps {
   ) => Promise<boolean>;
   children: React.ReactNode;
   currentUser: User;
+  allowEditForLowerFunction: boolean;
 }
 
 export function UserEditDialog({
@@ -84,6 +85,7 @@ export function UserEditDialog({
   onUserUpdate,
   children,
   currentUser,
+  allowEditForLowerFunction,
 }: UserEditDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -167,7 +169,8 @@ export function UserEditDialog({
                   : "harcerza"}
               </DialogTitle>
               {user.function.numberValue > currentUser.function.numberValue &&
-                currentUser.function.numberValue < 4 && (
+                currentUser.function.numberValue < 4 &&
+                !allowEditForLowerFunction && (
                   <DialogDescription>
                     Nie możesz edytować tego użytkownika: Ta osoba ma wyższą
                     funkcję niż Ty.
@@ -185,6 +188,7 @@ export function UserEditDialog({
                 "flex flex-col gap-4 py-4",
                 user.function.numberValue > currentUser.function.numberValue &&
                   currentUser.function.numberValue < 4 &&
+                  !allowEditForLowerFunction &&
                   "pointer-events-none opacity-50",
               )}
             >
@@ -294,7 +298,8 @@ export function UserEditDialog({
                                 value={fn.value.toString()}
                                 disabled={
                                   fn.value > currentUser.function.numberValue &&
-                                  currentUser.function.value < 4
+                                  currentUser.function.value < 4 &&
+                                  !allowEditForLowerFunction
                                 }
                               >
                                 {user.organization === Organization.Female
@@ -409,6 +414,13 @@ export function UserEditDialog({
                             type="button"
                             variant="destructive"
                             size="icon"
+                            disabled={
+                              isLoading ||
+                              (user.function.numberValue >
+                                currentUser.function.numberValue &&
+                                currentUser.function.numberValue < 4 &&
+                                !allowEditForLowerFunction)
+                            }
                           >
                             <UserXIcon className="size-4" />
                           </Button>
@@ -473,6 +485,13 @@ export function UserEditDialog({
                             form.setValue("isActive", false);
                             form.setValue("function", 0);
                           }}
+                          disabled={
+                            isLoading ||
+                            (user.function.numberValue >
+                              currentUser.function.numberValue &&
+                              currentUser.function.numberValue < 4 &&
+                              !allowEditForLowerFunction)
+                          }
                         >
                           <UserLockIcon className="size-4" />
                         </Button>
@@ -488,6 +507,13 @@ export function UserEditDialog({
                               user.function.numberValue,
                             );
                           }}
+                          disabled={
+                            isLoading ||
+                            (user.function.numberValue >
+                              currentUser.function.numberValue &&
+                              currentUser.function.numberValue < 4 &&
+                              !allowEditForLowerFunction)
+                          }
                         >
                           <UserCheckIcon className="size-4" />
                         </Button>
@@ -523,7 +549,8 @@ export function UserEditDialog({
                       isLoading ||
                       (user.function.numberValue >
                         currentUser.function.numberValue &&
-                        currentUser.function.numberValue < 4)
+                        currentUser.function.numberValue < 4 &&
+                        !allowEditForLowerFunction)
                     }
                   >
                     {isLoading ? "Zapisywanie..." : "Zapisz"}

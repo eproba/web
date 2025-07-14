@@ -17,12 +17,18 @@ interface PatrolsListProps {
   team: Team;
   users: User[];
   currentUser: User;
+  allowEditForLowerFunction: boolean;
+  setAllowEditForLowerFunction: React.Dispatch<React.SetStateAction<boolean>>;
+  setCurrentUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
 export function PatrolsList({
   team,
   users: initialUsers,
   currentUser,
+  allowEditForLowerFunction,
+  setAllowEditForLowerFunction,
+  setCurrentUser,
 }: PatrolsListProps) {
   const [patrols, setPatrols] = useState<Patrol[]>(
     team.patrols?.sort((a, b) => a.name.localeCompare(b.name)) ?? [],
@@ -47,6 +53,21 @@ export function PatrolsList({
             )
             .filter((user) => user.team === team.id),
         );
+        if (updated.id === currentUser.id) {
+          setCurrentUser(updated);
+        }
+        if (updated.function.numberValue >= 4) {
+          setAllowEditForLowerFunction(false);
+        } else {
+          setAllowEditForLowerFunction(
+            users.filter(
+              (user) =>
+                user.function.numberValue >= 4 &&
+                user.isActive &&
+                user.id !== updated.id,
+            ).length === 0,
+          );
+        }
         return true;
       } catch (error) {
         toast.error(
@@ -63,7 +84,14 @@ export function PatrolsList({
         setUpdatingUserIds((prev) => prev.filter((id) => id !== userId));
       }
     },
-    [apiClient, team.id],
+    [
+      apiClient,
+      currentUser.id,
+      setAllowEditForLowerFunction,
+      setCurrentUser,
+      team.id,
+      users,
+    ],
   );
 
   useEffect(() => {
@@ -205,6 +233,7 @@ export function PatrolsList({
             onPatrolDelete={handleDeletePatrol}
             currentUser={currentUser}
             updatingUserIds={updatingUserIds}
+            allowEditForLowerFunction={allowEditForLowerFunction}
           />
         ))}
         {inactiveUsers.length > 0 && (
@@ -214,6 +243,7 @@ export function PatrolsList({
             onUserUpdate={handleUserUpdate}
             currentUser={currentUser}
             updatingUserIds={updatingUserIds}
+            allowEditForLowerFunction={allowEditForLowerFunction}
           />
         )}
       </div>

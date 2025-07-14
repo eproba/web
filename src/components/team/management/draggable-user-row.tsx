@@ -14,6 +14,7 @@ import {
 import Link from "next/link";
 import { ApiUserResponse } from "@/lib/serializers/user";
 import { cn } from "@/lib/utils";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface DraggableUserRowProps {
   user: User;
@@ -24,6 +25,7 @@ interface DraggableUserRowProps {
   ) => Promise<boolean>;
   currentUser: User;
   isUpdating?: boolean;
+  allowEditForLowerFunction: boolean;
 }
 
 export function DraggableUserRow({
@@ -32,9 +34,31 @@ export function DraggableUserRow({
   onUserUpdate,
   currentUser,
   isUpdating = false,
+  allowEditForLowerFunction = false,
 }: DraggableUserRowProps) {
   const ref = useRef<HTMLDivElement>(null);
   const handleRef = useRef<HTMLDivElement>(null);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const isHighlighted = searchParams.get("highlightedUserId") === user.id;
+
+  useEffect(() => {
+    if (isHighlighted && ref.current) {
+      ref.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      ref.current.focus();
+    }
+  }, [isHighlighted]);
+
+  const handleBlur = () => {
+    if (isHighlighted) {
+      const params = new URLSearchParams(window.location.search);
+      params.delete("highlightedUserId");
+      router.replace(`${window.location.pathname}?${params.toString()}`, {
+        scroll: false,
+      });
+    }
+  };
 
   useEffect(() => {
     if (isUpdating || !user.isActive) return;
@@ -55,13 +79,17 @@ export function DraggableUserRow({
       patrols={patrols}
       onUserUpdate={onUserUpdate}
       currentUser={currentUser}
+      allowEditForLowerFunction={allowEditForLowerFunction}
     >
       <div
         ref={ref}
         className={cn(
           "flex items-center justify-between gap-2 p-2 rounded-md hover:bg-muted data-[state=open]:bg-muted",
           isUpdating && "opacity-50 pointer-events-none select-none",
+          isHighlighted && "focus:ring-2 focus:ring-primary focus:outline-none",
         )}
+        tabIndex={isHighlighted ? 0 : -1}
+        onBlur={handleBlur}
       >
         <div className="flex items-center gap-2">
           {user.isActive && (

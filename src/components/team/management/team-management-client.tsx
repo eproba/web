@@ -19,9 +19,15 @@ interface TeamManagementClientProps {
 export function TeamManagementClient({
   team: initialTeam,
   users,
-  currentUser,
+  currentUser: initialCurrentUser,
 }: TeamManagementClientProps) {
   const [team, setTeam] = useState<Team>(initialTeam);
+  const [allowEditForLowerFunction, setAllowEditForLowerFunction] =
+    useState<boolean>(
+      users.filter((user) => user.function.numberValue >= 4 && user.isActive)
+        .length === 0,
+    );
+  const [currentUser, setCurrentUser] = useState<User>(initialCurrentUser);
   const { apiClient } = useApi();
 
   const handleTeamUpdate = async (name: string, shortName: string) => {
@@ -54,9 +60,18 @@ export function TeamManagementClient({
       <TeamHeader
         team={team}
         onTeamUpdate={handleTeamUpdate}
-        allowEdit={currentUser.function.numberValue >= 4}
+        allowEdit={
+          currentUser.function.numberValue >= 4 || allowEditForLowerFunction
+        }
       />
-      <PatrolsList team={team} users={users} currentUser={currentUser} />
+      <PatrolsList
+        team={team}
+        users={users}
+        currentUser={currentUser}
+        allowEditForLowerFunction={allowEditForLowerFunction}
+        setAllowEditForLowerFunction={setAllowEditForLowerFunction}
+        setCurrentUser={setCurrentUser}
+      />
     </div>
   );
 }
