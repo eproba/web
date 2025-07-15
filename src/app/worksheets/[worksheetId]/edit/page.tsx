@@ -1,6 +1,7 @@
-import React from "react";
 import { WorksheetEditor } from "@/components/worksheets/editor/worksheet-editor";
 import { fetchCurrentUser, fetchWorksheet } from "@/lib/server-api";
+import type { Metadata } from "next";
+import React from "react";
 
 interface WorksheetEditPageProps {
   params: Promise<{
@@ -25,7 +26,7 @@ const WorksheetEditPage = async ({ params }: WorksheetEditPageProps) => {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold  mb-2">Edycja próby</h1>
+        <h1 className="mb-2 text-3xl font-bold">Edycja próby</h1>
       </div>
       <WorksheetEditor
         mode="edit"
@@ -38,3 +39,23 @@ const WorksheetEditPage = async ({ params }: WorksheetEditPageProps) => {
 };
 
 export default WorksheetEditPage;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ worksheetId: string }>;
+}): Promise<Metadata> {
+  const { worksheetId } = await params;
+
+  const { worksheet, error: worksheetError } =
+    await fetchWorksheet(worksheetId);
+  if (worksheetError) {
+    return { title: "Błąd" };
+  }
+
+  return {
+    title: worksheet?.name
+      ? `Edycja ${worksheet.name} - ${worksheet.user.displayName}`
+      : "Edycja próby",
+  };
+}

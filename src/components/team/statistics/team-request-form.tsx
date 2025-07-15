@@ -1,12 +1,8 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -15,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -22,19 +19,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusIcon, TrashIcon, UserIcon } from "lucide-react";
-import { toast } from "react-toastify";
-import { useRouter } from "next/navigation";
 import { useApi } from "@/lib/api-client";
-import { ToastMsg } from "@/lib/toast-msg";
 import {
   TeamRequestFormData,
   teamRequestSchema,
 } from "@/lib/schemas/team-request";
-import { ORGANIZATION_CHOICES } from "@/types/team-request";
-import { District } from "@/types/team";
 import { districtSerializer } from "@/lib/serializers/team";
+import { ToastMsg } from "@/lib/toast-msg";
+import { District } from "@/types/team";
+import { ORGANIZATION_CHOICES } from "@/types/team-request";
 import { User, UserFunction } from "@/types/user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { PlusIcon, TrashIcon, UserIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 interface TeamRequestFormProps {
   currentUser: User;
@@ -188,7 +188,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
   };
 
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="mx-auto max-w-2xl space-y-6">
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold">
@@ -197,7 +197,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
         </CardHeader>
         <CardContent>
           {currentUser.patrol && (
-            <Alert className="mb-6 bg-yellow-500/10 border-yellow-500/40">
+            <Alert className="mb-6 border-yellow-500/40 bg-yellow-500/10">
               <AlertDescription className="text-yellow-800 dark:text-yellow-200">
                 Jesteś obecnie przypisany do zastępu &quot;
                 {currentUser.patrolName}&quot; w &quot;{currentUser.teamName}
@@ -338,7 +338,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-8">
                   <FormLabel className="text-sm font-medium">Zastępy</FormLabel>
-                  <span className="text-xs text-muted-foreground truncate max-w-xs">
+                  <span className="text-muted-foreground max-w-xs truncate text-xs">
                     {watchedPatrols[userPatrolIndex] &&
                       `Twój zastęp: ${watchedPatrols[userPatrolIndex]}`}
                   </span>
@@ -393,7 +393,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
                   onClick={addPatrol}
                   className="w-full border-dashed"
                 >
-                  <PlusIcon className="size-4 mr-2" />
+                  <PlusIcon className="mr-2 size-4" />
                   Dodaj zastęp
                 </Button>
 

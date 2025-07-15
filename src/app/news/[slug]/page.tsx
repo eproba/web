@@ -1,7 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { notFound } from "next/navigation";
-import Link from "next/link";
 import { fetchNewsPost } from "@/lib/server-api";
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 export default async function NewsPostPage({
   params,
@@ -25,7 +26,7 @@ export default async function NewsPostPage({
         <Link href={`/news/${post.slug}`}>
           <CardTitle>{post.title}</CardTitle>
         </Link>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           {new Date(post.createdOn).toLocaleDateString()}
         </p>
       </CardHeader>
@@ -34,4 +35,23 @@ export default async function NewsPostPage({
       </CardContent>
     </Card>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+  const { post, error } = await fetchNewsPost(slug);
+
+  if (error || !post) {
+    return {
+      title: "Post nie znaleziony",
+    };
+  }
+
+  return {
+    title: post.title,
+  };
 }

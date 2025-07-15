@@ -1,9 +1,9 @@
-import React from "react";
-import { TaskList } from "@/components/worksheets/editor/task-list";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
-import { UseFormReturn } from "react-hook-form";
+import { TaskList } from "@/components/worksheets/editor/task-list";
 import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { User } from "@/types/user";
+import React from "react";
+import { UseFormReturn } from "react-hook-form";
 
 interface TasksSectionProps {
   form: UseFormReturn<WorksheetWithTasks>;
@@ -45,7 +45,7 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
 }) => {
   return (
     <div className="space-y-6">
-      <div className="flex flex-col lg:flex-row w-full gap-4">
+      <div className="flex w-full flex-col gap-4 lg:flex-row">
         {/* General Tasks */}
         <TaskList
           title={enableCategories ? "Zadania ogólne" : null}

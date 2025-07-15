@@ -4,6 +4,11 @@ import {
   fetchUserTeam,
   fetchWorksheets,
 } from "@/lib/server-api";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Zarządzaj próbami",
+};
 
 export default async function ManagedWorksheets() {
   const { worksheets, error: worksheetsError } = await fetchWorksheets();

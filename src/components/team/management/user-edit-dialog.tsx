@@ -1,45 +1,4 @@
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
-import { Input } from "@/components/ui/input";
-import { Organization, Patrol } from "@/types/team";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import React, { useEffect, useState } from "react";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ApiUserResponse } from "@/lib/serializers/user";
-import { capitalizeFirstLetter, cn } from "@/lib/utils";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { UserCheckIcon, UserLockIcon, UserXIcon } from "lucide-react";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -50,7 +9,48 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { ApiUserResponse } from "@/lib/serializers/user";
+import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { Organization, Patrol } from "@/types/team";
+import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { UserCheckIcon, UserLockIcon, UserXIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { z } from "zod";
 
 const formSchema = z.object({
   firstName: z.string().optional(),
@@ -315,7 +315,7 @@ export function UserEditDialog({
                   </FormItem>
                 )}
               />
-              <div className="flex flex-row gap-2 w-full">
+              <div className="flex w-full flex-row gap-2">
                 <FormField
                   control={form.control}
                   name="scoutRank"
@@ -398,14 +398,14 @@ export function UserEditDialog({
             </div>
             <DialogFooter>
               {form.watch("isActive") !== user.isActive && (
-                <span className="text-sm text-muted-foreground sm:hidden">
+                <span className="text-muted-foreground text-sm sm:hidden">
                   {form.watch("isActive")
                     ? "Zapisz aby aktywować"
                     : "Zapisz aby dezaktywować"}
                 </span>
               )}
-              <div className="flex justify-between items-center w-full gap-4">
-                <div className="flex gap-2 flex-wrap items-center">
+              <div className="flex w-full items-center justify-between gap-4">
+                <div className="flex flex-wrap items-center gap-2">
                   <AlertDialog>
                     <Tooltip>
                       <AlertDialogTrigger asChild>
@@ -463,7 +463,7 @@ export function UserEditDialog({
                           poziomu edycji swojego profilu.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
-                      <AlertDialogFooter className="flex flex-row justify-end gap-2 mt-4">
+                      <AlertDialogFooter className="mt-4 flex flex-row justify-end gap-2">
                         <AlertDialogCancel>Anuluj</AlertDialogCancel>
                         <AlertDialogAction
                           variant="destructive"
@@ -526,14 +526,14 @@ export function UserEditDialog({
                     </TooltipContent>
                   </Tooltip>
                   {form.watch("isActive") !== user.isActive && (
-                    <span className="text-sm text-muted-foreground hidden sm:inline">
+                    <span className="text-muted-foreground hidden text-sm sm:inline">
                       {form.watch("isActive")
                         ? "Zapisz aby aktywować"
                         : "Zapisz aby dezaktywować"}
                     </span>
                   )}
                 </div>
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center gap-2">
                   <DialogClose asChild>
                     <Button
                       type="button"

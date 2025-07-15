@@ -9,6 +9,8 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { TeamStatistics } from "@/types/team-statistics";
+import { TrendingUpIcon } from "lucide-react";
 import {
   Bar,
   BarChart,
@@ -23,8 +25,6 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { TrendingUpIcon } from "lucide-react";
-import { TeamStatistics } from "@/types/team-statistics";
 
 const CHART_COLORS = [
   "var(--color-chart-1)",
@@ -281,7 +281,7 @@ export function FunctionsChart({ statistics }: ChartsProps) {
       <CardContent>
         <ChartContainer
           config={functionsConfig}
-          className="min-h-80 h-full w-full"
+          className="h-full min-h-80 w-full"
         >
           <BarChart
             accessibilityLayer
@@ -346,7 +346,7 @@ export function PatrolComparisonChart({ statistics }: ChartsProps) {
       <CardContent>
         <ChartContainer
           config={patrolComparisonConfig}
-          className="min-h-80 h-full w-full"
+          className="h-full min-h-80 w-full"
         >
           <BarChart
             accessibilityLayer

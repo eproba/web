@@ -1,13 +1,12 @@
 "use client";
 
+import LightThemeLogo from "@/../public/logo-dark.svg";
+import DarkThemeLogo from "@/../public/logo.svg";
 import { useTheme } from "next-themes";
 import type { StaticImageData } from "next/image";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-
-import LightThemeLogo from "@/../public/logo-dark.svg";
-import DarkThemeLogo from "@/../public/logo.svg";
 
 const getSource = (theme: string | undefined): StaticImageData => {
   if (theme === "dark") {
@@ -31,9 +30,9 @@ export function AppLogo({
       <Image
         src={forceTheme ? getSource(forceTheme) : getSource(resolvedTheme)}
         alt="Epróba"
-        className="w-[112px] mb-1"
+        className="mb-1 w-[112px]"
       />
-      <span className="absolute translate-x-16 -translate-y-6 -rotate-30 text-green-500 pointer-events-none bg-accent/50">
+      <span className="bg-accent/50 pointer-events-none absolute translate-x-16 -translate-y-6 -rotate-30 text-green-500">
         v2 βeta
       </span>
     </Link>

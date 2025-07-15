@@ -1,5 +1,5 @@
-import { Post } from "@/types/news";
 import { ApiUserResponse, publicUserSerializer } from "@/lib/serializers/user";
+import { Post } from "@/types/news";
 
 export interface ApiPostResponse {
   id: string;

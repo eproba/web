@@ -1,3 +1,4 @@
+import { displayNameFromUser } from "@/lib/utils";
 import {
   Gender,
   InstructorRank,
@@ -6,7 +7,6 @@ import {
   User,
   UserFunction,
 } from "@/types/user";
-import { displayNameFromUser } from "@/lib/utils";
 
 export interface ApiUserResponse {
   id: string;

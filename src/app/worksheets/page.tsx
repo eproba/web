@@ -1,5 +1,10 @@
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
 import { fetchUserWorksheets } from "@/lib/server-api";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Twoje próby",
+};
 
 export default async function UserWorksheets() {
   const { worksheets, error } = await fetchUserWorksheets();
@@ -18,7 +23,7 @@ export default async function UserWorksheets() {
     <div className="space-y-4">
       <WorksheetList orgWorksheets={activeWorksheets} variant="user" />
       {archivedWorksheets?.length > 0 && (
-        <div className="space-y-4 mt-8">
+        <div className="mt-8 space-y-4">
           <h2 className="text-2xl font-semibold">Archiwum</h2>
           <WorksheetList orgWorksheets={archivedWorksheets} variant="shared" />
         </div>

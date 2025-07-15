@@ -1,11 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { toast } from "react-toastify";
-import { useApi } from "@/lib/api-client";
-import { Task } from "@/types/worksheet";
-import { ToastMsg } from "@/lib/toast-msg";
-import { taskSerializer } from "@/lib/serializers/worksheet";
 import {
   Dialog,
   DialogContent,
@@ -19,6 +13,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { useApi } from "@/lib/api-client";
+import { taskSerializer } from "@/lib/serializers/worksheet";
+import { ToastMsg } from "@/lib/toast-msg";
+import { cn } from "@/lib/utils";
+import { Task } from "@/types/worksheet";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   CheckIcon,
   EditIcon,
@@ -27,9 +28,8 @@ import {
   TrashIcon,
   XIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 interface TaskNotesProps {
   task: Task;
@@ -170,11 +170,11 @@ export function TaskNotes({
               }}
               className="overflow-hidden"
             >
-              <Card className="w-full gap-4 shadow-none bg-accent/50">
+              <Card className="bg-accent/50 w-full gap-4 shadow-none">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <StickyNoteIcon className="size-4 text-muted-foreground" />
+                      <StickyNoteIcon className="text-muted-foreground size-4" />
                       <CardTitle className="text-sm">Notatka</CardTitle>
                     </div>
                     <div className="flex gap-1">
@@ -184,7 +184,7 @@ export function TaskNotes({
                         onClick={handleStartEditing}
                         disabled={isLoading}
                       >
-                        <EditIcon className="w-3 h-3" />
+                        <EditIcon className="h-3 w-3" />
                       </Button>
                       <Dialog
                         open={isDeleteDialogOpen}
@@ -196,7 +196,7 @@ export function TaskNotes({
                             size="icon"
                             disabled={isLoading}
                           >
-                            <TrashIcon className="w-3 h-3" />
+                            <TrashIcon className="h-3 w-3" />
                           </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -229,7 +229,7 @@ export function TaskNotes({
                   </div>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                  <p className="text-muted-foreground text-sm whitespace-pre-wrap">
                     {task.notes}
                   </p>
                 </CardContent>
@@ -253,23 +253,23 @@ export function TaskNotes({
               }}
               className="overflow-hidden"
             >
-              <Card className="w-full gap-4 shadow-none bg-accent/50">
+              <Card className="bg-accent/50 w-full gap-4 shadow-none">
                 <CardHeader>
                   <div className="flex items-center gap-2">
-                    <StickyNoteIcon className="size-4 text-muted-foreground" />
+                    <StickyNoteIcon className="text-muted-foreground size-4" />
                     <CardTitle className="text-sm">
                       {task.notes ? "Edytuj notatkę" : "Dodaj notatkę"}
                     </CardTitle>
                   </div>
                 </CardHeader>
-                <CardContent className="pt-0 space-y-3">
+                <CardContent className="space-y-3 pt-0">
                   <Textarea
                     ref={textareaRef}
                     value={editValue}
                     onChange={(e) => setEditValue(e.target.value)}
                     placeholder="Wpisz notatkę..."
                     disabled={isLoading}
-                    className="w-full min-h-[80px] transition-all duration-200 field-sizing-content"
+                    className="field-sizing-content min-h-[80px] w-full transition-all duration-200"
                     rows={3}
                   />
                   <motion.div
@@ -284,7 +284,7 @@ export function TaskNotes({
                       onClick={handleCancelEditing}
                       disabled={isLoading}
                     >
-                      <XIcon className="w-3 h-3 mr-1" />
+                      <XIcon className="mr-1 h-3 w-3" />
                       Anuluj
                     </Button>
                     <Button
@@ -292,7 +292,7 @@ export function TaskNotes({
                       onClick={handleSaveNote}
                       disabled={isLoading || editValue.trim() === ""}
                     >
-                      <CheckIcon className="w-3 h-3 mr-1" />
+                      <CheckIcon className="mr-1 h-3 w-3" />
                       Zapisz
                     </Button>
                   </motion.div>
@@ -313,7 +313,7 @@ export function TaskNotes({
                 ease: "easeInOut",
                 height: { duration: 0.4 },
               }}
-              className="overflow-hidden flex justify-center"
+              className="flex justify-center overflow-hidden"
             >
               <Button
                 variant="ghost"
@@ -350,11 +350,11 @@ export function TaskNotes({
           variant="outline"
           size="icon"
           className={cn(
-            "h-8 w-8 p-0 shadow-lg hover:shadow-xl transition-all duration-200",
-            "bg-white/95 backdrop-blur-sm border-2",
+            "h-8 w-8 p-0 shadow-lg transition-all duration-200 hover:shadow-xl",
+            "border-2 bg-white/95 backdrop-blur-sm",
             task.notes
-              ? "text-amber-600 hover:text-amber-700 border-amber-300 bg-amber-50/95 hover:bg-amber-100/95"
-              : "text-gray-600 hover:text-gray-700 border-gray-300 bg-white/95 hover:bg-gray-50/95",
+              ? "border-amber-300 bg-amber-50/95 text-amber-600 hover:bg-amber-100/95 hover:text-amber-700"
+              : "border-gray-300 bg-white/95 text-gray-600 hover:bg-gray-50/95 hover:text-gray-700",
             "animate-in fade-in-0 slide-in-from-left-2 duration-300",
             className,
           )}
@@ -382,7 +382,7 @@ export function TaskNotes({
             >
               <div className="flex items-center justify-between p-4 pb-2">
                 <div className="flex items-center gap-2">
-                  <StickyNoteIcon className="size-4 text-muted-foreground" />
+                  <StickyNoteIcon className="text-muted-foreground size-4" />
                   <h3 className="text-sm font-medium">Notatka</h3>
                 </div>
                 <div className="flex gap-1">
@@ -393,7 +393,7 @@ export function TaskNotes({
                     disabled={isLoading}
                     className="h-6 w-6 p-0"
                   >
-                    <EditIcon className="w-3 h-3" />
+                    <EditIcon className="h-3 w-3" />
                   </Button>
                   <Dialog
                     open={isDeleteDialogOpen}
@@ -406,7 +406,7 @@ export function TaskNotes({
                         disabled={isLoading}
                         className="h-6 w-6 p-0"
                       >
-                        <TrashIcon className="w-3 h-3" />
+                        <TrashIcon className="h-3 w-3" />
                       </Button>
                     </DialogTrigger>
                     <DialogContent>
@@ -438,7 +438,7 @@ export function TaskNotes({
                 </div>
               </div>
               <div className="px-4 pb-4">
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap max-h-40 overflow-y-auto">
+                <p className="text-muted-foreground max-h-40 overflow-y-auto text-sm whitespace-pre-wrap">
                   {task.notes}
                 </p>
               </div>
@@ -460,12 +460,12 @@ export function TaskNotes({
               className="overflow-hidden"
             >
               <div className="flex items-center gap-2 p-4 pb-2">
-                <StickyNoteIcon className="size-4 text-muted-foreground" />
+                <StickyNoteIcon className="text-muted-foreground size-4" />
                 <h3 className="text-sm font-medium">
                   {task.notes ? "Edytuj notatkę" : "Dodaj notatkę"}
                 </h3>
               </div>
-              <div className="px-4 pb-4 space-y-3">
+              <div className="space-y-3 px-4 pb-4">
                 <Textarea
                   ref={textareaRef}
                   value={editValue}
@@ -481,7 +481,7 @@ export function TaskNotes({
                     onClick={handleCancelEditing}
                     disabled={isLoading}
                   >
-                    <XIcon className="w-3 h-3 mr-1" />
+                    <XIcon className="mr-1 h-3 w-3" />
                     Anuluj
                   </Button>
                   <Button
@@ -489,7 +489,7 @@ export function TaskNotes({
                     onClick={handleSaveNote}
                     disabled={isLoading || editValue.trim() === ""}
                   >
-                    <CheckIcon className="w-3 h-3 mr-1" />
+                    <CheckIcon className="mr-1 h-3 w-3" />
                     Zapisz
                   </Button>
                 </div>

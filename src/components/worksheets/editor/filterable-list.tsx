@@ -1,14 +1,14 @@
-import React, { useState, useMemo } from "react";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Toggle } from "@/components/ui/toggle";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import { SearchIcon, TagIcon, PlusIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Toggle } from "@/components/ui/toggle";
 import {
   FilterableItem,
   FilterableListProps,
 } from "@/types/filterable-components";
+import { PlusIcon, SearchIcon, TagIcon } from "lucide-react";
+import React, { useMemo, useState } from "react";
 
 export function FilterableList<T extends FilterableItem>({
   items,
@@ -62,21 +62,21 @@ export function FilterableList<T extends FilterableItem>({
   const defaultRenderItem = (item: T, onSelect?: () => void) => (
     <div
       key={`${item.name}-${item.description}`}
-      className="border rounded-lg p-4 hover:bg-muted transition-colors"
+      className="hover:bg-muted rounded-lg border p-4 transition-colors"
     >
-      <div className="flex justify-between items-start mb-2">
-        <h3 className="font-semibold text-lg">{item.name}</h3>
+      <div className="mb-2 flex items-start justify-between">
+        <h3 className="text-lg font-semibold">{item.name}</h3>
         {showSelectButton && onSelect && (
           <Button size="sm" onClick={onSelect} className="ml-2 flex-shrink-0">
-            <PlusIcon className="size-4 mr-1" />
+            <PlusIcon className="mr-1 size-4" />
             {selectButtonText}
           </Button>
         )}
       </div>
 
-      <p className="text-gray-600 mb-3">{item.description}</p>
+      <p className="mb-3 text-gray-600">{item.description}</p>
 
-      <div className="flex items-center gap-2 flex-wrap">
+      <div className="flex flex-wrap items-center gap-2">
         {item.tags.map((tag) => (
           <Badge key={tag} variant="outline" className="text-xs">
             {tag}
@@ -87,9 +87,9 @@ export function FilterableList<T extends FilterableItem>({
   );
 
   return (
-    <div className={`flex flex-col flex-1 min-h-0 space-y-4 ${className}`}>
+    <div className={`flex min-h-0 flex-1 flex-col space-y-4 ${className}`}>
       {/* Search and Filters */}
-      <div className="space-y-3 flex-shrink-0">
+      <div className="flex-shrink-0 space-y-3">
         <Input
           placeholder={searchPlaceholder}
           value={searchQuery}
@@ -112,7 +112,7 @@ export function FilterableList<T extends FilterableItem>({
                   size="sm"
                   pressed={selectedTags.includes(tag)}
                   onPressedChange={(pressed) => handleTagToggle(tag, pressed)}
-                  className="text-xs h-5 data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground"
+                  className="data-[state=on]:bg-foreground data-[state=on]:text-primary-foreground h-5 text-xs"
                 >
                   {tag}
                 </Toggle>
@@ -123,17 +123,17 @@ export function FilterableList<T extends FilterableItem>({
       </div>
 
       {/* Items List */}
-      <div className="flex-1 min-h-0">
+      <div className="min-h-0 flex-1">
         <ScrollArea className="h-full w-full pr-4">
           <div className="space-y-3">
             {isLoading ? (
-              <div className="text-center py-8 text-gray-500">
-                <div className="w-12 h-12 mx-auto mb-4 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+              <div className="py-8 text-center text-gray-500">
+                <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
                 <p>{loadingMessage}</p>
               </div>
             ) : filteredItems.length === 0 ? (
-              <div className="text-center py-8 text-gray-500">
-                <SearchIcon className="w-12 h-12 mx-auto mb-4 opacity-50" />
+              <div className="py-8 text-center text-gray-500">
+                <SearchIcon className="mx-auto mb-4 h-12 w-12 opacity-50" />
                 <p>{emptyStateMessage}</p>
               </div>
             ) : (

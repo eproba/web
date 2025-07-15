@@ -1,6 +1,6 @@
 export function Footer() {
   return (
-    <footer className="border-t mt-auto py-2 text-center text-muted-foreground text-sm sm:text-base">
+    <footer className="text-muted-foreground mt-auto border-t py-2 text-center text-sm sm:text-base">
       <strong className="text-foreground">Epróba</strong> by{" "}
       <a
         href="https://github.com/Antoni-Czaplicki"

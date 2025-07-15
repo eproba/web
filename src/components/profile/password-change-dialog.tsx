@@ -1,7 +1,6 @@
 "use client";
 
-import React from "react";
-import { useApi } from "@/lib/api-client";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -11,14 +10,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
-import { ToastMsg } from "@/lib/toast-msg";
-import { useRouter } from "next/navigation";
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import {
   Form,
   FormControl,
@@ -27,6 +18,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useApi } from "@/lib/api-client";
+import { ToastMsg } from "@/lib/toast-msg";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import React from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { z } from "zod";
 
 const getFormSchema = (variant: "change" | "set") => {
   const baseSchema = {
@@ -198,7 +198,7 @@ export const PasswordChangeDialog = ({
               />
             </div>
 
-            <DialogFooter className="flex flex-row justify-end gap-2 mt-4">
+            <DialogFooter className="mt-4 flex flex-row justify-end gap-2">
               <DialogClose asChild>
                 <Button type="button" variant="outline">
                   Anuluj

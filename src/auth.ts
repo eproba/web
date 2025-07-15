@@ -1,6 +1,6 @@
-import NextAuth from "next-auth";
 import { userSerializer } from "@/lib/serializers/user";
 import { User } from "@/types/user";
+import NextAuth from "next-auth";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

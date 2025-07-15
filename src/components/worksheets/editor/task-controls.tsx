@@ -1,12 +1,12 @@
-import React from "react";
 import { Button } from "@/components/ui/button";
-import { AlignLeftIcon, InfoIcon, TagsIcon } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { AlignLeftIcon, InfoIcon, TagsIcon } from "lucide-react";
+import React from "react";
 
 interface TaskControlsProps {
   showDescriptions: boolean;
@@ -22,13 +22,13 @@ export const TaskControls: React.FC<TaskControlsProps> = ({
   onToggleCategories,
 }) => {
   return (
-    <div className="flex flex-row flex-wrap gap-4 items-start sm:items-center justify-between p-4 bg-muted/30 rounded-lg border">
+    <div className="bg-muted/30 flex flex-row flex-wrap items-start justify-between gap-4 rounded-lg border p-4 sm:items-center">
       <div className="flex items-center gap-2">
-        <h2 className="text-xl font-semibold text-foreground">Zadania</h2>
+        <h2 className="text-foreground text-xl font-semibold">Zadania</h2>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger>
-              <InfoIcon className="size-4 text-muted-foreground" />
+              <InfoIcon className="text-muted-foreground size-4" />
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
               Dodaj zadania do swojej próby. Możesz je przeciągać, aby zmienić
@@ -46,7 +46,7 @@ export const TaskControls: React.FC<TaskControlsProps> = ({
           onClick={onToggleCategories}
         >
           <TagsIcon className="size-4" />
-          <span className="text-sm hidden sm:block">Kategorie</span>
+          <span className="hidden text-sm sm:block">Kategorie</span>
         </Button>
 
         <Button
@@ -56,7 +56,7 @@ export const TaskControls: React.FC<TaskControlsProps> = ({
           onClick={onToggleDescriptions}
         >
           <AlignLeftIcon className="size-4" />
-          <span className="text-sm hidden sm:block">Opisy zadań</span>
+          <span className="hidden text-sm sm:block">Opisy zadań</span>
         </Button>
       </div>
     </div>

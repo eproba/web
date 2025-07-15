@@ -1,4 +1,4 @@
-import { Organization, Patrol, Team, District } from "@/types/team";
+import { District, Organization, Patrol, Team } from "@/types/team";
 
 export interface ApiDistrictResponse {
   id: string;

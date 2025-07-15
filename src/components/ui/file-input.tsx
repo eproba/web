@@ -1,7 +1,8 @@
-import * as React from "react";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
-import { UploadIcon, XIcon, ImageIcon } from "lucide-react";
+import { ImageIcon, UploadIcon, XIcon } from "lucide-react";
+import Image from "next/image";
+import * as React from "react";
+
 import { Button } from "./button";
 
 export interface FileInputProps
@@ -121,11 +122,11 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
 
         <div
           className={cn(
-            "relative group border-2 border-dashed rounded-xl p-6 cursor-pointer transition-all duration-200 min-h-[200px] flex flex-col items-center justify-center",
+            "group relative flex min-h-[200px] cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed p-6 transition-all duration-200",
             dragActive
               ? "border-primary bg-primary/10 scale-[1.02]"
               : "border-border hover:border-primary/50 hover:bg-muted/30",
-            value && "border-solid border-border/50 bg-muted/20",
+            value && "border-border/50 bg-muted/20 border-solid",
             className,
           )}
           onDrop={handleDrop}
@@ -144,16 +145,16 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
                 e.stopPropagation();
                 handleRemove();
               }}
-              className="absolute top-3 right-3 h-8 w-8 p-0 opacity-0 group-hover:opacity-100 transition-opacity z-10"
+              className="absolute top-3 right-3 z-10 h-8 w-8 p-0 opacity-0 transition-opacity group-hover:opacity-100"
             >
               <XIcon className="size-4" />
             </Button>
           )}
 
           {preview && previewUrl ? (
-            <div className="flex flex-col items-center justify-center space-y-3 w-full">
+            <div className="flex w-full flex-col items-center justify-center space-y-3">
               {/* Image preview */}
-              <div className="relative w-24 h-24 rounded-lg overflow-hidden border border-border/20">
+              <div className="border-border/20 relative h-24 w-24 overflow-hidden rounded-lg border">
                 <Image
                   src={previewUrl}
                   alt="Preview"
@@ -163,50 +164,50 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
               </div>
 
               {/* File info */}
-              <div className="text-center space-y-1">
-                <p className="text-sm font-medium text-foreground">
+              <div className="space-y-1 text-center">
+                <p className="text-foreground text-sm font-medium">
                   {value instanceof File ? value.name : "Obecny obrazek"}
                 </p>
                 {value instanceof File && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {(value.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Kliknij aby zmienić lub przeciągnij nowy plik
                 </p>
               </div>
             </div>
           ) : value ? (
             <div className="flex flex-col items-center justify-center space-y-3">
-              <ImageIcon className="size-24 p-4 text-muted-foreground" />
-              <div className="text-center space-y-1">
-                <p className="text-sm font-medium text-foreground">
+              <ImageIcon className="text-muted-foreground size-24 p-4" />
+              <div className="space-y-1 text-center">
+                <p className="text-foreground text-sm font-medium">
                   {value instanceof File ? value.name : "Obecny obrazek"}
                 </p>
                 {value instanceof File && (
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     {(value.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 )}
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Kliknij aby zmienić lub przeciągnij nowy plik
                 </p>
               </div>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center space-y-3">
-              <div className="p-3 rounded-full bg-muted group-hover:bg-primary/10 transition-colors">
-                <UploadIcon className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
+              <div className="bg-muted group-hover:bg-primary/10 rounded-full p-3 transition-colors">
+                <UploadIcon className="text-muted-foreground group-hover:text-primary h-8 w-8 transition-colors" />
               </div>
-              <div className="text-center space-y-1">
-                <p className="text-sm font-medium text-foreground">
+              <div className="space-y-1 text-center">
+                <p className="text-foreground text-sm font-medium">
                   Dodaj obrazek
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Kliknij lub przeciągnij plik tutaj
                 </p>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   JPG, PNG, GIF, SVG (maks. {maxSizeInMB}MB)
                 </p>
               </div>

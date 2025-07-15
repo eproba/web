@@ -1,6 +1,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Link from "next/link";
 import { fetchNews } from "@/lib/server-api";
+import type { Metadata } from "next";
+import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Aktualności",
+};
 
 export default async function NewsPage() {
   const { posts: news, error } = await fetchNews();
@@ -35,7 +40,7 @@ export default async function NewsPage() {
                   <Link href={`/news/${post.slug}`}>
                     <CardTitle>{post.title}</CardTitle>
                   </Link>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {new Date(post.createdOn).toLocaleDateString()}
                   </p>
                 </CardHeader>
@@ -58,7 +63,7 @@ export default async function NewsPage() {
                   <Link href={`/news/${post.slug}`}>
                     <CardTitle>{post.title}</CardTitle>
                   </Link>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-muted-foreground text-sm">
                     {new Date(post.createdOn).toLocaleDateString()}
                   </p>
                 </CardHeader>

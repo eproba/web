@@ -1,8 +1,9 @@
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { notFound } from "next/navigation";
-import { Badge } from "@/components/ui/badge";
 import { fetchUser } from "@/lib/server-api";
+import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 
 export default async function ProfilePage({
   params,
@@ -79,4 +80,26 @@ export default async function ProfilePage({
       </CardContent>
     </Card>
   );
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+
+  const { user, error: userError } = await fetchUser(id);
+  if (userError) {
+    return { title: "Błąd" };
+  }
+
+  if (!user) {
+    return { title: "Nie znaleziono użytkownika" };
+  }
+
+  return {
+    title: `${user.displayName} - Profil użytkownika`,
+    description: `Profil użytkownika ${user.displayName} w systemie Epróba.`,
+  };
 }

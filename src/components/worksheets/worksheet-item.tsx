@@ -1,9 +1,9 @@
 "use client";
 
-import { Task, Worksheet } from "@/types/worksheet";
 import { TaskTable } from "@/components/worksheets/task-table";
 import { WorksheetActions } from "@/components/worksheets/worksheet-actions";
 import { User } from "@/types/user";
+import { Task, Worksheet } from "@/types/worksheet";
 import Image from "next/image";
 
 export function WorksheetItem({
@@ -24,14 +24,14 @@ export function WorksheetItem({
   return (
     <div className="bg-card rounded-lg p-6 shadow-md" id={worksheet.id}>
       <div>
-        <div className="flex w-full justify-between items-center gap-2 mb-2">
-          <h2 className="text-2xl font-semibold flex">
+        <div className="mb-2 flex w-full items-center justify-between gap-2">
+          <h2 className="flex text-2xl font-semibold">
             {worksheet.template?.image && (
               <Image
                 alt={worksheet.template.name}
-                className={`size-10 rounded-md object-cover inline-block mr-2 ${
+                className={`mr-2 inline-block size-10 rounded-md object-cover ${
                   worksheet.template.image.endsWith(".svg")
-                    ? "dark:invert dark:grayscale"
+                    ? "dark:grayscale dark:invert"
                     : ""
                 }`}
                 width={40}
@@ -62,12 +62,12 @@ export function WorksheetItem({
           />
         </div>
         {worksheet.description && (
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+          <p className="text-muted-foreground text-sm whitespace-pre-wrap">
             {worksheet.description}
           </p>
         )}
         {worksheet.supervisor && (
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Opiekun:{" "}
             <a
               href={`/profile/${worksheet.supervisor}`}
@@ -78,7 +78,7 @@ export function WorksheetItem({
           </p>
         )}
 
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Ostatnia aktualizacja: {worksheet.updatedAt.toLocaleString()}
         </p>
       </div>

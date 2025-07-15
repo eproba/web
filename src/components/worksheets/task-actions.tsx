@@ -1,25 +1,4 @@
-import React from "react";
-import { toast } from "react-toastify";
-import { useApi } from "@/lib/api-client";
-import { Task, TaskStatus } from "@/types/worksheet";
-import { PublicUser, User } from "@/types/user";
-import { ToastMsg } from "@/lib/toast-msg";
-import {
-  CloudUploadIcon,
-  EraserIcon,
-  PenOffIcon,
-  SendIcon,
-  SignatureIcon,
-  TicketXIcon,
-} from "lucide-react";
-import { taskSerializer } from "@/lib/serializers/worksheet";
-import { publicUserSerializer } from "@/lib/serializers/user";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -36,10 +15,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { composeEventHandlers } from "@radix-ui/primitive";
-import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useApi } from "@/lib/api-client";
 import { RequiredFunctionLevel } from "@/lib/const";
+import { publicUserSerializer } from "@/lib/serializers/user";
+import { taskSerializer } from "@/lib/serializers/worksheet";
+import { ToastMsg } from "@/lib/toast-msg";
+import { cn } from "@/lib/utils";
+import { PublicUser, User } from "@/types/user";
+import { Task, TaskStatus } from "@/types/worksheet";
+import { composeEventHandlers } from "@radix-ui/primitive";
+import {
+  CloudUploadIcon,
+  EraserIcon,
+  PenOffIcon,
+  SendIcon,
+  SignatureIcon,
+  TicketXIcon,
+} from "lucide-react";
+import React from "react";
+import { toast } from "react-toastify";
 
 type TaskAction = "submit" | "unsubmit" | "accept" | "reject" | "clear";
 
@@ -71,9 +71,9 @@ interface TaskActionsProps {
 }
 
 const LoadingIcon = () => (
-  <div className="relative w-full flex items-center justify-center">
-    <CloudUploadIcon className="absolute text-gray-500 animate-ping size-5" />
-    <CloudUploadIcon className="text-gray-500 size-5" />
+  <div className="relative flex w-full items-center justify-center">
+    <CloudUploadIcon className="absolute size-5 animate-ping text-gray-500" />
+    <CloudUploadIcon className="size-5 text-gray-500" />
   </div>
 );
 
@@ -81,7 +81,7 @@ const LoadingIndicator = ({ format }: { format: "icon" | "button" }) =>
   format === "button" ? (
     <Button
       variant="outline"
-      className="w-full pointer-events-none"
+      className="pointer-events-none w-full"
       size="icon"
     >
       <LoadingIcon />
@@ -196,7 +196,7 @@ const SubmitDialog = ({
               ))}
             </SelectContent>
           </Select>
-          <div className="flex justify-end gap-2 mt-4">
+          <div className="mt-4 flex justify-end gap-2">
             <DialogClose asChild>
               <Button variant="outline">Anuluj</Button>
             </DialogClose>
@@ -359,7 +359,7 @@ export function TaskActions({
       </ActionButton>
     ),
     [TaskStatus.AWAITING_APPROVAL]: (
-      <div className="grid gap-2 grid-cols-2 w-full">
+      <div className="grid w-full grid-cols-2 gap-2">
         <ActionButton
           icon={SignatureIcon}
           color="text-green-500"
@@ -381,7 +381,7 @@ export function TaskActions({
       </div>
     ),
     [TaskStatus.REJECTED]: (
-      <div className="grid gap-2 grid-cols-2 w-full">
+      <div className="grid w-full grid-cols-2 gap-2">
         <ActionButton
           icon={SignatureIcon}
           color="text-green-500"

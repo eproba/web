@@ -1,6 +1,11 @@
-import React from "react";
-import { fetchCurrentUser } from "@/lib/server-api";
 import { TemplateEditor } from "@/components/worksheets/editor/template-editor";
+import { fetchCurrentUser } from "@/lib/server-api";
+import { Metadata } from "next";
+import React from "react";
+
+export const metadata: Metadata = {
+  title: "Utwórz szablon",
+};
 
 interface TemplateCreatePageProps {
   searchParams: Promise<{

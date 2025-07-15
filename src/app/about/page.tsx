@@ -1,16 +1,22 @@
-import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { fetchApiConfig } from "@/lib/server-api";
-import packageInfo from "../../../package.json";
-import { API_VERSION } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { VersionInfo } from "@/components/version-info";
+import { API_VERSION } from "@/lib/api";
+import { fetchApiConfig } from "@/lib/server-api";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+
+import packageInfo from "../../../package.json";
+
+export const metadata: Metadata = {
+  title: "O Epróbie",
+};
 
 export default async function AboutPage() {
   const { config: apiConfig, error } = await fetchApiConfig();
@@ -55,7 +61,7 @@ export default async function AboutPage() {
                 alt="Google Play"
                 width={200}
                 height={59}
-                className="border-1 border-gray-500 rounded-md"
+                className="rounded-md border-1 border-gray-500"
               />
             </a>
           </div>

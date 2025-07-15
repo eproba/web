@@ -1,17 +1,18 @@
 import { PatrolCard } from "@/components/team/management/patrol-card";
 import { Button } from "@/components/ui/button";
+import { useApi } from "@/lib/api-client";
+import { patrolSerializer } from "@/lib/serializers/team";
+import { ApiUserResponse, userSerializer } from "@/lib/serializers/user";
+import { ToastMsg } from "@/lib/toast-msg";
 import { Patrol, Team } from "@/types/team";
 import { User } from "@/types/user";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import React, { useCallback, useEffect, useState } from "react";
-import { PatrolCreateDialog } from "./patrol-create-dialog";
-import { patrolSerializer } from "@/lib/serializers/team";
-import { toast } from "react-toastify";
-import { ToastMsg } from "@/lib/toast-msg";
-import { useApi } from "@/lib/api-client";
-import { ApiUserResponse, userSerializer } from "@/lib/serializers/user";
 import { LoaderCircleIcon } from "lucide-react";
+import React, { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
 import { InactiveUsersCard } from "./inactive-users-card";
+import { PatrolCreateDialog } from "./patrol-create-dialog";
 
 interface PatrolsListProps {
   team: Team;
@@ -210,18 +211,18 @@ export function PatrolsList({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4 px-2 sm:px-0">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
+      <div className="mb-4 flex items-center justify-between px-2 sm:px-0">
+        <h2 className="flex items-center gap-2 text-2xl font-bold">
           Zastępy
           {updatingUserIds.length > 0 && (
-            <LoaderCircleIcon className="size-4 mr-2 animate-spin" />
+            <LoaderCircleIcon className="mr-2 size-4 animate-spin" />
           )}
         </h2>
         <PatrolCreateDialog onCreate={handleCreatePatrol}>
           <Button>Dodaj zastęp</Button>
         </PatrolCreateDialog>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {patrols.map((patrol) => (
           <PatrolCard
             key={patrol.id}

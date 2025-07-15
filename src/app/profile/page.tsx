@@ -1,7 +1,14 @@
+import { PasswordChangeDialog } from "@/components/profile/password-change-dialog";
+import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
+import { ResendVerificationEmailButton } from "@/components/profile/resend-verification-email-button";
+import { UserDeactivateDialog } from "@/components/profile/user-deactivate-dialog";
+import { UserDeleteDialog } from "@/components/profile/user-delete-dialog";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProfileEditForm } from "./profile-edit-form";
+import { fetchCurrentUser } from "@/lib/server-api";
 import {
   ConstructionIcon,
   KeyRoundIcon,
@@ -12,16 +19,15 @@ import {
   UserXIcon,
   UsersIcon,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
-import { UserDeleteDialog } from "@/components/profile/user-delete-dialog";
-import { UserDeactivateDialog } from "@/components/profile/user-deactivate-dialog";
-import { Badge } from "@/components/ui/badge";
+import type { Metadata } from "next";
 import Image from "next/image";
-import { PasswordChangeDialog } from "@/components/profile/password-change-dialog";
-import { ResendVerificationEmailButton } from "@/components/profile/resend-verification-email-button";
+
+import { ProfileEditForm } from "./profile-edit-form";
 import { ProfileNotificationsTab } from "./profile-notifications-tab";
-import { fetchCurrentUser } from "@/lib/server-api";
+
+export const metadata: Metadata = {
+  title: "Twój profil",
+};
 
 export default async function UserProfilePage() {
   const { user, error: userError } = await fetchCurrentUser();
@@ -39,8 +45,8 @@ export default async function UserProfilePage() {
       orientation="vertical"
       className="flex lg:flex-row"
     >
-      <div className="flex justify-center lg:justify-start h-full">
-        <TabsList className="flex lg:flex-col h-full lg:w-64 flex-wrap">
+      <div className="flex h-full justify-center lg:justify-start">
+        <TabsList className="flex h-full flex-wrap lg:w-64 lg:flex-col">
           <TabsTrigger
             value="profile"
             className="w-full text-wrap sm:justify-start"
@@ -55,7 +61,7 @@ export default async function UserProfilePage() {
           </TabsTrigger>
           <TabsTrigger
             value="security"
-            className="w-full text-wrap hidden sm:flex sm:justify-start"
+            className="hidden w-full text-wrap sm:flex sm:justify-start"
           >
             Bezpieczeństwo i synchronizacja
           </TabsTrigger>
@@ -152,7 +158,7 @@ export default async function UserProfilePage() {
           <CardHeader>
             <h2 className="text-xl font-semibold">Akcje</h2>
           </CardHeader>
-          <CardContent className="flex flex-row gap-2 flex-wrap">
+          <CardContent className="flex flex-row flex-wrap gap-2">
             <PatrolSelectDialog
               userGender={user.gender}
               variant={user.patrol ? "change" : "set"}
@@ -190,13 +196,13 @@ export default async function UserProfilePage() {
             <h2 className="text-xl font-semibold">Bezpieczeństwo</h2>
           </CardHeader>
           <CardContent>
-            <div className="block sm:table w-full">
+            <div className="block w-full sm:table">
               <div className="sm:table-header-group">
                 <div className="hidden sm:table-row"></div>
               </div>
               <div className="sm:table-row-group">
-                <div className="block sm:table-row border-b last:border-b-0 py-2 sm:py-0">
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 font-medium">
+                <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
+                  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
                     <div className="flex items-center gap-2">
                       <Image
                         src="/google-icon.svg"
@@ -207,25 +213,25 @@ export default async function UserProfilePage() {
                       Logowanie z Google
                     </div>
                   </div>
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 sm:text-right">
+                  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
                     <Badge variant="success">Aktywne</Badge>
                   </div>
                 </div>
 
-                <div className="block sm:table-row border-b last:border-b-0 py-2 sm:py-0">
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 font-medium">
+                <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
+                  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
                     <div className="flex items-center gap-2">
                       <ConstructionIcon size={20} />
                       Logowanie z cz!appka
                     </div>
                   </div>
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 sm:text-right">
+                  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
                     <Badge variant="info">Wkrótce</Badge>
                   </div>
                 </div>
 
-                <div className="block sm:table-row border-b last:border-b-0 py-2 sm:py-0">
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 font-medium">
+                <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
+                  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
                     <div className="flex items-center gap-2">
                       {user.emailVerified ? (
                         <MailIcon size={20} />
@@ -235,7 +241,7 @@ export default async function UserProfilePage() {
                       Email ({user.email})
                     </div>
                   </div>
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 sm:text-right">
+                  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
                     {user.emailVerified ? (
                       <Badge variant="success">Zweryfikowany</Badge>
                     ) : (
@@ -247,14 +253,14 @@ export default async function UserProfilePage() {
                   </div>
                 </div>
 
-                <div className="block sm:table-row border-b last:border-b-0 py-2 sm:py-0">
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 font-medium">
+                <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
+                  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
                     <div className="flex items-center gap-2">
                       <KeyRoundIcon size={20} />
                       Hasło
                     </div>
                   </div>
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 sm:text-right">
+                  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
                     <PasswordChangeDialog
                       variant={user.hasPassword ? "change" : "set"}
                     >
@@ -279,19 +285,19 @@ export default async function UserProfilePage() {
             <h2 className="text-xl font-semibold">Synchronizacja</h2>
           </CardHeader>
           <CardContent>
-            <div className="block sm:table w-full">
+            <div className="block w-full sm:table">
               <div className="sm:table-header-group">
                 <div className="hidden sm:table-row"></div>
               </div>
               <div className="sm:table-row-group">
-                <div className="block sm:table-row border-b last:border-b-0 py-2 sm:py-0">
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 font-medium">
+                <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
+                  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
                     <div className="flex items-center gap-2">
                       <ConstructionIcon size={20} />
                       Synchronizacja z cz!appka
                     </div>
                   </div>
-                  <div className="block sm:table-cell px-4 py-2 sm:py-4 sm:text-right">
+                  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
                     <Badge variant="info">Wkrótce</Badge>
                   </div>
                 </div>

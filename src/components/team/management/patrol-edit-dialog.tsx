@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogClose,
@@ -8,12 +9,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Patrol } from "@/types/team";
-import { Input } from "@/components/ui/input";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import {
   Form,
   FormControl,
@@ -22,12 +17,17 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { useEffect, useState } from "react";
+import { Input } from "@/components/ui/input";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { Patrol } from "@/types/team";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
   name: z.string().min(1, { error: "Nazwa zastępu jest wymagana." }),
@@ -100,7 +100,7 @@ export function PatrolEditDialog({
             <DialogHeader>
               <DialogTitle>Edytuj zastęp</DialogTitle>
               {!allowDelete && (
-                <DialogDescription className="hidden pointer-coarse:block text-xs text-muted-foreground">
+                <DialogDescription className="text-muted-foreground hidden text-xs pointer-coarse:block">
                   {isLastPatrol
                     ? "W drużynie musi być przynajmniej jeden zastęp."
                     : "Tylko pusty zastęp może zostać usunięty."}
@@ -123,7 +123,7 @@ export function PatrolEditDialog({
               />
             </div>
             <DialogFooter>
-              <div className="flex justify-between items-center w-full gap-4">
+              <div className="flex w-full items-center justify-between gap-4">
                 {allowDelete ? (
                   <Button
                     type="button"
@@ -152,7 +152,7 @@ export function PatrolEditDialog({
                     </TooltipContent>
                   </Tooltip>
                 )}
-                <div className="flex gap-2 items-center">
+                <div className="flex items-center gap-2">
                   <DialogClose asChild>
                     <Button
                       type="button"

@@ -1,22 +1,5 @@
 "use client";
-import { useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  EllipsisVerticalIcon,
-  LucideIcon,
-  PrinterIcon,
-  SquarePenIcon,
-  TrashIcon,
-} from "lucide-react";
-import { toast } from "react-toastify";
-import { ToastMsg } from "@/lib/toast-msg";
-import { useRouter } from "next/navigation";
-import { useApi } from "@/lib/api-client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -28,14 +11,32 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useApi } from "@/lib/api-client";
+import { ToastMsg } from "@/lib/toast-msg";
 import { TemplateWorksheet } from "@/types/template";
+import {
+  EllipsisVerticalIcon,
+  LucideIcon,
+  PrinterIcon,
+  SquarePenIcon,
+  TrashIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 type TemplateAction = {
   id: string;
@@ -121,7 +122,7 @@ export function TemplateActions({
   };
 
   const renderDesktopIcons = () => (
-    <div className="hidden md:flex gap-2">
+    <div className="hidden gap-2 md:flex">
       {templateActions.map((action) => (
         <TooltipProvider key={action.id}>
           <Tooltip>
@@ -141,7 +142,7 @@ export function TemplateActions({
         <DropdownMenuTrigger asChild>
           <Button
             variant="ghost"
-            className="size-8 p-0 data-[state=open]:bg-muted"
+            className="data-[state=open]:bg-muted size-8 p-0"
           >
             <EllipsisVerticalIcon className="size-5" />
             <span className="sr-only">Otwórz menu</span>

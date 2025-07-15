@@ -1,15 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useApi } from "@/lib/api-client";
 import {
   getExistingToken,
   onMessageListener,
   registerDevice,
   requestNotificationPermission,
 } from "@/lib/firebase";
-import { toast } from "react-toastify";
-import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export function AutoNotificationSetup() {
   const [hasAttemptedSetup, setHasAttemptedSetup] = useState(false);

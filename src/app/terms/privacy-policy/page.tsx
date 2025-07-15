@@ -1,11 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Polityka prywatności",
+};
 
 export default function PrivacyPolicyPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-3xl font-bold text-center">
+        <CardTitle className="text-center text-3xl font-bold">
           Polityka Prywatności
         </CardTitle>
       </CardHeader>
@@ -37,7 +42,7 @@ export default function PrivacyPolicyPage() {
         </p>
 
         <Section title="§1 Definicje">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Serwis</strong> - serwis internetowy &quot;Epróba&quot;
               działający pod adresem https://eproba.zhr.pl
@@ -161,7 +166,7 @@ export default function PrivacyPolicyPage() {
         </Section>
 
         <Section title="§3 Rodzaje Plików Cookies">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Cookies wewnętrzne</strong> - pliki zamieszczane i
               odczytywane z Urządzenia Użytkownika przez system
@@ -194,7 +199,7 @@ export default function PrivacyPolicyPage() {
         </Section>
 
         <Section title="§4 Bezpieczeństwo składowania danych">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Mechanizmy składowania i odczytu plików Cookie</strong> -
               Mechanizmy składowania, odczytu i wymiany danych pomiędzy Plikami
@@ -228,7 +233,7 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>
               <strong>Kontrola plików Cookie</strong>
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   Użytkownik może w dowolnym momencie, samodzielnie zmienić
                   ustawienia dotyczące zapisywania, usuwania oraz dostępu do
@@ -285,7 +290,7 @@ export default function PrivacyPolicyPage() {
         </Section>
 
         <Section title="§5 Cele do których wykorzystywane są pliki Cookie">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>Usprawnienie i ułatwienie dostępu do Serwisu</li>
             <li>Personalizacja Serwisu dla Użytkowników</li>
             <li>Umożliwienie Logowania do serwisu</li>
@@ -303,10 +308,10 @@ export default function PrivacyPolicyPage() {
             Dane osobowe dobrowolnie podane przez Użytkowników są przetwarzane w
             jednym z następujących celów:
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Realizacji usług elektronicznych:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   Usługi rejestracji i utrzymania konta Użytkownika w Serwisie i
                   funkcjonalności z nim związanych
@@ -323,7 +328,7 @@ export default function PrivacyPolicyPage() {
             Dane o Użytkownikach gromadzone anonimowo i automatycznie są
             przetwarzane w jednym z następujących celów:
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>Prowadzenie statystyk</li>
             <li>Serwowanie reklam dostosowanych do preferencji Użytkowników</li>
             <li>Zapewnienia prawnie uzasadnionego interesu Administratora</li>
@@ -341,10 +346,10 @@ export default function PrivacyPolicyPage() {
             zaimplementowanych w Serwisie, mogących umieszczać pliki
             cookies:{" "}
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Usługi społecznościowe / łączone:</strong>
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   <a
                     rel="nofollow external"
@@ -358,7 +363,7 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>
               <strong>Usługi serwowania reklam oraz sieci afiliacyjne:</strong>
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   <a
                     rel="nofollow external"
@@ -372,7 +377,7 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>
               <strong>Prowadzenie statystyk:</strong>
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   <a
                     rel="nofollow external"
@@ -406,7 +411,7 @@ export default function PrivacyPolicyPage() {
               Analytics:
             </strong>
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>Adres IP</li>
             <li>Typ przeglądarki</li>
             <li>Rozdzielczość ekranu</li>
@@ -424,7 +429,7 @@ export default function PrivacyPolicyPage() {
           <p>
             <strong>Dane gromadzone podczas rejestracji:</strong>
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>Imię / nazwisko / pseudonim</li>
             <li>Adres e-mail</li>
             <li>
@@ -436,7 +441,7 @@ export default function PrivacyPolicyPage() {
           <p>
             <strong>Dane gromadzone podczas zapisu do usługi Newsletter</strong>
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>Adres e-mail</li>
           </ul>
           <p>
@@ -459,14 +464,14 @@ export default function PrivacyPolicyPage() {
             utrzymania infrastruktury i usług niezbędnych do prowadzenia serwisu
             tj.:
           </p>
-          <ul className="list-disc list-inside space-y-2"></ul>
+          <ul className="list-inside list-disc space-y-2"></ul>
         </Section>
 
         <Section title="§10 Sposób przetwarzania danych osobowych">
           <p>
             <strong>Dane osobowe podane dobrowolnie przez Użytkowników:</strong>
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Dane osobowe nie będą przekazywane poza Unię Europejską, chyba że
               zostały opublikowane na skutek indywidualnego działania
@@ -484,7 +489,7 @@ export default function PrivacyPolicyPage() {
               Dane anonimowe (bez danych osobowych) gromadzone automatycznie:
             </strong>
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Dane anonimowe (bez danych osobowych) będą przekazywane poza Unię
               Europejską.
@@ -507,14 +512,14 @@ export default function PrivacyPolicyPage() {
 
         <Section title="§11 Podstawy prawne przetwarzania danych osobowych">
           <p>Serwis gromadzi i przetwarza dane Użytkowników na podstawie:</p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z
               dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w
               związku z przetwarzaniem danych osobowych i w sprawie swobodnego
               przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (ogólne
               rozporządzenie o ochronie danych)
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   art. 6 ust. 1 lit. a<br />
                   <small>
@@ -590,7 +595,7 @@ export default function PrivacyPolicyPage() {
 
         <Section title="§13 Prawa Użytkowników związane z przetwarzaniem danych osobowych">
           <p>Serwis gromadzi i przetwarza dane Użytkowników na podstawie:</p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Prawo dostępu do danych osobowych</strong>
               <br />
@@ -666,7 +671,7 @@ export default function PrivacyPolicyPage() {
             Z Administratorem można skontaktować się w jeden z poniższych
             sposobów
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>
                 Adres poczty elektronicznej Inspektora Ochrony Danych
@@ -707,7 +712,7 @@ export default function PrivacyPolicyPage() {
         </Section>
 
         <Section title="§15 Wymagania Serwisu">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Ograniczenie zapisu i dostępu do plików Cookie na Urządzeniu
               Użytkownika może spowodować nieprawidłowe działanie niektórych
@@ -734,7 +739,7 @@ export default function PrivacyPolicyPage() {
         </Section>
 
         <Section title="§17 Zmiany w Polityce Prywatności">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Administrator zastrzega sobie prawo do dowolnej zmiany niniejszej
               Polityki Prywatności bez konieczności informowania o tym
@@ -774,7 +779,7 @@ function Section({
 }) {
   return (
     <section className="mb-8">
-      <h2 className="text-2xl font-semibold mb-4 mt-6">{title}</h2>
+      <h2 className="mt-6 mb-4 text-2xl font-semibold">{title}</h2>
       <div className="space-y-4">{children}</div>
     </section>
   );

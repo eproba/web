@@ -1,10 +1,13 @@
-import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { RequiredFunctionLevel } from "@/lib/const";
+import { triggerHapticFeedback } from "@/lib/mobile-utils";
+import { type Task } from "@/lib/schemas/worksheet";
+import { User } from "@/types/user";
 import {
   ArrowRightLeftIcon,
   ChevronDownIcon,
@@ -13,10 +16,7 @@ import {
   SparklesIcon,
   Trash2Icon,
 } from "lucide-react";
-import { triggerHapticFeedback } from "@/lib/mobile-utils";
-import { User } from "@/types/user";
-import { RequiredFunctionLevel } from "@/lib/const";
-import { type Task } from "@/lib/schemas/worksheet";
+import React, { useState } from "react";
 
 interface TaskActionPopoverProps {
   task: Task;
@@ -95,7 +95,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 p-0 md:hidden hover:bg-gray-100 dark:hover:bg-gray-800"
+          className="h-8 w-8 p-0 hover:bg-gray-100 md:hidden dark:hover:bg-gray-800"
           title="Opcje zadania"
         >
           <MoreVerticalIcon className="size-4" />
@@ -110,9 +110,9 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
             size="sm"
             onClick={handleMoveUp}
             disabled={!canMoveUp}
-            className="w-full justify-start h-8 px-2"
+            className="h-8 w-full justify-start px-2"
           >
-            <ChevronUpIcon className="size-4 mr-2" />
+            <ChevronUpIcon className="mr-2 size-4" />
             Przenieś w górę
           </Button>
 
@@ -123,9 +123,9 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
             size="sm"
             onClick={handleMoveDown}
             disabled={!canMoveDown}
-            className="w-full justify-start h-8 px-2"
+            className="h-8 w-full justify-start px-2"
           >
-            <ChevronDownIcon className="size-4 mr-2" />
+            <ChevronDownIcon className="mr-2 size-4" />
             Przenieś w dół
           </Button>
 
@@ -136,9 +136,9 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
               variant="ghost"
               size="sm"
               onClick={handleMoveToDifferentCategory}
-              className="w-full justify-start h-8 px-2"
+              className="h-8 w-full justify-start px-2"
             >
-              <ArrowRightLeftIcon className="size-4 mr-2" />
+              <ArrowRightLeftIcon className="mr-2 size-4" />
               <span className="truncate">
                 {task.category === "general"
                   ? "Do indywidualnych"
@@ -148,7 +148,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
           )}
 
           {/* Separator */}
-          <div className="border-t my-1" />
+          <div className="my-1 border-t" />
 
           {/* AI Suggestions */}
           {currentUser.function.numberValue >=
@@ -160,9 +160,9 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={handleShowSuggestions}
-                className="w-full justify-start h-8 px-2 text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                className="h-8 w-full justify-start px-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700"
               >
-                <SparklesIcon className="size-4 mr-2" />
+                <SparklesIcon className="mr-2 size-4" />
                 Pomysły na zadania
               </Button>
             )}
@@ -173,9 +173,9 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
             variant="ghost"
             size="sm"
             onClick={handleShowDeleteDialog}
-            className="w-full justify-start h-8 px-2 text-red-600 hover:text-red-700 hover:bg-red-50"
+            className="h-8 w-full justify-start px-2 text-red-600 hover:bg-red-50 hover:text-red-700"
           >
-            <Trash2Icon className="size-4 mr-2" />
+            <Trash2Icon className="mr-2 size-4" />
             Usuń zadanie
           </Button>
         </div>

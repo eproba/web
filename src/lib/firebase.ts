@@ -1,9 +1,9 @@
 import { FirebaseOptions, getApps, initializeApp } from "firebase/app";
 import {
+  MessagePayload,
   getMessaging,
   getToken,
   isSupported,
-  MessagePayload,
   onMessage,
 } from "firebase/messaging";
 import { UAParser } from "ua-parser-js";

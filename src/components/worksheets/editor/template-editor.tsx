@@ -1,17 +1,18 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import { TaskControls } from "@/components/worksheets/editor/task-controls";
-import { TasksSection } from "@/components/worksheets/editor/tasks-section";
-import { WorksheetSubmitButton } from "@/components/worksheets/editor/worksheet-submit-button";
-import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
+
 import { Form } from "@/components/ui/form";
-import { useWorksheetTasks } from "@/components/worksheets/editor/hooks/use-worksheet-tasks";
+import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
 import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
 import { useMobileTaskMovements } from "@/components/worksheets/editor/hooks/use-mobile-task-movements";
+import { useTemplateForm } from "@/components/worksheets/editor/hooks/use-template-form";
+import { useWorksheetTasks } from "@/components/worksheets/editor/hooks/use-worksheet-tasks";
+import { TaskControls } from "@/components/worksheets/editor/task-controls";
+import { TasksSection } from "@/components/worksheets/editor/tasks-section";
+import { TemplateWorksheetBasicInfo } from "@/components/worksheets/editor/template-basic-info";
+import { WorksheetSubmitButton } from "@/components/worksheets/editor/worksheet-submit-button";
 import { Task, WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { User } from "@/types/user";
-import { TemplateWorksheetBasicInfo } from "@/components/worksheets/editor/template-basic-info";
-import { useTemplateForm } from "@/components/worksheets/editor/hooks/use-template-form";
+import React, { useEffect, useState } from "react";
 
 interface TemplateEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
@@ -100,7 +101,7 @@ export const TemplateEditor = ({
   return (
     <DragDropProvider>
       <div
-        className="space-y-8 transition-all duration-300relative"
+        className="duration-300relative space-y-8 transition-all"
         onKeyDown={handleKeyDown}
       >
         <Form {...form}>

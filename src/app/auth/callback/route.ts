@@ -1,5 +1,5 @@
 import { auth } from "@/auth";
-import { redirect, RedirectType } from "next/navigation";
+import { RedirectType, redirect } from "next/navigation";
 import { NextRequest } from "next/server";
 
 export async function GET(request: NextRequest) {

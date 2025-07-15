@@ -1,10 +1,15 @@
 "use client";
-import { useCallback, useEffect, useState } from "react";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Switch } from "@/components/ui/switch";
+import { Toggle } from "@/components/ui/toggle";
 import { useApi } from "@/lib/api-client";
+import { getExistingToken } from "@/lib/firebase";
 import { ToastMsg } from "@/lib/toast-msg";
+import { User } from "@/types/user";
 import {
   BellIcon,
   BellOffIcon,
@@ -15,12 +20,8 @@ import {
   TabletIcon,
   TrashIcon,
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Toggle } from "@/components/ui/toggle";
-import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { User } from "@/types/user";
-import { getExistingToken } from "@/lib/firebase";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 type DeviceInfo = {
   os?: { name: string; version: string };
@@ -189,7 +190,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
           <h2 className="text-xl font-semibold">Powiadomienia</h2>
         </CardHeader>
         <CardContent>
-          <div className="border rounded-lg p-4 flex flex-row justify-between gap-4">
+          <div className="flex flex-row justify-between gap-4 rounded-lg border p-4">
             <div className="flex items-center gap-3">
               <MailIcon className="size-8" />
               <div>
@@ -208,7 +209,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
             </div>
           </div>
 
-          <h5 className="text-sm font-medium my-4">Urządzenia</h5>
+          <h5 className="my-4 text-sm font-medium">Urządzenia</h5>
 
           {devices.length > 0 ? (
             <div className="space-y-4">
@@ -218,7 +219,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
                 return (
                   <div
                     key={device.id}
-                    className="border rounded-lg p-4 flex flex-col sm:flex-row justify-between gap-4"
+                    className="flex flex-col justify-between gap-4 rounded-lg border p-4 sm:flex-row"
                   >
                     <div className="flex items-center gap-3">
                       {getDeviceIcon(device.type, deviceInfo)}
@@ -227,7 +228,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
                           {formatDeviceName(device)}
                         </p>
                         <div className="flex items-center gap-2">
-                          <p className="text-sm text-muted-foreground">
+                          <p className="text-muted-foreground text-sm">
                             {new Date(device.date_created).toLocaleDateString()}
                           </p>
                           {isCurrentDevice(device) && (
@@ -239,7 +240,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2 justify-end">
+                    <div className="flex items-center justify-end gap-2">
                       <Toggle
                         pressed={device.active}
                         onPressedChange={() =>
@@ -277,13 +278,13 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
               {[1, 2].map((i) => (
                 <div
                   key={i}
-                  className="border rounded-lg p-4 flex flex-col sm:flex-row justify-between gap-4"
+                  className="flex flex-col justify-between gap-4 rounded-lg border p-4 sm:flex-row"
                 >
                   <div className="flex items-center gap-3">
                     <Skeleton className="size-8" />
                     <div>
                       <Skeleton className="h-5 w-40" />
-                      <Skeleton className="h-4 w-24 mt-2" />
+                      <Skeleton className="mt-2 h-4 w-24" />
                     </div>
                   </div>
                   <div className="flex items-center gap-2">

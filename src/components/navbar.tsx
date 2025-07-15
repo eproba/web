@@ -1,11 +1,17 @@
-import Link from "next/link";
 import { auth, signIn, signOut } from "@/auth";
 import { AppLogo } from "@/components/app-logo";
-import { ThemeSwitch } from "@/components/theme-switch";
 import AutoNotificationSetup from "@/components/auto-notification-setup";
+import { PatrolAlert } from "@/components/patrol-alert";
+import { ThemeSwitch } from "@/components/theme-switch";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -15,19 +21,13 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "@/components/ui/drawer";
-import { User } from "@/types/user";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { fetchCurrentUser } from "@/lib/server-api";
+import { cn } from "@/lib/utils";
 import { Organization } from "@/types/team";
-import { PatrolAlert } from "@/components/patrol-alert";
+import { User } from "@/types/user";
+import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
+import Link from "next/link";
 
 type NavItem = {
   title: string;
@@ -121,10 +121,26 @@ const AuthButtons = ({
             await signOut({ redirectTo: "/signout" });
           }}
         >
-          <Button variant="destructive" className="w-full">
-            <LogOutIcon className="mr-2 size-4" />
-            Wyloguj
-          </Button>
+          {mobile ? (
+            <Button variant="destructive" className="w-full">
+              <LogOutIcon className="mr-2 size-4" />
+              Wyloguj
+            </Button>
+          ) : (
+            <>
+              <Button variant="destructive" className="hidden w-full xl:flex">
+                <LogOutIcon className="mr-2 size-4" />
+                Wyloguj
+              </Button>
+              <Button
+                variant="destructive"
+                className="min-w-full xl:hidden"
+                size="icon"
+              >
+                <LogOutIcon className="size-4" />
+              </Button>
+            </>
+          )}
         </form>
         {mobile ? (
           <DrawerClose asChild>
@@ -137,9 +153,15 @@ const AuthButtons = ({
           </DrawerClose>
         ) : (
           <Link href="/profile" className="flex-1">
-            <Button className="w-full bg-[#1abc9c] hover:bg-[#16a085]">
+            <Button className="hidden w-full bg-[#1abc9c] hover:bg-[#16a085] xl:flex">
               <UserIcon className="mr-2 size-4" />
               Profil
+            </Button>
+            <Button
+              className="min-w-full bg-[#1abc9c] hover:bg-[#16a085] xl:hidden"
+              size="icon"
+            >
+              <UserIcon className="size-4" />
             </Button>
           </Link>
         )}
@@ -174,9 +196,9 @@ const MobileNavItem = ({
     {...props}
     className={cn(
       navigationMenuTriggerStyle(),
-      "py-1.5 h-auto w-full justify-start",
+      "h-auto w-full justify-start py-1.5",
       header &&
-        "text-xs text-muted-foreground pb-0 pt-2 h-auto pointer-events-none",
+        "text-muted-foreground pointer-events-none h-auto pt-2 pb-0 text-xs",
     )}
     target={item.external ? "_blank" : undefined}
   >
@@ -200,8 +222,8 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => (
         <NavigationMenuTrigger className="bg-transparent pointer-fine:hidden">
           {item.title}
         </NavigationMenuTrigger>
-        <NavigationMenuContent className="dark:bg-[#161b22] z-50">
-          <ul className="grid gap-1 p-2 w-[240px]">
+        <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
+          <ul className="grid w-[240px] gap-1 p-2">
             {item.subItems.map((subItem) => (
               <NavigationMenuItem key={subItem.href}>
                 <NavigationMenuLink asChild>
@@ -210,7 +232,7 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => (
                     target={subItem.external ? "_blank" : undefined}
                     className={cn(
                       navigationMenuTriggerStyle(),
-                      "bg-transparent w-full items-start",
+                      "w-full items-start bg-transparent",
                     )}
                   >
                     {subItem.title}
@@ -255,8 +277,8 @@ export async function Navbar() {
 
   return (
     <>
-      <nav className="flex items-center p-4 px-5 container mx-auto gap-4 rounded-lg shadow-lg dark:bg-[#161b22]">
-        <div className="flex items-center gap-4 justify-between w-full md:w-auto">
+      <nav className="container mx-auto flex items-center gap-4 rounded-lg p-4 px-5 shadow-lg dark:bg-[#161b22]">
+        <div className="flex w-full items-center justify-between gap-4 md:w-auto">
           <AppLogo />
 
           {/* Mobile Navigation */}
@@ -266,9 +288,9 @@ export async function Navbar() {
                 <MenuIcon className="size-6" />
               </Button>
             </DrawerTrigger>
-            <DrawerContent className="h-full w-[300px] ml-auto rounded-l-lgflex flex-col p-4">
-              <DrawerHeader className="p-0 mb-4">
-                <DrawerTitle className="flex justify-between items-center">
+            <DrawerContent className="rounded-l-lgflex ml-auto h-full w-[300px] flex-col p-4">
+              <DrawerHeader className="mb-4 p-0">
+                <DrawerTitle className="flex items-center justify-between">
                   <AppLogo />
                   <DrawerClose asChild>
                     <Button variant="ghost" size="icon">
@@ -278,7 +300,7 @@ export async function Navbar() {
                 </DrawerTitle>
               </DrawerHeader>
 
-              <div className="flex-1 flex flex-col gap-3 overflow-y-auto">
+              <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
                 {filteredMainNav.map((item) => (
                   <div key={item.href} className="flex flex-col gap-1">
                     <DrawerClose asChild>
@@ -296,7 +318,7 @@ export async function Navbar() {
                 ))}
 
                 <div className="mt-4 border-t pt-2">
-                  <h5 className="text-xs text-muted-foreground px-3 mb-2">
+                  <h5 className="text-muted-foreground mb-2 px-3 text-xs">
                     Więcej
                   </h5>
                   <div className="flex flex-col gap-1">
@@ -309,9 +331,9 @@ export async function Navbar() {
                 </div>
               </div>
 
-              <div className="mt-auto pt-4 border-t">
+              <div className="mt-auto border-t pt-4">
                 <div className="flex flex-col gap-2">
-                  <div className="flex gap-2 justify-between items-center px-2">
+                  <div className="flex items-center justify-between gap-2 px-2">
                     <AuthButtons user={user} mobile={true} />
                   </div>
                 </div>
@@ -321,9 +343,9 @@ export async function Navbar() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="hidden md:flex flex-1 items-center justify-between">
+        <div className="hidden flex-1 items-center justify-between md:flex">
           <NavigationMenu viewport={false}>
-            <NavigationMenuList className="hidden md:flex">
+            <NavigationMenuList className="hidden flex-wrap md:flex lg:flex-nowrap">
               {filteredMainNav.map((item) => (
                 <DesktopNavItem key={item.href} item={item} />
               ))}
@@ -332,8 +354,8 @@ export async function Navbar() {
                 <NavigationMenuTrigger className="bg-transparent">
                   Więcej
                 </NavigationMenuTrigger>
-                <NavigationMenuContent className="dark:bg-[#161b22] z-50">
-                  <ul className="grid gap-1 p-2 w-[240px]">
+                <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
+                  <ul className="grid w-[240px] gap-1 p-2">
                     {filteredMoreNav.map((item) => (
                       <NavigationMenuItem key={item.href}>
                         <NavigationMenuLink asChild>
@@ -341,7 +363,7 @@ export async function Navbar() {
                             href={item.href}
                             className={cn(
                               navigationMenuTriggerStyle(),
-                              "bg-transparent w-full items-start",
+                              "w-full items-start bg-transparent",
                             )}
                             target={item.external ? "_blank" : undefined}
                           >
@@ -356,7 +378,7 @@ export async function Navbar() {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="hidden md:flex gap-2">
+          <div className="flex gap-2">
             <AuthButtons user={user} mobile={false} />
           </div>
         </div>

@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { NextResponse } from "next/server";
 
 function handleRedirect(response: Response, request: Request) {
   const location = response.headers.get("Location");

@@ -1,9 +1,14 @@
-import React from "react";
+import { Card, CardDescription, CardTitle } from "@/components/ui/card";
 import { WorksheetEditor } from "@/components/worksheets/editor/worksheet-editor";
 import { fetchCurrentUser, fetchTemplate } from "@/lib/server-api";
-import { Card, CardDescription, CardTitle } from "@/components/ui/card";
-import Image from "next/image";
 import { cn } from "@/lib/utils";
+import type { Metadata } from "next";
+import Image from "next/image";
+import React from "react";
+
+export const metadata: Metadata = {
+  title: "Utwórz próbę",
+};
 
 interface WorksheetCreatePageProps {
   searchParams: Promise<{
@@ -38,7 +43,7 @@ const WorksheetCreatePage = async ({
                 alt={template.name}
                 width={48}
                 height={48}
-                className="size-12 rounded-md object-cover m-2 dark:invert dark:grayscale"
+                className="m-2 size-12 rounded-md object-cover dark:grayscale dark:invert"
               />
             )}
             <div className={cn("my-4", !template?.image && "mx-6")}>

@@ -1,6 +1,7 @@
-import React from "react";
-import { fetchCurrentUser, fetchTemplate } from "@/lib/server-api";
 import { TemplateEditor } from "@/components/worksheets/editor/template-editor";
+import { fetchCurrentUser, fetchTemplate } from "@/lib/server-api";
+import type { Metadata } from "next";
+import React from "react";
 
 interface TemplateEditPageProps {
   params: Promise<{
@@ -24,7 +25,7 @@ const TemplateEditPage = async ({ params }: TemplateEditPageProps) => {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6">
-        <h1 className="text-3xl font-bold  mb-2">Edycja szablonu</h1>
+        <h1 className="mb-2 text-3xl font-bold">Edycja szablonu</h1>
       </div>
       <TemplateEditor
         mode="edit"
@@ -37,3 +38,22 @@ const TemplateEditPage = async ({ params }: TemplateEditPageProps) => {
 };
 
 export default TemplateEditPage;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ templateId: string }>;
+}): Promise<Metadata> {
+  const { templateId } = await params;
+
+  const { template, error: templateError } = await fetchTemplate(templateId);
+  if (templateError) {
+    return { title: "Błąd" };
+  }
+
+  return {
+    title: template?.name
+      ? `Edycja szablonu ${template.name}`
+      : "Edycja szablonu",
+  };
+}

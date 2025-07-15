@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Card } from "@/components/ui/card";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Textarea } from "@/components/ui/textarea";
+import { cn } from "@/lib/utils";
 import {
   BotIcon,
   LoaderCircleIcon,
@@ -11,7 +11,7 @@ import {
   SparklesIcon,
   UserIcon,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import React, { useEffect, useRef } from "react";
 
 interface Message {
   id: string;
@@ -169,9 +169,9 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       {/* Chat Messages */}
-      <div className="flex-1 min-h-0">
+      <div className="min-h-0 flex-1">
         <ScrollArea ref={scrollAreaRef} className="h-full p-4">
           <div className="space-y-4">
             {/* Messages */}
@@ -184,7 +184,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                 )}
               >
                 {message.role === "assistant" && (
-                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
                     <BotIcon className="size-4 text-blue-600" />
                   </div>
                 )}
@@ -210,18 +210,18 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
 
                   {/* Task Suggestions */}
                   {message.suggestions && message.suggestions.length > 0 && (
-                    <div className="space-y-2 w-full">
+                    <div className="w-full space-y-2">
                       {message.suggestions.map((suggestion) => (
                         <Card
                           key={suggestion.name}
-                          className="p-3 border-dashed"
+                          className="border-dashed p-3"
                         >
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1 space-y-1">
-                              <h4 className="font-medium text-sm">
+                              <h4 className="text-sm font-medium">
                                 {suggestion.name}
                               </h4>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-muted-foreground text-xs">
                                 {suggestion.description}
                               </p>
                             </div>
@@ -231,7 +231,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                               onClick={() => handleAddSuggestion(suggestion)}
                               className="flex-shrink-0"
                             >
-                              <PlusIcon className="w-3 h-3 mr-1" />
+                              <PlusIcon className="mr-1 h-3 w-3" />
                               Dodaj
                             </Button>
                           </div>
@@ -240,7 +240,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                     </div>
                   )}
 
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-muted-foreground text-xs">
                     {message.timestamp.toLocaleTimeString("pl-PL", {
                       hour: "2-digit",
                       minute: "2-digit",
@@ -249,7 +249,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                 </div>
 
                 {message.role === "user" && (
-                  <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-gray-100">
                     <UserIcon className="size-4 text-gray-600" />
                   </div>
                 )}
@@ -258,14 +258,14 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
 
             {/* Loading indicator */}
             {isLoading && (
-              <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+              <div className="flex justify-start gap-3">
+                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
                   <BotIcon className="size-4 text-blue-600" />
                 </div>
-                <Card className="p-3 bg-muted">
+                <Card className="bg-muted p-3">
                   <div className="flex items-center gap-2">
                     <LoaderCircleIcon className="size-4 animate-spin" />
-                    <span className="text-sm text-muted-foreground">
+                    <span className="text-muted-foreground text-sm">
                       AI pracuje nad odpowiedzią...
                     </span>
                   </div>
@@ -277,9 +277,9 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className="border-t p-4 flex-shrink-0">
+      <div className="flex-shrink-0 border-t p-4">
         <div className="flex gap-2">
-          <div className="flex-1 relative">
+          <div className="relative flex-1">
             <Textarea
               ref={textareaRef}
               value={inputMessage}
@@ -289,7 +289,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
               className="min-h-[80px] resize-none pr-12"
               disabled={isLoading}
             />
-            <div className="absolute bottom-2 right-2 flex gap-1">
+            <div className="absolute right-2 bottom-2 flex gap-1">
               <Button
                 size="icon"
                 variant="ghost"
@@ -302,8 +302,8 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
             </div>
           </div>
         </div>
-        <div className="mt-2 text-xs text-muted-foreground">
-          <SparklesIcon className="w-3 h-3 inline mr-1" />
+        <div className="text-muted-foreground mt-2 text-xs">
+          <SparklesIcon className="mr-1 inline h-3 w-3" />
           Przycisk Enter wysyła wiadomość, Shift+Enter nowa linia
         </div>
       </div>

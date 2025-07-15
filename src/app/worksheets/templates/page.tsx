@@ -1,9 +1,14 @@
-import { TemplateList } from "@/components/worksheets/templates/template-list";
-import { fetchCurrentUser, fetchTemplates } from "@/lib/server-api";
 import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-button";
+import { TemplateList } from "@/components/worksheets/templates/template-list";
 import { RequiredFunctionLevel } from "@/lib/const";
+import { fetchCurrentUser, fetchTemplates } from "@/lib/server-api";
 import { PlusIcon } from "lucide-react";
+import type { Metadata } from "next";
 import * as React from "react";
+
+export const metadata: Metadata = {
+  title: "Szablony",
+};
 
 export default async function TemplatesPage() {
   const { templates, error: templatesError } = await fetchTemplates();
@@ -27,7 +32,7 @@ export default async function TemplatesPage() {
     <div className="space-y-4">
       {teamTemplates.length > 0 && (
         <div className="space-y-4">
-          <div className="flex justify-between flex-wrap items-center">
+          <div className="flex flex-wrap items-center justify-between">
             <h2 className="text-2xl font-semibold">Szablony twojej drużyny</h2>
             {user!.function.numberValue >=
               RequiredFunctionLevel.TEAM_TEMPLATE_MANAGEMENT && (
@@ -50,8 +55,8 @@ export default async function TemplatesPage() {
         </div>
       )}
       {organizationTemplates.length > 0 && (
-        <div className="space-y-4 mt-8">
-          <div className="flex justify-between flex-wrap items-center">
+        <div className="mt-8 space-y-4">
+          <div className="flex flex-wrap items-center justify-between">
             <h2 className="text-2xl font-semibold">
               Szablony twojej organizacji
             </h2>
@@ -77,7 +82,7 @@ export default async function TemplatesPage() {
         </div>
       )}
       {!teamTemplates.length && !organizationTemplates.length && (
-        <div className="text-center text-gray-500 mt-8">
+        <div className="mt-8 text-center text-gray-500">
           <p>Brak dostępnych szablonów.</p>
         </div>
       )}

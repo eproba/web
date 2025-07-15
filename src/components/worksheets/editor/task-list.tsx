@@ -1,21 +1,21 @@
-import React, { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { InfoIcon, ListTodoIcon, PlusIcon } from "lucide-react";
-import { TaskItem } from "@/components/worksheets/editor/task-item";
-import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { cn } from "@/lib/utils";
-import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
-import { UseFormReturn } from "react-hook-form";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { User, UserFunction } from "@/types/user";
+import { TaskItem } from "@/components/worksheets/editor/task-item";
 import { RequiredFunctionLevel } from "@/lib/const";
+import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { cn } from "@/lib/utils";
+import { User, UserFunction } from "@/types/user";
+import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { AnimatePresence, motion } from "framer-motion";
+import { InfoIcon, ListTodoIcon, PlusIcon } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
 
 interface TaskListProps {
   title?: string | null;
@@ -98,7 +98,7 @@ export const TaskList: React.FC<TaskListProps> = ({
     <motion.div
       ref={containerRef}
       className={cn(
-        "space-y-1 transition-all duration-300 relative touch-manipulation w-full",
+        "relative w-full touch-manipulation space-y-1 transition-all duration-300",
       )}
     >
       <motion.div layout className="space-y-1">
@@ -167,9 +167,9 @@ export const TaskList: React.FC<TaskListProps> = ({
               type="button"
               variant="ghost"
               onClick={handleAddTask}
-              className="w-full border-2 border-dashed border-muted-foreground/30 "
+              className="border-muted-foreground/30 w-full border-2 border-dashed"
             >
-              <PlusIcon className="size-4 mr-2" />
+              <PlusIcon className="mr-2 size-4" />
               Dodaj zadanie
             </Button>
           </motion.div>
@@ -188,7 +188,7 @@ export const TaskList: React.FC<TaskListProps> = ({
             delay: 0.1,
           }}
           className={cn(
-            "flex flex-col items-center justify-center py-12 text-center relative border-2 border-dashed border-transparent rounded-lg transition-all",
+            "relative flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-transparent py-12 text-center transition-all",
             isDropHovered &&
               "border-dashed border-blue-500 bg-blue-50/50 dark:bg-blue-950/50",
           )}
@@ -200,12 +200,12 @@ export const TaskList: React.FC<TaskListProps> = ({
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                className="absolute inset-0 flex items-center justify-center pointer-events-none"
+                className="pointer-events-none absolute inset-0 flex items-center justify-center"
               >
                 <motion.div
                   initial={{ y: 10 }}
                   animate={{ y: 0 }}
-                  className="bg-blue-500/90 text-white px-4 py-2 rounded-lg shadow-lg font-medium"
+                  className="rounded-lg bg-blue-500/90 px-4 py-2 font-medium text-white shadow-lg"
                 >
                   Upuść tutaj zadanie
                 </motion.div>
@@ -224,7 +224,7 @@ export const TaskList: React.FC<TaskListProps> = ({
             }}
             className={isDropHovered ? "opacity-30" : ""}
           >
-            <ListTodoIcon className="w-12 h-12 text-muted-foreground mb-4" />
+            <ListTodoIcon className="text-muted-foreground mb-4 h-12 w-12" />
           </motion.div>
           <motion.p
             initial={{ opacity: 0, y: 10 }}
@@ -253,9 +253,9 @@ export const TaskList: React.FC<TaskListProps> = ({
               type="button"
               variant="outline"
               onClick={handleAddTask}
-              className="w-full hover:scale-105 transition-transform"
+              className="w-full transition-transform hover:scale-105"
             >
-              <PlusIcon className="size-4 mr-2" />
+              <PlusIcon className="mr-2 size-4" />
               Dodaj pierwsze zadanie
             </Button>
           </motion.div>
@@ -266,13 +266,13 @@ export const TaskList: React.FC<TaskListProps> = ({
 
   if (title) {
     return (
-      <motion.div layout className="w-full h-full">
+      <motion.div layout className="h-full w-full">
         <Card className="transition-all duration-200 hover:shadow-md">
           <CardHeader className="pb-3">
-            <CardTitle className="text-lg flex items-center gap-2">
+            <CardTitle className="flex items-center gap-2 text-lg">
               <motion.div
                 className={cn(
-                  "w-3 h-3 rounded-full",
+                  "h-3 w-3 rounded-full",
                   category === "general" ? "bg-blue-500" : "bg-green-500",
                 )}
                 initial={{ scale: 0 }}
@@ -299,7 +299,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
-                      <InfoIcon className="size-4 text-muted-foreground" />
+                      <InfoIcon className="text-muted-foreground size-4" />
                     </TooltipTrigger>
                     <TooltipContent>
                       {category === "general"
@@ -319,7 +319,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.3 }}
-                className="text-sm font-normal text-muted-foreground ml-auto"
+                className="text-muted-foreground ml-auto text-sm font-normal"
               >
                 {tasks.length}{" "}
                 {tasks.length === 1

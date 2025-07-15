@@ -1,7 +1,5 @@
 "use client";
 
-import { CheckIcon, ChevronsUpDownIcon, UserIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -17,10 +15,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { useApi } from "@/lib/api-client";
-import { PublicUser } from "@/types/user";
 import { publicUserSerializer } from "@/lib/serializers/user";
-import { useDebouncedCallback } from "use-debounce";
+import { cn } from "@/lib/utils";
+import { PublicUser } from "@/types/user";
+import { CheckIcon, ChevronsUpDownIcon, UserIcon } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 interface UserComboboxProps {
   value?: string;
@@ -113,7 +113,7 @@ export function UserCombobox({
           disabled={disabled}
         >
           <div className="flex items-center gap-2">
-            <UserIcon className="size-4 text-muted-foreground" />
+            <UserIcon className="text-muted-foreground size-4" />
             {selectedUser ? (
               <span className="truncate">{selectedUser.displayName}</span>
             ) : value ? (
@@ -145,11 +145,11 @@ export function UserCombobox({
           </div>
           <CommandList>
             {isLoading ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground p-4 text-center text-sm">
                 Wyszukiwanie...
               </div>
             ) : searchQuery.trim().length < 3 ? (
-              <div className="p-4 text-center text-sm text-muted-foreground">
+              <div className="text-muted-foreground p-4 text-center text-sm">
                 Wpisz co najmniej 3 znaki aby wyszukać
               </div>
             ) : users.length === 0 ? (
@@ -167,11 +167,11 @@ export function UserCombobox({
                     className="flex items-center justify-between"
                   >
                     <div className="flex items-center gap-2">
-                      <UserIcon className="size-4 text-muted-foreground" />
+                      <UserIcon className="text-muted-foreground size-4" />
                       <div className="flex flex-col">
                         <span className="font-medium">{user.displayName}</span>
                         {user.patrolName && (
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-muted-foreground text-xs">
                             {searchOutsideTeam
                               ? `${user.teamName} - ${user.patrolName}`
                               : user.patrolName}
@@ -193,7 +193,7 @@ export function UserCombobox({
               <Button
                 variant="ghost"
                 size="sm"
-                className="w-full justify-start text-xs text-muted-foreground"
+                className="text-muted-foreground w-full justify-start text-xs"
                 onClick={() => setSearchOutsideTeam(!searchOutsideTeam)}
               >
                 {!searchOutsideTeam

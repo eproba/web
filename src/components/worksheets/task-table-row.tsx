@@ -1,8 +1,4 @@
-import { Task, TaskStatus } from "@/types/worksheet";
-import { TableCell, TableRow } from "@/components/ui/table";
-import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
-import { TaskActions } from "@/components/worksheets/task-actions";
-import { TaskNotes } from "@/components/worksheets/task-notes";
+import { Button } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -13,14 +9,18 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { TableCell, TableRow } from "@/components/ui/table";
+import { TaskActions } from "@/components/worksheets/task-actions";
+import { TaskNotes } from "@/components/worksheets/task-notes";
+import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
+import { RequiredFunctionLevel } from "@/lib/const";
 import { cn } from "@/lib/utils";
-import { User } from "@/types/user";
 import { TemplateTask } from "@/types/template";
+import { User } from "@/types/user";
+import { Task, TaskStatus } from "@/types/worksheet";
 import { motion } from "framer-motion";
 import { InfoIcon } from "lucide-react";
-import { RequiredFunctionLevel } from "@/lib/const";
+import { useState } from "react";
 
 export function TaskTableRow({
   task,
@@ -65,7 +65,7 @@ export function TaskTableRow({
     <Drawer key={task.id} open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild className="sm:hidden">
         <TableRow className={cn("hover:bg-muted/10", rowStyle)}>
-          <TableCell className="font-medium align-text-top w-8">
+          <TableCell className="w-8 align-text-top font-medium">
             {index + 1}
           </TableCell>
           <TableCell>
@@ -73,7 +73,7 @@ export function TaskTableRow({
             !task.name &&
             "templateNotes" in task &&
             task.templateNotes ? (
-              <p className="text-wrap text-muted-foreground italic flex items-center gap-2">
+              <p className="text-muted-foreground flex items-center gap-2 text-wrap italic">
                 <InfoIcon className="size-4 flex-shrink-0" />
                 {task.templateNotes}
               </p>
@@ -85,13 +85,13 @@ export function TaskTableRow({
               </p>
             )}
             {task.description && (
-              <p className="text-sm text-muted-foreground text-wrap line-clamp-3 whitespace-pre-wrap">
+              <p className="text-muted-foreground line-clamp-3 text-sm text-wrap whitespace-pre-wrap">
                 {task.description}
               </p>
             )}
           </TableCell>
           {variant !== "template" && (
-            <TableCell className="text-center w-8">
+            <TableCell className="w-8 text-center">
               <TaskStatusIndicator task={task} tooltip={false} />
             </TableCell>
           )}
@@ -100,17 +100,17 @@ export function TaskTableRow({
 
       <TableRow
         className={cn(
-          "relative hover:bg-muted/10 hidden sm:table-row group",
+          "hover:bg-muted/10 group relative hidden sm:table-row",
           rowStyle,
         )}
       >
-        <TableCell className="font-medium align-text-top w-8 relative">
+        <TableCell className="relative w-8 align-text-top font-medium">
           {["managed", "review", "archived"].includes(variant) &&
             currentUser &&
             (currentUser.function.numberValue >=
               RequiredFunctionLevel.WORKSHEET_NOTES_ACCESS ||
               currentUser.id === supervisorId) && (
-              <div className="absolute -left-8 top-0 py-0.5 z-50 pointer-events-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible has-[[data-state=open]]:opacity-100 has-[[data-state=open]]:visible transition-all duration-300 ease-out transform translate-x-2 group-hover:translate-x-0 has-[[data-state=open]]:translate-x-0">
+              <div className="pointer-events-auto invisible absolute top-0 -left-8 z-50 translate-x-2 transform py-0.5 opacity-0 transition-all duration-300 ease-out group-hover:visible group-hover:translate-x-0 group-hover:opacity-100 has-[[data-state=open]]:visible has-[[data-state=open]]:translate-x-0 has-[[data-state=open]]:opacity-100">
                 <TaskNotes
                   task={task as Task}
                   worksheetId={worksheetId}
@@ -126,7 +126,7 @@ export function TaskTableRow({
           !task.name &&
           "templateNotes" in task &&
           task.templateNotes ? (
-            <p className="text-wrap text-muted-foreground italic flex items-center gap-2">
+            <p className="text-muted-foreground flex items-center gap-2 text-wrap italic">
               <InfoIcon className="size-4 flex-shrink-0" />
               {task.templateNotes}
             </p>
@@ -136,20 +136,20 @@ export function TaskTableRow({
             </p>
           )}
           {task.description && (
-            <p className="text-sm text-muted-foreground text-wrap whitespace-pre-wrap">
+            <p className="text-muted-foreground text-sm text-wrap whitespace-pre-wrap">
               {task.description}
             </p>
           )}
         </TableCell>
         {variant !== "template" && (
-          <TableCell className="text-center w-16 p-0">
+          <TableCell className="w-16 p-0 text-center">
             <TaskStatusIndicator task={task} />
           </TableCell>
         )}
         {(variant === "managed" ||
           variant === "user" ||
           variant === "review") && (
-          <TableCell className="text-center w-16 p-0">
+          <TableCell className="w-16 p-0 text-center">
             <TaskActions
               task={task}
               variant={variant}
@@ -162,7 +162,7 @@ export function TaskTableRow({
       </TableRow>
 
       <DrawerContent
-        className="transition-all duration-300 ease-in-out overflow-hidden"
+        className="overflow-hidden transition-all duration-300 ease-in-out"
         style={{
           height: "auto",
           maxHeight: "80vh",
@@ -175,7 +175,7 @@ export function TaskTableRow({
             "templateNotes" in task &&
             task.templateNotes ? (
               <>
-                <InfoIcon className="inline-block mr-2 size-4" />
+                <InfoIcon className="mr-2 inline-block size-4" />
                 {task.templateNotes}
               </>
             ) : (
@@ -187,7 +187,7 @@ export function TaskTableRow({
           </DrawerDescription>
         </DrawerHeader>
         <motion.div
-          className="flex flex-col items-center justify-between px-4 gap-4 pb-4"
+          className="flex flex-col items-center justify-between gap-4 px-4 pb-4"
           layout
           transition={{
             duration: 0.35,

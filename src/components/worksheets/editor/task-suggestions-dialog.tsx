@@ -1,4 +1,3 @@
-import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -7,8 +6,9 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { FilterableList } from "@/components/worksheets/editor/filterable-list";
-import { SparklesIcon } from "lucide-react";
 import taskIdeasData from "@/data/task-ideas.json";
+import { SparklesIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
 
 // interface Message {
 //   id: string;
@@ -74,19 +74,19 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="max-w-4xl sm:h-[70vh] h-[85vh] flex flex-col"
+        className="flex h-[85vh] max-w-4xl flex-col sm:h-[70vh]"
         aria-describedby={undefined}
       >
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
-            <SparklesIcon className="w-5 h-5 text-blue-500" />
+            <SparklesIcon className="h-5 w-5 text-blue-500" />
             Pomysły na zadania indywidualne
           </DialogTitle>
         </DialogHeader>
 
         <Tabs
           defaultValue="browse"
-          className="w-full flex flex-col flex-1 min-h-0"
+          className="flex min-h-0 w-full flex-1 flex-col"
         >
           {/*<TabsList className="grid w-full grid-cols-2 flex-shrink-0">*/}
           {/*  <TabsTrigger value="browse" className="flex items-center gap-2">*/}
@@ -101,7 +101,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
 
           <TabsContent
             value="browse"
-            className="flex flex-col flex-1 min-h-0 space-y-4 data-[state=active]:flex"
+            className="flex min-h-0 flex-1 flex-col space-y-4 data-[state=active]:flex"
           >
             <FilterableList
               items={taskIdeas}

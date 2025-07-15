@@ -1,10 +1,5 @@
 "use client";
 
-import React, { useState } from "react";
-import { useApi } from "@/lib/api-client";
-import { User } from "@/types/user";
-import { toast } from "react-toastify";
-import { ToastMsg } from "@/lib/toast-msg";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,7 +13,12 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useApi } from "@/lib/api-client";
+import { ToastMsg } from "@/lib/toast-msg";
+import { User } from "@/types/user";
 import { signOut } from "next-auth/react";
+import React, { useState } from "react";
+import { toast } from "react-toastify";
 
 export const UserDeleteDialog = ({
   children,
@@ -78,7 +78,7 @@ export const UserDeleteDialog = ({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
         />
-        <AlertDialogFooter className="flex flex-row justify-end gap-2 mt-4">
+        <AlertDialogFooter className="mt-4 flex flex-row justify-end gap-2">
           <AlertDialogCancel>Anuluj</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleSubmit}

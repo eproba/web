@@ -1,14 +1,14 @@
 "use client";
 
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
-import { Card, CardContent } from "@/components/ui/card";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 
 type FormData = {
   subject: string;
@@ -58,7 +58,7 @@ export default function ContactPage() {
   }
 
   return (
-    <div className=" space-y-6">
+    <div className="space-y-6">
       <Card>
         <CardContent>
           <h1 className="text-2xl font-bold">Formularz kontaktowy</h1>
@@ -68,7 +68,7 @@ export default function ContactPage() {
             noValidate
           >
             <div>
-              <label htmlFor="subject" className="block font-medium mb-1">
+              <label htmlFor="subject" className="mb-1 block font-medium">
                 Temat
               </label>
               <Input
@@ -77,14 +77,14 @@ export default function ContactPage() {
                 type="text"
               />
               {errors.subject && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="mt-1 text-sm text-red-500">
                   {errors.subject.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="from_email" className="block font-medium mb-1">
+              <label htmlFor="from_email" className="mb-1 block font-medium">
                 Email
               </label>
               <Input
@@ -99,14 +99,14 @@ export default function ContactPage() {
                 type="email"
               />
               {errors.from_email && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="mt-1 text-sm text-red-500">
                   {errors.from_email.message}
                 </p>
               )}
             </div>
 
             <div>
-              <label htmlFor="message" className="block font-medium mb-1">
+              <label htmlFor="message" className="mb-1 block font-medium">
                 Wiadomość
               </label>
               <Textarea
@@ -117,7 +117,7 @@ export default function ContactPage() {
                 rows={5}
               ></Textarea>
               {errors.message && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="mt-1 text-sm text-red-500">
                   {errors.message.message}
                 </p>
               )}

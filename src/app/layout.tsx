@@ -1,11 +1,12 @@
-import "./globals.css";
-import { Metadata, Viewport } from "next";
-import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
+import { Navbar } from "@/components/navbar";
 import { Providers } from "@/components/providers";
 import { ThemedToastContainer } from "@/components/themed-toast-container";
-import NextTopLoader from "nextjs-toploader";
 import { GoogleTagManager } from "@next/third-parties/google";
+import { Metadata, Viewport } from "next";
+import NextTopLoader from "nextjs-toploader";
+
+import "./globals.css";
 
 const APP_NAME = "Epróba";
 const APP_DEFAULT_TITLE = "Epróba";
@@ -70,7 +71,7 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <GoogleTagManager gtmId="GTM-NN3D54WV" />
       </head>
-      <body className="flex flex-col min-h-screen">
+      <body className="flex min-h-screen flex-col">
         <Providers>
           <NextTopLoader color="#1abc9c" />
           {/*{devMode && (*/}
@@ -80,11 +81,11 @@ export default function RootLayout({
           {/*    </div>*/}
           {/*)}*/}
 
-          <div className="flex flex-col flex-1 p-2 md:p-4">
+          <div className="flex flex-1 flex-col p-2 md:p-4">
             {/* NAVBAR */}
             <Navbar />
 
-            <main className="mx-auto container md:px-16 flex flex-col pt-4 mb-24">
+            <main className="container mx-auto mb-24 flex flex-col pt-4 md:px-16">
               {children}
             </main>
           </div>

@@ -1,9 +1,9 @@
+import { signIn } from "@/auth";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AlertCircleIcon, LogInIcon } from "lucide-react";
-import { signIn } from "@/auth";
 import { ErrorPageParam, SignInPageErrorParam } from "@auth/core/types";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircleIcon, LogInIcon } from "lucide-react";
 
 interface LoginRequiredProps {
   redirectTo?: string;
@@ -92,7 +92,7 @@ export function LoginRequired({ redirectTo, error }: LoginRequiredProps) {
           </Alert>
         )}
       </CardHeader>
-      <CardContent className="text-center space-y-4">
+      <CardContent className="space-y-4 text-center">
         <p className="text-muted-foreground">
           Aby uzyskać dostęp do tej strony, musisz się zalogować.
         </p>

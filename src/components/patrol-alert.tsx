@@ -1,11 +1,11 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
-import { AlertCircleIcon } from "lucide-react";
 import { User } from "@/types/user";
+import { AlertCircleIcon } from "lucide-react";
+import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 interface PatrolAlertProps {
@@ -35,7 +35,7 @@ export function PatrolAlert({ user }: PatrolAlertProps) {
   return (
     <Alert
       variant="destructive"
-      className="mx-auto container mt-4 bg-red-500/10 border-red-500/20"
+      className="container mx-auto mt-4 border-red-500/20 bg-red-500/10"
     >
       <AlertCircleIcon className="size-4" />
       <AlertTitle className="font-semibold">

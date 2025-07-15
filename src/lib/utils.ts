@@ -1,6 +1,6 @@
+import { PublicUser } from "@/types/user";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { PublicUser } from "@/types/user";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));

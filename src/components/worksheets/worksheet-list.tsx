@@ -1,10 +1,8 @@
 "use client";
-import { Task, Worksheet } from "@/types/worksheet";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { WorksheetItem } from "@/components/worksheets/worksheet-item";
-import { useCallback, useMemo, useState } from "react";
-import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
-import Fuse from "fuse.js";
 import {
   Select,
   SelectContent,
@@ -12,14 +10,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { User } from "@/types/user";
-import { LoaderCircleIcon, SearchIcon, XIcon } from "lucide-react";
 import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-button";
+import { WorksheetItem } from "@/components/worksheets/worksheet-item";
+import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
 import { Patrol } from "@/types/team";
+import { User } from "@/types/user";
+import { Task, Worksheet } from "@/types/worksheet";
+import Fuse from "fuse.js";
+import { LoaderCircleIcon, SearchIcon, XIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
+import { useCallback, useMemo, useState } from "react";
 
 export function WorksheetList({
   orgWorksheets,
@@ -153,23 +154,23 @@ export function WorksheetList({
       {showFilters ? (
         <div className="flex items-center justify-between gap-2">
           <div className="relative">
-            <SearchIcon className="size-4 text-muted-foreground absolute left-3 top-1/2 transform -translate-y-1/2" />
+            <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform" />
             <Input
               type="text"
               placeholder="Wyszukaj próbę"
-              className="max-w-xs pl-10 pr-10"
+              className="max-w-xs pr-10 pl-10"
               value={searchQuery}
               onChange={handleSearchChange}
             />
             {isFiltering && searchQuery && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin size-4 border-2 border-muted-foreground border-t-transparent rounded-full" />
+              <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
+                <div className="border-muted-foreground size-4 animate-spin rounded-full border-2 border-t-transparent" />
               </div>
             )}
           </div>
-          <div className="flex items-center gap-2 min-w-0">
+          <div className="flex min-w-0 items-center gap-2">
             {searchParams.get("userId") ? (
-              <div className="flex items-center flex-nowrap border rounded-full pl-4 bg-accent/50 text-sm min-w-0">
+              <div className="bg-accent/50 flex min-w-0 flex-nowrap items-center rounded-full border pl-4 text-sm">
                 <span className="truncate text-nowrap">
                   {searchParams.get("userName") ||
                     `Użytkownik ${searchParams.get("userId")}`}
@@ -211,7 +212,7 @@ export function WorksheetList({
 
       {showFilters && isFiltering && (
         <div className="mb-4 flex items-center gap-2 px-2 sm:px-0">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             <span className="flex items-center gap-2">
               <LoaderCircleIcon className="size-4 animate-spin" />
               Filtrowanie...
@@ -226,7 +227,7 @@ export function WorksheetList({
             <div key={i} className="bg-card rounded-lg p-6 shadow-md">
               <div className="space-y-4">
                 {/* Header section */}
-                <div className="flex w-full justify-between items-center gap-2 mb-2">
+                <div className="mb-2 flex w-full items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Skeleton className="size-10 rounded-md" />
                     <div className="space-y-2">
@@ -253,7 +254,7 @@ export function WorksheetList({
                 <div className="mt-4 space-y-2">
                   <div>
                     {/* Table header */}
-                    <div className="flex items-center justify-between p-3 border-b">
+                    <div className="flex items-center justify-between border-b p-3">
                       <Skeleton className="h-4 w-24" />
                       <Skeleton className="h-4 w-16" />
                       <Skeleton className="h-4 w-20" />
@@ -263,7 +264,7 @@ export function WorksheetList({
                     {[...Array(5)].map((_, rowIndex) => (
                       <div
                         key={rowIndex}
-                        className="flex items-center justify-between p-3 border-b last:border-b-0"
+                        className="flex items-center justify-between border-b p-3 last:border-b-0"
                       >
                         <Skeleton className="h-4 w-32" />
                         <Skeleton className="h-4 w-20" />

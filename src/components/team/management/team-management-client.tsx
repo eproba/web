@@ -1,14 +1,15 @@
 "use client";
 
-import { Team } from "@/types/team";
-import { User } from "@/types/user";
-import { TeamHeader } from "./team-header";
-import { PatrolsList } from "./patrols-list";
-import { useState } from "react";
 import { useApi } from "@/lib/api-client";
 import { teamSerializer } from "@/lib/serializers/team";
-import { toast } from "react-toastify";
 import { ToastMsg } from "@/lib/toast-msg";
+import { Team } from "@/types/team";
+import { User } from "@/types/user";
+import { useState } from "react";
+import { toast } from "react-toastify";
+
+import { PatrolsList } from "./patrols-list";
+import { TeamHeader } from "./team-header";
 
 interface TeamManagementClientProps {
   team: Team;

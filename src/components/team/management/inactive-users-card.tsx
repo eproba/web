@@ -1,9 +1,9 @@
-import React from "react";
-import { User } from "@/types/user";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { DraggableUserRow } from "@/components/team/management/draggable-user-row";
-import { Organization, Patrol } from "@/types/team";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApiUserResponse } from "@/lib/serializers/user";
+import { Organization, Patrol } from "@/types/team";
+import { User } from "@/types/user";
+import React from "react";
 
 interface InactiveUsersCardProps {
   users: User[];

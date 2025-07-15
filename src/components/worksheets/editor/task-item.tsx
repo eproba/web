@@ -1,32 +1,4 @@
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  GripVerticalIcon,
-  InfoIcon,
-  SparklesIcon,
-  Trash2Icon,
-} from "lucide-react";
-import {
-  draggable,
-  dropTargetForElements,
-} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
-import { cn } from "@/lib/utils";
-import { isTouchDevice, triggerHapticFeedback } from "@/lib/mobile-utils";
-import { useDragDrop } from "./drag-drop-provider";
-import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
-import { UseFormReturn } from "react-hook-form";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { TaskSuggestionsDialog } from "./task-suggestions-dialog";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -37,11 +9,40 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useDebouncedCallback } from "use-debounce";
-import { User } from "@/types/user";
+import { Button } from "@/components/ui/button";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { RequiredFunctionLevel } from "@/lib/const";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { isTouchDevice, triggerHapticFeedback } from "@/lib/mobile-utils";
+import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { cn } from "@/lib/utils";
+import { User } from "@/types/user";
+import {
+  draggable,
+  dropTargetForElements,
+} from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { setCustomNativeDragPreview } from "@atlaskit/pragmatic-drag-and-drop/element/set-custom-native-drag-preview";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  GripVerticalIcon,
+  InfoIcon,
+  SparklesIcon,
+  Trash2Icon,
+} from "lucide-react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import { UseFormReturn } from "react-hook-form";
+import { useDebouncedCallback } from "use-debounce";
+
+import { useDragDrop } from "./drag-drop-provider";
 import { TaskActionPopover } from "./task-action-popover";
+import { TaskSuggestionsDialog } from "./task-suggestions-dialog";
 
 interface TaskItemProps {
   task: Task;
@@ -290,7 +291,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             animate={{ opacity: 1, scaleY: 1 }}
             exit={{ opacity: 0, scaleY: 0 }}
             transition={{ duration: 0.15 }}
-            className="absolute -top-1 left-0 right-0 h-1 bg-blue-500 rounded-full z-20"
+            className="absolute -top-1 right-0 left-0 z-20 h-1 rounded-full bg-blue-500"
             style={{
               boxShadow: "0 0 8px rgba(59, 130, 246, 0.5)",
             }}
@@ -300,7 +301,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               transition={{ delay: 0.05, duration: 0.15 }}
-              className="absolute -top-1 left-0 w-3 h-3 bg-blue-500 rounded-full"
+              className="absolute -top-1 left-0 h-3 w-3 rounded-full bg-blue-500"
               style={{
                 boxShadow: "0 0 6px rgba(59, 130, 246, 0.7)",
               }}
@@ -310,7 +311,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               transition={{ delay: 0.05, duration: 0.15 }}
-              className="absolute -top-1 right-0 w-3 h-3 bg-blue-500 rounded-full"
+              className="absolute -top-1 right-0 h-3 w-3 rounded-full bg-blue-500"
               style={{
                 boxShadow: "0 0 6px rgba(59, 130, 246, 0.7)",
               }}
@@ -324,18 +325,18 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         ref={elementRef}
         layout
         className={cn(
-          "group relative bg-card border rounded-lg p-4 transition-all duration-200 touch-manipulation hover:bg-accent/30",
-          isBeingDragged && "opacity-30 scale-95 bg-muted border-dashed",
+          "group bg-card hover:bg-accent/30 relative touch-manipulation rounded-lg border p-4 transition-all duration-200",
+          isBeingDragged && "bg-muted scale-95 border-dashed opacity-30",
           isHovered && !isBeingDragged && "shadow-sm",
         )}
         whileTap={{ scale: 0.98 }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        <div className="flex gap-3 items-start">
+        <div className="flex items-start gap-3">
           {/* Task Number */}
-          <div className="flex items-center pt-2 min-w-4 sm:min-w-8">
-            <span className="text-sm font-medium text-muted-foreground select-none">
+          <div className="flex min-w-4 items-center pt-2 sm:min-w-8">
+            <span className="text-muted-foreground text-sm font-medium select-none">
               {index + 1}.
             </span>
           </div>
@@ -411,7 +412,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 name={`tasks.${taskIndex}.templateNotes` as const}
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-xs text-muted-foreground">
+                    <FormLabel className="text-muted-foreground text-xs">
                       Notatki do szablonu, znikają po utworzeniu próby
                     </FormLabel>
                     <FormControl>
@@ -437,7 +438,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           </div>
 
           {/* Action Buttons */}
-          <div className="flex items-center gap-1 flex-col-reverse md:flex-row">
+          <div className="flex flex-col-reverse items-center gap-1 md:flex-row">
             {/* AI Suggestions Button - Desktop Only */}
             {currentUser.function.numberValue >=
               RequiredFunctionLevel.TASK_SUGGESTIONS &&
@@ -451,9 +452,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                     setShowSuggestions(true);
                   }}
                   className={cn(
-                    "hidden md:flex md:opacity-0 md:pointer-coarse:opacity-100 group-hover:opacity-100 transition-all hover:bg-blue-100 hover:text-blue-700",
+                    "hidden transition-all group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-700 md:flex md:opacity-0 md:pointer-coarse:opacity-100",
                     showSuggestions &&
-                      "opacity-100 bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300",
+                      "bg-blue-100 text-blue-700 opacity-100 dark:bg-blue-900 dark:text-blue-300",
                   )}
                   title="Pomysły na zadania"
                 >
@@ -466,7 +467,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               type="button"
               variant="ghost"
               size="icon"
-              className="hidden md:flex md:opacity-0 md:pointer-coarse:opacity-100 group-hover:opacity-100 transition-opacity hover:bg-red-100 hover:text-red-700"
+              className="hidden transition-opacity group-hover:opacity-100 hover:bg-red-100 hover:text-red-700 md:flex md:opacity-0 md:pointer-coarse:opacity-100"
               onClick={() => handleDelete()}
             >
               <Trash2Icon className="size-4" />
@@ -475,8 +476,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             <motion.div
               ref={dragHandleRef}
               className={cn(
-                "cursor-grab hover:bg-gray-100 dark:hover:bg-gray-800 transition-all touch-manipulation select-none",
-                "p-2 rounded-md items-center justify-center hidden md:flex",
+                "cursor-grab touch-manipulation transition-all select-none hover:bg-gray-100 dark:hover:bg-gray-800",
+                "hidden items-center justify-center rounded-md p-2 md:flex",
                 isDragging && "cursor-grabbing bg-blue-100 dark:bg-blue-900",
                 "opacity-60 group-hover:opacity-100",
               )}
@@ -497,7 +498,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             >
               <GripVerticalIcon
                 className={cn(
-                  "w-5 h-5 text-muted-foreground transition-colors",
+                  "text-muted-foreground h-5 w-5 transition-colors",
                   isDragging && "text-blue-600",
                 )}
               />
@@ -530,7 +531,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             animate={{ opacity: 1, scaleY: 1 }}
             exit={{ opacity: 0, scaleY: 0 }}
             transition={{ duration: 0.15 }}
-            className="absolute -bottom-1 left-0 right-0 h-1 bg-blue-500 rounded-full z-20"
+            className="absolute right-0 -bottom-1 left-0 z-20 h-1 rounded-full bg-blue-500"
             style={{
               boxShadow: "0 0 8px rgba(59, 130, 246, 0.5)",
             }}
@@ -540,7 +541,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               transition={{ delay: 0.05, duration: 0.15 }}
-              className="absolute -bottom-1 left-0 w-3 h-3 bg-blue-500 rounded-full"
+              className="absolute -bottom-1 left-0 h-3 w-3 rounded-full bg-blue-500"
               style={{
                 boxShadow: "0 0 6px rgba(59, 130, 246, 0.7)",
               }}
@@ -550,7 +551,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               animate={{ scale: 1 }}
               exit={{ scale: 0 }}
               transition={{ delay: 0.05, duration: 0.15 }}
-              className="absolute -bottom-1 right-0 w-3 h-3 bg-blue-500 rounded-full"
+              className="absolute right-0 -bottom-1 h-3 w-3 rounded-full bg-blue-500"
               style={{
                 boxShadow: "0 0 6px rgba(59, 130, 246, 0.7)",
               }}

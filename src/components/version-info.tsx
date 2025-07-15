@@ -1,14 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircleIcon, ExternalLinkIcon, XCircleIcon } from "lucide-react";
-import * as semver from "semver";
-import { API_URL } from "@/lib/api";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { API_URL } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import { CheckCircleIcon, ExternalLinkIcon, XCircleIcon } from "lucide-react";
+import * as semver from "semver";
 
 interface VersionInfoProps {
   appVersion: string;
@@ -30,12 +30,12 @@ export function VersionInfo({
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-bold flex flex-wrap items-center gap-2">
+        <CardTitle className="flex flex-wrap items-center gap-2 text-2xl font-bold">
           Informacje o wersji
           <a
             href={`${API_URL}/schema/swagger-ui/`}
             target="_blank"
-            className="text-sm font-normal text-muted-foreground hover:text-foreground flex items-center gap-1"
+            className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm font-normal"
           >
             <ExternalLinkIcon className="h-3 w-3" />
             Dokumentacja API
@@ -44,34 +44,34 @@ export function VersionInfo({
       </CardHeader>
       <CardContent className="space-y-4">
         {/* Version Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="space-y-2">
-            <h4 className="font-semibold text-sm text-muted-foreground">
+            <h4 className="text-muted-foreground text-sm font-semibold">
               Wersja aplikacji
             </h4>
-            <Badge variant="outline" className="text-base font-mono">
+            <Badge variant="outline" className="font-mono text-base">
               v{appVersion}
             </Badge>
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-semibold text-sm text-muted-foreground">
+            <h4 className="text-muted-foreground text-sm font-semibold">
               Wersja serwera
             </h4>
-            <Badge variant="outline" className="text-base font-mono">
+            <Badge variant="outline" className="font-mono text-base">
               v{serverVersion}
             </Badge>
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-semibold text-sm text-muted-foreground">
+            <h4 className="text-muted-foreground text-sm font-semibold">
               Wersje API
             </h4>
             <Popover>
               <PopoverTrigger>
                 <Badge
                   variant="outline"
-                  className="text-base font-mono flex items-center gap-1"
+                  className="flex items-center gap-1 font-mono text-base"
                 >
                   {!apiIsCompatible ? (
                     <XCircleIcon className="size-4 text-red-500" />

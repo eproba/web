@@ -1,12 +1,12 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { TaskTable } from "@/components/worksheets/task-table";
 import { TemplateActions } from "@/components/worksheets/templates/template-actions";
 import { TemplateWorksheet } from "@/types/template";
 import { PencilRulerIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 export function TemplateItem({
   template,
@@ -17,19 +17,19 @@ export function TemplateItem({
 }) {
   return (
     <div
-      className="bg-card rounded-lg p-6 shadow-md space-y-4"
+      className="bg-card space-y-4 rounded-lg p-6 shadow-md"
       id={template.id}
     >
       <div>
-        <div className="flex w-full justify-between items-center gap-2 mb-2">
-          <h2 className="text-2xl font-semibold flex items-center">
+        <div className="mb-2 flex w-full items-center justify-between gap-2">
+          <h2 className="flex items-center text-2xl font-semibold">
             {template.image && (
               <Image
                 src={template.image}
                 alt={template.name}
-                className={`size-10 rounded-md object-cover inline-block mr-2 ${
+                className={`mr-2 inline-block size-10 rounded-md object-cover ${
                   template.image.endsWith(".svg")
-                    ? "dark:invert dark:grayscale"
+                    ? "dark:grayscale dark:invert"
                     : ""
                 }`}
                 width={40}
@@ -45,12 +45,12 @@ export function TemplateItem({
           />
         </div>
         {template.description && (
-          <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+          <p className="text-muted-foreground text-sm whitespace-pre-wrap">
             {template.description}
           </p>
         )}
         {template.updatedAt && (
-          <p className="text-xs text-muted-foreground">
+          <p className="text-muted-foreground text-xs">
             Ostatnia aktualizacja: {template.updatedAt.toLocaleString()}
           </p>
         )}

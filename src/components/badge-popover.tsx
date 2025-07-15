@@ -1,3 +1,4 @@
+import { BadgeData } from "@/app/regulations/male/page";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -6,7 +7,6 @@ import {
 } from "@/components/ui/popover";
 import { StarIcon } from "lucide-react";
 import Image from "next/image";
-import { BadgeData } from "@/app/regulations/male/page";
 
 interface BadgePopoverProps {
   badge: BadgeData;
@@ -19,14 +19,14 @@ export function BadgePopover({ badge, imageUrl }: BadgePopoverProps) {
       <PopoverTrigger asChild>
         <Badge
           variant="outline"
-          className="cursor-pointer hover:bg-muted transition-colors"
+          className="hover:bg-muted cursor-pointer transition-colors"
         >
           {badge.name}
           <div className="inline-flex items-center">
             {Array.from({ length: badge.stars }).map((_, i) => (
               <StarIcon
                 key={i}
-                className="w-3 h-3 text-yellow-500 fill-yellow-500"
+                className="h-3 w-3 fill-yellow-500 text-yellow-500"
               />
             ))}
           </div>
@@ -52,10 +52,10 @@ export function BadgePopover({ badge, imageUrl }: BadgePopoverProps) {
                 {Array.from({ length: badge.stars }).map((_, i) => (
                   <StarIcon
                     key={i}
-                    className="w-3 h-3 text-yellow-500 fill-yellow-500"
+                    className="h-3 w-3 fill-yellow-500 text-yellow-500"
                   />
                 ))}
-                <span className="text-sm text-muted-foreground ml-1">
+                <span className="text-muted-foreground ml-1 text-sm">
                   {badge.stars}{" "}
                   {badge.stars === 1
                     ? "gwiazdka"
@@ -69,8 +69,8 @@ export function BadgePopover({ badge, imageUrl }: BadgePopoverProps) {
 
           {badge.requirements.length > 0 && (
             <div>
-              <h5 className="font-medium text-sm mb-2">Wymagania:</h5>
-              <ul className="text-xs space-y-1 list-disc pl-4">
+              <h5 className="mb-2 text-sm font-medium">Wymagania:</h5>
+              <ul className="list-disc space-y-1 pl-4 text-xs">
                 {badge.requirements.map((req, index) => (
                   <li key={index}>{req}</li>
                 ))}

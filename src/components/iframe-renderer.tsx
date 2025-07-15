@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 
 /**
  * `IframeRenderer` is a React component that renders an iframe with dynamic height adjustment.
@@ -64,12 +64,12 @@ export function IframeRenderer({ src }: { src: string }) {
     <AnimatePresence>
       <motion.div
         ref={containerRef}
-        className="w-full mb-4 transition-all duration-100"
+        className="mb-4 w-full transition-all duration-100"
       >
         <iframe
           ref={iframeRef}
           src={src}
-          className="w-full border-none h-full"
+          className="h-full w-full border-none"
         />
       </motion.div>
     </AnimatePresence>

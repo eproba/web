@@ -1,13 +1,18 @@
+import { TeamManagementClient } from "@/components/team/management/team-management-client";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { RequiredFunctionLevel } from "@/lib/const";
 import {
   fetchCurrentUser,
-  fetchUsersByTeamId,
   fetchUserTeam,
+  fetchUsersByTeamId,
 } from "@/lib/server-api";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { TeamManagementClient } from "@/components/team/management/team-management-client";
 import { User } from "@/types/user";
-import { RequiredFunctionLevel } from "@/lib/const";
 import { AlertCircleIcon } from "lucide-react";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Twoja drużyna",
+};
 
 export default async function TeamPage() {
   const { team, error: teamsError } = await fetchUserTeam();

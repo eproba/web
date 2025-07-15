@@ -1,9 +1,10 @@
 "use client";
 
-import { AlertCircleIcon } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
-import type { ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/button";
+import type { ApiError } from "@/lib/api";
+import { AlertCircleIcon } from "lucide-react";
+
+import { Alert, AlertDescription, AlertTitle } from "./ui/alert";
 
 export function ErrorAlert({ error }: { error: Response | ApiError }) {
   console.error(error);
@@ -26,7 +27,7 @@ export function ErrorAlert({ error }: { error: Response | ApiError }) {
         <p>
           Spróbuj odświeżyć stronę, jeśli to nie pomoże, zgłoś błąd{" "}
           <a
-            className="underline font-bold"
+            className="font-bold underline"
             href="https://github.com/eproba/web-v2/issues"
             target="_blank"
           >

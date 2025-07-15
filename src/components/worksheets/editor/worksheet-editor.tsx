@@ -1,19 +1,20 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import { Form } from "@/components/ui/form";
+import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
+import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
+import { useMobileTaskMovements } from "@/components/worksheets/editor/hooks/use-mobile-task-movements";
+import { useWorksheetForm } from "@/components/worksheets/editor/hooks/use-worksheet-form";
+import { useWorksheetTasks } from "@/components/worksheets/editor/hooks/use-worksheet-tasks";
+import { ModifiedTasksDialog } from "@/components/worksheets/editor/modified-tasks-dialog";
 import { TaskControls } from "@/components/worksheets/editor/task-controls";
 import { TasksSection } from "@/components/worksheets/editor/tasks-section";
 import { WorksheetBasicInfo } from "@/components/worksheets/editor/worksheet-basic-info";
 import { WorksheetSubmitButton } from "@/components/worksheets/editor/worksheet-submit-button";
-import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
-import { Form } from "@/components/ui/form";
-import { useWorksheetForm } from "@/components/worksheets/editor/hooks/use-worksheet-form";
-import { useWorksheetTasks } from "@/components/worksheets/editor/hooks/use-worksheet-tasks";
-import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
-import { useMobileTaskMovements } from "@/components/worksheets/editor/hooks/use-mobile-task-movements";
 import { Task, WorksheetWithTasks } from "@/lib/schemas/worksheet";
-import { TaskStatus } from "@/types/worksheet";
 import { User } from "@/types/user";
-import { ModifiedTasksDialog } from "@/components/worksheets/editor/modified-tasks-dialog";
+import { TaskStatus } from "@/types/worksheet";
+import React, { useEffect, useState } from "react";
 
 interface WorksheetEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
@@ -162,7 +163,7 @@ export const WorksheetEditor = ({
   return (
     <DragDropProvider>
       <div
-        className="space-y-8 transition-all duration-300relative"
+        className="duration-300relative space-y-8 transition-all"
         onKeyDown={handleKeyDown}
       >
         <Form {...form}>

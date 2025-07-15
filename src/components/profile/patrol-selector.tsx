@@ -1,4 +1,3 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -7,10 +6,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { District, Patrol, Team } from "@/types/team";
 import { useApi } from "@/lib/api-client";
 import { districtSerializer, teamSerializer } from "@/lib/serializers/team";
+import { District, Patrol, Team } from "@/types/team";
 import { FieldInfo } from "@/types/user";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 interface PatrolSelectFormProps {
   userGender: FieldInfo | null;
@@ -122,7 +122,7 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
   );
 
   return (
-    <div className="flex flex-col gap-4 w-full overflow-hidden">
+    <div className="flex w-full flex-col gap-4 overflow-hidden">
       <div>
         <Label>Organizacja</Label>
         <Select

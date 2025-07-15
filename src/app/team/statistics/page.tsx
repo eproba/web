@@ -1,15 +1,3 @@
-import { fetchTeamStatistics } from "@/lib/server-api";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Progress } from "@/components/ui/progress";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   ActivityTrendsChart,
   FunctionsChart,
@@ -18,6 +6,26 @@ import {
   PatrolPerformanceRadarChart,
   ScoutRanksChart,
 } from "@/components/team/statistics/statistics-charts";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { fetchTeamStatistics } from "@/lib/server-api";
 import {
   ActivityIcon,
   AlertTriangleIcon,
@@ -29,14 +37,11 @@ import {
   TrophyIcon,
   UsersIcon,
 } from "lucide-react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Statystyki drużyny",
+};
 
 export default async function TeamStatisticsPage() {
   const { data: statistics, error } = await fetchTeamStatistics();
@@ -58,7 +63,7 @@ export default async function TeamStatisticsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1 className="text-3xl font-bold">Statystyki Drużyny</h1>
           <p className="text-muted-foreground mt-1">
@@ -69,7 +74,7 @@ export default async function TeamStatisticsPage() {
           {!statistics.teamInfo.isVerified && (
             <Badge>
               <>
-                <ShieldOffIcon className="h-3 w-3 mr-1" />
+                <ShieldOffIcon className="mr-1 h-3 w-3" />
                 Niezweryfikowana
               </>
             </Badge>
@@ -79,19 +84,19 @@ export default async function TeamStatisticsPage() {
       </div>
 
       {/* Overview Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
               Wszyscy członkowie
             </CardTitle>
-            <UsersIcon className="size-4 text-muted-foreground" />
+            <UsersIcon className="text-muted-foreground size-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {statistics.overview.totalMembers}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {statistics.overview.verifiedEmails} zweryfikowanych emaili
             </p>
           </CardContent>
@@ -102,13 +107,13 @@ export default async function TeamStatisticsPage() {
             <CardTitle className="text-sm font-medium">
               Aktywni (30 dni)
             </CardTitle>
-            <ActivityIcon className="size-4 text-muted-foreground" />
+            <ActivityIcon className="text-muted-foreground size-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {statistics.overview.activeLast30Days}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               {Math.round(
                 (statistics.overview.activeLast30Days /
                   statistics.overview.totalMembers) *
@@ -122,13 +127,13 @@ export default async function TeamStatisticsPage() {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Zastępy</CardTitle>
-            <UsersIcon className="size-4 text-muted-foreground" />
+            <UsersIcon className="text-muted-foreground size-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {statistics.overview.patrolsCount}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Średnio{" "}
               {Math.round(
                 statistics.overview.totalMembers /
@@ -157,13 +162,13 @@ export default async function TeamStatisticsPage() {
             <CardTitle className="text-sm font-medium">
               Ukończenie prób
             </CardTitle>
-            <TargetIcon className="size-4 text-muted-foreground" />
+            <TargetIcon className="text-muted-foreground size-4" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
               {statistics.worksheetProgress.averageCompletionRate.toFixed(1)}%
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-muted-foreground text-xs">
               Średni poziom ukończenia
             </p>
           </CardContent>
@@ -172,7 +177,7 @@ export default async function TeamStatisticsPage() {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto gap-1">
+        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-4">
           <TabsTrigger value="overview">
             <BarChartIcon className="size-4" />
             Przegląd
@@ -182,17 +187,17 @@ export default async function TeamStatisticsPage() {
             Stopnie
           </TabsTrigger>
           <TabsTrigger value="patrols">
-            <UsersIcon className="size-4 " />
+            <UsersIcon className="size-4" />
             Zastępy
           </TabsTrigger>
           <TabsTrigger value="performance">
-            <ActivityIcon className="size-4 " />
+            <ActivityIcon className="size-4" />
             Aktywność
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
             {/* Worksheet Progress */}
             <Card>
               <CardHeader>
@@ -226,7 +231,7 @@ export default async function TeamStatisticsPage() {
                   value={statistics.worksheetProgress.averageCompletionRate}
                   className="h-2"
                 />
-                <p className="text-xs text-muted-foreground">
+                <p className="text-muted-foreground text-xs">
                   Średni poziom ukończenia:{" "}
                   {statistics.worksheetProgress.averageCompletionRate.toFixed(
                     1,
@@ -242,7 +247,7 @@ export default async function TeamStatisticsPage() {
         </TabsContent>
 
         <TabsContent value="ranks" className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3">
             <ScoutRanksChart statistics={statistics} />
             <InstructorRanksChart statistics={statistics} />
             <FunctionsChart statistics={statistics} />
@@ -250,7 +255,7 @@ export default async function TeamStatisticsPage() {
         </TabsContent>
 
         <TabsContent value="patrols" className="space-y-4">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             <PatrolComparisonChart statistics={statistics} />
             <PatrolPerformanceRadarChart statistics={statistics} />
           </div>
@@ -292,7 +297,7 @@ export default async function TeamStatisticsPage() {
         </TabsContent>
 
         <TabsContent value="performance" className="space-y-4">
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
             {/* Top Performers */}
             <Card>
               <CardHeader>
@@ -312,11 +317,11 @@ export default async function TeamStatisticsPage() {
                     .map((performer) => (
                       <div
                         key={performer.id}
-                        className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                        className="bg-muted flex items-center justify-between rounded-lg p-3"
                       >
                         <div>
                           <div className="font-medium">{performer.name}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-muted-foreground text-sm">
                             {performer.patrol} • {performer.rank}
                           </div>
                         </div>
@@ -335,7 +340,7 @@ export default async function TeamStatisticsPage() {
                               return "zadań";
                             })()}
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-muted-foreground text-xs">
                             {performer.totalWorksheets}{" "}
                             {(() => {
                               const count = performer.totalWorksheets;
@@ -375,11 +380,11 @@ export default async function TeamStatisticsPage() {
                     .map((member) => (
                       <div
                         key={member.id}
-                        className="flex items-center justify-between p-3 bg-muted rounded-lg"
+                        className="bg-muted flex items-center justify-between rounded-lg p-3"
                       >
                         <div>
                           <div className="font-medium">{member.name}</div>
-                          <div className="text-sm text-muted-foreground">
+                          <div className="text-muted-foreground text-sm">
                             {member.patrol} • {member.rank}
                           </div>
                         </div>
@@ -387,7 +392,7 @@ export default async function TeamStatisticsPage() {
                           <div className="text-sm font-medium">
                             -{member.daysInactive} dni
                           </div>
-                          <div className="text-xs text-muted-foreground">
+                          <div className="text-muted-foreground text-xs">
                             {member.totalWorksheets}{" "}
                             {(() => {
                               const count = member.totalWorksheets;

@@ -1,15 +1,12 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-toastify";
-import { useApi } from "@/lib/api-client";
-import { TeamRequest } from "@/types/team-request";
-import { FieldInfo, UserFunction } from "@/types/user";
-import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
@@ -17,10 +14,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
+import { useApi } from "@/lib/api-client";
+import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
+import { ToastMsg } from "@/lib/toast-msg";
+import { TeamRequest } from "@/types/team-request";
+import { FieldInfo, UserFunction } from "@/types/user";
 import {
   AlertCircleIcon,
   CalendarIcon,
@@ -32,8 +32,8 @@ import {
   ShieldIcon,
   UsersIcon,
 } from "lucide-react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { ToastMsg } from "@/lib/toast-msg";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 type FilterStatus =
   | "all"
@@ -213,9 +213,9 @@ export function TeamRequestsClient({
 
   return (
     <>
-      <div className="mb-6 flex flex-col sm:flex-row gap-4">
+      <div className="mb-6 flex flex-col gap-4 sm:flex-row">
         <div className="flex items-center gap-2">
-          <FilterIcon className="size-4 text-muted-foreground" />
+          <FilterIcon className="text-muted-foreground size-4" />
           <Select value={filterStatus} onValueChange={handleFilterStatusChange}>
             <SelectTrigger className="w-[280px]">
               <SelectValue placeholder="Filtruj po statusie" />
@@ -235,18 +235,18 @@ export function TeamRequestsClient({
           </Select>
         </div>
 
-        <div className="flex items-center gap-2 flex-1">
+        <div className="flex flex-1 items-center gap-2">
           <div className="relative">
-            <SearchIcon className="size-4 text-muted-foreground absolute left-3 top-1/2 transform -translate-y-1/2" />
+            <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform" />
             <Input
               placeholder="Szukaj po nazwie drużyny, wnioskodawcy, e-mailu..."
               value={searchTerm}
               onChange={handleSearchChange}
-              className="max-w-sm pl-10 pr-10"
+              className="max-w-sm pr-10 pl-10"
             />
             {isFiltering && searchTerm && (
-              <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-                <div className="animate-spin size-4 border-2 border-muted-foreground border-t-transparent rounded-full" />
+              <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
+                <div className="border-muted-foreground size-4 animate-spin rounded-full border-2 border-t-transparent" />
               </div>
             )}
           </div>
@@ -255,7 +255,7 @@ export function TeamRequestsClient({
 
       {isFiltering && (
         <div className="mb-6 flex items-center gap-2">
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             <span className="flex items-center gap-2">
               <LoaderCircleIcon className="size-4 animate-spin" />
               Filtrowanie...
@@ -290,8 +290,8 @@ export function TeamRequestsClient({
       ) : filteredRequests.length === 0 ? (
         <Card>
           <CardContent className="py-8">
-            <div className="text-center text-muted-foreground">
-              <UsersIcon className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <div className="text-muted-foreground text-center">
+              <UsersIcon className="mx-auto mb-4 h-12 w-12 opacity-50" />
               <p>Brak zgłoszeń pasujących do filtra</p>
             </div>
           </CardContent>
@@ -359,7 +359,7 @@ function TeamRequestCard({
         <div className="flex items-start justify-between">
           <div className="space-y-2">
             <CardTitle className="text-xl">{request.team.name}</CardTitle>
-            <div className="flex items-center gap-4 text-sm text-muted-foreground">
+            <div className="text-muted-foreground flex items-center gap-4 text-sm">
               <span className="font-medium">{request.team.shortName}</span>
               {request.team.district && (
                 <div className="flex items-center gap-1">
@@ -376,12 +376,12 @@ function TeamRequestCard({
       </CardHeader>
 
       <CardContent className="space-y-6">
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <h4 className="font-medium mb-3 flex items-center gap-2">
+        <div className="bg-muted/50 rounded-lg p-4">
+          <h4 className="mb-3 flex items-center gap-2 font-medium">
             <ShieldIcon className="size-4" />
             Wnioskodawca
           </h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
             <div>
               <span className="font-medium">Imię i nazwisko:</span>
               <div className="mt-1">
@@ -396,7 +396,7 @@ function TeamRequestCard({
             <div>
               <span className="font-medium">E-mail:</span>
               <div className="mt-1 flex items-center gap-2">
-                <MailIcon className="h-3 w-3 text-muted-foreground" />
+                <MailIcon className="text-muted-foreground h-3 w-3" />
                 <span>{request.createdBy.email}</span>
                 {!request.createdBy.emailVerified && (
                   <Badge variant="destructive" className="text-xs">
@@ -417,19 +417,19 @@ function TeamRequestCard({
             <div>
               <span className="font-medium">Data zgłoszenia:</span>
               <div className="mt-1 flex items-center gap-2">
-                <CalendarIcon className="h-3 w-3 text-muted-foreground" />
+                <CalendarIcon className="text-muted-foreground h-3 w-3" />
                 <span>{formatDate(request.createdAt)}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-muted/50 p-4 rounded-lg">
-          <h4 className="font-medium mb-3 flex items-center gap-2">
+        <div className="bg-muted/50 rounded-lg p-4">
+          <h4 className="mb-3 flex items-center gap-2 font-medium">
             <UsersIcon className="size-4" />
             Informacje o drużynie
           </h4>
-          <div className="text-sm space-y-2">
+          <div className="space-y-2 text-sm">
             {request.team.patrols && request.team.patrols.length > 0 && (
               <div>
                 <span className="font-medium">Zastępy:</span>
@@ -454,8 +454,8 @@ function TeamRequestCard({
           </Alert>
         )}
 
-        <div className="border-t pt-6 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-4 border-t pt-6">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
               <Label
                 htmlFor={`status-${request.id}`}
@@ -500,7 +500,7 @@ function TeamRequestCard({
             />
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col gap-4 sm:flex-row">
             <div className="flex items-center space-x-2">
               <Checkbox
                 id={`send-email-${request.id}`}

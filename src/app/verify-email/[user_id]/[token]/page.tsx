@@ -1,3 +1,7 @@
+import { signIn } from "@/auth";
+import { ResendVerificationEmailButton } from "@/components/profile/resend-verification-email-button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -5,13 +9,14 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 import { fetchCurrentUser, fetchUser, verifyEmail } from "@/lib/server-api";
-import { ResendVerificationEmailButton } from "@/components/profile/resend-verification-email-button";
+import { CheckCircleIcon, XCircleIcon } from "lucide-react";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { signIn } from "@/auth";
+
+export const metadata: Metadata = {
+  title: "Weryfikacja adresu e-mail",
+};
 
 interface PageProps {
   params: Promise<{
@@ -106,7 +111,7 @@ function EmailVerificationError({
   email?: string;
 }) {
   return (
-    <div className="flex items-center justify-center ">
+    <div className="flex items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">
@@ -164,7 +169,7 @@ function EmailVerificationSuccess({
   alreadyVerified: boolean;
 }) {
   return (
-    <div className="flex items-center justify-center ">
+    <div className="flex items-center justify-center">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Email zweryfikowany</CardTitle>

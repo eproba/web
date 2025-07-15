@@ -1,10 +1,31 @@
-import { useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { WorksheetNotesDialog } from "@/components/worksheets/worksheet-notes-dialog";
+import { useApi } from "@/lib/api-client";
+import { RequiredFunctionLevel } from "@/lib/const";
+import { ToastMsg } from "@/lib/toast-msg";
+import { User } from "@/types/user";
 import { Worksheet } from "@/types/worksheet";
 import {
   ArchiveIcon,
@@ -18,31 +39,10 @@ import {
   StickyNoteIcon,
   TrashIcon,
 } from "lucide-react";
-import { toast } from "react-toastify";
-import { ToastMsg } from "@/lib/toast-msg";
-import { useRouter } from "next/navigation";
-import { useApi } from "@/lib/api-client";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { WorksheetNotesDialog } from "@/components/worksheets/worksheet-notes-dialog";
-import { User } from "@/types/user";
-import { RequiredFunctionLevel } from "@/lib/const";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 type WorksheetAction = {
   id: string;
@@ -281,7 +281,7 @@ export function WorksheetActions({
   };
 
   const renderDesktopIcons = () => (
-    <div className="hidden md:flex gap-2">
+    <div className="hidden gap-2 md:flex">
       {filteredActions.map((action) => (
         <TooltipProvider key={action.id}>
           <Tooltip>
@@ -304,7 +304,7 @@ export function WorksheetActions({
             <Button
               variant="ghost"
               size="icon"
-              className="size-8 p-0 data-[state=open]:bg-muted"
+              className="data-[state=open]:bg-muted size-8 p-0"
             >
               <EllipsisVerticalIcon className="size-5" />
               <span className="sr-only">Otwórz menu</span>
@@ -321,8 +321,8 @@ export function WorksheetActions({
                       updateWorksheet={updateWorksheet || (() => {})}
                       format="mobile"
                     >
-                      <div className="flex items-center justify-start w-full h-auto px-2 py-1.5 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground">
-                        <StickyNoteIcon className="size-4 mr-2" />
+                      <div className="hover:bg-accent hover:text-accent-foreground flex h-auto w-full cursor-pointer items-center justify-start px-2 py-1.5 text-sm">
+                        <StickyNoteIcon className="mr-2 size-4" />
                         {worksheet.notes ? "Notatka" : "Dodaj notatkę"}
                       </div>
                     </WorksheetNotesDialog>

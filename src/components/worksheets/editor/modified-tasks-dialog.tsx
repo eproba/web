@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -7,11 +7,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { TaskStatus } from "@/types/worksheet";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
+import { TaskStatus } from "@/types/worksheet";
+import React, { useEffect, useState } from "react";
 
 interface ModifiedTask {
   id: string;
@@ -70,7 +70,7 @@ export const ModifiedTasksDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+      <DialogContent className="flex max-h-[80vh] max-w-2xl flex-col">
         <DialogHeader>
           <DialogTitle>Zadania ze statusem zostały zmodyfikowane</DialogTitle>
           <DialogDescription>
@@ -81,7 +81,7 @@ export const ModifiedTasksDialog = ({
         </DialogHeader>
 
         <div className="flex-1 overflow-hidden">
-          <div className="flex gap-2 mb-4">
+          <div className="mb-4 flex gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -100,19 +100,19 @@ export const ModifiedTasksDialog = ({
             </Button>
           </div>
 
-          <div className="space-y-3 max-h-96 overflow-y-auto pr-2">
+          <div className="max-h-96 space-y-3 overflow-y-auto pr-2">
             {modifiedTasks.map((task) => {
               const shouldKeepStatus = tasksToKeepStatus.has(task.id);
 
               return (
-                <div key={task.id} className="p-4 border rounded-lg bg-card">
+                <div key={task.id} className="bg-card rounded-lg border p-4">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0 space-y-2">
-                      <p className="font-medium text-sm leading-relaxed">
+                    <div className="min-w-0 flex-1 space-y-2">
+                      <p className="text-sm leading-relaxed font-medium">
                         {task.name || "Zadanie bez nazwy"}
                       </p>
                       <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-muted-foreground text-xs">
                           Aktualny status:
                         </span>
                         <TaskStatusIndicator
@@ -122,10 +122,10 @@ export const ModifiedTasksDialog = ({
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-2 shrink-0">
+                    <div className="flex shrink-0 items-center space-x-2">
                       <Label
                         htmlFor={`task-${task.id}`}
-                        className="text-xs text-muted-foreground cursor-pointer"
+                        className="text-muted-foreground cursor-pointer text-xs"
                       >
                         Zachowaj status
                       </Label>
@@ -142,7 +142,7 @@ export const ModifiedTasksDialog = ({
           </div>
         </div>
 
-        <DialogFooter className="flex-col sm:flex-row gap-2 pt-4 border-t">
+        <DialogFooter className="flex-col gap-2 border-t pt-4 sm:flex-row">
           <Button
             variant="outline"
             onClick={onClose}

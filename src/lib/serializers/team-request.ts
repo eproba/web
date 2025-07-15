@@ -1,6 +1,6 @@
-import { TeamRequest } from "@/types/team-request";
 import { ApiTeamResponse, teamSerializer } from "@/lib/serializers/team";
 import { ApiUserResponse, userSerializer } from "@/lib/serializers/user";
+import { TeamRequest } from "@/types/team-request";
 
 export interface ApiTeamRequestResponse {
   id: string;

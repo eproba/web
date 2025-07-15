@@ -1,17 +1,22 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Regulamin serwisu",
+};
 
 export default function TermsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-3xl font-bold text-center">
+        <CardTitle className="text-center text-3xl font-bold">
           Regulamin serwisu
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Section title="I. Pojęcia ogólne">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Regulamin</strong> – niniejszy regulamin
             </li>
@@ -41,7 +46,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="II. Postanowienia ogólne">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Regulamin, określa zasady funkcjonowania i użytkowania Serwisu
               oraz określa zakres praw i obowiązków Usługobiorców i Usługodawcy
@@ -73,7 +78,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="III. Warunki używania Serwisu">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Używanie Serwisu przez każdego z Usługobiorców jest nieodpłatne i
               dobrowolne.
@@ -90,7 +95,7 @@ export default function TermsPage() {
             </li>
             <li>
               Wymagania techniczne korzystania z Serwisu:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   urządzenie z wyświetlaczem umożliwiające wyświetlanie stron
                   internetowych,
@@ -122,7 +127,7 @@ export default function TermsPage() {
             <li>
               Zabrania się działań wykonywanych osobiście przez Usługobiorców
               lub przy użyciu oprogramowania:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   bez zgody pisemnej, dekompilacji i analizy kodu źródłowego, za
                   wyjątkiem kodu źródłowego dostępnego publicznie na podstawie
@@ -165,7 +170,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="IV. Warunki oraz zasady rejestracji">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Użytkownikami mogą być wszystkie osoby fizyczne, lecz konta
               aktywne będą mieć wyłącznie osoby zrzeszone w Związku Harcerstwa
@@ -199,7 +204,7 @@ export default function TermsPage() {
             </li>
             <li>
               Dodatkowe zasady bezpieczeństwa w zakresie korzystania z konta:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   Zabrania się Usługobiorcom zarejestrowanym w Serwisie do
                   udostępniania loginu oraz hasła do swojego konta osobom
@@ -213,7 +218,7 @@ export default function TermsPage() {
             </li>
             <li>
               Usuwanie konta:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   Każdy Usługobiorca posiadający konto w Serwisie ma możliwość
                   samodzielnego usunięcia konta z Serwisu.
@@ -234,7 +239,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="V. Przekazanie praw do materiałów umieszczanych przez użytkowników">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Usługobiorcy, umieszczając jakiekolwiek materiały w Serwisie, w
               tym teksty, zdjęcia, grafiki, nagrania wideo, dźwięki, lub inne
@@ -257,18 +262,18 @@ export default function TermsPage() {
         </Section>
 
         <Section title="VI. Warunki komunikacji i świadczenia pozostałych usług w Serwisie">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Serwis udostępnia usługi i narzędzia umożliwiające Usługobiorcom
               interakcję z Serwisem w postaci:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>Formularzu kontaktowego</li>
                 <li>Formularzu rejestracyjnym</li>
               </ul>
             </li>
             <li>
               Serwis udostępnia dane kontaktowe w postaci:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>Adresu e-mail</li>
               </ul>
             </li>
@@ -287,7 +292,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="VII. Gromadzenie danych o Usługobiorcach">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               W celu prawidłowego świadczenia usług przez Serwis, zabezpieczenia
               prawnego interesu Usługodawcy oraz w celu zapewnienia zgodności
@@ -328,7 +333,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="VIII. Prawa autorskie">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>Właścicielem Serwisu jest Usługodawca.</li>
             <li>
               Właścicielem praw autorskich do serwisu jest Antoni Czaplicki.
@@ -364,7 +369,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="IX. Zmiany Regulaminu">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Wszelkie postanowienia Regulaminu mogą być w każdej chwili
               jednostronnie zmieniane przez Usługodawcę, bez podawania przyczyn.
@@ -392,7 +397,7 @@ export default function TermsPage() {
         </Section>
 
         <Section title="X. Postanowienia końcowe">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Usługodawca dokona wszelkich starań by usługi Serwisu były
               oferowane w sposób ciągły. Nie ponosi on jednak żadnej
@@ -430,7 +435,7 @@ export default function TermsPage() {
               We wszelkich sprawach związanych z działalnością Serwisu należy
               kontaktować się z Usługodawcę korzystając z jednej z poniższych
               form kontaktu:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>Używając formularza kontaktowego dostępnego w Serwisie</li>
                 <li>Wysyłając wiadomość na adres e-mail: eproba@zhr.pl</li>
               </ul>
@@ -455,7 +460,7 @@ function Section({
 }) {
   return (
     <section className="mb-8">
-      <h2 className="text-2xl font-semibold mb-4 mt-6">{title}</h2>
+      <h2 className="mt-6 mb-4 text-2xl font-semibold">{title}</h2>
       <div className="space-y-4">{children}</div>
     </section>
   );

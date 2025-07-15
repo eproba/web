@@ -1,14 +1,15 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { ApiUserResponse } from "@/lib/serializers/user";
 import { Patrol } from "@/types/team";
 import { User } from "@/types/user";
-import { DraggableUserRow } from "./draggable-user-row";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { useEffect, useRef, useState } from "react";
-import { PatrolEditDialog } from "./patrol-edit-dialog";
-import { DropIndicator } from "./drop-indicator";
 import { PenIcon } from "lucide-react";
-import { ApiUserResponse } from "@/lib/serializers/user";
+import { useEffect, useRef, useState } from "react";
+
+import { DraggableUserRow } from "./draggable-user-row";
+import { DropIndicator } from "./drop-indicator";
+import { PatrolEditDialog } from "./patrol-edit-dialog";
 
 interface PatrolCardProps {
   patrol: Patrol;

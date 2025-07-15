@@ -1,4 +1,4 @@
-import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
+import { Progress } from "@/components/ui/progress";
 import {
   Table,
   TableBody,
@@ -8,10 +8,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Progress } from "@/components/ui/progress";
-import { TaskTableRow } from "./task-table-row";
-import { User } from "@/types/user";
 import { TemplateTask, TemplateWorksheet } from "@/types/template";
+import { User } from "@/types/user";
+import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
+
+import { TaskTableRow } from "./task-table-row";
 
 export function TaskTable({
   worksheet,
@@ -54,13 +55,13 @@ export function TaskTable({
         <TableHead className="w-8">Lp.</TableHead>
         <TableHead>Zadanie</TableHead>
         {variant !== "template" && (
-          <TableHead className="w-16 hidden sm:table-cell">Status</TableHead>
+          <TableHead className="hidden w-16 sm:table-cell">Status</TableHead>
         )}
         <TableHead className="sm:hidden"></TableHead>
         {(variant === "managed" ||
           variant === "user" ||
           variant === "review") && (
-          <TableHead className="w-16 hidden sm:table-cell">Akcje</TableHead>
+          <TableHead className="hidden w-16 sm:table-cell">Akcje</TableHead>
         )}
       </TableRow>
     </TableHeader>
@@ -114,7 +115,7 @@ export function TaskTable({
   const renderProgress = () => (
     <div className="flex items-center justify-end gap-4">
       <Progress value={completionPercentage} className="w-24" />
-      <p className="text-sm w-8">{completionPercentage || 0}%</p>
+      <p className="w-8 text-sm">{completionPercentage || 0}%</p>
     </div>
   );
 
@@ -127,7 +128,7 @@ export function TaskTable({
           <TableFooter className="bg-transparent">
             <TableRow className="hover:bg-transparent">
               <TableCell colSpan={4}>
-                <div className="flex items-center justify-end gap-4 w-full">
+                <div className="flex w-full items-center justify-end gap-4">
                   {renderProgress()}
                 </div>
               </TableCell>
@@ -142,7 +143,7 @@ export function TaskTable({
     <div className="space-y-4">
       {generalTasks.length > 0 && (
         <div>
-          <h3 className="font-medium text-lg">Zadania ogólne</h3>
+          <h3 className="text-lg font-medium">Zadania ogólne</h3>
           <Table containerClassName="sm:overflow-x-visible">
             {renderTableHeader()}
             {renderTaskList(generalTasks)}
@@ -152,7 +153,7 @@ export function TaskTable({
 
       {individualTasks.length > 0 && (
         <div>
-          <h3 className="font-medium text-lg">Zadania indywidualne</h3>
+          <h3 className="text-lg font-medium">Zadania indywidualne</h3>
           <Table containerClassName="sm:overflow-x-visible">
             {renderTableHeader()}
             {renderTaskList(individualTasks)}
@@ -161,7 +162,7 @@ export function TaskTable({
       )}
 
       {variant !== "archived" && variant !== "template" && (
-        <div className="bg-transparent border-t pt-3">{renderProgress()}</div>
+        <div className="border-t bg-transparent pt-3">{renderProgress()}</div>
       )}
     </div>
   );

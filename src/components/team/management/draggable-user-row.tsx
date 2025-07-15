@@ -1,20 +1,21 @@
-import { User } from "@/types/user";
-import { GripVerticalIcon, ListStartIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { useEffect, useRef } from "react";
-import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
-import { UserEditDialog } from "./user-edit-dialog";
-import { Organization, Patrol } from "@/types/team";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import Link from "next/link";
 import { ApiUserResponse } from "@/lib/serializers/user";
 import { cn } from "@/lib/utils";
+import { Organization, Patrol } from "@/types/team";
+import { User } from "@/types/user";
+import { draggable } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { GripVerticalIcon, ListStartIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useRef } from "react";
+
+import { UserEditDialog } from "./user-edit-dialog";
 
 interface DraggableUserRowProps {
   user: User;
@@ -84,9 +85,9 @@ export function DraggableUserRow({
       <div
         ref={ref}
         className={cn(
-          "flex items-center justify-between gap-2 p-2 rounded-md hover:bg-muted data-[state=open]:bg-muted",
-          isUpdating && "opacity-50 pointer-events-none select-none",
-          isHighlighted && "focus:ring-2 focus:ring-primary focus:outline-none",
+          "hover:bg-muted data-[state=open]:bg-muted flex items-center justify-between gap-2 rounded-md p-2",
+          isUpdating && "pointer-events-none opacity-50 select-none",
+          isHighlighted && "focus:ring-primary focus:ring-2 focus:outline-none",
         )}
         tabIndex={isHighlighted ? 0 : -1}
         onBlur={handleBlur}
@@ -98,7 +99,7 @@ export function DraggableUserRow({
               className="cursor-grab pointer-coarse:hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              <GripVerticalIcon className="h-5 w-5 text-muted-foreground" />
+              <GripVerticalIcon className="text-muted-foreground h-5 w-5" />
             </div>
           )}
           <div className="cursor-pointer">
@@ -111,7 +112,7 @@ export function DraggableUserRow({
                 !user.nickname &&
                 user.email}
             </p>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               {user.scoutRank.shortName}
               {user.instructorRank.shortName
                 ? ` · ${user.instructorRank.shortName}`

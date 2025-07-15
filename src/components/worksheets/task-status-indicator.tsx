@@ -1,10 +1,10 @@
+import { Badge } from "@/components/ui/badge";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
 import { Task, TaskStatus } from "@/types/worksheet";
 import {
   CalendarIcon,
@@ -106,7 +106,7 @@ export function TaskStatusIndicator({
       <Tooltip open={tooltip !== false ? undefined : false}>
         <TooltipTrigger>
           {format === "badges" ? (
-            <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant="secondary" className="text-md [&>svg]:size-auto">
                 <Icon size={16} />
                 {shortText}
@@ -115,14 +115,14 @@ export function TaskStatusIndicator({
                 <>
                   <Badge
                     variant="secondary"
-                    className="text-md font-normal  [&>svg]:size-auto"
+                    className="text-md font-normal [&>svg]:size-auto"
                   >
                     <CalendarIcon size={16} />
                     {task.approvalDate?.toLocaleString()}
                   </Badge>
                   <Badge
                     variant="secondary"
-                    className="text-md font-normal  [&>svg]:size-auto"
+                    className="text-md font-normal [&>svg]:size-auto"
                   >
                     <UserCheckIcon size={16} />
                     {task.approverName}

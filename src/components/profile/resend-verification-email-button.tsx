@@ -1,9 +1,10 @@
 "use client";
-import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useState } from "react";
+import { toast } from "react-toastify";
 
 export function ResendVerificationEmailButton() {
   const [isLoading, setIsLoading] = useState(false);

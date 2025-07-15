@@ -1,9 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
-import { toast } from "react-toastify";
-import { useApi } from "@/lib/api-client";
-import { Worksheet } from "@/types/worksheet";
-import { ToastMsg } from "@/lib/toast-msg";
 import {
   Dialog,
   DialogContent,
@@ -12,11 +7,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import {
   Drawer,
   DrawerClose,
@@ -28,14 +18,24 @@ import {
   DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
+import { useApi } from "@/lib/api-client";
+import { ToastMsg } from "@/lib/toast-msg";
+import { Worksheet } from "@/types/worksheet";
+import { AnimatePresence, motion } from "framer-motion";
+import {
   CheckIcon,
   EditIcon,
   StickyNoteIcon,
   TrashIcon,
   XIcon,
 } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useEffect, useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 interface WorksheetNotesDialogProps {
   worksheet: Worksheet;
@@ -179,7 +179,7 @@ export function WorksheetNotesDialog({
         >
           <div className="flex items-center justify-between p-4 pb-2">
             <div className="flex items-center gap-2">
-              <StickyNoteIcon className="size-4 text-muted-foreground" />
+              <StickyNoteIcon className="text-muted-foreground size-4" />
               <h3 className="text-sm font-medium">Notatka do próby</h3>
             </div>
             <div className="flex gap-1">
@@ -190,7 +190,7 @@ export function WorksheetNotesDialog({
                 disabled={isLoading}
                 className="h-6 w-6 p-0"
               >
-                <EditIcon className="w-3 h-3" />
+                <EditIcon className="h-3 w-3" />
               </Button>
               <Dialog
                 open={isDeleteDialogOpen}
@@ -203,7 +203,7 @@ export function WorksheetNotesDialog({
                     disabled={isLoading}
                     className="h-6 w-6 p-0"
                   >
-                    <TrashIcon className="w-3 h-3" />
+                    <TrashIcon className="h-3 w-3" />
                   </Button>
                 </DialogTrigger>
                 <DialogContent>
@@ -235,7 +235,7 @@ export function WorksheetNotesDialog({
             </div>
           </div>
           <div className="px-4 pb-4">
-            <p className="text-sm text-muted-foreground whitespace-pre-wrap max-h-40 overflow-y-auto">
+            <p className="text-muted-foreground max-h-40 overflow-y-auto text-sm whitespace-pre-wrap">
               {worksheet.notes}
             </p>
           </div>
@@ -257,12 +257,12 @@ export function WorksheetNotesDialog({
           className="overflow-hidden"
         >
           <div className="flex items-center gap-2 p-4 pb-2">
-            <StickyNoteIcon className="size-4 text-muted-foreground" />
+            <StickyNoteIcon className="text-muted-foreground size-4" />
             <h3 className="text-sm font-medium">
               {worksheet.notes ? "Edytuj notatkę" : "Dodaj notatkę"}
             </h3>
           </div>
-          <div className="px-4 pb-4 space-y-3">
+          <div className="space-y-3 px-4 pb-4">
             <Textarea
               ref={textareaRef}
               value={editValue}
@@ -278,7 +278,7 @@ export function WorksheetNotesDialog({
                 onClick={handleCancelEditing}
                 disabled={isLoading}
               >
-                <XIcon className="w-3 h-3 mr-1" />
+                <XIcon className="mr-1 h-3 w-3" />
                 Anuluj
               </Button>
               <Button
@@ -286,7 +286,7 @@ export function WorksheetNotesDialog({
                 onClick={handleSaveNote}
                 disabled={isLoading || editValue.trim() === ""}
               >
-                <CheckIcon className="w-3 h-3 mr-1" />
+                <CheckIcon className="mr-1 h-3 w-3" />
                 Zapisz
               </Button>
             </div>

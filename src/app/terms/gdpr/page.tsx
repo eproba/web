@@ -1,11 +1,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Obowiązek informacyjny RODO",
+};
 
 export default function GDPRPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-3xl font-bold text-center">
+        <CardTitle className="text-center text-3xl font-bold">
           Obowiązek informacyjny RODO
         </CardTitle>
       </CardHeader>
@@ -40,7 +45,7 @@ export default function GDPRPage() {
             Z Administratorem można skontaktować się w jeden z poniższych
             sposobów:
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>
                 Adres poczty elektronicznej Inspektora Ochrony Danych
@@ -89,7 +94,7 @@ export default function GDPRPage() {
 
         <Section title="Jak można skontaktować się z Inspektorem Danych Osobowych?">
           <p>Kontakt z Inspektorem Danych Osobowych możliwy jest poprzez:</p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Adres e-mail</strong>: iod@zhr.pl
             </li>
@@ -103,7 +108,7 @@ export default function GDPRPage() {
 
         <Section title="Skąd pozyskujemy dane osobowe i jakie są ich źródła?">
           <p>Dane pozyskiwane są z następujących źródeł:</p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>Od osób, których dane dotyczą</li>
             <li>
               W przypadku rejestracji przy użyciu portali społecznościowych, za
@@ -140,10 +145,10 @@ export default function GDPRPage() {
             Dane osobowe dobrowolnie podane przez Użytkowników są przetwarzane w
             jednym z następujących celów:
           </p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Realizacji usług elektronicznych:
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   Usługi rejestracji i utrzymania konta Użytkownika w Serwisie i
                   funkcjonalności z nim związanych
@@ -160,14 +165,14 @@ export default function GDPRPage() {
 
         <Section title="Jakie są podstawy prawne przetwarzania danych?">
           <p>Serwis gromadzi i przetwarza dane Użytkowników na podstawie:</p>
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z
               dnia 27 kwietnia 2016 r. w sprawie ochrony osób fizycznych w
               związku z przetwarzaniem danych osobowych i w sprawie swobodnego
               przepływu takich danych oraz uchylenia dyrektywy 95/46/WE (ogólne
               rozporządzenie o ochronie danych)
-              <ul className="list-disc list-inside ml-6 space-y-2">
+              <ul className="ml-6 list-inside list-disc space-y-2">
                 <li>
                   art. 6 ust. 1 lit. a
                   <br />
@@ -205,7 +210,7 @@ export default function GDPRPage() {
         </Section>
 
         <Section title="Jaki jest prawnie uzasadniony interes realizowany przez Administratora?">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               W celu ewentualnego ustalenia, dochodzenia lub obrony przed
               roszczeniami – podstawą prawną przetwarzania jest nasz uzasadniony
@@ -265,7 +270,7 @@ export default function GDPRPage() {
         </Section>
 
         <Section title="Jakie mają Państwo prawa związane z przetwarzaniem danych osobowych?">
-          <ul className="list-disc list-inside space-y-2">
+          <ul className="list-inside list-disc space-y-2">
             <li>
               <strong>Prawo dostępu do danych osobowych</strong>
               <br />
@@ -338,7 +343,7 @@ function Section({
 }) {
   return (
     <section className="mb-8">
-      <h2 className="text-2xl font-semibold mb-4 mt-6">{title}</h2>
+      <h2 className="mt-6 mb-4 text-2xl font-semibold">{title}</h2>
       <div className="space-y-4">{children}</div>
     </section>
   );

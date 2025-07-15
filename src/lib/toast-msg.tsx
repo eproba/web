@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { ApiError } from "@/lib/api";
+import Link from "next/link";
 
 export function ToastMsg({
   data,

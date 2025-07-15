@@ -1,5 +1,10 @@
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
 import { fetchArchivedWorksheets, fetchUserTeam } from "@/lib/server-api";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Archiwum prób",
+};
 
 export default async function ArchivedWorksheets() {
   const { worksheets, error: worksheetsError } =
