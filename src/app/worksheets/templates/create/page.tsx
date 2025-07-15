@@ -20,8 +20,8 @@ const TemplateCreatePage = async ({
   }
 
   const initialData = {
-    organization: forOrganization ? user?.organization : undefined,
-  };
+    scope: forOrganization ? "organization" : "team",
+  } as const;
 
   return (
     <TemplateEditor

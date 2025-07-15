@@ -20,6 +20,7 @@ import { User } from "@/types/user";
 import { TemplateTask } from "@/types/template";
 import { motion } from "framer-motion";
 import { InfoIcon } from "lucide-react";
+import { RequiredFunctionLevel } from "@/lib/const";
 
 export function TaskTableRow({
   task,
@@ -28,6 +29,7 @@ export function TaskTableRow({
   worksheetId,
   updateTask,
   currentUser,
+  supervisorId,
 }:
   | {
       task: Task;
@@ -36,6 +38,7 @@ export function TaskTableRow({
       worksheetId: string;
       updateTask?: (task: Task) => void;
       currentUser?: User;
+      supervisorId?: string | null;
     }
   | {
       task: TemplateTask;
@@ -44,6 +47,7 @@ export function TaskTableRow({
       worksheetId: string;
       updateTask?: (task: Task) => void;
       currentUser?: User;
+      supervisorId?: never;
     }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -101,16 +105,20 @@ export function TaskTableRow({
         )}
       >
         <TableCell className="font-medium align-text-top w-8 relative">
-          {["managed", "review", "archived"].includes(variant) && (
-            <div className="absolute -left-8 top-0 py-0.5 z-50 pointer-events-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible has-[[data-state=open]]:opacity-100 has-[[data-state=open]]:visible transition-all duration-300 ease-out transform translate-x-2 group-hover:translate-x-0 has-[[data-state=open]]:translate-x-0">
-              <TaskNotes
-                task={task as Task}
-                worksheetId={worksheetId}
-                updateTask={updateTask!}
-                format="overlay"
-              />
-            </div>
-          )}
+          {["managed", "review", "archived"].includes(variant) &&
+            currentUser &&
+            (currentUser.function.numberValue >=
+              RequiredFunctionLevel.WORKSHEET_NOTES_ACCESS ||
+              currentUser.id === supervisorId) && (
+              <div className="absolute -left-8 top-0 py-0.5 z-50 pointer-events-auto opacity-0 invisible group-hover:opacity-100 group-hover:visible has-[[data-state=open]]:opacity-100 has-[[data-state=open]]:visible transition-all duration-300 ease-out transform translate-x-2 group-hover:translate-x-0 has-[[data-state=open]]:translate-x-0">
+                <TaskNotes
+                  task={task as Task}
+                  worksheetId={worksheetId}
+                  updateTask={updateTask!}
+                  format="overlay"
+                />
+              </div>
+            )}
           {index + 1}
         </TableCell>
         <TableCell>
@@ -201,15 +209,19 @@ export function TaskTableRow({
                 format="badges"
                 tooltip={false}
               />
-              {["managed", "review", "archived"].includes(variant) && (
-                <TaskNotes
-                  task={task}
-                  worksheetId={worksheetId}
-                  updateTask={updateTask!}
-                  format="mobile"
-                  className="w-full"
-                />
-              )}
+              {["managed", "review", "archived"].includes(variant) &&
+                currentUser &&
+                (currentUser.function.numberValue >=
+                  RequiredFunctionLevel.WORKSHEET_NOTES_ACCESS ||
+                  currentUser.id === supervisorId) && (
+                  <TaskNotes
+                    task={task}
+                    worksheetId={worksheetId}
+                    updateTask={updateTask!}
+                    format="mobile"
+                    className="w-full"
+                  />
+                )}
             </motion.div>
           )}
           {(variant === "managed" ||

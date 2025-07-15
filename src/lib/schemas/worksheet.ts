@@ -28,8 +28,7 @@ export const worksheetWithTasksSchema = z.object({
     .max(500, { error: "Opis nie może przekraczać 500 znaków" }),
   supervisor: z.string().nullable().optional(),
   userId: z.string().nullable().optional(),
-  teamId: z.string().nullable().optional(),
-  organization: z.number().nullable().optional(),
+  scope: z.enum(["team", "organization"]).optional(),
   tasks: z.array(taskSchema).max(100, { error: "Maksymalnie 100 zadań" }),
   templateNotes: z
     .string()

@@ -1,4 +1,3 @@
-"use client";
 import { useEffect, useState } from "react";
 import {
   Tooltip,
@@ -42,6 +41,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { WorksheetNotesDialog } from "@/components/worksheets/worksheet-notes-dialog";
+import { User } from "@/types/user";
+import { RequiredFunctionLevel } from "@/lib/const";
 
 type WorksheetAction = {
   id: string;
@@ -50,6 +51,7 @@ type WorksheetAction = {
   handler?: () => void;
   href?: string;
   variant: ("managed" | "archived" | "user" | "review")[];
+  userFilter?: (user: User) => boolean;
   renderContent?: (action: WorksheetAction, baseUrl: string) => React.ReactNode;
 };
 
@@ -58,11 +60,13 @@ export function WorksheetActions({
   variant,
   removeWorksheet,
   updateWorksheet,
+  currentUser,
 }: {
   worksheet: Worksheet;
   variant: "user" | "managed" | "shared" | "archived" | "review";
   removeWorksheet?: (worksheetId: string) => void;
   updateWorksheet?: (worksheet: Worksheet) => void;
+  currentUser?: User;
 }) {
   const router = useRouter();
   const { apiClient } = useApi();
@@ -159,6 +163,10 @@ export function WorksheetActions({
       label: "Notatka",
       icon: StickyNoteIcon,
       variant: ["managed", "archived", "user"],
+      userFilter: (user) =>
+        user.function.numberValue >=
+          RequiredFunctionLevel.WORKSHEET_NOTES_ACCESS ||
+        user.id === worksheet.supervisor,
       renderContent: (action) => (
         <Tooltip>
           <WorksheetNotesDialog
@@ -189,6 +197,10 @@ export function WorksheetActions({
       icon: SquarePenIcon,
       href: `/worksheets/${worksheet.id}/edit`,
       variant: ["managed"],
+      userFilter: (user) =>
+        user.function.numberValue >= worksheet.user.function.numberValue ||
+        user.function.numberValue >= 4 ||
+        user.id === worksheet.supervisor,
     },
     {
       id: "share",
@@ -213,6 +225,10 @@ export function WorksheetActions({
         ? handleUnarchiveWorksheet
         : handleArchiveWorksheet,
       variant: ["managed", "archived"],
+      userFilter: (user) =>
+        user.function.numberValue >= worksheet.user.function.numberValue ||
+        user.function.numberValue >= 4 ||
+        user.id === worksheet.supervisor,
     },
     {
       id: "delete",
@@ -220,6 +236,10 @@ export function WorksheetActions({
       icon: TrashIcon,
       handler: () => setShowDeleteAlert(true),
       variant: ["managed", "archived"],
+      userFilter: (user) =>
+        user.function.numberValue >= worksheet.user.function.numberValue ||
+        user.function.numberValue >= 4 ||
+        user.id === worksheet.supervisor,
     },
     {
       id: "open-in-manage",
@@ -230,10 +250,12 @@ export function WorksheetActions({
     },
   ];
 
-  const filteredActions = worksheetActions.filter((action) =>
-    action.variant.includes(
-      variant as "managed" | "archived" | "user" | "review",
-    ),
+  const filteredActions = worksheetActions.filter(
+    (action) =>
+      action.variant.includes(
+        variant as "managed" | "archived" | "user" | "review",
+      ) &&
+      (!action.userFilter || (currentUser && action.userFilter(currentUser))),
   );
 
   const renderActionIcon = (action: WorksheetAction) => {

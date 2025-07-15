@@ -17,10 +17,10 @@ export default async function TemplatesPage() {
   }
 
   const teamTemplates = templates!.filter(
-    (worksheet) => worksheet.teamId !== null,
+    (worksheet) => worksheet.scope === "team",
   );
   const organizationTemplates = templates!.filter(
-    (worksheet) => worksheet.organization !== null,
+    (worksheet) => worksheet.scope === "organization",
   );
 
   return (

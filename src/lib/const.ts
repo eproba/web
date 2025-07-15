@@ -31,4 +31,9 @@ export const RequiredFunctionLevel = {
    * Permission level needed for individual task management
    */
   INDIVIDUAL_TASKS_MANAGEMENT: 3,
+
+  /**
+   * Permission level needed for accessing and modifying worksheet notes
+   */
+  WORKSHEET_NOTES_ACCESS: 4,
 };

@@ -1,5 +1,3 @@
-import { Organization } from "@/types/team";
-
 export interface TemplateTask {
   id: string;
   name: string;
@@ -12,8 +10,7 @@ export interface TemplateTask {
 export interface TemplateWorksheet {
   id: string;
   name: string;
-  teamId: string | null;
-  organization: Organization | null;
+  scope: "team" | "organization";
   description: string;
   tasks: TemplateTask[];
   updatedAt: Date;

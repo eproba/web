@@ -11,20 +11,17 @@ import { useApi } from "@/lib/api-client";
 import { v4 as uuid } from "uuid";
 import { ToastMsg } from "@/lib/toast-msg";
 import { useRouter } from "nextjs-toploader/app";
-import { User } from "@/types/user";
 
 interface UseTemplateFormProps {
   mode: "create" | "edit";
   redirectTo: string;
   initialData?: Partial<WorksheetWithTasks>;
-  currentUser: User;
 }
 
 export const useTemplateForm = ({
   mode,
   redirectTo,
   initialData,
-  currentUser,
 }: UseTemplateFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { apiClient } = useApi();
@@ -45,10 +42,7 @@ export const useTemplateForm = ({
   const defaultValues: WorksheetWithTasks = {
     name: initialData?.name || "",
     description: initialData?.description || "",
-    teamId:
-      initialData?.teamId ||
-      (initialData?.organization == null ? currentUser.team : undefined),
-    organization: initialData?.organization,
+    scope: initialData?.scope || "team",
     tasks:
       initialData?.tasks && initialData.tasks.length > 0
         ? initialData.tasks
@@ -83,7 +77,7 @@ export const useTemplateForm = ({
         return;
       }
 
-      if (!data.teamId && data.organization === null) {
+      if (!data.scope) {
         toast.error(
           "Template must be associated with either a team or an organization",
         );
@@ -93,9 +87,7 @@ export const useTemplateForm = ({
       const templateData = {
         name: data.name.trim(),
         description: data.description.trim(),
-        ...(data.teamId || !currentUser.isStaff
-          ? { team: data.teamId }
-          : { organization: data.organization }),
+        scope: data.scope,
         tasks: validTasks.map((task) => ({
           id: task.id,
           task: task.name.trim(),
@@ -124,12 +116,7 @@ export const useTemplateForm = ({
         formData.append("name", data.name.trim());
         formData.append("description", data.description.trim());
 
-        if (data.teamId) {
-          formData.append("team", data.teamId);
-        }
-        if (data.organization !== null && data.organization !== undefined) {
-          formData.append("organization", data.organization.toString());
-        }
+        formData.append("scope", data.scope);
 
         // Add tasks as JSON string (since it's complex data)
         formData.append("tasks", JSON.stringify(templateData.tasks));

@@ -1,5 +1,4 @@
 import { TemplateTask, TemplateWorksheet } from "@/types/template";
-import { Organization } from "@/types/team";
 
 // Helper function to transform image URLs for SVG files
 // This is because files that are fetched from the internal server
@@ -36,8 +35,7 @@ export interface ApiTemplateWorksheetResponse {
   id: string;
   name: string;
   description: string;
-  team: string | null;
-  organization: Organization | null;
+  scope: "team" | "organization";
   tasks: ApiTemplateTaskResponse[];
   updated_at: string;
   created_at: string;
@@ -64,8 +62,7 @@ export function templateSerializer(
 ): TemplateWorksheet {
   return {
     ...templateMetadataSerializer(apiResponse),
-    teamId: apiResponse.team,
-    organization: apiResponse.organization as Organization,
+    scope: apiResponse.scope,
     tasks: apiResponse.tasks.map(templateTaskSerializer),
     updatedAt: new Date(apiResponse.updated_at),
     createdAt: new Date(apiResponse.created_at),

@@ -31,7 +31,6 @@ export const TemplateEditor = ({
     mode,
     redirectTo,
     initialData,
-    currentUser,
   });
 
   // Initialize task management with a custom hook

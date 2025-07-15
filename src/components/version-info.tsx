@@ -4,10 +4,10 @@ import { CheckCircleIcon, ExternalLinkIcon, XCircleIcon } from "lucide-react";
 import * as semver from "semver";
 import { API_URL } from "@/lib/api";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 
 interface VersionInfoProps {
@@ -23,7 +23,6 @@ export function VersionInfo({
   serverApiVersion,
   clientApiVersion,
 }: VersionInfoProps) {
-  // Compare API versions
   const apiComparison = semver.compare(serverApiVersion, clientApiVersion);
   const apiIsCompatible =
     semver.major(serverApiVersion) === semver.major(clientApiVersion);
@@ -68,8 +67,8 @@ export function VersionInfo({
             <h4 className="font-semibold text-sm text-muted-foreground">
               Wersje API
             </h4>
-            <Tooltip>
-              <TooltipTrigger>
+            <Popover>
+              <PopoverTrigger>
                 <Badge
                   variant="outline"
                   className="text-base font-mono flex items-center gap-1"
@@ -98,8 +97,8 @@ export function VersionInfo({
                     </>
                   )}
                 </Badge>
-              </TooltipTrigger>
-              <TooltipContent>
+              </PopoverTrigger>
+              <PopoverContent className="text-sm">
                 <p>Wersja API klienta: v{clientApiVersion}</p>
                 <p>Wersja API serwera: v{serverApiVersion}</p>
                 {apiComparison < 0 && (
@@ -119,8 +118,8 @@ export function VersionInfo({
                     Wersje API nie są kompatybilne!
                   </p>
                 )}
-              </TooltipContent>
-            </Tooltip>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </CardContent>

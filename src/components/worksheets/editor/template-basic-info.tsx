@@ -19,37 +19,21 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
   form,
   currentUser,
 }) => {
-  const selectedType = form.watch("teamId")
-    ? "team"
-    : form.watch("organization") !== null
-      ? "organization"
-      : "team";
-
-  const handleTypeChange = (value: string) => {
-    if (value === "team") {
-      form.setValue("teamId", currentUser.team);
-      form.setValue("organization", null);
-    } else if (value === "organization") {
-      form.setValue("teamId", null);
-      form.setValue("organization", currentUser.organization);
-    }
-  };
-
   return (
     <Card>
       <CardContent>
         <div className="space-y-4">
           <FormField
             control={form.control}
-            name="teamId"
-            render={() => (
+            name="scope"
+            render={({ field }) => (
               <FormItem>
                 <label className="text-sm font-medium">
                   Dla kogo jest ten szablon? *
                 </label>
                 <RadioGroup
-                  value={selectedType}
-                  onValueChange={handleTypeChange}
+                  value={field.value}
+                  onValueChange={field.onChange}
                   className="flex flex-col space-y-2"
                 >
                   <div className="flex items-center space-x-2">

@@ -299,7 +299,12 @@ export function FunctionsChart({ statistics }: ChartsProps) {
               height={40}
               interval={0}
             />
-            <YAxis tickLine={false} axisLine={false} tickMargin={8} />
+            <YAxis
+              tickLine={false}
+              axisLine={false}
+              tickMargin={8}
+              allowDecimals={false}
+            />
             <ChartTooltip content={ChartTooltipContent} />
             {allRanks.map((rank) => (
               <Bar

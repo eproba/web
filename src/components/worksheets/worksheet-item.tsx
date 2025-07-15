@@ -41,7 +41,7 @@ export function WorksheetItem({
             )}
             <div className="self-center">
               {worksheet.name}
-              {(variant === "managed" || variant === "archived") && (
+              {variant !== "user" && (
                 <a
                   href={`/profile/${worksheet.user.id}`}
                   className="text-primary"
@@ -58,6 +58,7 @@ export function WorksheetItem({
             variant={variant}
             removeWorksheet={deleteWorksheet}
             updateWorksheet={updateWorksheet}
+            currentUser={currentUser}
           />
         </div>
         {worksheet.description && (

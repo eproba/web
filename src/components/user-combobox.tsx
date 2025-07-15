@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  CheckIcon,
-  ChevronsUpDownIcon,
-  SearchIcon,
-  UserIcon,
-} from "lucide-react";
+import { CheckIcon, ChevronsUpDownIcon, UserIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -141,13 +136,11 @@ export function UserCombobox({
         align="start"
       >
         <Command shouldFilter={false}>
-          <div className="flex items-center border-b px-3 [&>[data-slot=command-input-wrapper]]:w-full">
-            <SearchIcon className="mr-2 size-4 shrink-0 opacity-50" />
+          <div className="flex items-center [&>[data-slot=command-input-wrapper]]:w-full">
             <CommandInput
               placeholder="Wyszukaj użytkownika..."
               value={searchQuery}
               onValueChange={setSearchQuery}
-              className="border-0 focus:ring-0"
             />
           </div>
           <CommandList>

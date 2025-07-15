@@ -93,6 +93,7 @@ export function TaskTable({
                 worksheetId={worksheet.id}
                 updateTask={updateTask}
                 currentUser={currentUser}
+                supervisorId={worksheet.supervisor}
               />
             );
           }
