@@ -29,6 +29,7 @@ const ALWAYS_ACCESSIBLE = [
   "^/manifest\\.webmanifest$", // PWA manifest
   "^/robots\\.txt$", // Robots.txt
   "^/sitemap\\.xml$", // Sitemap
+  "^/.well-known/.*", // Well-known URIs
   ".*\\.(png|jpg|jpeg|gif|svg|ico|css|js|webp|woff|woff2|ttf|eot)$", // Static file extensions
 ];
 
