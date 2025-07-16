@@ -23,6 +23,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { API_URL } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { TemplateWorksheet } from "@/types/template";
@@ -87,7 +88,7 @@ export function TemplateActions({
       id: "print",
       label: "Drukuj",
       icon: PrinterIcon,
-      href: `${process.env.NEXT_PUBLIC_SERVER_URL}/worksheets/templates/${template.id}/print`,
+      href: `${API_URL}/templates/${template.id}/pdf/`,
     },
     {
       id: "edit",

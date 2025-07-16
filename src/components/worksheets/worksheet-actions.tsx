@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { WorksheetNotesDialog } from "@/components/worksheets/worksheet-notes-dialog";
+import { API_URL } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { ToastMsg } from "@/lib/toast-msg";
@@ -213,7 +214,7 @@ export function WorksheetActions({
       id: "print",
       label: "Drukuj",
       icon: PrinterIcon,
-      href: `${process.env.NEXT_PUBLIC_SERVER_URL}/worksheets/${worksheet.id}/print`,
+      href: `${API_URL}/worksheets/${worksheet.id}/pdf/`,
       variant: ["managed", "archived", "user"],
     },
     {
