@@ -1,5 +1,9 @@
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
-import { fetchArchivedWorksheets, fetchUserTeam } from "@/lib/server-api";
+import {
+  fetchArchivedWorksheets,
+  fetchCurrentUser,
+  fetchUserTeam,
+} from "@/lib/server-api";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -18,6 +22,11 @@ export default async function ArchivedWorksheets() {
     return teamsError;
   }
 
+  const { user, error: userError } = await fetchCurrentUser();
+  if (userError) {
+    return userError;
+  }
+
   const patrols =
     team?.patrols?.sort((a, b) => a.name.localeCompare(b.name)) ?? [];
 
@@ -28,6 +37,7 @@ export default async function ArchivedWorksheets() {
         variant="archived"
         showFilters={true}
         patrols={patrols}
+        currentUser={user!}
       />
     </div>
   );

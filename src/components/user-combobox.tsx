@@ -26,18 +26,20 @@ interface UserComboboxProps {
   value?: string;
   onValueChange?: (value: string) => void;
   placeholder?: string;
-  searchEndpoint?: string;
   disabled?: boolean;
   className?: string;
+  allowsOutsideUserTeamSearch?: boolean;
+  excludeUserIds?: string[];
 }
 
 export function UserCombobox({
   value,
   onValueChange,
   placeholder = "Wybierz użytkownika...",
-  searchEndpoint = "/users/search/",
   disabled = false,
   className,
+  allowsOutsideUserTeamSearch = false,
+  excludeUserIds = [],
 }: UserComboboxProps) {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<PublicUser[]>([]);
@@ -53,10 +55,16 @@ export function UserCombobox({
 
     try {
       const response = await apiClient(
-        `${searchEndpoint}?q=${encodeURIComponent(query)}&outside_team=${searchOutsideTeam}`,
+        `/users/search/?q=${encodeURIComponent(query)}&outside_team=${searchOutsideTeam}`,
       );
-      const data = (await response.json()).map(publicUserSerializer);
-      setUsers(data);
+      const data = (await response.json()).map(
+        publicUserSerializer,
+      ) as PublicUser[];
+      setUsers(
+        data.filter((user) => {
+          return !excludeUserIds.includes(user.id);
+        }),
+      );
     } catch (error) {
       console.error("Failed to search users:", error);
       setUsers([]);
@@ -148,7 +156,7 @@ export function UserCombobox({
               <div className="text-muted-foreground p-4 text-center text-sm">
                 Wyszukiwanie...
               </div>
-            ) : searchQuery.trim().length < 3 ? (
+            ) : searchQuery.trim().length < 3 && !selectedUser ? (
               <div className="text-muted-foreground p-4 text-center text-sm">
                 Wpisz co najmniej 3 znaki aby wyszukać
               </div>
@@ -189,18 +197,20 @@ export function UserCombobox({
                 ))}
               </CommandGroup>
             )}
-            <div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground w-full justify-start text-xs"
-                onClick={() => setSearchOutsideTeam(!searchOutsideTeam)}
-              >
-                {!searchOutsideTeam
-                  ? "Szukaj również poza drużyną"
-                  : "Szukaj tylko w drużynie"}
-              </Button>
-            </div>
+            {allowsOutsideUserTeamSearch && (
+              <div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground w-full justify-start text-xs"
+                  onClick={() => setSearchOutsideTeam(!searchOutsideTeam)}
+                >
+                  {!searchOutsideTeam
+                    ? "Szukaj również poza twoją drużyną"
+                    : "Szukaj tylko w twojej drużynie"}
+                </Button>
+              </div>
+            )}
           </CommandList>
         </Command>
       </PopoverContent>

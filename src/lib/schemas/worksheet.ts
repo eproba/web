@@ -63,6 +63,16 @@ export const worksheetWithTasksSchema = z.object({
         error: "Rozmiar pliku nie może przekraczać 5MB",
       },
     ),
+  finalChallenge: z
+    .string()
+    .max(200, { error: "Próba końcowa nie może przekraczać 200 znaków" })
+    .optional(),
+  finalChallengeDescription: z
+    .string()
+    .max(2000, {
+      error: "Opis próby końcowej nie może przekraczać 2000 znaków",
+    })
+    .optional(),
 });
 
 export type Task = z.infer<typeof taskSchema>;

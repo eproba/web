@@ -34,6 +34,8 @@ export interface ApiWorksheetResponse {
     description: string;
     image?: string | null;
   } | null;
+  final_challenge: string;
+  final_challenge_description: string;
 }
 
 export function worksheetSerializer(
@@ -59,6 +61,8 @@ export function worksheetSerializer(
     template: apiResponse.template
       ? templateMetadataSerializer(apiResponse.template)
       : null,
+    finalChallenge: apiResponse.final_challenge,
+    finalChallengeDescription: apiResponse.final_challenge_description,
   };
 }
 

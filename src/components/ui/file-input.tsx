@@ -2,6 +2,7 @@ import { cn } from "@/lib/utils";
 import { ImageIcon, UploadIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
+import { useState } from "react";
 
 import { Button } from "./button";
 
@@ -30,8 +31,8 @@ const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
     },
     ref,
   ) => {
-    const [dragActive, setDragActive] = React.useState(false);
-    const [previewUrl, setPreviewUrl] = React.useState<string | null>(null);
+    const [dragActive, setDragActive] = useState(false);
+    const [previewUrl, setPreviewUrl] = useState<string | null>(null);
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     React.useImperativeHandle(ref, () => inputRef.current as HTMLInputElement);

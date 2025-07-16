@@ -31,7 +31,7 @@ export const TaskControls: React.FC<TaskControlsProps> = ({
               <InfoIcon className="text-muted-foreground size-4" />
             </TooltipTrigger>
             <TooltipContent className="max-w-xs">
-              Dodaj zadania do swojej próby. Możesz je przeciągać, aby zmienić
+              Dodaj zadania do tej próby. Możesz je przeciągać, aby zmienić
               kolejność i kategorie.
             </TooltipContent>
           </Tooltip>

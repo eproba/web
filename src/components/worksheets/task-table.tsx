@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import {
   Table,
@@ -8,9 +9,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { useApi } from "@/lib/api-client";
+import { ToastMsg } from "@/lib/toast-msg";
 import { TemplateTask, TemplateWorksheet } from "@/types/template";
 import { User } from "@/types/user";
 import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
+import { ArchiveIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import { TaskTableRow } from "./task-table-row";
 
@@ -18,20 +24,25 @@ export function TaskTable({
   worksheet,
   variant,
   updateTask,
+  removeWorksheet,
   currentUser,
 }:
   | {
       worksheet: Worksheet;
       variant: "user" | "managed" | "shared" | "archived" | "review";
       updateTask?: (task: Task) => void;
+      removeWorksheet?: (worksheetId: string) => void;
       currentUser?: User;
     }
   | {
       worksheet: TemplateWorksheet;
       variant: "template";
       updateTask?: (task: Task) => void;
+      removeWorksheet?: (worksheetId: string) => void;
       currentUser?: User;
     }) {
+  const router = useRouter();
+  const { apiClient } = useApi();
   const completionPercentage = Math.round(
     (worksheet.tasks.filter(
       (task) => "status" in task && task.status === TaskStatus.APPROVED,
@@ -48,6 +59,33 @@ export function TaskTable({
   );
   const hasBothCategories =
     individualTasks.length > 0 && generalTasks.length > 0;
+  const hasFinalChallenge =
+    variant !== "template" &&
+    (worksheet.finalChallenge || worksheet.finalChallengeDescription);
+
+  async function handleArchiveWorksheet() {
+    try {
+      await apiClient(`/worksheets/${worksheet.id}/`, {
+        method: "PATCH",
+        body: JSON.stringify({ is_archived: true }),
+      });
+      toast.success("Próba została przeniesiona do archiwum");
+      if (removeWorksheet) {
+        removeWorksheet(worksheet.id);
+      } else {
+        router.refresh();
+      }
+    } catch (error) {
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie można przenieść próby do archiwum",
+            description: error as Error,
+          },
+        }),
+      );
+    }
+  }
 
   const renderTableHeader = () => (
     <TableHeader>
@@ -119,7 +157,7 @@ export function TaskTable({
     </div>
   );
 
-  if (!hasBothCategories) {
+  if (!hasBothCategories && !hasFinalChallenge) {
     return (
       <Table containerClassName="sm:overflow-x-visible">
         {renderTableHeader()}
@@ -128,7 +166,17 @@ export function TaskTable({
           <TableFooter className="bg-transparent">
             <TableRow className="hover:bg-transparent">
               <TableCell colSpan={4}>
-                <div className="flex w-full items-center justify-end gap-4">
+                <div className="flex items-center justify-end gap-4">
+                  {completionPercentage === 100 && variant === "managed" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleArchiveWorksheet}
+                    >
+                      <ArchiveIcon className="size-4" />
+                      Archiwizuj próbę
+                    </Button>
+                  )}
                   {renderProgress()}
                 </div>
               </TableCell>
@@ -143,7 +191,9 @@ export function TaskTable({
     <div className="space-y-4">
       {generalTasks.length > 0 && (
         <div>
-          <h3 className="text-lg font-medium">Zadania ogólne</h3>
+          {hasBothCategories && (
+            <h3 className="text-lg font-medium">Zadania ogólne</h3>
+          )}
           <Table containerClassName="sm:overflow-x-visible">
             {renderTableHeader()}
             {renderTaskList(generalTasks)}
@@ -161,8 +211,38 @@ export function TaskTable({
         </div>
       )}
 
+      {hasFinalChallenge && (
+        <div>
+          <h3 className="text-lg font-medium">Próba końcowa</h3>
+          <Table containerClassName="sm:overflow-x-visible">
+            <TableBody>
+              <TableRow className="hover:bg-muted/10">
+                <TableCell colSpan={4}>
+                  {worksheet.finalChallenge && (
+                    <p className={`text-wrap`}>{worksheet.finalChallenge}</p>
+                  )}
+                  {worksheet.finalChallengeDescription && (
+                    <p className="text-muted-foreground line-clamp-3 text-sm text-wrap whitespace-pre-wrap sm:line-clamp-none">
+                      {worksheet.finalChallengeDescription}
+                    </p>
+                  )}
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </div>
+      )}
+
       {variant !== "archived" && variant !== "template" && (
-        <div className="border-t bg-transparent pt-3">{renderProgress()}</div>
+        <div className="flex items-center justify-end gap-4 border-t bg-transparent pt-3">
+          {completionPercentage === 100 && variant === "managed" && (
+            <Button variant="ghost" size="sm" onClick={handleArchiveWorksheet}>
+              <ArchiveIcon className="size-4" />
+              Archiwizuj próbę
+            </Button>
+          )}
+          {renderProgress()}
+        </div>
       )}
     </div>
   );

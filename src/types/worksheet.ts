@@ -39,4 +39,6 @@ export interface Worksheet {
     TemplateWorksheet,
     "id" | "name" | "description" | "image"
   > | null;
+  finalChallenge: string;
+  finalChallengeDescription: string;
 }

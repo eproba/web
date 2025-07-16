@@ -18,6 +18,11 @@ export const RequiredFunctionLevel = {
   TASK_SUGGESTIONS: 3,
 
   /**
+   * Permission level needed for final challenge suggestions
+   */
+  FINAL_CHALLENGE_SUGGESTIONS: 3,
+
+  /**
    * Permission level needed for worksheet management
    */
   WORKSHEET_MANAGEMENT: 2,
@@ -36,4 +41,9 @@ export const RequiredFunctionLevel = {
    * Permission level needed for accessing and modifying worksheet notes
    */
   WORKSHEET_NOTES_ACCESS: 4,
+
+  /**
+   * Permission level needed for creating worksheets for users outside the team
+   */
+  OUTSIDE_TEAM_WORKSHEET_CREATION: 3,
 };

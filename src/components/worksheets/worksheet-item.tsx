@@ -87,6 +87,7 @@ export function WorksheetItem({
         worksheet={worksheet}
         variant={variant}
         updateTask={(task) => updateTask?.(worksheet.id, task)}
+        removeWorksheet={deleteWorksheet}
         currentUser={currentUser}
       />
     </div>

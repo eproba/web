@@ -48,13 +48,19 @@ function AccordionTrigger({
 
 function AccordionContent({
   className,
+  containerClassName,
   children,
   ...props
-}: React.ComponentProps<typeof AccordionPrimitive.Content>) {
+}: React.ComponentProps<typeof AccordionPrimitive.Content> & {
+  containerClassName?: string;
+}) {
   return (
     <AccordionPrimitive.Content
       data-slot="accordion-content"
-      className="data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm"
+      className={cn(
+        "data-[state=closed]:animate-accordion-up data-[state=open]:animate-accordion-down overflow-hidden text-sm",
+        containerClassName,
+      )}
       {...props}
     >
       <div className={cn("pt-0 pb-4", className)}>{children}</div>

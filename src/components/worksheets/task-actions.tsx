@@ -38,7 +38,7 @@ import {
   SignatureIcon,
   TicketXIcon,
 } from "lucide-react";
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "react-toastify";
 
 type TaskAction = "submit" | "unsubmit" | "accept" | "reject" | "clear";
@@ -131,9 +131,9 @@ const SubmitDialog = ({
   onSuccess: (id: string) => void;
 }) => {
   const { apiClient } = useApi();
-  const [approvers, setApprovers] = React.useState<PublicUser[]>([]);
-  const [selectedApprover, setSelectedApprover] = React.useState<string>();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [approvers, setApprovers] = useState<PublicUser[]>([]);
+  const [selectedApprover, setSelectedApprover] = useState<string>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const fetchApprovers = async () => {
     setIsLoading(true);
@@ -225,7 +225,7 @@ const useTaskActions = ({
   "worksheetId" | "task" | "updateTask" | "closeDrawer"
 >) => {
   const { apiClient } = useApi();
-  const [isLoading, setIsLoading] = React.useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAction = async (action: TaskAction, body?: object) => {
     setIsLoading(true);

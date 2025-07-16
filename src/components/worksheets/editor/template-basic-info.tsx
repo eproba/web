@@ -2,6 +2,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { FileInput } from "@/components/ui/file-input";
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { WorksheetWithTasks } from "@/lib/schemas/worksheet";
@@ -28,9 +29,7 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
             name="scope"
             render={({ field }) => (
               <FormItem>
-                <label className="text-sm font-medium">
-                  Dla kogo jest ten szablon? *
-                </label>
+                <Label>Dla kogo jest ten szablon? *</Label>
                 <RadioGroup
                   value={field.value}
                   onValueChange={field.onChange}
@@ -38,20 +37,20 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="team" id="team" />
-                    <label htmlFor="team" className="text-sm">
+                    <Label htmlFor="team" className="text-sm">
                       Dla mojej drużyny{" "}
                       {currentUser.teamName && `(${currentUser.teamName})`}
-                    </label>
+                    </Label>
                   </div>
                   {currentUser.isStaff && (
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="organization" id="organization" />
-                      <label htmlFor="organization" className="text-sm">
+                      <Label htmlFor="organization" className="text-sm">
                         Dla mojej organizacji{" "}
                         {currentUser.organization === Organization.Male
                           ? "(Harcerze)"
                           : "(Harcerki)"}
-                      </label>
+                      </Label>
                     </div>
                   )}
                 </RadioGroup>
@@ -65,7 +64,7 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <label className="text-sm font-medium">Nazwa *</label>
+                <Label>Nazwa *</Label>
                 <Input placeholder="np. Wywiadowca" {...field} />
                 <FormMessage />
               </FormItem>
@@ -77,7 +76,7 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <label className="text-sm font-medium">Opis</label>
+                <Label>Opis</Label>
                 <Textarea
                   placeholder="Jeśli chcesz, możesz opisać tę próbę."
                   rows={2}
@@ -93,7 +92,7 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
             name="templateNotes"
             render={({ field }) => (
               <FormItem>
-                <label className="text-sm font-medium">Notatka</label>
+                <Label>Notatka</Label>
                 <Textarea
                   placeholder="Notatka - widoczna do momentu utworzenie próby z szablonu."
                   rows={2}
@@ -109,7 +108,7 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
             name="image"
             render={({ field }) => (
               <FormItem>
-                <label className="text-sm font-medium">Obrazek szablonu</label>
+                <Label>Obrazek szablonu</Label>
                 <FileInput
                   value={field.value || null}
                   onChange={field.onChange}

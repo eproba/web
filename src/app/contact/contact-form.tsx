@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
@@ -71,9 +72,9 @@ export default function ContactForm({
           noValidate
         >
           <div>
-            <label htmlFor="subject" className="mb-1 block font-medium">
+            <Label htmlFor="subject" className="mb-1 block font-medium">
               Temat
-            </label>
+            </Label>
             <Input
               id="subject"
               {...register("subject", { required: "Temat jest wymagany" })}
@@ -87,9 +88,9 @@ export default function ContactForm({
           </div>
 
           <div>
-            <label htmlFor="from_email" className="mb-1 block font-medium">
+            <Label htmlFor="from_email" className="mb-1 block font-medium">
               Email
-            </label>
+            </Label>
             <Input
               id="from_email"
               {...register("from_email", {
@@ -110,9 +111,9 @@ export default function ContactForm({
           </div>
 
           <div>
-            <label htmlFor="message" className="mb-1 block font-medium">
+            <Label htmlFor="message" className="mb-1 block font-medium">
               Wiadomość
-            </label>
+            </Label>
             <Textarea
               id="message"
               {...register("message", {

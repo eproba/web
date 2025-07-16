@@ -63,6 +63,8 @@ export const useWorksheetForm = ({
         ? initialData.tasks
         : defaultTasks,
     templateNotes: initialData?.templateNotes || undefined,
+    finalChallenge: initialData?.finalChallenge || "",
+    finalChallengeDescription: initialData?.finalChallengeDescription || "",
   };
 
   const form = useForm<WorksheetWithTasks>({
@@ -161,7 +163,7 @@ export const useWorksheetForm = ({
         user_id: data.userId || undefined,
         name: data.name.trim(),
         description: data.description.trim(),
-        supervisor: data.supervisor || undefined,
+        supervisor: data.supervisor || "",
         tasks: validTasks.map((task) => ({
           id: task.id,
           task: task.name.trim(),
@@ -174,6 +176,9 @@ export const useWorksheetForm = ({
           }),
         })),
         template_id: initialData?.templateId || undefined,
+        final_challenge: data.finalChallenge?.trim() || "",
+        final_challenge_description:
+          data.finalChallengeDescription?.trim() || "",
       };
 
       const url =
