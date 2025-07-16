@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "pl.zhr.eproba.pwa",
+      "sha256_cert_fingerprints": [
+        "C8:CE:C9:5E:35:0E:CF:12:D2:6E:27:04:EF:5B:90:AD:5E:57:EF:31:7E:3D:97:92:60:30:6A:56:B8:CB:A1:43"
+      ]
+    }
+  }
+]
