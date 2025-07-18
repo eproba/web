@@ -43,7 +43,13 @@ export default function manifest(): MetadataRoute.Manifest {
     categories: ["education", "productivity"],
     lang: "pl",
     dir: "ltr",
-    prefer_related_applications: false,
+    related_applications: [
+      {
+        platform: "play",
+        id: "pl.zhr.eproba.pwa",
+        url: "https://play.google.com/store/apps/details?id=pl.zhr.eproba.pwa",
+      },
+    ],
     shortcuts: [
       {
         name: "Twoje próby",
