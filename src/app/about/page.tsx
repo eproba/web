@@ -1,16 +1,28 @@
+import { PwaInstallButton } from "@/components/pwa-install-button";
+import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { VersionInfo } from "@/components/version-info";
 import { API_VERSION } from "@/lib/api";
 import { fetchApiConfig } from "@/lib/server-api";
+import { QrCodeIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
+import { QRCodeSVG } from "qrcode.react";
 
 import packageInfo from "../../../package.json";
 
@@ -50,20 +62,32 @@ export default async function AboutPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-2">
-            <a
-              href="https://play.google.com/store/apps/details?id=com.czaplicki.eproba"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image
-                src="/get-it-on-google-play-pl.svg"
-                alt="Google Play"
-                width={200}
-                height={59}
-                className="rounded-md border-1 border-gray-500"
-              />
-            </a>
+          <div className="flex flex-row items-start gap-2">
+            <PwaInstallPrompt>
+              <PwaInstallButton />
+            </PwaInstallPrompt>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="icon">
+                  <QrCodeIcon className="size-4" />
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Zainstaluj na innym urządzeniu</DialogTitle>
+                  <DialogDescription>
+                    Zeskanuj kod QR, aby otworzyć lub zainstalować aplikację na
+                    twoim telefonie, tablecie lub komputerze.
+                  </DialogDescription>
+                  <QRCodeSVG
+                    value="https://eproba.zhr.pl?install=true"
+                    level="H"
+                    size={256}
+                    className="mx-auto mt-4 h-full max-w-full rounded-lg bg-white p-4"
+                  />
+                </DialogHeader>
+              </DialogContent>
+            </Dialog>
           </div>
         </CardContent>
       </Card>
@@ -149,16 +173,22 @@ export default async function AboutPage() {
                 Czy powstanie aplikacja na iOS?
               </AccordionTrigger>
               <AccordionContent>
-                <p>
-                  Na chwilę obecną nie planujemy stworzenia aplikacji na iOS,
-                  ale Epróba jest dostępna jako aplikacja webowa PWA, która
-                  działa na wszystkich urządzeniach z przeglądarką internetową.
-                </p>
-                <p>
-                  Możesz dodać Epróbę do ekranu głównego swojego urządzenia, aby
-                  korzystać z niej jak z natywnej aplikacji i dostawać
-                  powiadomienia.
-                </p>
+                <div className="space-y-2">
+                  <p>
+                    Na chwilę obecną nie planujemy stworzenia aplikacji na iOS,
+                    ale Epróba jest dostępna jako aplikacja webowa PWA, która
+                    działa na wszystkich urządzeniach z przeglądarką
+                    internetową.
+                  </p>
+                  <p>
+                    Możesz dodać Epróbę do ekranu głównego swojego urządzenia,
+                    aby korzystać z niej jak z natywnej aplikacji i dostawać
+                    powiadomienia.
+                  </p>
+                  <PwaInstallPrompt>
+                    <PwaInstallButton />
+                  </PwaInstallPrompt>
+                </div>
               </AccordionContent>
             </AccordionItem>
           </Accordion>

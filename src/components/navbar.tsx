@@ -2,6 +2,7 @@ import { auth, signIn, signOut } from "@/auth";
 import { AppLogo } from "@/components/app-logo";
 import AutoNotificationSetup from "@/components/auto-notification-setup";
 import { PatrolAlert } from "@/components/patrol-alert";
+import { PwaInstallAlert } from "@/components/pwa-install-alert";
 import { ThemeSwitch } from "@/components/theme-switch";
 import { Button } from "@/components/ui/button";
 import {
@@ -388,6 +389,7 @@ export async function Navbar() {
 
       {/* Auto notification setup for authenticated users */}
       {user && <AutoNotificationSetup />}
+      <PwaInstallAlert />
     </>
   );
 }
