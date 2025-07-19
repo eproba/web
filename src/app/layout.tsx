@@ -37,6 +37,14 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+    images: [
+      {
+        url: "https://eproba.zhr.pl/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: APP_DEFAULT_TITLE,
+      },
+    ],
   },
   twitter: {
     card: "summary",
@@ -45,6 +53,14 @@ export const metadata: Metadata = {
       template: APP_TITLE_TEMPLATE,
     },
     description: APP_DESCRIPTION,
+    images: [
+      {
+        url: "https://eproba.zhr.pl/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: APP_DEFAULT_TITLE,
+      },
+    ],
   },
 };
 

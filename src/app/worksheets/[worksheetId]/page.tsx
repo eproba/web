@@ -41,5 +41,21 @@ export async function generateMetadata({
       ? `${worksheet.name} - ${worksheet.user.displayName}`
       : "Próba",
     description: worksheet?.description || undefined,
+    openGraph: {
+      title: worksheet?.name
+        ? `${worksheet.name} - ${worksheet.user.displayName}`
+        : "Próba",
+      description: worksheet?.description || undefined,
+      images: [
+        {
+          url: "https://eproba.zhr.pl/og-image.png",
+          width: 1200,
+          height: 630,
+          alt: worksheet?.name
+            ? `${worksheet.name} - ${worksheet.user.displayName}`
+            : "Próba",
+        },
+      ],
+    },
   };
 }
