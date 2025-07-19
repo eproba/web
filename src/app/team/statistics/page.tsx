@@ -65,7 +65,7 @@ export default async function TeamStatisticsPage() {
       {/* Header */}
       <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold">Statystyki Drużyny</h1>
+          <h1 className="text-2xl font-semibold">Statystyki Drużyny</h1>
           <p className="text-muted-foreground mt-1">
             {statistics.teamInfo.name} ({statistics.teamInfo.shortName})
           </p>

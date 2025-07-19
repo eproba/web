@@ -13,7 +13,7 @@ export function TeamHeader({ team, onTeamUpdate, allowEdit }: TeamHeaderProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-2 px-2 sm:px-0">
       <div>
-        <h1 className="text-xl font-bold sm:text-3xl">
+        <h1 className="text-xl font-semibold sm:text-2xl">
           {team.name}{" "}
           <span className="font-normal">
             · <span className="text-nowrap">{team.shortName}</span>

@@ -16,8 +16,8 @@ export default async function TeamRequestsPage() {
 
   return (
     <div>
-      <div className="mb-8">
-        <h1 className="mb-2 text-3xl font-bold">Zgłoszenia drużyn</h1>
+      <div className="mb-4">
+        <h1 className="mb-2 text-2xl font-bold">Zgłoszenia drużyn</h1>
       </div>
       <TeamRequestsClient initialRequests={requests || []} />
     </div>

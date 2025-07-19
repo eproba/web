@@ -41,7 +41,7 @@ export default async function AboutPage() {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">O Epróbie</CardTitle>
+          <CardTitle className="text-2xl font-semibold">O Epróbie</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
@@ -57,7 +57,7 @@ export default async function AboutPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-2xl font-semibold">
             Pobierz aplikację
           </CardTitle>
         </CardHeader>
@@ -94,7 +94,7 @@ export default async function AboutPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-2xl font-semibold">
             FAQ - Najczęściej zadawane pytania
           </CardTitle>
         </CardHeader>
@@ -197,7 +197,7 @@ export default async function AboutPage() {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">Regulaminy</CardTitle>
+          <CardTitle className="text-2xl font-semibold">Regulaminy</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-2">

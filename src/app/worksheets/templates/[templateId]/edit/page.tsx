@@ -25,7 +25,7 @@ const TemplateEditPage = async ({ params }: TemplateEditPageProps) => {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6">
-        <h1 className="mb-2 text-3xl font-bold">Edycja szablonu</h1>
+        <h1 className="mb-2 text-2xl font-semibold">Edycja szablonu</h1>
       </div>
       <TemplateEditor
         mode="edit"

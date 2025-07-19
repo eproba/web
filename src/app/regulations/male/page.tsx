@@ -406,7 +406,7 @@ export default async function MaleRegulationsPage() {
             alt="Logo regulaminu stopni harcerzy"
             width={218}
             height={219}
-            className="mx-auto rounded-full dark:invert"
+            className="mx-auto max-w-1/2 rounded-full dark:invert"
           />
         </div>
         <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
@@ -459,10 +459,7 @@ export default async function MaleRegulationsPage() {
         <TabsContent value="overview" className="mt-6 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AwardIcon className="h-5 w-5" />
-                Stopnie harcerskie
-              </CardTitle>
+              <CardTitle>Stopnie harcerskie</CardTitle>
               <CardDescription>
                 Stopień harcerski stanowi potwierdzenie rzetelnej pracy nad sobą
                 oraz wyrobienia harcerskiego. Kierunki pracy nad sobą są
@@ -514,7 +511,7 @@ export default async function MaleRegulationsPage() {
             <CardContent>
               <div className="space-y-4">
                 <div className="flex gap-3">
-                  <StarIcon className="mt-0.5 h-6 w-6 flex-shrink-0 text-yellow-500 sm:h-5 sm:w-5" />
+                  <StarIcon className="mt-0.5 size-6 flex-shrink-0 text-yellow-500 sm:size-5" />
                   <div>
                     <h4 className="font-medium">Praca nad sobą</h4>
                     <p className="text-muted-foreground text-sm">
@@ -525,7 +522,7 @@ export default async function MaleRegulationsPage() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <TargetIcon className="mt-0.5 h-6 w-6 flex-shrink-0 text-blue-500 sm:h-5 sm:w-5" />
+                  <TargetIcon className="mt-0.5 size-6 flex-shrink-0 text-blue-500 sm:size-5" />
                   <div>
                     <h4 className="font-medium">Wiedza i umiejętności</h4>
                     <p className="text-muted-foreground text-sm">
@@ -535,7 +532,7 @@ export default async function MaleRegulationsPage() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <AwardIcon className="mt-0.5 h-6 w-6 flex-shrink-0 text-green-500 sm:h-5 sm:w-5" />
+                  <AwardIcon className="mt-0.5 size-6 flex-shrink-0 text-green-500 sm:size-5" />
                   <div>
                     <h4 className="font-medium">Sprawności dodatkowe</h4>
                     <p className="text-muted-foreground text-sm">
@@ -545,7 +542,7 @@ export default async function MaleRegulationsPage() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <UsersIcon className="mt-0.5 h-6 w-6 flex-shrink-0 text-purple-500 sm:h-5 sm:w-5" />
+                  <UsersIcon className="mt-0.5 size-6 flex-shrink-0 text-purple-500 sm:size-5" />
                   <div>
                     <h4 className="font-medium">Aktywność</h4>
                     <p className="text-muted-foreground text-sm">
@@ -555,7 +552,7 @@ export default async function MaleRegulationsPage() {
                   </div>
                 </div>
                 <div className="flex gap-3">
-                  <ShieldIcon className="mt-0.5 h-6 w-6 flex-shrink-0 text-red-500 sm:h-5 sm:w-5" />
+                  <ShieldIcon className="mt-0.5 size-6 flex-shrink-0 text-red-500 sm:size-5" />
                   <div>
                     <h4 className="font-medium">Próba końcowa</h4>
                     <p className="text-muted-foreground text-sm">
@@ -577,7 +574,7 @@ export default async function MaleRegulationsPage() {
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900">
-                    <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                    <div className="size-2 rounded-full bg-blue-500"></div>
                   </div>
                   <p className="text-sm">
                     Oznaczenia stopni na mundurze wskazane są w tabeli powyżej.
@@ -714,9 +711,9 @@ export default async function MaleRegulationsPage() {
                   return (
                     <div
                       key={index}
-                      className="flex items-start gap-3 rounded-lg border p-3"
+                      className="flex items-center gap-3 rounded-lg border p-3"
                     >
-                      <IconComponent className="mt-0.5 h-5 w-5 text-blue-500" />
+                      <IconComponent className="mt-0.5 size-6 text-blue-500 sm:size-5" />
                       <div>
                         <h4 className="text-sm font-medium">{area.name}</h4>
                       </div>
@@ -734,7 +731,7 @@ export default async function MaleRegulationsPage() {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <CheckCircleIcon className="mt-0.5 h-5 w-5 text-green-500" />
+                  <CheckCircleIcon className="mt-0.5 size-6 text-green-500 sm:size-5" />
                   <p className="text-sm">
                     Harcerz, który spełnił wymaganie lub zrealizował zadanie
                     indywidualne zgłasza to drużynowemu, wyznaczonej przez niego
@@ -759,7 +756,7 @@ export default async function MaleRegulationsPage() {
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <div className="rounded-full bg-blue-100 p-2 dark:bg-blue-900">
-                    <div className="h-2 w-2 rounded-full bg-blue-500"></div>
+                    <div className="size-2 rounded-full bg-blue-500"></div>
                   </div>
                   <p className="text-sm">
                     Zdobywanie pierwszego stopnia rozpoczyna się z chwilą
@@ -769,7 +766,7 @@ export default async function MaleRegulationsPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="rounded-full bg-green-100 p-2 dark:bg-green-900">
-                    <div className="h-2 w-2 rounded-full bg-green-500"></div>
+                    <div className="size-2 rounded-full bg-green-500"></div>
                   </div>
                   <p className="text-sm">
                     Harcerz nie może rozpocząć zdobywania innego stopnia niż
@@ -778,7 +775,7 @@ export default async function MaleRegulationsPage() {
                 </div>
                 <div className="flex items-start gap-3">
                   <div className="rounded-full bg-yellow-100 p-2 dark:bg-yellow-900">
-                    <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
+                    <div className="size-2 rounded-full bg-yellow-500"></div>
                   </div>
                   <p className="text-sm">
                     Harcerz, który zdobywa stopień z pominięciem jednego lub
@@ -801,14 +798,14 @@ export default async function MaleRegulationsPage() {
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <ShieldIcon className="mt-0.5 h-5 w-5 text-blue-500" />
+                  <ShieldIcon className="mt-0.5 size-6 flex-shrink-0 text-blue-500 sm:size-5" />
                   <p className="text-sm">
                     Drużynowy przyznaje stopnie rozkazem, po stwierdzeniu
                     spełnienia przez harcerza wszystkich warunków.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <TargetIcon className="mt-0.5 h-5 w-5 text-yellow-500" />
+                  <TargetIcon className="mt-0.5 size-6 flex-shrink-0 text-yellow-500 sm:size-5" />
                   <p className="text-sm">
                     Jeśli postawa harcerza jest sprzeczna z Prawem Harcerskim,
                     drużynowy może nie przyznać mu stopnia i wyznaczyć dodatkowe
@@ -816,7 +813,7 @@ export default async function MaleRegulationsPage() {
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <AwardIcon className="mt-0.5 h-5 w-5 text-green-500" />
+                  <AwardIcon className="mt-0.5 size-6 flex-shrink-0 text-green-500 sm:size-5" />
                   <p className="text-sm">
                     Bezpośrednio po przyznaniu pierwszego stopnia drużynowy
                     dopuszcza harcerza do złożenia Przyrzeczenia Harcerskiego.
@@ -884,7 +881,7 @@ export default async function MaleRegulationsPage() {
 
               <div className="mt-4 grid gap-4 md:grid-cols-3">
                 <div className="rounded-lg border p-4 text-center">
-                  <TargetIcon className="mx-auto mb-2 h-8 w-8 text-blue-500" />
+                  <TargetIcon className="mx-auto mb-2 size-8 text-blue-500" />
                   <h5 className="font-medium">Cele rozwojowe</h5>
                   <p className="text-muted-foreground mt-1 text-xs">
                     Pomoc w wyznaczeniu celów rozwojowych i określaniu zadań
@@ -892,7 +889,7 @@ export default async function MaleRegulationsPage() {
                   </p>
                 </div>
                 <div className="rounded-lg border p-4 text-center">
-                  <UsersIcon className="mx-auto mb-2 h-8 w-8 text-green-500" />
+                  <UsersIcon className="mx-auto mb-2 size-8 text-green-500" />
                   <h5 className="font-medium">Kontakt</h5>
                   <p className="text-muted-foreground mt-1 text-xs">
                     Utrzymywanie regularnego kontaktu ze zdobywającym stopień i
@@ -900,7 +897,7 @@ export default async function MaleRegulationsPage() {
                   </p>
                 </div>
                 <div className="rounded-lg border p-4 text-center">
-                  <ShieldIcon className="mx-auto mb-2 h-8 w-8 text-purple-500" />
+                  <ShieldIcon className="mx-auto mb-2 size-8 text-purple-500" />
                   <h5 className="font-medium">Wsparcie</h5>
                   <p className="text-muted-foreground mt-1 text-xs">
                     Wsparcie zdobywającego stopień w realizacji zadań

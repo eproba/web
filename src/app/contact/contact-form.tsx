@@ -65,7 +65,7 @@ export default function ContactForm({
   return (
     <Card>
       <CardContent>
-        <h1 className="text-2xl font-bold">Formularz kontaktowy</h1>
+        <h1 className="text-2xl font-semibold">Formularz kontaktowy</h1>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="mt-4 space-y-4"

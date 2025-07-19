@@ -32,7 +32,7 @@ export default async function NewsPage() {
     <div className="space-y-4">
       {pinnedNews.length > 0 && (
         <>
-          <h1 className="text-2xl font-bold">Ważne aktualności</h1>
+          <h1 className="text-2xl font-semibold">Ważne aktualności</h1>
           <div className="grid gap-4">
             {pinnedNews.map((post) => (
               <Card key={post.id} className="gap-2">
@@ -55,7 +55,7 @@ export default async function NewsPage() {
 
       {otherNews.length > 0 && (
         <>
-          <h1 className="text-2xl font-bold">Aktualności dla Ciebie</h1>
+          <h1 className="text-2xl font-semibold">Aktualności dla Ciebie</h1>
           <div className="grid gap-4">
             {otherNews.map((post) => (
               <Card key={post.id} className="gap-2">

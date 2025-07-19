@@ -191,7 +191,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
     <div className="mx-auto max-w-2xl space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-2xl font-semibold">
             Zgłoszenie drużyny
           </CardTitle>
         </CardHeader>

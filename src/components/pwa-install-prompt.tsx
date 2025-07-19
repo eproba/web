@@ -50,6 +50,8 @@ export function PwaInstallPrompt({
   const isStandalone = useIsStandalone();
   const searchParams = useSearchParams();
   const [isInstructionsOpen, setIsInstructionsOpen] = useState(false);
+  const [isFallbackInstructionsOpen, setIsFallbackInstructionsOpen] =
+    useState(false);
   const [isAutoInstallModalOpen, setIsAutoInstallModalOpen] = useState(false);
   const installTriggered = useRef(false);
   const router = useRouter();
@@ -118,9 +120,7 @@ export function PwaInstallPrompt({
       setIsInstructionsOpen(true);
     } else {
       // Fallback for other browsers that don't support the prompt but are not iOS
-      alert(
-        "Aby zainstalować aplikację, poszukaj opcji 'Dodaj do ekranu głównego' w menu przeglądarki. Jeśli już jest zainstalowana, możesz ją otworzyć z ekranu głównego.",
-      );
+      setIsFallbackInstructionsOpen(true);
     }
     router.replace(pathname);
   }, [
@@ -189,6 +189,16 @@ export function PwaInstallPrompt({
   const instructionTitle = isIos
     ? "Instrukcja instalacji na iOS"
     : "Instrukcja instalacji na macOS";
+
+  const fallbackInstructions = (
+    <div className="space-y-4 p-4 text-center">
+      <p>
+        Aby zainstalować aplikację, poszukaj opcji &apos;Dodaj do ekranu
+        głównego&apos; w menu przeglądarki. Jeśli już jest zainstalowana, możesz
+        ją otworzyć z ekranu głównego.
+      </p>
+    </div>
+  );
 
   return (
     <>
@@ -280,6 +290,56 @@ export function PwaInstallPrompt({
             </DrawerContent>
           </Drawer>
         ))}
+
+      {isDesktop ? (
+        <Dialog
+          open={isFallbackInstructionsOpen}
+          onOpenChange={(open) => {
+            setIsFallbackInstructionsOpen(open);
+            if (!open && onDismiss) {
+              onDismiss();
+            }
+          }}
+        >
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Instrukcja instalacji</DialogTitle>
+              <DialogDescription asChild>
+                {fallbackInstructions}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <DialogClose asChild>
+                <Button variant="outline">Zamknij</Button>
+              </DialogClose>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Drawer
+          open={isFallbackInstructionsOpen}
+          onOpenChange={(open) => {
+            setIsFallbackInstructionsOpen(open);
+            if (!open && onDismiss) {
+              onDismiss();
+            }
+          }}
+        >
+          <DrawerContent>
+            <DrawerHeader>
+              <DrawerTitle>Instrukcja instalacji</DrawerTitle>
+              <DrawerDescription asChild>
+                {fallbackInstructions}
+              </DrawerDescription>
+              <DrawerFooter>
+                <DrawerClose asChild>
+                  <Button variant="outline">Zamknij</Button>
+                </DrawerClose>
+              </DrawerFooter>
+            </DrawerHeader>
+          </DrawerContent>
+        </Drawer>
+      )}
     </>
   );
 }

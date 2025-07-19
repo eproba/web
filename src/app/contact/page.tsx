@@ -16,7 +16,7 @@ export default async function ContactPage() {
       <ContactForm initialEmail={user?.email} />
       <Card>
         <CardContent>
-          <h1 className="text-2xl font-bold">Informacje kontaktowe</h1>
+          <h1 className="text-2xl font-semibold">Informacje kontaktowe</h1>
           <p className="mt-2">
             Jeśli chcesz, możesz również napisać bezpośrednio na adres:{" "}
             <a

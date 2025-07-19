@@ -21,7 +21,11 @@ export default async function UserWorksheets() {
 
   return (
     <div className="space-y-4">
-      <WorksheetList orgWorksheets={activeWorksheets} variant="user" />
+      <WorksheetList
+        orgWorksheets={activeWorksheets}
+        variant="user"
+        title="Twoje próby"
+      />
       {archivedWorksheets?.length > 0 && (
         <div className="mt-8 space-y-4">
           <h2 className="text-2xl font-semibold">Archiwum</h2>

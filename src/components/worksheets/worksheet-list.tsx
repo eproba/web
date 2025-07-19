@@ -14,6 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-button";
 import { WorksheetItem } from "@/components/worksheets/worksheet-item";
 import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
+import { cn } from "@/lib/utils";
 import { Patrol } from "@/types/team";
 import { User } from "@/types/user";
 import { Task, Worksheet } from "@/types/worksheet";
@@ -28,12 +29,14 @@ export function WorksheetList({
   showFilters = false,
   patrols = [],
   currentUser,
+  title,
 }: {
   orgWorksheets: Worksheet[];
   variant?: "user" | "managed" | "shared" | "archived" | "review";
   showFilters?: boolean;
   patrols?: Patrol[];
   currentUser?: User;
+  title?: string;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
@@ -152,62 +155,71 @@ export function WorksheetList({
   return (
     <div className="space-y-4">
       {showFilters ? (
-        <div className="flex items-center justify-between gap-2">
-          <div className="relative">
-            <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform" />
-            <Input
-              type="text"
-              placeholder="Wyszukaj próbę"
-              className="max-w-xs pr-10 pl-10"
-              value={searchQuery}
-              onChange={handleSearchChange}
-            />
-            {isFiltering && searchQuery && (
-              <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
-                <div className="border-muted-foreground size-4 animate-spin rounded-full border-2 border-t-transparent" />
-              </div>
-            )}
-          </div>
-          <div className="flex min-w-0 items-center gap-2">
-            {searchParams.get("userId") ? (
-              <div className="bg-accent/50 flex min-w-0 flex-nowrap items-center rounded-full border pl-4 text-sm">
-                <span className="truncate text-nowrap">
-                  {searchParams.get("userName") ||
-                    `Użytkownik ${searchParams.get("userId")}`}
-                </span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="rounded-l-none rounded-r-full"
-                  onClick={handleClearUser}
+        <>
+          {title && <h2 className="text-2xl font-semibold">{title}</h2>}
+          <div className="flex items-center justify-between gap-2">
+            <div className="relative">
+              <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform" />
+              <Input
+                type="text"
+                placeholder="Wyszukaj próbę"
+                className="max-w-xs pr-10 pl-10"
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+              {isFiltering && searchQuery && (
+                <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
+                  <div className="border-muted-foreground size-4 animate-spin rounded-full border-2 border-t-transparent" />
+                </div>
+              )}
+            </div>
+            <div className="flex min-w-0 items-center gap-2">
+              {searchParams.get("userId") ? (
+                <div className="bg-accent/50 flex min-w-0 flex-nowrap items-center rounded-full border pl-4 text-sm">
+                  <span className="truncate text-nowrap">
+                    {searchParams.get("userName") ||
+                      `Użytkownik ${searchParams.get("userId")}`}
+                  </span>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="rounded-l-none rounded-r-full"
+                    onClick={handleClearUser}
+                  >
+                    <XIcon className="size-4" />
+                  </Button>
+                </div>
+              ) : (
+                <Select
+                  onValueChange={handlePatrolChange}
+                  value={selectedPatrol}
                 >
-                  <XIcon className="size-4" />
-                </Button>
-              </div>
-            ) : (
-              <Select onValueChange={handlePatrolChange} value={selectedPatrol}>
-                <SelectTrigger className="w-40">
-                  <SelectValue placeholder="Wybierz zastęp" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="null">Wszystkie</SelectItem>
-                  {patrols.map((patrol) => (
-                    <SelectItem key={patrol.id} value={patrol.id}>
-                      {patrol.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-            {(variant === "managed" || variant === "user") && (
-              <CreateWorksheetButton size="icon" />
-            )}
+                  <SelectTrigger className="w-40">
+                    <SelectValue placeholder="Wybierz zastęp" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="null">Wszystkie</SelectItem>
+                    {patrols.map((patrol) => (
+                      <SelectItem key={patrol.id} value={patrol.id}>
+                        {patrol.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+              {(variant === "managed" || variant === "user") && (
+                <CreateWorksheetButton size="icon" />
+              )}
+            </div>
           </div>
-        </div>
+        </>
       ) : variant === "managed" || variant === "user" ? (
-        <div className="flex justify-end">
+        <div className={cn("flex", title ? "justify-between" : "justify-end")}>
+          {title && <h2 className="text-2xl font-semibold">{title}</h2>}
           <CreateWorksheetButton />
         </div>
+      ) : title ? (
+        <h2 className="text-2xl font-semibold">{title}</h2>
       ) : null}
 
       {showFilters && isFiltering && (

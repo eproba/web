@@ -26,7 +26,7 @@ const WorksheetEditPage = async ({ params }: WorksheetEditPageProps) => {
   return (
     <div className="container mx-auto py-8">
       <div className="mb-6">
-        <h1 className="mb-2 text-3xl font-bold">Edycja próby</h1>
+        <h1 className="mb-2 text-2xl font-semibold">Edycja próby</h1>
       </div>
       <WorksheetEditor
         mode="edit"

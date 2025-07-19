@@ -212,7 +212,7 @@ export function PatrolsList({
   return (
     <div>
       <div className="mb-4 flex items-center justify-between px-2 sm:px-0">
-        <h2 className="flex items-center gap-2 text-2xl font-bold">
+        <h2 className="flex items-center gap-2 text-2xl font-semibold">
           Zastępy
           {updatingUserIds.length > 0 && (
             <LoaderCircleIcon className="mr-2 size-4 animate-spin" />
