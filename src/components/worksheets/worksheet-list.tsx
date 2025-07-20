@@ -158,12 +158,12 @@ export function WorksheetList({
         <>
           {title && <h2 className="text-2xl font-semibold">{title}</h2>}
           <div className="flex items-center justify-between gap-2">
-            <div className="relative">
-              <SearchIcon className="text-muted-foreground absolute top-1/2 left-3 size-4 -translate-y-1/2 transform" />
+            <div className="relative flex-1">
               <Input
+                startIcon={SearchIcon}
                 type="text"
                 placeholder="Wyszukaj próbę"
-                className="max-w-xs pr-10 pl-10"
+                className="max-w-fit"
                 value={searchQuery}
                 onChange={handleSearchChange}
               />
@@ -173,7 +173,7 @@ export function WorksheetList({
                 </div>
               )}
             </div>
-            <div className="flex min-w-0 items-center gap-2">
+            <div className="flex min-w-0 flex-1 items-center justify-end gap-2">
               {searchParams.get("userId") ? (
                 <div className="bg-accent/50 flex min-w-0 flex-nowrap items-center rounded-full border pl-4 text-sm">
                   <span className="truncate text-nowrap">
@@ -190,22 +190,24 @@ export function WorksheetList({
                   </Button>
                 </div>
               ) : (
-                <Select
-                  onValueChange={handlePatrolChange}
-                  value={selectedPatrol}
-                >
-                  <SelectTrigger className="w-40">
-                    <SelectValue placeholder="Wybierz zastęp" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="null">Wszystkie</SelectItem>
-                    {patrols.map((patrol) => (
-                      <SelectItem key={patrol.id} value={patrol.id}>
-                        {patrol.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <div className="overflow-hidden">
+                  <Select
+                    onValueChange={handlePatrolChange}
+                    value={selectedPatrol}
+                  >
+                    <SelectTrigger className="w-full sm:min-w-40">
+                      <SelectValue placeholder="Wybierz zastęp" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="null">Wszystkie</SelectItem>
+                      {patrols.map((patrol) => (
+                        <SelectItem key={patrol.id} value={patrol.id}>
+                          {patrol.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               )}
               {(variant === "managed" || variant === "user") && (
                 <CreateWorksheetButton size="icon" />

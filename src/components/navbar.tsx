@@ -278,7 +278,7 @@ export async function Navbar() {
 
   return (
     <>
-      <nav className="container mx-auto flex items-center gap-4 rounded-lg p-4 px-5 shadow-lg dark:bg-[#161b22]">
+      <nav className="bg-background container mx-auto flex items-center gap-4 rounded-lg p-4 px-5 shadow-lg dark:bg-[#161b22]">
         <div className="flex w-full items-center justify-between gap-4 md:w-auto">
           <AppLogo />
 

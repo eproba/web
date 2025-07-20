@@ -4,6 +4,7 @@ import { Providers } from "@/components/providers";
 import { ThemedToastContainer } from "@/components/themed-toast-container";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { Metadata, Viewport } from "next";
+import { Space_Grotesk } from "next/font/google";
 import NextTopLoader from "nextjs-toploader";
 
 import "./globals.css";
@@ -74,6 +75,10 @@ export const viewport: Viewport = {
   ],
 };
 
+const spaceGrotesk = Space_Grotesk({
+  subsets: ["latin-ext"],
+});
+
 export default function RootLayout({
   children,
 }: {
@@ -82,7 +87,11 @@ export default function RootLayout({
   // const devMode = process.env.NODE_ENV !== 'production'
 
   return (
-    <html lang="pl" suppressHydrationWarning={true}>
+    <html
+      lang="pl"
+      suppressHydrationWarning={true}
+      className={spaceGrotesk.className}
+    >
       <head>
         <meta charSet="utf-8" />
         <meta
