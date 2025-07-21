@@ -3,6 +3,8 @@ import { Card } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, UIMessage } from "ai";
 import {
   BotIcon,
   LoaderCircleIcon,
@@ -11,15 +13,7 @@ import {
   SparklesIcon,
   UserIcon,
 } from "lucide-react";
-import React, { useEffect, useRef } from "react";
-
-interface Message {
-  id: string;
-  role: "user" | "assistant";
-  content: string;
-  timestamp: Date;
-  suggestions?: TaskSuggestion[];
-}
+import React, { useEffect, useRef, useState } from "react";
 
 interface TaskSuggestion {
   name: string;
@@ -28,25 +22,63 @@ interface TaskSuggestion {
 
 interface TaskSuggestionsChatProps {
   onAddTask: (task: { name: string; description: string }) => void;
-  messages: Message[];
-  setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
-  inputMessage: string;
-  setInputMessage: React.Dispatch<React.SetStateAction<string>>;
-  isLoading: boolean;
-  setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+function parseTaskSuggestions(
+  responseText: string,
+): Array<{ id: string; name: string; description: string }> {
+  const suggestions: Array<{ id: string; name: string; description: string }> =
+    [];
+  // Only parse after ---zadania---
+  const split = responseText.split("---zadania---");
+  if (split.length < 2) return suggestions;
+  const tasksText = split[1];
+  const taskPattern = /\*\*([^*]+)\*\*\s*[-–]\s*([^\n]+)/g;
+  let match;
+  let index = 0;
+  while ((match = taskPattern.exec(tasksText)) !== null && index < 5) {
+    const taskName = match[1].trim();
+    const description = match[2].trim();
+    if (taskName && description) {
+      suggestions.push({
+        id: `ai-suggestion-${index + 1}`,
+        name: taskName,
+        description: description,
+      });
+      index++;
+    }
+  }
+  return suggestions;
+}
+
+function removeTasksFromResponse(responseText: string): string {
+  // Remove task suggestions from the response text
+  return responseText.split("---zadania---")[0].trim();
 }
 
 export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
   onAddTask,
-  messages,
-  setMessages,
-  inputMessage,
-  setInputMessage,
-  isLoading,
-  setIsLoading,
 }) => {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [input, setInput] = useState("");
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({
+      api: "/ai/api/task-suggestions",
+    }),
+    messages: [
+      {
+        id: "welcome",
+        role: "assistant",
+        parts: [
+          {
+            type: "text",
+            text: "Cześć! Jestem tutaj, aby pomóc Ci w tworzeniu zadań indywidualnych. Powiedz mi w jakiej kategorii szukasz zadań, a ja postaram się coś wymyślić.",
+          },
+        ],
+      } as UIMessage,
+    ],
+  });
 
   useEffect(() => {
     // Auto-scroll to bottom when new messages are added
@@ -61,97 +93,12 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputMessage.trim() || isLoading) return;
+    if (!input.trim()) return;
 
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      role: "user",
-      content: inputMessage.trim(),
-      timestamp: new Date(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInputMessage("");
-    setIsLoading(true);
-
-    try {
-      // Simulate AI response (replace with actual OpenAI API call)
-      await simulateAIResponse(inputMessage.trim());
-    } catch (error) {
-      console.error("Error sending message:", error);
-      // Add error message
-      const errorMessage: Message = {
-        id: Date.now().toString(),
-        role: "assistant",
-        content:
-          "Przepraszam, wystąpił błąd podczas przetwarzania Twojej wiadomości. Spróbuj ponownie.",
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, errorMessage]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const simulateAIResponse = async (userInput: string) => {
-    try {
-      const response = await fetch("/ai/api/task-suggestions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: userInput,
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      const data = await response.json();
-
-      const aiMessage: Message = {
-        id: Date.now().toString(),
-        role: "assistant",
-        content: data.content,
-        timestamp: new Date(),
-        suggestions: data.suggestions || [],
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-    } catch (error) {
-      console.error("Error calling AI API:", error);
-
-      // Fallback to mock response
-      const mockSuggestions: TaskSuggestion[] = [
-        {
-          name: "Obserwacja ptaków w okolicy",
-          description:
-            "Zanotuj co najmniej 5 różnych gatunków ptaków wraz z ich zachowaniami",
-        },
-        {
-          name: "Identyfikacja drzew liściastych",
-          description:
-            "Znajdź i opisz 3 różne gatunki drzew, zwracając uwagę na kształt liści",
-        },
-        {
-          name: "Pomiar temperatury w różnych miejscach",
-          description:
-            "Zmierz temperaturę w słońcu, w cieniu i przy wodzie, porównaj wyniki",
-        },
-      ];
-
-      const aiMessage: Message = {
-        id: Date.now().toString(),
-        role: "assistant",
-        content: `Na podstawie Twojego zapytania: "${userInput}", oto kilka pomysłów na zadania indywidualne:`,
-        timestamp: new Date(),
-        suggestions: mockSuggestions,
-      };
-
-      setMessages((prev) => [...prev, aiMessage]);
-    }
+    await sendMessage({
+      text: input.trim(),
+    });
+    setInput("");
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -169,7 +116,7 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
   };
 
   return (
-    <div className="flex h-full flex-col">
+    <div className="flex h-full w-full flex-col">
       {/* Chat Messages */}
       <div className="min-h-0 flex-1">
         <ScrollArea ref={scrollAreaRef} className="h-full p-4">
@@ -195,57 +142,73 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                     message.role === "user" ? "items-end" : "items-start",
                   )}
                 >
-                  <Card
-                    className={cn(
-                      "p-3",
-                      message.role === "user"
-                        ? "bg-blue-500 text-white"
-                        : "bg-muted",
-                    )}
-                  >
-                    <p className="text-sm leading-relaxed whitespace-pre-line">
-                      {message.content}
-                    </p>
-                  </Card>
-
-                  {/* Task Suggestions */}
-                  {message.suggestions && message.suggestions.length > 0 && (
-                    <div className="w-full space-y-2">
-                      {message.suggestions.map((suggestion) => (
+                  {(() => {
+                    const text = message.parts
+                      .map((part) => (part.type === "text" ? part.text : ""))
+                      .join(" ");
+                    const suggestions = parseTaskSuggestions(text);
+                    const mainText = removeTasksFromResponse(text);
+                    return (
+                      <>
                         <Card
-                          key={suggestion.name}
-                          className="border-dashed p-3"
+                          className={cn(
+                            "p-3",
+                            message.role === "user"
+                              ? "bg-blue-500 text-white"
+                              : "bg-muted",
+                          )}
                         >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="flex-1 space-y-1">
-                              <h4 className="text-sm font-medium">
-                                {suggestion.name}
-                              </h4>
-                              <p className="text-muted-foreground text-xs">
-                                {suggestion.description}
-                              </p>
+                          {status !== "ready" &&
+                          message.role === "assistant" &&
+                          !mainText ? (
+                            <div className="flex items-center gap-2">
+                              <LoaderCircleIcon className="size-4 animate-spin" />
+                              <span className="text-muted-foreground text-sm">
+                                AI pracuje nad odpowiedzią...
+                              </span>
                             </div>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleAddSuggestion(suggestion)}
-                              className="flex-shrink-0"
-                            >
-                              <PlusIcon className="mr-1 h-3 w-3" />
-                              Dodaj
-                            </Button>
-                          </div>
+                          ) : (
+                            <p className="text-sm leading-relaxed whitespace-pre-line">
+                              {mainText}
+                            </p>
+                          )}
                         </Card>
-                      ))}
-                    </div>
-                  )}
-
-                  <span className="text-muted-foreground text-xs">
-                    {message.timestamp.toLocaleTimeString("pl-PL", {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
-                  </span>
+                        {/* Task Suggestions */}
+                        {suggestions.length > 0 && (
+                          <div className="w-full space-y-2">
+                            {suggestions.map((suggestion) => (
+                              <Card
+                                key={suggestion.name}
+                                className="border-dashed p-3"
+                              >
+                                <div className="flex items-start justify-between gap-3">
+                                  <div className="flex-1 space-y-1">
+                                    <h4 className="text-sm font-medium">
+                                      {suggestion.name}
+                                    </h4>
+                                    <p className="text-muted-foreground text-xs">
+                                      {suggestion.description}
+                                    </p>
+                                  </div>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() =>
+                                      handleAddSuggestion(suggestion)
+                                    }
+                                    className="flex-shrink-0"
+                                  >
+                                    <PlusIcon className="mr-1 h-3 w-3" />
+                                    Wstaw
+                                  </Button>
+                                </div>
+                              </Card>
+                            ))}
+                          </div>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
 
                 {message.role === "user" && (
@@ -255,23 +218,6 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
                 )}
               </div>
             ))}
-
-            {/* Loading indicator */}
-            {isLoading && (
-              <div className="flex justify-start gap-3">
-                <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-blue-100">
-                  <BotIcon className="size-4 text-blue-600" />
-                </div>
-                <Card className="bg-muted p-3">
-                  <div className="flex items-center gap-2">
-                    <LoaderCircleIcon className="size-4 animate-spin" />
-                    <span className="text-muted-foreground text-sm">
-                      AI pracuje nad odpowiedzią...
-                    </span>
-                  </div>
-                </Card>
-              </div>
-            )}
           </div>
         </ScrollArea>
       </div>
@@ -282,19 +228,19 @@ export const TaskSuggestionsChat: React.FC<TaskSuggestionsChatProps> = ({
           <div className="relative flex-1">
             <Textarea
               ref={textareaRef}
-              value={inputMessage}
-              onChange={(e) => setInputMessage(e.target.value)}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyPress}
               placeholder="Opisz tematykę zajęć lub zapytaj o konkretne zadania..."
               className="min-h-[80px] resize-none pr-12"
-              disabled={isLoading}
+              disabled={status !== "ready"}
             />
             <div className="absolute right-2 bottom-2 flex gap-1">
               <Button
                 size="icon"
                 variant="ghost"
                 onClick={handleSendMessage}
-                disabled={!inputMessage.trim() || isLoading}
+                disabled={!input.trim() || status !== "ready"}
                 className="h-8 w-8 p-0"
               >
                 <SendIcon className="size-4" />

@@ -23,6 +23,7 @@ import { RequiredFunctionLevel } from "@/lib/const";
 import { isTouchDevice, triggerHapticFeedback } from "@/lib/mobile-utils";
 import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { cn } from "@/lib/utils";
+import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import {
   draggable,
@@ -439,11 +440,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
           {/* Action Buttons */}
           <div className="flex flex-col-reverse items-center gap-1 md:flex-row">
-            {/* AI Suggestions Button - Desktop Only */}
+            {/* Task Suggestions Button - Desktop Only */}
             {currentUser.function.numberValue >=
               RequiredFunctionLevel.TASK_SUGGESTIONS &&
               variant === "worksheet" &&
-              task.category === "individual" && (
+              task.category === "individual" &&
+              currentUser.organization === Organization.Male && (
                 <Button
                   type="button"
                   variant="ghost"
@@ -454,7 +456,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                   className={cn(
                     "hidden transition-all group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-700 md:flex md:opacity-0 md:pointer-coarse:opacity-100",
                     showSuggestions &&
-                      "bg-blue-100 text-blue-700 opacity-100 dark:bg-blue-900 dark:text-blue-300",
+                      "bg-blue-100 text-blue-700 !opacity-100 dark:bg-blue-900 dark:text-blue-300",
                   )}
                   title="Pomysły na zadania"
                 >

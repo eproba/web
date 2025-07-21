@@ -1,124 +1,53 @@
-import { NextRequest, NextResponse } from "next/server";
-import { OpenAI } from "openai";
+import taskIdeasData from "@/data/task-ideas.json";
+import { xai } from "@ai-sdk/xai";
+import { UIMessage, convertToModelMessages, streamText } from "ai";
+import { NextRequest } from "next/server";
+
+// Allow streaming responses up to 60 seconds
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
-  try {
-    if (!process.env.OPENAI_API_KEY) {
-      return NextResponse.json(
-        { error: "OpenAI API key not configured" },
-        { status: 500 },
-      );
-    }
+  const { messages }: { messages: UIMessage[] } = await req.json();
 
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+  const systemPrompt = `Jesteś ekspertem od tworzenia zadań edukacyjnych dla harcerzy w ZHR. Twoim zadaniem jest pomaganie w tworzeniu kreatywnych i angażujących zadań INDYWIDUALNYCH dla pojedynczych uczestników - harcerzy.
 
-    const { message, category } = await req.json();
+Zadania indywidualne to kluczowy element rozwoju harcerskiego w dążeniu do ideałów wskazanych w Prawie Harcerskim
 
-    if (!message || typeof message !== "string") {
-      return NextResponse.json(
-        { error: "Message is required" },
-        { status: 400 },
-      );
-    }
+Cel zadań:
+- Dążenie do ideałów wskazanych w Prawie Harcerskim poprzez kształtowanie postaw, cnót i cech charakteru, tworzenie pożytecznych nawyków, zgodnie z potrzebami i możliwościami harcerza.
+Proces wyznaczania:
+- Harcerz, z pomocą drużynowego lub opiekuna próby, dokonuje samooceny, wskazuje cele i techniki pracy nad sobą i wyznacza zadania indywidualne - zgodnie ze swoją wizją dalszego rozwoju. Liczba zadań powinna być dostosowana do zdobywanego stopnia oraz indywidualnych potrzeb i możliwości harcerza.
 
-    const systemPrompt =
-      category === "general"
-        ? `Jesteś ekspertem od tworzenia zadań edukacyjnych dla grup. Twoim zadaniem jest pomaganie w tworzeniu kreatywnych i angażujących zadań OGÓLNYCH dla grup uczestników (harcerzy, skautów, uczniów). 
 
-Zadania ogólne to takie, które:
-- Wykonuje cała grupa razem
-- Wymagają współpracy i komunikacji
-- Budują więzi w grupie
-- Często są realizowane na świeżym powietrzu lub w ramach zajęć grupowych
+Obszary zadań indywidualnych - Zadania indywidualne dotyczą następujących dziedzin rozwoju osobowego:
+- Bóg, wiara i duchowość
+- Siła charakteru
+- Rozum i intelekt
+- Zdrowie i sprawność fizyczna
+- Małe ojczyzny, Polska i świat
+- Rodzina i wybór życiowej drogi
+- Służba
+- Pasje i umiejętności
+- Kultura i komunikacja
+- Przyroda i puszczaństwo
 
-Zawsze odpowiadaj w języku polskim. Gdy użytkownik opisuje temat lub aktywność, zaproponuj 3-4 konkretne zadania z krótkimi opisami. Zadania powinny być praktyczne, wykonalne i dostosowane do różnych grup wiekowych.
+Zawsze odpowiadaj w języku polskim. Gdy użytkownik opisuje zainteresowania, kategorie lub aktywność, zaproponuj 3-4 konkretne zadania z krótkimi opisami. Zadania powinny być wymagające, ale praktyczne i wykonalne (ale mogą na spokojnie wymagać przygotowania).
 
 Format odpowiedzi:
 1. Krótka odpowiedź na zapytanie użytkownika
-2. Lista zadań w formacie: **Nazwa zadania** - opis tego co należy zrobić
+2. Oddzielenie od zadań w formie: "---zadania---"
+3. Lista zadań w formacie: **Nazwa zadania** - opis tego co należy zrobić
 
-Przykład:
-**Obserwacja ptaków** - Zanotuj co najmniej 5 różnych gatunków ptaków wraz z ich zachowaniami
-**Budowa schronienia** - Zbuduj tymczasowe schronienie używając tylko materiałów naturalnych`
-        : `Jesteś ekspertem od tworzenia zadań edukacyjnych dla jednostek. Twoim zadaniem jest pomaganie w tworzeniu kreatywnych i angażujących zadań INDYWIDUALNYCH dla pojedynczych uczestników (harcerzy, skautów, uczniów).
+Przykładowe zadania:
+${taskIdeasData.map((idea) => `**${idea.name}** - ${idea.description}`).join("\n")}
+`;
 
-Zadania indywidualne to takie, które:
-- Wykonuje jedna osoba samodzielnie
-- Rozwijają indywidualne umiejętności i talenty
-- Mogą być dostosowane do różnych poziomów zaawansowania
-- Często wymagają osobistej refleksji lub autodyscypliny
+  const result = streamText({
+    model: xai("grok-3-mini"),
+    prompt: convertToModelMessages(messages),
+    system: systemPrompt,
+    temperature: 0.7,
+  });
 
-Zawsze odpowiadaj w języku polskim. Gdy użytkownik opisuje temat lub aktywność, zaproponuj 3-4 konkretne zadania z krótkimi opisami. Zadania powinny być praktyczne, wykonalne i dostosowane do różnych grup wiekowych.
-
-Format odpowiedzi:
-1. Krótka odpowiedź na zapytanie użytkownika
-2. Lista zadań w formacie: **Nazwa zadania** - opis tego co należy zrobić
-
-Przykład:
-**Dziennik obserwacji przyrody** - Przez tydzień zapisuj codzienne obserwacje przyrody w okolicy
-**Portfolio fotograficzne** - Stwórz kolekcję 20 zdjęć przedstawiających różne tekstury w naturze`;
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: [
-        { role: "system", content: systemPrompt },
-        { role: "user", content: message },
-      ],
-      max_completion_tokens: 800,
-      temperature: 0.7,
-    });
-
-    const responseText =
-      completion.choices[0]?.message?.content ||
-      "Przepraszam, nie mogę wygenerować odpowiedzi w tym momencie.";
-
-    // Parse the response to extract task suggestions
-    const taskSuggestions = parseTaskSuggestions(responseText);
-
-    return NextResponse.json({
-      content: removeTasksFromResponse(responseText),
-      suggestions: taskSuggestions,
-    });
-  } catch (error) {
-    console.error("OpenAI API error:", error);
-    return NextResponse.json(
-      { error: "Wystąpił błąd podczas przetwarzania zapytania" },
-      { status: 500 },
-    );
-  }
-}
-
-function parseTaskSuggestions(
-  responseText: string,
-): Array<{ id: string; name: string; description: string }> {
-  const suggestions: Array<{ id: string; name: string; description: string }> =
-    [];
-
-  // Look for patterns like "**Task Name** - description"
-  const taskPattern = /\*\*([^*]+)\*\*\s*[-–]\s*([^\n]+)/g;
-  let match;
-  let index = 0;
-
-  while ((match = taskPattern.exec(responseText)) !== null && index < 5) {
-    const taskName = match[1].trim();
-    const description = match[2].trim();
-
-    if (taskName && description) {
-      suggestions.push({
-        id: `ai-suggestion-${index + 1}`,
-        name: taskName,
-        description: description,
-      });
-      index++;
-    }
-  }
-
-  return suggestions;
-}
-
-function removeTasksFromResponse(responseText: string): string {
-  // Remove task suggestions from the response text
-  return responseText.replace(/\*\*[^*]+\*\*\s*[-–]\s*[^\n]+/g, "").trim();
+  return result.toUIMessageStreamResponse();
 }

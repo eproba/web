@@ -1,4 +1,4 @@
-import { TeamRequestForm } from "@/components/team/statistics/team-request-form";
+import { TeamRequestForm } from "@/components/team/team-request-form";
 import { fetchCurrentUser } from "@/lib/server-api";
 import type { Metadata } from "next";
 

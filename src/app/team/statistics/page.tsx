@@ -1,3 +1,4 @@
+import { StatisticsAISummary } from "@/components/team/statistics/statistics-ai-summary";
 import {
   ActivityTrendsChart,
   FunctionsChart,
@@ -33,6 +34,7 @@ import {
   BarChartIcon,
   FileTextIcon,
   ShieldOffIcon,
+  SparklesIcon,
   TargetIcon,
   TrophyIcon,
   UsersIcon,
@@ -177,22 +179,26 @@ export default async function TeamStatisticsPage() {
 
       {/* Main Content Tabs */}
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid h-auto w-full grid-cols-2 gap-1 md:grid-cols-4">
+        <TabsList className="flex h-auto w-full flex-wrap justify-between gap-2">
           <TabsTrigger value="overview">
             <BarChartIcon className="size-4" />
-            Przegląd
+            <span className="hidden sm:block">Przegląd</span>
           </TabsTrigger>
           <TabsTrigger value="ranks">
             <AwardIcon className="size-4" />
-            Stopnie
+            <span className="hidden sm:block">Stopnie</span>
           </TabsTrigger>
           <TabsTrigger value="patrols">
             <UsersIcon className="size-4" />
-            Zastępy
+            <span className="hidden sm:block">Zastępy</span>
           </TabsTrigger>
           <TabsTrigger value="performance">
             <ActivityIcon className="size-4" />
-            Aktywność
+            <span className="hidden sm:block">Aktywność</span>
+          </TabsTrigger>
+          <TabsTrigger value="ai-summary">
+            <SparklesIcon className="size-4" />
+            <span className="hidden sm:block">Podsumowanie</span>
           </TabsTrigger>
         </TabsList>
 
@@ -413,6 +419,10 @@ export default async function TeamStatisticsPage() {
               </CardContent>
             </Card>
           </div>
+        </TabsContent>
+
+        <TabsContent value="ai-summary" className="space-y-4">
+          <StatisticsAISummary statistics={statistics} />
         </TabsContent>
       </Tabs>
     </div>

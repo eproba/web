@@ -1,27 +1,27 @@
 [
   {
-    "name": "Próba końcowa 1",
-    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-    "tags": ["tag1", "tag2", "tag3"]
+    "name": "Masz 24 godziny na to, żeby wyruszyć i wrócić do obozowiska z własnoręcznie wykutym, naostrzonym nożem",
+    "description": "Zabierzesz ze sobą jedynie umundurowanie, potrzebną odzież oraz kopertę awaryjną z telefonem i gotówką. Z koperty awaryjnej skorzystasz tylko w razie konieczności.",
+    "tags": ["ćwik", "kreatywność", "rzemiosło"]
   },
   {
-    "name": "Próba końcowa 2",
-    "description": "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
-    "tags": ["tag4", "tag5", "tag6"]
+    "name": "Podejdź obóz drużyny z naszego hufca i zamień swoją rogatywkę na rogatywkę drużynowego",
+    "description": "Następnego dnia rano zamelduj się temu drużynowemu na apelu drużyny. Na całość, od wyjścia do powrotu masz 24 godziny.  Zabierzesz ze sobą jedynie umundurowanie, potrzebną odzież oraz kopertę awaryjną z telefonem i gotówką. Z koperty awaryjnej skorzystasz tylko w razie konieczności.",
+    "tags": ["ćwik", "podchody", "inna drużyna"]
   },
   {
-    "name": "Próba końcowa 3",
-    "description": "Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.",
-    "tags": ["tag7", "tag8", "tag9"]
+    "name": "Odwiedź drużynę posiadającą tego samego patrona co nasza",
+    "description": "Zbierz w trybie alarmowym jak największą liczbę harcerzy i przeprowadź dla nich zbiórkę, którą zakończysz gawędą o patronie. Masz na to 24 godziny, zabierzesz ze sobą jedynie umundurowanie, potrzebną odzież oraz kopertę awaryjną z telefonem i gotówką. Z koperty awaryjnej skorzystasz tylko w razie konieczności.",
+    "tags": ["ćwik", "inna drużyna", "podchody", "gawęda"]
   },
   {
-    "name": "Próba końcowa 4",
-    "description": "Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
-    "tags": ["tag10", "tag11", "tag12"]
+    "name": "Zdobądź dowolny dwutysięcznik, masz na to 48 godzin",
+    "description": "Zabierzesz ze sobą jedynie umundurowanie, potrzebną odzież oraz kopertę awaryjną z telefonem i gotówką. Z koperty awaryjnej skorzystasz tylko w razie konieczności.",
+    "tags": ["ćwik", "sport", "góry"]
   },
   {
-    "name": "Próba końcowa 5",
-    "description": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.",
-    "tags": ["tag13", "tag14", "tag15"]
+    "name": "Przebiegnij 5 km z Naczelnikiem Harcerzy, zrób sobie z Nim zdjęcie i wrzuć na stronę Organizacji Harcerzy na FB",
+    "description": "Masz na to 24 godziny. Zabierzesz ze sobą jedynie potrzebną odzież oraz kopertę awaryjną z telefonem i gotówką. Z koperty awaryjnej skorzystasz tylko w razie konieczności.",
+    "tags": ["ćwik", "sport", "kreatywność"]
   }
 ]
