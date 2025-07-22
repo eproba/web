@@ -19,17 +19,17 @@ if (API_URL === "") {
 export class ApiError extends Error {
   status: number;
   statusText: string;
-  response: unknown;
+  response: object;
 
   constructor(
     message: string,
     status: number,
     statusText: string,
-    response?: unknown,
+    response?: object,
   ) {
     super(message);
     this.status = status;
     this.statusText = statusText;
-    this.response = response;
+    this.response = response || {};
   }
 }

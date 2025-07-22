@@ -41,12 +41,19 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useApi } from "@/lib/api-client";
 import { ApiUserResponse } from "@/lib/serializers/user";
+import { ToastMsg } from "@/lib/toast-msg";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
 import { Organization, Patrol } from "@/types/team";
 import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { UserCheckIcon, UserLockIcon, UserXIcon } from "lucide-react";
+import {
+  RotateCcwKeyIcon,
+  UserCheckIcon,
+  UserLockIcon,
+  UserXIcon,
+} from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -89,6 +96,8 @@ export function UserEditDialog({
 }: UserEditDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [newPassword, setNewPassword] = useState<string>("");
+  const { apiClient } = useApi();
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -149,6 +158,30 @@ export function UserEditDialog({
     });
   }, [user, form]);
 
+  const onPasswordReset = async () => {
+    setIsLoading(true);
+    try {
+      const response = await apiClient(`/users/${user.id}/reset-password/`, {
+        method: "POST",
+      });
+      const data = await response.json();
+      setNewPassword(data.new_password);
+      setIsLoading(false);
+      toast.success(
+        `Hasło zostało zresetowane${!user.email.endsWith("@eproba.zhr.pl") && "i wysłane na email użytkownika"}`,
+      );
+    } catch (error) {
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie udało się zresetować hasła",
+            description: error as Error,
+          },
+        }),
+      );
+    }
+  };
+
   return (
     <Dialog
       open={isOpen}
@@ -197,7 +230,7 @@ export function UserEditDialog({
                 name="firstName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Imię i nazwisko</FormLabel>
+                    <FormLabel>Imię</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -398,7 +431,7 @@ export function UserEditDialog({
             </div>
             <DialogFooter>
               {form.watch("isActive") !== user.isActive && (
-                <span className="text-muted-foreground text-sm sm:hidden">
+                <span className="text-muted-foreground text-xs sm:hidden">
                   {form.watch("isActive")
                     ? "Zapisz aby aktywować"
                     : "Zapisz aby dezaktywować"}
@@ -525,8 +558,102 @@ export function UserEditDialog({
                         : "Aktywuj konto użytkownika"}
                     </TooltipContent>
                   </Tooltip>
+
+                  <Dialog
+                    onOpenChange={(open) => {
+                      if (!open) {
+                        setNewPassword("");
+                      }
+                    }}
+                  >
+                    <Tooltip>
+                      <DialogTrigger asChild>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="info"
+                            size="icon"
+                            disabled={
+                              isLoading ||
+                              (user.function.numberValue >
+                                currentUser.function.numberValue &&
+                                currentUser.function.numberValue < 4 &&
+                                !allowEditForLowerFunction)
+                            }
+                          >
+                            <RotateCcwKeyIcon className="size-4" />
+                          </Button>
+                        </TooltipTrigger>
+                      </DialogTrigger>
+                      <TooltipContent>Zresetuj hasło</TooltipContent>
+                    </Tooltip>
+                    <DialogContent>
+                      <DialogHeader>
+                        <DialogTitle>Zresetuj hasło użytkownika</DialogTitle>
+                      </DialogHeader>
+                      <DialogDescription>
+                        {newPassword ? (
+                          <span>
+                            Nowe hasło:{" "}
+                            <span className="font-semibold">{newPassword}</span>
+                          </span>
+                        ) : (
+                          <span>
+                            Czy na pewno chcesz zresetować hasło{" "}
+                            {user.displayName || user.email}?
+                            <br />
+                            <br />
+                            {!user.email.endsWith("@eproba.zhr.pl") ? (
+                              <span>
+                                {user.nickname || user.firstName || user.email}{" "}
+                                otrzyma na maila nowe hasło oraz wyświetli się
+                                ono tutaj.
+                              </span>
+                            ) : (
+                              <span>
+                                {user.nickname || user.firstName || user.email}{" "}
+                                otrzyma nowe hasło, które będzie widoczne tutaj.
+                              </span>
+                            )}
+                          </span>
+                        )}
+                      </DialogDescription>
+                      <DialogFooter className="mt-4 flex flex-row justify-end gap-2">
+                        <DialogClose asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            disabled={isLoading}
+                          >
+                            {newPassword ? "Zamknij" : "Anuluj"}
+                          </Button>
+                        </DialogClose>
+                        {newPassword ? (
+                          <Button
+                            type="button"
+                            variant="info"
+                            onClick={() => {
+                              navigator.clipboard.writeText(newPassword);
+                              toast.success("Hasło skopiowane do schowka");
+                            }}
+                            disabled={isLoading}
+                          >
+                            Skopiuj hasło
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="info"
+                            onClick={onPasswordReset}
+                            disabled={isLoading}
+                          >
+                            Zresetuj hasło
+                          </Button>
+                        )}
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
                   {form.watch("isActive") !== user.isActive && (
-                    <span className="text-muted-foreground hidden text-sm sm:inline">
+                    <span className="text-muted-foreground hidden text-xs sm:inline">
                       {form.watch("isActive")
                         ? "Zapisz aby aktywować"
                         : "Zapisz aby dezaktywować"}

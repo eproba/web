@@ -13,7 +13,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-button";
 import { WorksheetItem } from "@/components/worksheets/worksheet-item";
-import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
 import { cn } from "@/lib/utils";
 import { Patrol } from "@/types/team";
 import { User } from "@/types/user";
@@ -22,6 +21,7 @@ import Fuse from "fuse.js";
 import { LoaderCircleIcon, SearchIcon, XIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useMemo, useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
 export function WorksheetList({
   orgWorksheets,

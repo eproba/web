@@ -117,7 +117,7 @@ export function TaskTable({
                 task={task as TemplateTask}
                 index={index}
                 variant={variant}
-                worksheetId={worksheet.id}
+                worksheet={worksheet}
                 updateTask={updateTask}
                 currentUser={currentUser}
               />
@@ -129,10 +129,9 @@ export function TaskTable({
                 task={task as Task}
                 index={index}
                 variant={variant}
-                worksheetId={worksheet.id}
+                worksheet={worksheet}
                 updateTask={updateTask}
                 currentUser={currentUser}
-                supervisorId={worksheet.supervisor}
               />
             );
           }

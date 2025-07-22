@@ -17,7 +17,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { useApi } from "@/lib/api-client";
-import { useDebouncedCallback } from "@/lib/hooks/use-debounced-callback";
 import { ToastMsg } from "@/lib/toast-msg";
 import { TeamRequest } from "@/types/team-request";
 import { FieldInfo, UserFunction } from "@/types/user";
@@ -34,6 +33,7 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
+import { useDebouncedCallback } from "use-debounce";
 
 type FilterStatus =
   | "all"
@@ -384,14 +384,7 @@ function TeamRequestCard({
           <div className="grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
             <div>
               <span className="font-medium">Imię i nazwisko:</span>
-              <div className="mt-1">
-                {request.createdBy.displayName}
-                {request.createdBy.nickname && (
-                  <span className="text-muted-foreground ml-1">
-                    &quot;{request.createdBy.nickname}&quot;
-                  </span>
-                )}
-              </div>
+              <div className="mt-1">{request.createdBy.displayName}</div>
             </div>
             <div>
               <span className="font-medium">E-mail:</span>

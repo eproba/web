@@ -15,9 +15,9 @@ import { TaskNotes } from "@/components/worksheets/task-notes";
 import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { cn } from "@/lib/utils";
-import { TemplateTask } from "@/types/template";
+import { TemplateTask, TemplateWorksheet } from "@/types/template";
 import { User } from "@/types/user";
-import { Task, TaskStatus } from "@/types/worksheet";
+import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
 import { motion } from "framer-motion";
 import { InfoIcon } from "lucide-react";
 import { useState } from "react";
@@ -26,28 +26,25 @@ export function TaskTableRow({
   task,
   index,
   variant,
-  worksheetId,
+  worksheet,
   updateTask,
   currentUser,
-  supervisorId,
 }:
   | {
       task: Task;
       index: number;
       variant: "user" | "managed" | "shared" | "archived" | "review";
-      worksheetId: string;
+      worksheet: Worksheet;
       updateTask?: (task: Task) => void;
       currentUser?: User;
-      supervisorId?: string | null;
     }
   | {
       task: TemplateTask;
       index: number;
       variant: "template";
-      worksheetId: string;
+      worksheet: TemplateWorksheet;
       updateTask?: (task: Task) => void;
       currentUser?: User;
-      supervisorId?: never;
     }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -109,11 +106,12 @@ export function TaskTableRow({
             currentUser &&
             (currentUser.function.numberValue >=
               RequiredFunctionLevel.WORKSHEET_NOTES_ACCESS ||
-              currentUser.id === supervisorId) && (
+              currentUser.id === (worksheet as Worksheet).supervisor) &&
+            currentUser.id !== (worksheet as Worksheet).user.id && (
               <div className="pointer-events-auto invisible absolute top-0 -left-8 z-50 translate-x-2 transform py-0.5 opacity-0 transition-all duration-300 ease-out group-hover:visible group-hover:translate-x-0 group-hover:opacity-100 has-[[data-state=open]]:visible has-[[data-state=open]]:translate-x-0 has-[[data-state=open]]:opacity-100">
                 <TaskNotes
                   task={task as Task}
-                  worksheetId={worksheetId}
+                  worksheetId={worksheet.id}
                   updateTask={updateTask!}
                   format="overlay"
                 />
@@ -153,7 +151,7 @@ export function TaskTableRow({
             <TaskActions
               task={task}
               variant={variant}
-              worksheetId={worksheetId}
+              worksheetId={worksheet.id}
               updateTask={updateTask!}
               currentUser={currentUser}
             />
@@ -213,10 +211,11 @@ export function TaskTableRow({
                 currentUser &&
                 (currentUser.function.numberValue >=
                   RequiredFunctionLevel.WORKSHEET_NOTES_ACCESS ||
-                  currentUser.id === supervisorId) && (
+                  currentUser.id === worksheet.supervisor) &&
+                currentUser.id !== worksheet.user.id && (
                   <TaskNotes
                     task={task}
-                    worksheetId={worksheetId}
+                    worksheetId={worksheet.id}
                     updateTask={updateTask!}
                     format="mobile"
                     className="w-full"
@@ -237,7 +236,7 @@ export function TaskTableRow({
               <TaskActions
                 task={task}
                 variant={variant}
-                worksheetId={worksheetId}
+                worksheetId={worksheet.id}
                 updateTask={updateTask!}
                 format="button"
                 closeDrawer={() => setIsOpen(false)}

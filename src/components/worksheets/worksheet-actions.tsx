@@ -87,7 +87,7 @@ export function WorksheetActions({
 
   async function handleDeleteWorksheet() {
     try {
-      await apiClient(`/worksheets/${worksheet.id}/`, {
+      await apiClient(`/worksheets/${worksheet.id}/${worksheet.isArchived ? "?archived" : ""}`, {
         method: "DELETE",
       });
       toast.success("Próba została usunięta");
@@ -165,9 +165,10 @@ export function WorksheetActions({
       icon: StickyNoteIcon,
       variant: ["managed", "archived", "user"],
       userFilter: (user) =>
-        user.function.numberValue >=
+        (user.function.numberValue >=
           RequiredFunctionLevel.WORKSHEET_NOTES_ACCESS ||
-        user.id === worksheet.supervisor,
+          user.id === worksheet.supervisor) &&
+        user.id !== worksheet.user.id,
       renderContent: (action) => (
         <Tooltip>
           <WorksheetNotesDialog

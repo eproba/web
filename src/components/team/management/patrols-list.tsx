@@ -1,10 +1,12 @@
 import { PatrolCard } from "@/components/team/management/patrol-card";
+import { UserCreateDialog } from "@/components/team/management/user-create-dialog";
 import { Button } from "@/components/ui/button";
+import { ApiError } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { patrolSerializer } from "@/lib/serializers/team";
 import { ApiUserResponse, userSerializer } from "@/lib/serializers/user";
 import { ToastMsg } from "@/lib/toast-msg";
-import { Patrol, Team } from "@/types/team";
+import { Organization, Patrol, Team } from "@/types/team";
 import { User } from "@/types/user";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { LoaderCircleIcon } from "lucide-react";
@@ -206,6 +208,38 @@ export function PatrolsList({
     }
   };
 
+  const handleCreateUser = async (userData: Partial<ApiUserResponse>) => {
+    try {
+      const response = await apiClient(`/users/`, {
+        method: "POST",
+        body: JSON.stringify({
+          ...userData,
+        }),
+      });
+      const data = await response.json();
+      const newUser = {
+        ...userSerializer(data),
+        newPassword: data.new_password ?? "",
+      };
+      setUsers((prevUsers) => [...prevUsers, newUser]);
+      return newUser;
+    } catch (error) {
+      toast.error(
+        ToastMsg({
+          data: {
+            title: "Nie udało się dodać użytkownika",
+            description: error as Error,
+          },
+        }),
+      );
+      console.error("Error creating user:", error);
+      if (error instanceof ApiError) {
+        return error;
+      }
+      return error as Error;
+    }
+  };
+
   const inactiveUsers = users.filter((user) => !user.isActive);
   const activeUsers = users.filter((user) => user.isActive);
 
@@ -218,9 +252,28 @@ export function PatrolsList({
             <LoaderCircleIcon className="mr-2 size-4 animate-spin" />
           )}
         </h2>
-        <PatrolCreateDialog onCreate={handleCreatePatrol}>
-          <Button>Dodaj zastęp</Button>
-        </PatrolCreateDialog>
+        <div className="flex items-center gap-2">
+          <UserCreateDialog
+            onUserCreate={handleCreateUser}
+            currentUser={currentUser}
+            patrols={patrols}
+          >
+            <Button variant="outline">
+              <span>
+                Załóż konto
+                <span className="hidden sm:inline">
+                  {" dla "}
+                  {currentUser.organization === Organization.Female
+                    ? "harcerki"
+                    : "harcerza"}
+                </span>
+              </span>
+            </Button>
+          </UserCreateDialog>
+          <PatrolCreateDialog onCreate={handleCreatePatrol}>
+            <Button>Dodaj zastęp</Button>
+          </PatrolCreateDialog>
+        </div>
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
         {patrols.map((patrol) => (

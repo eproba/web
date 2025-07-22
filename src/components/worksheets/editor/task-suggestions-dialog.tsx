@@ -4,11 +4,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { FilterableList } from "@/components/worksheets/editor/filterable-list";
-import { TaskSuggestionsChat } from "@/components/worksheets/editor/task-suggestions-chat";
 import taskIdeasData from "@/data/task-ideas.json";
-import { SearchIcon, SparklesIcon } from "lucide-react";
+import { SparklesIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
 interface TaskIdea {
@@ -76,16 +75,16 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
           defaultValue="browse"
           className="flex min-h-0 w-full flex-1 flex-col"
         >
-          <TabsList className="grid w-full flex-shrink-0 grid-cols-2">
-            <TabsTrigger value="browse" className="flex items-center gap-2">
-              <SearchIcon className="size-4" />
-              Przeglądaj pomysły
-            </TabsTrigger>
-            <TabsTrigger value="ai-chat" className="flex items-center gap-2">
-              <SparklesIcon className="size-4" />
-              Czat z AI
-            </TabsTrigger>
-          </TabsList>
+          {/*<TabsList className="grid w-full flex-shrink-0 grid-cols-2">*/}
+          {/*  <TabsTrigger value="browse" className="flex items-center gap-2">*/}
+          {/*    <SearchIcon className="size-4" />*/}
+          {/*    Przeglądaj pomysły*/}
+          {/*  </TabsTrigger>*/}
+          {/*  <TabsTrigger value="ai-chat" className="flex items-center gap-2">*/}
+          {/*    <SparklesIcon className="size-4" />*/}
+          {/*    Czat z AI*/}
+          {/*  </TabsTrigger>*/}
+          {/*</TabsList>*/}
 
           <TabsContent
             value="browse"
@@ -103,20 +102,20 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
             />
           </TabsContent>
 
-          <TabsContent
-            value="ai-chat"
-            className="min-h-0 flex-1 data-[state=active]:flex"
-          >
-            <TaskSuggestionsChat
-              onAddTask={(suggestion: {
-                name: string;
-                description: string;
-              }) => {
-                onAddTask(suggestion);
-                onOpenChange(false);
-              }}
-            />
-          </TabsContent>
+          {/*<TabsContent*/}
+          {/*  value="ai-chat"*/}
+          {/*  className="min-h-0 flex-1 data-[state=active]:flex"*/}
+          {/*>*/}
+          {/*  <TaskSuggestionsChat*/}
+          {/*    onAddTask={(suggestion: {*/}
+          {/*      name: string;*/}
+          {/*      description: string;*/}
+          {/*    }) => {*/}
+          {/*      onAddTask(suggestion);*/}
+          {/*      onOpenChange(false);*/}
+          {/*    }}*/}
+          {/*  />*/}
+          {/*</TabsContent>*/}
         </Tabs>
       </DialogContent>
     </Dialog>
