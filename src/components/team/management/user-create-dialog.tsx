@@ -32,14 +32,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ApiError } from "@/lib/api";
+import { useApi } from "@/lib/api-client";
 import { ApiUserResponse } from "@/lib/serializers/user";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { Organization, Patrol } from "@/types/team";
 import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import { PopoverClose } from "@radix-ui/react-popover";
+import React, { useCallback, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useDebouncedCallback } from "use-debounce";
+import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
 const formSchema = z.object({
@@ -72,8 +74,17 @@ export function UserCreateDialog({
   children,
   currentUser,
 }: UserEditDialogProps) {
+  const { apiClient } = useApi();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [internalEmailLogin, setInternalEmailLogin] = useState("");
+  const [internalEmailLoginState, setIsInternalEmailLoginState] = useState<
+    "valid" | "invalid" | "checking"
+  >("invalid");
+  const [debouncedInternalEmailLoginState] = useDebounce(
+    internalEmailLoginState,
+    500,
+  );
   const [createdUser, setCreatedUser] = useState<
     (User & { newPassword: string }) | null
   >(null);
@@ -119,9 +130,49 @@ export function UserCreateDialog({
     setIsLoading(false);
   };
 
+  const emailAvailabilityCache = useMemo(() => new Map<string, boolean>(), []);
+
+  const checkEmailAvailability = useCallback(
+    async (email: string) => {
+      const re =
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+      if (!email || email.split("@")[0].length < 5 || !re.test(email)) {
+        setIsInternalEmailLoginState("invalid");
+        return;
+      }
+
+      if (emailAvailabilityCache.has(email)) {
+        setIsInternalEmailLoginState(
+          emailAvailabilityCache.get(email) ? "valid" : "invalid",
+        );
+        return;
+      }
+
+      setIsInternalEmailLoginState("checking");
+
+      try {
+        const result = (await (
+          await apiClient(
+            `/users/email-available/?email=${encodeURIComponent(email)}`,
+          )
+        ).json()) as { available: boolean };
+        emailAvailabilityCache.set(email, result.available || false);
+        setIsInternalEmailLoginState(result.available ? "valid" : "invalid");
+      } catch (error) {
+        emailAvailabilityCache.set(email, false);
+        setIsInternalEmailLoginState("invalid");
+        console.error("Error checking email availability:", error);
+      }
+    },
+    [apiClient, emailAvailabilityCache],
+  );
+
   const debouncedReset = useDebouncedCallback(() => {
     form.reset();
     setCreatedUser(null);
+    setInternalEmailLogin("");
+    emailAvailabilityCache.clear();
   }, 500);
 
   return (
@@ -153,7 +204,7 @@ export function UserCreateDialog({
               <strong>Hasło:</strong> {createdUser.newPassword}
               <br />
               <br />
-              {createdUser.email.endsWith("@eproba.zhp.pl")
+              {createdUser.email.endsWith("@eproba.zhr.pl")
                 ? "Pamiętaj, aby przekazać je nowemu członkowi drużyny. Ich kopie znajdziesz na swoim mailu."
                 : "Dane logowania zostały również wysłane na podany adres email."}
             </DialogDescription>
@@ -239,8 +290,76 @@ export function UserCreateDialog({
                           <PopoverTrigger className="text-xs">
                             Brak adresu email? Kliknij aby wygenerować.
                           </PopoverTrigger>
-                          <PopoverContent align="start">
-                            Place content for the popover here.
+                          <PopoverContent
+                            align="start"
+                            className="text-sm sm:w-96"
+                          >
+                            <div className="flex flex-col gap-2">
+                              <p>
+                                Jeśli nie masz adresu email, możesz wygenerować
+                                tymczasowy email, który będzie działał tylko do
+                                logowania do Epróby.
+                              </p>
+                              <div className="flex items-center">
+                                <Input
+                                  type="text"
+                                  placeholder="np. antoni.czaplicki"
+                                  className="rounded-r-none"
+                                  value={internalEmailLogin}
+                                  onChange={(e) => {
+                                    setInternalEmailLogin(
+                                      e.target.value.trim(),
+                                    );
+                                    checkEmailAvailability(
+                                      `${e.target.value.trim()}@eproba.zhr.pl`,
+                                    );
+                                  }}
+                                />
+                                <Input
+                                  type="email"
+                                  value="@eproba.zhr.pl"
+                                  readOnly
+                                  disabled
+                                  containerClassName="w-fit"
+                                  className="rounded-l-none px-2"
+                                />
+                              </div>
+                              {internalEmailLoginState === "invalid" &&
+                              internalEmailLogin.length >= 5 ? (
+                                <p className="text-xs text-red-500">
+                                  Adres email jest nieprawidłowy lub już zajęty.
+                                </p>
+                              ) : debouncedInternalEmailLoginState ===
+                                "checking" ? (
+                                <p className="text-xs text-gray-500">
+                                  Sprawdzanie dostępności adresu email...
+                                </p>
+                              ) : (
+                                <p className="text-xs text-gray-500">
+                                  Co najmniej 5 znaków, bez spacji.
+                                </p>
+                              )}
+                              <PopoverClose asChild>
+                                <Button
+                                  type="button"
+                                  variant="outline"
+                                  onClick={async () => {
+                                    form.setValue(
+                                      "email",
+                                      `${internalEmailLogin.trim()}@eproba.zhr.pl`,
+                                    );
+                                    setInternalEmailLogin("");
+                                  }}
+                                  disabled={
+                                    isLoading ||
+                                    !internalEmailLogin.trim() ||
+                                    internalEmailLoginState !== "valid"
+                                  }
+                                >
+                                  Użyj tego adresu
+                                </Button>
+                              </PopoverClose>
+                            </div>
                           </PopoverContent>
                         </Popover>
                       </FormDescription>

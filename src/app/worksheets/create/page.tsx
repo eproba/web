@@ -7,7 +7,6 @@ import Image from "next/image";
 import React from "react";
 import { v4 as uuid } from "uuid";
 
-
 export const metadata: Metadata = {
   title: "Utwórz próbę",
 };
@@ -68,7 +67,14 @@ const WorksheetCreatePage = async ({
         <WorksheetEditor
           mode="create"
           redirectTo={redirectTo || `/worksheets/templates#${templateId}`}
-          initialData={{ ...template, templateId, tasks: (template?.tasks || []).map((task) => ({ ...task, id: uuid() })) }}
+          initialData={{
+            ...template,
+            templateId,
+            tasks: (template?.tasks || []).map((task) => ({
+              ...task,
+              id: uuid(),
+            })),
+          }}
           currentUser={user!}
         />
       </div>

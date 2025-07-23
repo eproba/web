@@ -87,9 +87,12 @@ export function WorksheetActions({
 
   async function handleDeleteWorksheet() {
     try {
-      await apiClient(`/worksheets/${worksheet.id}/${worksheet.isArchived ? "?archived" : ""}`, {
-        method: "DELETE",
-      });
+      await apiClient(
+        `/worksheets/${worksheet.id}/${worksheet.isArchived ? "?archived" : ""}`,
+        {
+          method: "DELETE",
+        },
+      );
       toast.success("Próba została usunięta");
       if (removeWorksheet) {
         removeWorksheet(worksheet.id);

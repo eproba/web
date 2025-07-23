@@ -233,7 +233,8 @@ export default async function UserProfilePage() {
                 <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
                   <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
                     <div className="flex items-center gap-2">
-                      {user.emailVerified ? (
+                      {user.emailVerified ||
+                      user.email.endsWith("@eproba.zhr.pl") ? (
                         <MailIcon size={20} />
                       ) : (
                         <MailWarningIcon size={20} />
@@ -244,6 +245,8 @@ export default async function UserProfilePage() {
                   <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
                     {user.emailVerified ? (
                       <Badge variant="success">Zweryfikowany</Badge>
+                    ) : user.email.endsWith("@eproba.zhr.pl") ? (
+                      <Badge variant="info">Wewnętrzny (@eproba.zhr.pl)</Badge>
                     ) : (
                       <div className="flex items-center gap-2 sm:justify-end">
                         <Badge variant="warning">Niezweryfikowany</Badge>
