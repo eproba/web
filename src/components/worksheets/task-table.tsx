@@ -191,7 +191,7 @@ export function TaskTable({
       {generalTasks.length > 0 && (
         <div>
           {hasBothCategories && (
-            <h3 className="text-lg font-medium">Zadania ogólne</h3>
+            <h3 className="text-lg font-medium">Wymagania ogólne</h3>
           )}
           <Table containerClassName="sm:overflow-x-visible">
             {renderTableHeader()}

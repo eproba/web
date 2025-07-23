@@ -11,10 +11,14 @@ import { TaskControls } from "@/components/worksheets/editor/task-controls";
 import { TasksSection } from "@/components/worksheets/editor/tasks-section";
 import { WorksheetBasicInfo } from "@/components/worksheets/editor/worksheet-basic-info";
 import { WorksheetSubmitButton } from "@/components/worksheets/editor/worksheet-submit-button";
+import { RequiredFunctionLevel } from "@/lib/const";
 import { Task, WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { ToastMsg } from "@/lib/toast-msg";
+import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { TaskStatus } from "@/types/worksheet";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface WorksheetEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
@@ -159,6 +163,40 @@ export const WorksheetEditor = ({
     }, 200);
     resetModifiedTasksHandling(); // Reset the flag so user can try again
   };
+
+  useEffect(() => {
+    if (
+      !initialData &&
+      mode === "create" &&
+      currentUser.organization === Organization.Male &&
+      currentUser.function.numberValue >=
+        RequiredFunctionLevel.WORKSHEET_MANAGEMENT
+    ) {
+      toast.info(
+        ToastMsg({
+          data: {
+            title: "Tworzysz próbę na stopień?",
+            description:
+              "Skorzystaj z szablonów rekomendowanych przez Organizację Harcerzy ZHR.\nKliknij, aby zobaczyć dostępne szablony.",
+            href: "/worksheets/templates",
+          },
+        }),
+        {
+          autoClose: 30000,
+          toastId: "worksheet-template-hint",
+        },
+      );
+    }
+    return () => {
+      // Cleanup toast when component unmounts
+      toast.dismiss("worksheet-template-hint");
+    };
+  }, [
+    currentUser.function.numberValue,
+    currentUser.organization,
+    initialData,
+    mode,
+  ]);
 
   return (
     <DragDropProvider>

@@ -1,9 +1,11 @@
 import { ApiError } from "@/lib/api";
 import Link from "next/link";
+import { ToastContentProps } from "react-toastify";
 
 export function ToastMsg({
   data,
-}: {
+  closeToast,
+}: Partial<ToastContentProps> & {
   data: {
     title: string;
     description: string | ApiError | Error;
@@ -30,9 +32,9 @@ export function ToastMsg({
   if (data.href) {
     return (
       <div>
-        <Link href={data.href}>
+        <Link href={data.href} onClick={closeToast}>
           <p className="font-semibold">{data.title}</p>
-          <p className="text-sm">{description}</p>
+          <p className="text-sm whitespace-break-spaces">{description}</p>
         </Link>
       </div>
     );

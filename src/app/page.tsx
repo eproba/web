@@ -9,7 +9,7 @@ export default async function Home() {
   if (session) {
     const { worksheets, error } = await fetchUserWorksheets();
     if (error) {
-      return error;
+      return NewsPage(); // If there's an error fetching worksheets, just show the news page
     }
 
     const activeWorksheets = worksheets!.filter(

@@ -48,7 +48,7 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
       <div className="flex w-full flex-col gap-4 lg:flex-row">
         {/* General Tasks */}
         <TaskList
-          title={enableCategories ? "Zadania ogólne" : null}
+          title={enableCategories ? "Wymagania ogólne" : null}
           tasks={generalTasks}
           category="general"
           showDescriptions={showDescriptions}
@@ -67,7 +67,7 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
         {/* Individual Tasks (only when categories enabled) */}
         {enableCategories && (
           <TaskList
-            title="Próby indywidualne"
+            title="Zadania indywidualne"
             tasks={individualTasks}
             category="individual"
             showDescriptions={showDescriptions}

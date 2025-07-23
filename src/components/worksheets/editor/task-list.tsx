@@ -295,19 +295,20 @@ export const TaskList: React.FC<TaskListProps> = ({
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.2 }}
+                className="inline-flex items-center"
               >
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger>
                       <InfoIcon className="text-muted-foreground size-4" />
                     </TooltipTrigger>
-                    <TooltipContent>
+                    <TooltipContent className="max-w-xs">
                       {category === "general"
-                        ? `Zadania ogólne, mogą je podpisywać ${UserFunction.fromValue(
+                        ? `Wymagania dotyczące umiejętności - technik harcerskich i wiedzy, mogą je podpisywać ${UserFunction.fromValue(
                             RequiredFunctionLevel.WORKSHEET_MANAGEMENT,
                             currentUser.gender,
                           ).fullName.toLowerCase()} i wyżej`
-                        : `Zadania indywidualne, podpisać je może co najmniej ${UserFunction.fromValue(
+                        : `Zadania ułożone indywidualnie, oparte o kształtowanie postaw i pracę nad cechami charakteru, podpisać je może co najmniej ${UserFunction.fromValue(
                             RequiredFunctionLevel.INDIVIDUAL_TASKS_MANAGEMENT,
                             currentUser.gender,
                           ).fullName.toLowerCase()} lub opiekun${currentUser.gender?.value === "female" ? "ka" : ""}`}
