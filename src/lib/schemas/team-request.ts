@@ -18,7 +18,6 @@ export const teamRequestSchema = z.object({
     .array(
       z
         .string()
-        .min(1, { error: "Nazwa zastępu nie może być pusta" })
         .max(50, { error: "Nazwa zastępu nie może przekraczać 50 znaków" }),
     )
     .min(1, { error: "Dodaj przynajmniej jeden zastęp" }),
