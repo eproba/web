@@ -2,7 +2,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
-import { fetchUser } from "@/lib/server-api";
+import { RequiredFunctionLevel } from "@/lib/const";
+import { fetchCurrentUser, fetchUser } from "@/lib/server-api";
 import { Organization } from "@/types/team";
 import { ListStartIcon, PencilIcon } from "lucide-react";
 import type { Metadata } from "next";
@@ -24,6 +25,8 @@ export default async function ProfilePage({
   if (!user) {
     notFound();
   }
+
+  const { user: currentUser } = await fetchCurrentUser();
 
   return (
     <div className="space-y-4">
@@ -84,26 +87,32 @@ export default async function ProfilePage({
           </Table>
         </CardContent>
       </Card>
-      <Card className="gap-2">
-        <CardContent className="flex flex-wrap gap-4">
-          <Link href={`/team/?highlightedUserId=${user.id}`}>
-            <Button variant="outline">
-              <PencilIcon />
-              Edytuj harcer
-              {user.organization === Organization.Female ? "kę" : "za"} w
-              drużynie
-            </Button>
-          </Link>
-          <Link
-            href={`/worksheets/manage?userId=${user.id}&userName=${encodeURIComponent(user.displayName)}`}
-          >
-            <Button variant="outline">
-              <ListStartIcon />
-              Przejdź do prób
-            </Button>
-          </Link>
-        </CardContent>
-      </Card>
+      {(currentUser?.function.numberValue || 0) >=
+        RequiredFunctionLevel.WORKSHEET_MANAGEMENT && (
+        <Card className="gap-2">
+          <CardContent className="flex flex-wrap gap-4">
+            {(currentUser?.function.numberValue || 0) >=
+              RequiredFunctionLevel.TEAM_MANAGEMENT && (
+              <Link href={`/team/?highlightedUserId=${user.id}`}>
+                <Button variant="outline">
+                  <PencilIcon />
+                  Edytuj harcer
+                  {user.organization === Organization.Female ? "kę" : "za"} w
+                  drużynie
+                </Button>
+              </Link>
+            )}
+            <Link
+              href={`/worksheets/manage?userId=${user.id}&userName=${encodeURIComponent(user.displayName)}`}
+            >
+              <Button variant="outline">
+                <ListStartIcon />
+                Przejdź do prób
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }
