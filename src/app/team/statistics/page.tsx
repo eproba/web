@@ -40,6 +40,7 @@ import {
   UsersIcon,
 } from "lucide-react";
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Statystyki drużyny",
@@ -326,7 +327,12 @@ export default async function TeamStatisticsPage() {
                         className="bg-muted flex items-center justify-between rounded-lg p-3"
                       >
                         <div>
-                          <div className="font-medium">{performer.name}</div>
+                          <Link
+                            className="font-medium"
+                            href={`/profile/${performer.id}`}
+                          >
+                            {performer.name}
+                          </Link>
                           <div className="text-muted-foreground text-sm">
                             {performer.patrol} • {performer.rank}
                           </div>
@@ -389,7 +395,12 @@ export default async function TeamStatisticsPage() {
                         className="bg-muted flex items-center justify-between rounded-lg p-3"
                       >
                         <div>
-                          <div className="font-medium">{member.name}</div>
+                          <Link
+                            className="font-medium"
+                            href={`/profile/${member.id}`}
+                          >
+                            {member.name}
+                          </Link>
                           <div className="text-muted-foreground text-sm">
                             {member.patrol} • {member.rank}
                           </div>

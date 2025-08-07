@@ -124,13 +124,13 @@ const AuthButtons = ({
         >
           {mobile ? (
             <Button variant="destructive" className="w-full">
-              <LogOutIcon className="mr-2 size-4" />
+              <LogOutIcon />
               Wyloguj
             </Button>
           ) : (
             <>
               <Button variant="destructive" className="hidden w-full xl:flex">
-                <LogOutIcon className="mr-2 size-4" />
+                <LogOutIcon />
                 Wyloguj
               </Button>
               <Button
@@ -138,7 +138,7 @@ const AuthButtons = ({
                 className="min-w-full xl:hidden"
                 size="icon"
               >
-                <LogOutIcon className="size-4" />
+                <LogOutIcon />
               </Button>
             </>
           )}
@@ -147,7 +147,7 @@ const AuthButtons = ({
           <DrawerClose asChild>
             <Link href="/profile" className="flex-1">
               <Button className="w-full bg-[#1abc9c] hover:bg-[#16a085]">
-                <UserIcon className="mr-2 size-4" />
+                <UserIcon />
                 Profil
               </Button>
             </Link>
@@ -155,14 +155,14 @@ const AuthButtons = ({
         ) : (
           <Link href="/profile" className="flex-1">
             <Button className="hidden w-full bg-[#1abc9c] hover:bg-[#16a085] xl:flex">
-              <UserIcon className="mr-2 size-4" />
+              <UserIcon />
               Profil
             </Button>
             <Button
               className="min-w-full bg-[#1abc9c] hover:bg-[#16a085] xl:hidden"
               size="icon"
             >
-              <UserIcon className="size-4" />
+              <UserIcon />
             </Button>
           </Link>
         )}
@@ -176,7 +176,7 @@ const AuthButtons = ({
         }}
       >
         <Button className="w-full">
-          <LogInIcon className="mr-2 size-4" />
+          <LogInIcon />
           Zaloguj się
         </Button>
       </form>

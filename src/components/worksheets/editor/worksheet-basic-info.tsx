@@ -158,7 +158,7 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                       onClick={() => {
                         setShowFinalChallengeSuggestions(true);
                       }}
-                      className="bg-blue-100 text-blue-700 opacity-100 hover:bg-blue-200 hover:text-blue-800 dark:bg-blue-900 dark:text-blue-300 dark:hover:bg-blue-800 dark:hover:text-blue-400"
+                      className="bg-blue-100 text-blue-700 opacity-100 hover:bg-blue-200 hover:text-blue-800 dark:bg-blue-950 dark:text-blue-300 dark:hover:bg-blue-900 dark:hover:text-blue-200"
                       title="Pomysły na zadania"
                     >
                       <SparklesIcon className="size-4" />

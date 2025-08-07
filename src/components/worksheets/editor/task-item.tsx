@@ -454,9 +454,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                     setShowSuggestions(true);
                   }}
                   className={cn(
-                    "hidden transition-all group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-700 md:flex md:opacity-0 md:pointer-coarse:opacity-100",
+                    "hidden transition-all group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-700 md:flex md:opacity-0 dark:hover:bg-blue-950 dark:hover:text-blue-300 md:pointer-coarse:opacity-100",
                     showSuggestions &&
-                      "bg-blue-100 text-blue-700 !opacity-100 dark:bg-blue-900 dark:text-blue-300",
+                      "bg-blue-100 text-blue-700 !opacity-100 dark:bg-blue-950 dark:text-blue-300",
                   )}
                   title="Pomysły na zadania"
                 >

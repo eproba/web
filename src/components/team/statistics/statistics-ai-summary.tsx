@@ -2,58 +2,107 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TeamStatistics } from "@/types/team-statistics";
+import { cn } from "@/lib/utils";
+import {
+  MemberNeedingAttention,
+  TeamStatistics,
+  TopPerformer,
+} from "@/types/team-statistics";
+import { useCompletion } from "@ai-sdk/react";
 import { SparklesIcon } from "lucide-react";
-import { useEffect, useState } from "react";
+import Link from "next/link";
+import { useEffect } from "react";
 import Markdown from "react-markdown";
+
+function buildUserMap(statistics: TeamStatistics): Record<string, string> {
+  const map: Record<string, string> = {};
+  [
+    ...(statistics.topPerformers ?? []),
+    ...(statistics.membersNeedingAttention ?? []),
+  ].forEach((user) => {
+    map[user.id] = user.name;
+  });
+  return map;
+}
+
+function redactStatistics(statistics: TeamStatistics): TeamStatistics {
+  const redactName = (user: TopPerformer | MemberNeedingAttention) => ({
+    ...user,
+    name: `<userId:${user.id}>`,
+  });
+
+  return {
+    ...statistics,
+    topPerformers: statistics.topPerformers?.map(
+      redactName,
+    ) as unknown as TopPerformer[],
+    membersNeedingAttention: statistics.membersNeedingAttention?.map(
+      redactName,
+    ) as unknown as MemberNeedingAttention[],
+  };
+}
+
+function restoreNames(
+  summary: string,
+  userMap: Record<string, string>,
+): string {
+  return summary.replace(/<userId:([a-f0-9-]+)>/g, (_, id) =>
+    userMap[id] ? `[${userMap[id]}](/profile/${id})` : `<userId:${id}>`,
+  );
+}
 
 export function StatisticsAISummary({
   statistics,
 }: {
   statistics: TeamStatistics;
 }) {
-  const [summary, setSummary] = useState<string>("");
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const userMap = buildUserMap(statistics);
+
+  const {
+    completion: summary,
+    complete,
+    isLoading,
+  } = useCompletion({
+    api: "/ai/api/team-stats",
+  });
 
   useEffect(() => {
-    let isMounted = true;
     const fetchSummary = async () => {
-      setIsLoading(true);
-      setSummary("Ładowanie podsumowania AI...");
-      setError(null);
-      try {
-        const res = await fetch("/ai/api/team-stats", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ statistics }),
-        });
-        if (!res.ok) throw new Error(await res.text());
-        const text = await res.text();
-        if (isMounted) setSummary(text);
-      } catch (err) {
-        console.error("Error fetching AI summary:", err);
-        if (isMounted) setError("Błąd generowania podsumowania AI");
-      } finally {
-        if (isMounted) setIsLoading(false);
-      }
+      await complete(JSON.stringify(redactStatistics(statistics)));
     };
     fetchSummary();
-    return () => {
-      isMounted = false;
-    };
-  }, [statistics]);
+  }, [complete, statistics]);
+
+  const restoredSummary = summary ? restoreNames(summary, userMap) : "";
 
   return (
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <SparklesIcon className="size-5" />
+          <SparklesIcon
+            className={cn("size-5", isLoading && "animate-bounce")}
+          />
           Podsumowanie AI
         </CardTitle>
       </CardHeader>
       <CardContent>
-        {isLoading ? (
+        {restoredSummary ? (
+          <div className="space-y-4">
+            <Markdown
+              components={{
+                a: ({ ...props }) => (
+                  <Link
+                    {...props}
+                    href={props.href || ""}
+                    className="hover:underline"
+                  />
+                ),
+              }}
+            >
+              {restoredSummary}
+            </Markdown>
+          </div>
+        ) : isLoading ? (
           <div className="space-y-4">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />
@@ -61,10 +110,10 @@ export function StatisticsAISummary({
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-full" />
           </div>
-        ) : error ? (
-          <div className="text-destructive">{error}</div>
         ) : (
-          <Markdown>{summary}</Markdown>
+          <p className="text-muted-foreground">
+            Nie udało się wygenerować podsumowania. Spróbuj ponownie później.
+          </p>
         )}
       </CardContent>
     </Card>

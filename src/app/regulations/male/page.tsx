@@ -731,7 +731,7 @@ export default async function MaleRegulationsPage() {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
-                  <CheckCircleIcon className="mt-0.5 size-6 text-green-500 sm:size-5" />
+                  <CheckCircleIcon className="mt-0.5 size-6 flex-shrink-0 text-green-500 sm:size-5" />
                   <p className="text-sm">
                     Harcerz, który spełnił wymaganie lub zrealizował zadanie
                     indywidualne zgłasza to drużynowemu, wyznaczonej przez niego
