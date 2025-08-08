@@ -42,7 +42,6 @@ const MAIN_NAV_ITEMS: NavItem[] = [
   {
     title: "Twoje próby",
     href: "/worksheets",
-    access: () => true,
   },
   {
     title: "Zarządzaj próbami",
@@ -64,14 +63,18 @@ const MAIN_NAV_ITEMS: NavItem[] = [
   {
     title: "Admin",
     href: `${process.env.NEXT_PUBLIC_SERVER_URL}/admin`,
-    access: (user) => !!user && user.isSuperuser,
+    access: (user) => !!user && user.isStaff,
     subItems: [
       {
         title: "Panel administracyjny",
         href: `${process.env.NEXT_PUBLIC_SERVER_URL}/admin`,
         external: true,
       },
-      { title: "Zgłoszenia drużyn", href: "/team/requests" },
+      {
+        title: "Zgłoszenia drużyn",
+        href: "/team/requests",
+        access: (user) => !!user && user.isSuperuser,
+      },
     ],
     external: true,
   },
@@ -94,12 +97,11 @@ const MAIN_NAV_ITEMS: NavItem[] = [
 ];
 
 const MORE_NAV_ITEMS: NavItem[] = [
-  { title: "O stronie", href: "/about", access: () => true },
-  { title: "Kontakt", href: "/contact", access: () => true },
+  { title: "O stronie", href: "/about" },
+  { title: "Kontakt", href: "/contact" },
   {
     title: "Zgłoś błąd",
     href: "https://github.com/eproba/web-v2/issues",
-    access: () => true,
     external: true,
   },
 ];
@@ -273,8 +275,18 @@ export async function Navbar() {
     }
   }
 
-  const filteredMainNav = MAIN_NAV_ITEMS.filter((item) => item.access?.(user));
-  const filteredMoreNav = MORE_NAV_ITEMS.filter((item) => item.access?.(user));
+  const filteredMainNav = MAIN_NAV_ITEMS.filter(
+    (item) => item.access?.(user) ?? true,
+  ).map((item) => ({
+    ...item,
+    subItems: item.subItems?.filter(
+      (subItem) => subItem.access?.(user) ?? true,
+    ),
+  }));
+
+  const filteredMoreNav = MORE_NAV_ITEMS.filter(
+    (item) => item.access?.(user) ?? true,
+  );
 
   return (
     <>

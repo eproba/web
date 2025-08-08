@@ -88,31 +88,33 @@ export default async function ProfilePage({
         </CardContent>
       </Card>
       {(currentUser?.function.numberValue || 0) >=
-        RequiredFunctionLevel.WORKSHEET_MANAGEMENT && (
-        <Card className="gap-2">
-          <CardContent className="flex flex-wrap gap-4">
-            {(currentUser?.function.numberValue || 0) >=
-              RequiredFunctionLevel.TEAM_MANAGEMENT && (
-              <Link href={`/team/?highlightedUserId=${user.id}`}>
+        RequiredFunctionLevel.WORKSHEET_MANAGEMENT &&
+        currentUser?.team &&
+        currentUser?.team === user.team && (
+          <Card className="gap-2">
+            <CardContent className="flex flex-wrap gap-4">
+              {(currentUser?.function.numberValue || 0) >=
+                RequiredFunctionLevel.TEAM_MANAGEMENT && (
+                <Link href={`/team/?highlightedUserId=${user.id}`}>
+                  <Button variant="outline">
+                    <PencilIcon />
+                    Edytuj harcer
+                    {user.organization === Organization.Female ? "kę" : "za"} w
+                    drużynie
+                  </Button>
+                </Link>
+              )}
+              <Link
+                href={`/worksheets/manage?userId=${user.id}&userName=${encodeURIComponent(user.displayName)}`}
+              >
                 <Button variant="outline">
-                  <PencilIcon />
-                  Edytuj harcer
-                  {user.organization === Organization.Female ? "kę" : "za"} w
-                  drużynie
+                  <ListStartIcon />
+                  Przejdź do prób
                 </Button>
               </Link>
-            )}
-            <Link
-              href={`/worksheets/manage?userId=${user.id}&userName=${encodeURIComponent(user.displayName)}`}
-            >
-              <Button variant="outline">
-                <ListStartIcon />
-                Przejdź do prób
-              </Button>
-            </Link>
-          </CardContent>
-        </Card>
-      )}
+            </CardContent>
+          </Card>
+        )}
     </div>
   );
 }
