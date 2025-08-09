@@ -1,18 +1,32 @@
 "use client";
 
+import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
 import { Toggle } from "@/components/ui/toggle";
 import { useApi } from "@/lib/api-client";
-import { getExistingToken } from "@/lib/firebase";
+import {
+  getExistingToken,
+  registerDevice,
+  requestNotificationPermission,
+} from "@/lib/firebase";
 import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
 import {
   BellIcon,
   BellOffIcon,
+  InfoIcon,
   LaptopIcon,
   MailIcon,
   MonitorIcon,
@@ -20,8 +34,9 @@ import {
   TabletIcon,
   TrashIcon,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
+import { UAParser } from "ua-parser-js";
 
 type DeviceInfo = {
   os?: { name: string; version: string };
@@ -51,6 +66,14 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
   );
   const { apiClient } = useApi();
 
+  const isIos =
+    typeof window !== "undefined" &&
+    /iPad|iPhone|iPod/.test(navigator.userAgent);
+
+  const [showHelpDialog, setShowHelpDialog] = useState(false);
+  const [isCurrentDeviceRegistering, setIsCurrentDeviceRegistering] =
+    useState(false);
+
   const fetchDevices = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -79,6 +102,42 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
       setCurrentDeviceToken(token);
     });
   }, [fetchDevices]);
+
+  const handleEnableCurrentDevice = async () => {
+    if (isCurrentDeviceRegistering) return;
+    setIsCurrentDeviceRegistering(true);
+    try {
+      const token = await requestNotificationPermission();
+      if (token) {
+        const ok = await registerDevice(token, apiClient);
+        if (ok) {
+          toast.success("Powiadomienia zostały włączone na tym urządzeniu");
+          await fetchDevices();
+          const refreshed = await getExistingToken();
+          setCurrentDeviceToken(refreshed);
+          setIsCurrentDeviceRegistering(false);
+          return;
+        }
+      }
+      setShowHelpDialog(true);
+    } catch {
+      setShowHelpDialog(true);
+    } finally {
+      setIsCurrentDeviceRegistering(false);
+    }
+  };
+
+  const isCurrentRegistered = useMemo(() => {
+    if (!currentDeviceToken) return false;
+    return devices.some((d) => d.registration_id === currentDeviceToken);
+  }, [devices, currentDeviceToken]);
+
+  const needsCurrentDeviceSetup = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    if (isCurrentRegistered) return false;
+    if (!("Notification" in window)) return false;
+    return Notification.permission !== "granted";
+  }, [isCurrentRegistered]);
 
   const handleDeviceAction = async (
     registrationId: string,
@@ -139,19 +198,30 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
     switch (deviceType) {
       case "android":
       case "ios":
-        return <SmartphoneIcon className="size-8" />;
+        return <SmartphoneIcon className="size-8 flex-shrink-0" />;
       case "web":
         if (deviceInfo.device?.type === "tablet") {
-          return <TabletIcon className="size-8" />;
+          return <TabletIcon className="size-8 flex-shrink-0" />;
         }
         return deviceInfo.device?.type === "mobile" ? (
-          <SmartphoneIcon className="size-8" />
+          <SmartphoneIcon className="size-8 flex-shrink-0" />
         ) : (
-          <LaptopIcon className="size-8" />
+          <LaptopIcon className="size-8 flex-shrink-0" />
         );
       default:
-        return <MonitorIcon className="size-8" />;
+        return <MonitorIcon className="size-8 flex-shrink-0" />;
     }
+  };
+
+  const getCurrentDeviceIcon = () => {
+    const parser = new UAParser();
+    const result = parser.getResult();
+    const deviceInfo = {
+      os: result.os,
+      device: result.device,
+      browser: result.browser.name || "Unknown",
+    } as unknown as DeviceInfo;
+    return getDeviceIcon("web", deviceInfo);
   };
 
   const parseDeviceInfo = (deviceInfoStr: string): DeviceInfo => {
@@ -208,6 +278,31 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
               />
             </div>
           </div>
+
+          {needsCurrentDeviceSetup && (
+            <div className="mt-4 flex flex-col justify-between gap-4 rounded-lg border p-4 sm:flex-row">
+              <div className="flex items-center gap-3">
+                {getCurrentDeviceIcon()}
+                <div>
+                  <p className="font-medium">To urządzenie</p>
+                  <p className="text-muted-foreground text-sm">
+                    Włącz powiadomienia, aby otrzymywać alerty o nowych
+                    wiadomościach.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center justify-end gap-2">
+                <Button
+                  onClick={handleEnableCurrentDevice}
+                  disabled={isCurrentDeviceRegistering}
+                >
+                  {isCurrentDeviceRegistering
+                    ? "Trwa rejestracja..."
+                    : "Włącz powiadomienia"}
+                </Button>
+              </div>
+            </div>
+          )}
 
           <h5 className="my-4 text-sm font-medium">Urządzenia</h5>
 
@@ -299,6 +394,41 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
           )}
         </CardContent>
       </Card>
+
+      <Dialog open={showHelpDialog} onOpenChange={setShowHelpDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Nie można włączyć powiadomień</DialogTitle>
+            <DialogDescription>
+              {isIos ? (
+                <>
+                  Na urządzeniach iOS powiadomienia działają tylko w
+                  zainstalowanych aplikacjach PWA. Zainstaluj aplikację, otwórz
+                  ją i spróbuj ponownie.
+                </>
+              ) : (
+                <>
+                  Aby włączyć powiadomienia, zezwól na nie w ustawieniach
+                  przeglądarki dla tej strony. Zazwyczaj: ikona kłódki obok
+                  adresu → Ustawienia witryny → Powiadomienia → Zezwalaj, a
+                  potem odśwież stronę.
+                </>
+              )}
+            </DialogDescription>
+            {isIos && (
+              <PwaInstallPrompt>
+                <Button variant="outline">
+                  <InfoIcon />
+                  Pokaż jak zainstalować
+                </Button>
+              </PwaInstallPrompt>
+            )}
+          </DialogHeader>
+          <DialogFooter>
+            <Button onClick={() => setShowHelpDialog(false)}>Zamknij</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
