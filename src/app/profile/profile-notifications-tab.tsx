@@ -21,6 +21,7 @@ import {
   registerDevice,
   requestNotificationPermission,
 } from "@/lib/firebase";
+import { useIsStandalone } from "@/lib/hooks/use-is-standalone";
 import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
 import {
@@ -69,6 +70,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
   const isIos =
     typeof window !== "undefined" &&
     /iPad|iPhone|iPod/.test(navigator.userAgent);
+  const isStandalone = useIsStandalone();
 
   const [showHelpDialog, setShowHelpDialog] = useState(false);
   const [isCurrentDeviceRegistering, setIsCurrentDeviceRegistering] =
@@ -400,7 +402,13 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
           <DialogHeader>
             <DialogTitle>Nie można włączyć powiadomień</DialogTitle>
             <DialogDescription>
-              {isIos ? (
+              {isStandalone ? (
+                <>
+                  Aby włączyć powiadomienia, otwórz ustawienia urządzenia,
+                  znajdź sekcję aplikacji, a następnie zezwól na powiadomienia
+                  dla aplikacji Epróba.
+                </>
+              ) : isIos ? (
                 <>
                   Na urządzeniach iOS powiadomienia działają tylko w
                   zainstalowanych aplikacjach PWA. Zainstaluj aplikację, otwórz
@@ -415,7 +423,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
                 </>
               )}
             </DialogDescription>
-            {isIos && (
+            {isIos && !isStandalone && (
               <PwaInstallPrompt>
                 <Button variant="outline">
                   <InfoIcon />
