@@ -384,7 +384,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
                       <Skeleton className="mt-2 h-4 w-24" />
                     </div>
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center justify-end gap-2">
                     <Skeleton className="h-9 w-9 rounded-md" />
                     <Skeleton className="h-9 w-9 rounded-md" />
                   </div>
