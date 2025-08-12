@@ -200,11 +200,12 @@ export const WorksheetEditor = ({
 
   return (
     <DragDropProvider>
-      <div
-        className="duration-300relative space-y-8 transition-all"
-        onKeyDown={handleKeyDown}
-      >
-        <Form {...form}>
+      <Form {...form}>
+        <form
+          onSubmit={onSubmit}
+          className="duration-300relative space-y-8 transition-all"
+          onKeyDown={handleKeyDown}
+        >
           {/* Worksheet Basic Info */}
           <WorksheetBasicInfo form={form} currentUser={currentUser} />
 
@@ -241,20 +242,19 @@ export const WorksheetEditor = ({
           {/* Submit Button */}
           <WorksheetSubmitButton
             isSubmitting={isSubmitting}
-            onSubmit={onSubmit}
             mode={mode}
             variant="worksheet"
           />
-        </Form>
+        </form>
+      </Form>
 
-        {/* Modified Tasks Dialog */}
-        <ModifiedTasksDialog
-          isOpen={showModifiedDialog}
-          onClose={handleCloseDialog}
-          onContinue={handleContinueWithDecisions}
-          modifiedTasks={modifiedTasks}
-        />
-      </div>
+      {/* Modified Tasks Dialog */}
+      <ModifiedTasksDialog
+        isOpen={showModifiedDialog}
+        onClose={handleCloseDialog}
+        onContinue={handleContinueWithDecisions}
+        modifiedTasks={modifiedTasks}
+      />
     </DragDropProvider>
   );
 };

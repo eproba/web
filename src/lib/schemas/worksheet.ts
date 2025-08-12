@@ -73,6 +73,16 @@ export const worksheetWithTasksSchema = z.object({
       error: "Opis próby końcowej nie może przekraczać 2000 znaków",
     })
     .optional(),
+  priority: z.coerce
+    .number({ error: "Priorytet musi być liczbą" })
+    .int({ error: "Priorytet musi być liczbą całkowitą" })
+    .min(0, {
+      error: "Priorytet musi być większy lub równy 0",
+    })
+    .max(100, {
+      error: "Priorytet nie może przekraczać 100",
+    })
+    .optional(),
 });
 
 export type Task = z.infer<typeof taskSchema>;

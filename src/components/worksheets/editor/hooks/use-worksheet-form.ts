@@ -10,7 +10,7 @@ import { TaskStatus } from "@/types/worksheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
 
@@ -68,7 +68,9 @@ export const useWorksheetForm = ({
   };
 
   const form = useForm<WorksheetWithTasks>({
-    resolver: zodResolver(worksheetWithTasksSchema),
+    resolver: zodResolver(
+      worksheetWithTasksSchema,
+    ) as Resolver<WorksheetWithTasks>,
     defaultValues,
     mode: "onChange",
   });

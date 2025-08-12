@@ -100,11 +100,12 @@ export const TemplateEditor = ({
 
   return (
     <DragDropProvider>
-      <div
-        className="duration-300relative space-y-8 transition-all"
-        onKeyDown={handleKeyDown}
-      >
-        <Form {...form}>
+      <Form {...form}>
+        <form
+          onSubmit={onSubmit}
+          className="duration-300relative space-y-8 transition-all"
+          onKeyDown={handleKeyDown}
+        >
           {/* Template Basic Info */}
           <TemplateWorksheetBasicInfo form={form} currentUser={currentUser} />
 
@@ -141,12 +142,11 @@ export const TemplateEditor = ({
           {/* Submit Button */}
           <WorksheetSubmitButton
             isSubmitting={isSubmitting}
-            onSubmit={onSubmit}
             mode={mode}
             variant="template"
           />
-        </Form>
-      </div>
+        </form>
+      </Form>
     </DragDropProvider>
   );
 };

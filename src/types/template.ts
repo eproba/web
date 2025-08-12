@@ -17,4 +17,5 @@ export interface TemplateWorksheet {
   createdAt: Date;
   templateNotes: string;
   image?: string | null;
+  priority: number;
 }

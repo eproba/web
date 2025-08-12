@@ -41,6 +41,7 @@ export interface ApiTemplateWorksheetResponse {
   created_at: string;
   template_notes: string;
   image?: string | null;
+  priority: number;
 }
 
 export function templateMetadataSerializer(
@@ -67,6 +68,7 @@ export function templateSerializer(
     updatedAt: new Date(apiResponse.updated_at),
     createdAt: new Date(apiResponse.created_at),
     templateNotes: apiResponse.template_notes,
+    priority: apiResponse.priority,
   };
 }
 

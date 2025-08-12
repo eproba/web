@@ -8,7 +8,7 @@ import { ToastMsg } from "@/lib/toast-msg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { Resolver, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { v4 as uuid } from "uuid";
 
@@ -51,10 +51,13 @@ export const useTemplateForm = ({
     image:
       (initialData as WorksheetWithTasks & { image?: string | File | null })
         ?.image || undefined,
+    priority: initialData?.priority || 0,
   };
 
   const form = useForm<WorksheetWithTasks>({
-    resolver: zodResolver(worksheetWithTasksSchema),
+    resolver: zodResolver(
+      worksheetWithTasksSchema,
+    ) as Resolver<WorksheetWithTasks>,
     defaultValues,
     mode: "onChange",
   });
@@ -96,6 +99,7 @@ export const useTemplateForm = ({
           order: task.order,
           template_notes: task.templateNotes?.trim() || undefined,
         })),
+        priority: data.priority ?? 0,
       };
 
       const url =
@@ -113,10 +117,11 @@ export const useTemplateForm = ({
         }
 
         // Add all template data as separate form fields
-        formData.append("name", data.name.trim());
-        formData.append("description", data.description.trim());
+        formData.append("name", templateData.name);
+        formData.append("description", templateData.description);
 
-        formData.append("scope", data.scope);
+        formData.append("scope", templateData.scope);
+        formData.append("priority", templateData.priority.toString());
 
         // Add tasks as JSON string (since it's complex data)
         formData.append("tasks", JSON.stringify(templateData.tasks));

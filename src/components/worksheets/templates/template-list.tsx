@@ -32,7 +32,7 @@ export function TemplateList({
       ) : (
         templates
           .sort(
-            (a, b) => new Date(b.name).getTime() - new Date(a.name).getTime(),
+            (a, b) => b.priority - a.priority || a.name.localeCompare(b.name),
           )
           .map((template) => (
             <TemplateItem

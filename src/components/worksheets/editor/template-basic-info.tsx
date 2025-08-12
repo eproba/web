@@ -5,9 +5,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { Organization } from "@/types/team";
 import { User } from "@/types/user";
+import { InfoIcon } from "lucide-react";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -33,7 +39,7 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                 <RadioGroup
                   value={field.value}
                   onValueChange={field.onChange}
-                  className="flex flex-col space-y-2"
+                  className="flex flex-col"
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="team" id="team" />
@@ -115,6 +121,44 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                   accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
                   maxSizeInMB={5}
                   preview={true}
+                />
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="priority"
+            render={({ field }) => (
+              <FormItem>
+                <Label>
+                  Priorytet
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <InfoIcon className="text-muted-foreground size-3" />
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      Im wyższy, tym szablon będzie wyżej na liście szablonów.
+                      Jeśli priorytet jest taki sam jak innego szablonu, to
+                      szablony będą sortowane alfabetycznie.
+                    </TooltipContent>
+                  </Tooltip>
+                </Label>
+                <Input
+                  type="number"
+                  inputMode="numeric"
+                  placeholder="0"
+                  min={0}
+                  max={100}
+                  step={1}
+                  onWheel={(e) => e.currentTarget.blur()} // Prevents scrolling the input value\
+                  onKeyDown={(e) => {
+                    if (e.key === "e" || e.key === "E") {
+                      e.preventDefault(); // Prevents entering scientific notation
+                    }
+                  }}
+                  {...field}
                 />
                 <FormMessage />
               </FormItem>

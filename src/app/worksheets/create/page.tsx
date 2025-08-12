@@ -51,7 +51,7 @@ const WorksheetCreatePage = async ({
               <CardTitle>{template?.name}</CardTitle>
               <CardDescription>
                 <span className="hidden sm:inline">
-                  Ten szablon zostanie użyty do stworzenia nowego próby. Możesz
+                  Ten szablon zostanie użyty do stworzenia nowej próby. Możesz
                   ją edytować i dostosować do swoich potrzeb.
                 </span>
                 <span className="inline sm:hidden">

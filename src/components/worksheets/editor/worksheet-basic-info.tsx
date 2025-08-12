@@ -136,7 +136,7 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
               </AccordionTrigger>
               <AccordionContent
                 className="space-y-4"
-                containerClassName="overflow-visible"
+                containerClassName="overflow-x-visible overflow-y-clip"
               >
                 <div className="flex items-center gap-2 pt-2">
                   <FormField
