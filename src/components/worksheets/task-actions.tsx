@@ -27,7 +27,8 @@ import { publicUserSerializer } from "@/lib/serializers/user";
 import { taskSerializer } from "@/lib/serializers/worksheet";
 import { ToastMsg } from "@/lib/toast-msg";
 import { cn } from "@/lib/utils";
-import { PublicUser, User } from "@/types/user";
+import { useCurrentUser } from "@/state/user";
+import { PublicUser } from "@/types/user";
 import { Task, TaskStatus } from "@/types/worksheet";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import {
@@ -67,7 +68,6 @@ interface TaskActionsProps {
   closeDrawer?: () => void;
   format?: "icon" | "button";
   onClick?: (event: React.MouseEvent) => void;
-  currentUser?: User;
 }
 
 const LoadingIcon = () => (
@@ -264,8 +264,8 @@ export function TaskActions({
   closeDrawer,
   format = "icon",
   onClick,
-  currentUser,
 }: TaskActionsProps) {
+  const currentUser = useCurrentUser();
   const { isLoading, handleAction } = useTaskActions({
     worksheetId,
     task,

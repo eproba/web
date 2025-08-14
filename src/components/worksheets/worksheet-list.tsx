@@ -15,7 +15,6 @@ import { CreateWorksheetButton } from "@/components/worksheets/create-worksheet-
 import { WorksheetItem } from "@/components/worksheets/worksheet-item";
 import { cn } from "@/lib/utils";
 import { Patrol } from "@/types/team";
-import { User } from "@/types/user";
 import { Task, Worksheet } from "@/types/worksheet";
 import Fuse from "fuse.js";
 import { LoaderCircleIcon, SearchIcon, XIcon } from "lucide-react";
@@ -28,14 +27,12 @@ export function WorksheetList({
   variant = "user",
   showFilters = false,
   patrols = [],
-  currentUser,
   title,
 }: {
   orgWorksheets: Worksheet[];
   variant?: "user" | "managed" | "shared" | "archived" | "review";
   showFilters?: boolean;
   patrols?: Patrol[];
-  currentUser?: User;
   title?: string;
 }) {
   const [searchQuery, setSearchQuery] = useState("");
@@ -327,7 +324,6 @@ export function WorksheetList({
               updateTask={updateTask}
               updateWorksheet={updateWorksheet}
               deleteWorksheet={() => deleteWorksheet(worksheet.id)}
-              currentUser={currentUser}
             />
           ))
       )}

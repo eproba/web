@@ -22,9 +22,11 @@ import { useApi } from "@/lib/api-client";
 import { teamSerializer } from "@/lib/serializers/team";
 import { userSerializer } from "@/lib/serializers/user";
 import { ToastMsg } from "@/lib/toast-msg";
+import { setCurrentUserAtom } from "@/state/user";
 import { Patrol } from "@/types/team";
 import { User } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -54,6 +56,7 @@ export function ProfileEditForm({ user }: { user: User }) {
   ]);
   const { apiClient, isApiReady, updateSession } = useApi();
   const router = useRouter();
+  const setCurrentUser = useSetAtom(setCurrentUserAtom);
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(formSchema),
@@ -78,7 +81,9 @@ export function ProfileEditForm({ user }: { user: User }) {
           patrol: data.patrol,
         }),
       });
-      await updateSession(userSerializer(await response.json()));
+      const updated = userSerializer(await response.json());
+      setCurrentUser(updated);
+      await updateSession(updated);
       toast.success("Profil został zaktualizowany");
       router.refresh();
     } catch (error) {

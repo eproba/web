@@ -15,8 +15,8 @@ import { TaskNotes } from "@/components/worksheets/task-notes";
 import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { cn } from "@/lib/utils";
+import { useCurrentUser } from "@/state/user";
 import { TemplateTask, TemplateWorksheet } from "@/types/template";
-import { User } from "@/types/user";
 import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
 import { motion } from "framer-motion";
 import { InfoIcon } from "lucide-react";
@@ -27,7 +27,6 @@ export function TaskTableRow({
   variant,
   worksheet,
   updateTask,
-  currentUser,
   displayIndex,
   grouped,
 }:
@@ -36,7 +35,6 @@ export function TaskTableRow({
       variant: "user" | "managed" | "shared" | "archived" | "review";
       worksheet: Worksheet;
       updateTask?: (task: Task) => void;
-      currentUser?: User;
       displayIndex?: string | number;
       grouped?: boolean;
     }
@@ -45,11 +43,11 @@ export function TaskTableRow({
       variant: "template";
       worksheet: TemplateWorksheet;
       updateTask?: (task: Task) => void;
-      currentUser?: User;
       displayIndex?: string | number;
       grouped?: boolean;
     }) {
   const [isOpen, setIsOpen] = useState(false);
+  const currentUser = useCurrentUser();
 
   const isHighlightedTask =
     variant === "review" &&
@@ -163,7 +161,6 @@ export function TaskTableRow({
               variant={variant}
               worksheetId={worksheet.id}
               updateTask={updateTask!}
-              currentUser={currentUser}
             />
           </TableCell>
         )}
@@ -250,7 +247,6 @@ export function TaskTableRow({
                 updateTask={updateTask!}
                 format="button"
                 closeDrawer={() => setIsOpen(false)}
-                currentUser={currentUser}
               />
             </motion.div>
           )}

@@ -1,6 +1,7 @@
 import { DraggableUserRow } from "@/components/team/management/draggable-user-row";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ApiUserResponse } from "@/lib/serializers/user";
+import { useCurrentUser } from "@/state/user";
 import { Organization, Patrol } from "@/types/team";
 import { User } from "@/types/user";
 import React from "react";
@@ -12,7 +13,6 @@ interface InactiveUsersCardProps {
     userId: string,
     updatedUser: Partial<ApiUserResponse>,
   ) => Promise<boolean>;
-  currentUser: User;
   updatingUserIds: string[];
   allowEditForLowerFunction: boolean;
 }
@@ -21,15 +21,15 @@ export function InactiveUsersCard({
   users,
   allPatrols,
   onUserUpdate,
-  currentUser,
   updatingUserIds,
   allowEditForLowerFunction,
 }: InactiveUsersCardProps) {
+  const currentUser = useCurrentUser();
   return (
     <Card className="bg-muted/50 border shadow-none">
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>
-          {currentUser.organization === Organization.Male
+          {currentUser?.organization === Organization.Male
             ? "Nieaktywni harcerze"
             : "Nieaktywne harcerki"}
         </CardTitle>
@@ -52,7 +52,6 @@ export function InactiveUsersCard({
                 user={user}
                 patrols={allPatrols}
                 onUserUpdate={onUserUpdate}
-                currentUser={currentUser}
                 isUpdating={updatingUserIds.includes(user.id)}
                 allowEditForLowerFunction={allowEditForLowerFunction}
               />

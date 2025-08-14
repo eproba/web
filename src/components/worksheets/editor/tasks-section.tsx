@@ -1,7 +1,6 @@
 import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { TaskList } from "@/components/worksheets/editor/task-list";
 import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
-import { User } from "@/types/user";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -24,7 +23,6 @@ interface TasksSectionProps {
     fromCategory: string,
     toCategory: string,
   ) => void;
-  currentUser: User;
   variant: "template" | "worksheet";
 }
 
@@ -40,7 +38,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
   onMoveTaskUp,
   onMoveTaskDown,
   onMoveTaskToCategory,
-  currentUser,
   variant,
 }) => {
   return (
@@ -60,7 +57,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
           onMoveTaskDown={onMoveTaskDown}
           onMoveTaskToCategory={onMoveTaskToCategory}
           form={form}
-          currentUser={currentUser}
           variant={variant}
         />
 
@@ -79,7 +75,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
             onMoveTaskDown={onMoveTaskDown}
             onMoveTaskToCategory={onMoveTaskToCategory}
             form={form}
-            currentUser={currentUser}
             variant={variant}
           />
         )}

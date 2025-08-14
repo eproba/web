@@ -25,8 +25,11 @@ import {
 } from "@/components/ui/tooltip";
 import { API_URL } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
+import { RequiredFunctionLevel } from "@/lib/const";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useCurrentUser } from "@/state/user";
 import { TemplateWorksheet } from "@/types/template";
+import { User } from "@/types/user";
 import {
   EllipsisVerticalIcon,
   LucideIcon,
@@ -45,6 +48,22 @@ type TemplateAction = {
   icon: LucideIcon;
   handler?: () => void;
   href?: string;
+  userFilter?: (user: User) => boolean;
+};
+
+const allowEdit = (scope: string, user?: User) => {
+  switch (scope) {
+    case "team":
+      return (
+        !!user &&
+        user.function.numberValue >=
+          RequiredFunctionLevel.TEAM_TEMPLATE_MANAGEMENT
+      );
+    case "organization":
+      return !!user?.isStaff;
+    default:
+      return false;
+  }
 };
 
 export function TemplateActions({
@@ -54,6 +73,7 @@ export function TemplateActions({
   template: TemplateWorksheet;
   removeTemplate?: (templateId: string) => void;
 }) {
+  const currentUser = useCurrentUser();
   const router = useRouter();
   const { apiClient } = useApi();
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
@@ -95,12 +115,14 @@ export function TemplateActions({
       label: "Edytuj",
       icon: SquarePenIcon,
       href: `/worksheets/templates/${template.id}/edit`,
+      userFilter: (user) => allowEdit(template.scope, user),
     },
     {
       id: "delete",
       label: "Usuń",
       icon: TrashIcon,
       handler: () => setShowDeleteAlert(true),
+      userFilter: (user) => allowEdit(template.scope, user),
     },
   ];
 
@@ -122,9 +144,14 @@ export function TemplateActions({
     );
   };
 
+  const filteredActions = templateActions.filter(
+    (action) =>
+      !action.userFilter || (currentUser && action.userFilter(currentUser)),
+  );
+
   const renderDesktopIcons = () => (
     <div className="hidden gap-2 md:flex">
-      {templateActions.map((action) => (
+      {filteredActions.map((action) => (
         <TooltipProvider key={action.id}>
           <Tooltip>
             <TooltipTrigger asChild>{renderActionIcon(action)}</TooltipTrigger>
@@ -150,7 +177,7 @@ export function TemplateActions({
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
-          {templateActions.map((action) => {
+          {filteredActions.map((action) => {
             return (
               <DropdownMenuItem
                 key={action.id}

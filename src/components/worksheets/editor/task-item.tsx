@@ -23,8 +23,8 @@ import { RequiredFunctionLevel } from "@/lib/const";
 import { isTouchDevice, triggerHapticFeedback } from "@/lib/mobile-utils";
 import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { cn } from "@/lib/utils";
+import { useCurrentUser } from "@/state/user";
 import { Organization } from "@/types/team";
-import { User } from "@/types/user";
 import {
   draggable,
   dropTargetForElements,
@@ -59,7 +59,6 @@ interface TaskItemProps {
   canMoveDown: boolean;
   canMoveToDifferentCategory: boolean;
   form: UseFormReturn<WorksheetWithTasks>;
-  currentUser: User;
   variant: "template" | "worksheet";
   ref: React.ForwardedRef<{
     focus: () => void;
@@ -80,10 +79,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   canMoveDown,
   canMoveToDifferentCategory,
   form,
-  currentUser,
   variant,
   ref,
 }) => {
+  const currentUser = useCurrentUser();
   const elementRef = useRef<HTMLDivElement>(null);
   const dragHandleRef = useRef<HTMLDivElement>(null);
   const taskInputRef = useRef<HTMLInputElement>(null);
@@ -441,8 +440,9 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           {/* Action Buttons */}
           <div className="flex flex-col-reverse items-center gap-1 md:flex-row">
             {/* Task Suggestions Button - Desktop Only */}
-            {currentUser.function.numberValue >=
-              RequiredFunctionLevel.TASK_SUGGESTIONS &&
+            {currentUser &&
+              currentUser.function.numberValue >=
+                RequiredFunctionLevel.TASK_SUGGESTIONS &&
               variant === "worksheet" &&
               task.category === "individual" &&
               currentUser.organization === Organization.Male && (
@@ -518,7 +518,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               canMoveUp={canMoveUp}
               canMoveDown={canMoveDown}
               canMoveToDifferentCategory={canMoveToDifferentCategory}
-              currentUser={currentUser}
               variant={variant}
             />
           </div>

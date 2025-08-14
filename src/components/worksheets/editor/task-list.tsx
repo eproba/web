@@ -10,7 +10,8 @@ import { TaskItem } from "@/components/worksheets/editor/task-item";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { cn } from "@/lib/utils";
-import { User, UserFunction } from "@/types/user";
+import { useCurrentUser } from "@/state/user";
+import { UserFunction } from "@/types/user";
 import { dropTargetForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { AnimatePresence, motion } from "framer-motion";
 import { InfoIcon, ListTodoIcon, PlusIcon } from "lucide-react";
@@ -37,7 +38,6 @@ interface TaskListProps {
     toCategory: string,
   ) => void;
   form: UseFormReturn<WorksheetWithTasks>;
-  currentUser: User;
   variant: "template" | "worksheet";
 }
 
@@ -54,9 +54,9 @@ export const TaskList: React.FC<TaskListProps> = ({
   onMoveTaskDown,
   onMoveTaskToCategory,
   form,
-  currentUser,
   variant,
 }) => {
+  const currentUser = useCurrentUser();
   const containerRef = useRef<HTMLDivElement>(null);
   const [isDropHovered, setIsDropHovered] = useState(false);
   const taskRefs = useRef<Map<string, { focus: () => void }>>(new Map());
@@ -143,7 +143,6 @@ export const TaskList: React.FC<TaskListProps> = ({
                   canMoveDown={index < tasks.length - 1}
                   canMoveToDifferentCategory={enableCategories}
                   form={form}
-                  currentUser={currentUser}
                   variant={variant}
                 />
               </motion.div>
@@ -306,12 +305,12 @@ export const TaskList: React.FC<TaskListProps> = ({
                       {category === "general"
                         ? `Wymagania dotyczące umiejętności - technik harcerskich i wiedzy, mogą je podpisywać ${UserFunction.fromValue(
                             RequiredFunctionLevel.WORKSHEET_MANAGEMENT,
-                            currentUser.gender,
+                            currentUser?.gender,
                           ).fullName.toLowerCase()} i wyżej`
                         : `Zadania ułożone indywidualnie, oparte o kształtowanie postaw i pracę nad cechami charakteru, podpisać je może co najmniej ${UserFunction.fromValue(
                             RequiredFunctionLevel.INDIVIDUAL_TASKS_MANAGEMENT,
-                            currentUser.gender,
-                          ).fullName.toLowerCase()} lub opiekun${currentUser.gender?.value === "female" ? "ka" : ""}`}
+                            currentUser?.gender,
+                          ).fullName.toLowerCase()} lub opiekun${currentUser?.gender?.value === "female" ? "ka" : ""}`}
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>

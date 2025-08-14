@@ -2,7 +2,6 @@
 
 import { TaskTable } from "@/components/worksheets/task-table";
 import { WorksheetActions } from "@/components/worksheets/worksheet-actions";
-import { User } from "@/types/user";
 import { Task, Worksheet } from "@/types/worksheet";
 import Image from "next/image";
 
@@ -12,14 +11,12 @@ export function WorksheetItem({
   updateTask,
   deleteWorksheet,
   updateWorksheet,
-  currentUser,
 }: {
   worksheet: Worksheet;
   variant?: "user" | "managed" | "shared" | "archived" | "review";
   updateTask?: (worksheetId: string, task: Task) => void;
   deleteWorksheet?: (worksheetId: string) => void;
   updateWorksheet?: (worksheet: Worksheet) => void;
-  currentUser?: User;
 }) {
   return (
     <div className="bg-card rounded-lg p-6 shadow-md" id={worksheet.id}>
@@ -58,7 +55,6 @@ export function WorksheetItem({
             variant={variant}
             removeWorksheet={deleteWorksheet}
             updateWorksheet={updateWorksheet}
-            currentUser={currentUser}
           />
         </div>
         {worksheet.description && (
@@ -88,7 +84,6 @@ export function WorksheetItem({
         variant={variant}
         updateTask={(task) => updateTask?.(worksheet.id, task)}
         removeWorksheet={deleteWorksheet}
-        currentUser={currentUser}
       />
     </div>
   );

@@ -235,7 +235,6 @@ export const WorksheetEditor = ({
             onMoveTaskUp={handleMoveTaskUp}
             onMoveTaskDown={handleMoveTaskDown}
             onMoveTaskToCategory={handleMoveTaskToCategory}
-            currentUser={currentUser}
             variant="worksheet"
           />
 

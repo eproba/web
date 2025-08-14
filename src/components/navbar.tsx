@@ -22,6 +22,7 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
+import { UserHydrator } from "@/components/user-hydrator";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { fetchCurrentUser } from "@/lib/server-api";
 import { cn } from "@/lib/utils";
@@ -397,11 +398,12 @@ export async function Navbar() {
         </div>
       </nav>
 
-      {user && !user.patrol && <PatrolAlert user={user} />}
+      {user && !user.patrol && <PatrolAlert />}
 
       {/* Auto notification setup for authenticated users */}
       {user && <AutoNotificationSetup />}
       <PwaInstallAlert />
+      <UserHydrator user={user} />
     </>
   );
 }

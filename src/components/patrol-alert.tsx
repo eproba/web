@@ -3,23 +3,20 @@
 import { PatrolSelectDialog } from "@/components/profile/patrol-select-dialog";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { User } from "@/types/user";
+import { useCurrentUser } from "@/state/user";
 import { AlertCircleIcon } from "lucide-react";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
-interface PatrolAlertProps {
-  user: User;
-}
-
-export function PatrolAlert({ user }: PatrolAlertProps) {
+export function PatrolAlert() {
+  const user = useCurrentUser();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [isOpenSelectPatrolDialog, setIsOpenSelectPatrolDialog] = useState(
     searchParams.get("openSelectPatrolDialog") === "true",
   );
 
-  if (user.patrol || pathname === "/team/request") {
+  if (!user || user.patrol || pathname === "/team/request") {
     return null;
   }
 

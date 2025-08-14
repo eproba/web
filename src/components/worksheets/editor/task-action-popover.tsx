@@ -7,7 +7,7 @@ import {
 import { RequiredFunctionLevel } from "@/lib/const";
 import { triggerHapticFeedback } from "@/lib/mobile-utils";
 import { type Task } from "@/lib/schemas/worksheet";
-import { User } from "@/types/user";
+import { useCurrentUser } from "@/state/user";
 import {
   ArrowRightLeftIcon,
   ChevronDownIcon,
@@ -28,7 +28,6 @@ interface TaskActionPopoverProps {
   canMoveUp: boolean;
   canMoveDown: boolean;
   canMoveToDifferentCategory: boolean;
-  currentUser: User;
   variant: "template" | "worksheet";
 }
 
@@ -42,9 +41,9 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
   canMoveUp,
   canMoveDown,
   canMoveToDifferentCategory,
-  currentUser,
   variant,
 }) => {
+  const currentUser = useCurrentUser();
   const [isOpen, setIsOpen] = useState(false);
 
   const handleMoveUp = () => {
@@ -151,8 +150,9 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
           <div className="my-1 border-t" />
 
           {/* AI Suggestions */}
-          {currentUser.function.numberValue >=
-            RequiredFunctionLevel.TASK_SUGGESTIONS &&
+          {currentUser &&
+            currentUser.function.numberValue >=
+              RequiredFunctionLevel.TASK_SUGGESTIONS &&
             variant === "worksheet" &&
             task.category === "individual" && (
               <Button

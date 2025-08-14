@@ -26,6 +26,7 @@ import { API_URL } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useCurrentUser } from "@/state/user";
 import { User } from "@/types/user";
 import { Worksheet } from "@/types/worksheet";
 import {
@@ -61,14 +62,13 @@ export function WorksheetActions({
   variant,
   removeWorksheet,
   updateWorksheet,
-  currentUser,
 }: {
   worksheet: Worksheet;
   variant: "user" | "managed" | "shared" | "archived" | "review";
   removeWorksheet?: (worksheetId: string) => void;
   updateWorksheet?: (worksheet: Worksheet) => void;
-  currentUser?: User;
 }) {
+  const currentUser = useCurrentUser();
   const router = useRouter();
   const { apiClient } = useApi();
   const [baseUrl, setBaseUrl] = useState("");

@@ -1,5 +1,4 @@
 import { TeamRequestForm } from "@/components/team/team-request-form";
-import { fetchCurrentUser } from "@/lib/server-api";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -7,15 +6,9 @@ export const metadata: Metadata = {
 };
 
 export default async function TeamRequestPage() {
-  const { user, error } = await fetchCurrentUser();
-
-  if (error) {
-    return error;
-  }
-
   return (
     <div className="container mx-auto">
-      <TeamRequestForm currentUser={user!} />
+      <TeamRequestForm />
     </div>
   );
 }

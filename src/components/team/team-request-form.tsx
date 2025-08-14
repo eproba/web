@@ -26,9 +26,10 @@ import {
 } from "@/lib/schemas/team-request";
 import { districtSerializer } from "@/lib/serializers/team";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useCurrentUser } from "@/state/user";
 import { District } from "@/types/team";
 import { ORGANIZATION_CHOICES } from "@/types/team-request";
-import { User, UserFunction } from "@/types/user";
+import { UserFunction } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon, TrashIcon, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -36,13 +37,10 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 
-interface TeamRequestFormProps {
-  currentUser: User;
-}
-
-export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
+export function TeamRequestForm() {
   const { apiClient, isApiReady } = useApi();
   const router = useRouter();
+  const currentUser = useCurrentUser();
   const [districts, setDistricts] = useState<District[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -196,7 +194,7 @@ export function TeamRequestForm({ currentUser }: TeamRequestFormProps) {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {currentUser.patrol && (
+          {currentUser?.patrol && (
             <Alert className="mb-6 border-yellow-500/40 bg-yellow-500/10">
               <AlertDescription className="text-yellow-800 dark:text-yellow-200">
                 Jesteś obecnie przypisany do zastępu &quot;

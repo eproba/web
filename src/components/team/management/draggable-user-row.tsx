@@ -24,7 +24,6 @@ interface DraggableUserRowProps {
     userId: string,
     updatedUser: Partial<ApiUserResponse>,
   ) => Promise<boolean>;
-  currentUser: User;
   isUpdating?: boolean;
   allowEditForLowerFunction: boolean;
 }
@@ -33,7 +32,6 @@ export function DraggableUserRow({
   user,
   patrols,
   onUserUpdate,
-  currentUser,
   isUpdating = false,
   allowEditForLowerFunction = false,
 }: DraggableUserRowProps) {
@@ -79,7 +77,6 @@ export function DraggableUserRow({
       user={user}
       patrols={patrols}
       onUserUpdate={onUserUpdate}
-      currentUser={currentUser}
       allowEditForLowerFunction={allowEditForLowerFunction}
     >
       <div

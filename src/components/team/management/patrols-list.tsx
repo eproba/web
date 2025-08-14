@@ -6,9 +6,11 @@ import { useApi } from "@/lib/api-client";
 import { patrolSerializer } from "@/lib/serializers/team";
 import { ApiUserResponse, userSerializer } from "@/lib/serializers/user";
 import { ToastMsg } from "@/lib/toast-msg";
+import { setCurrentUserAtom, useCurrentUser } from "@/state/user";
 import { Organization, Patrol, Team } from "@/types/team";
 import { User } from "@/types/user";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
+import { useSetAtom } from "jotai";
 import { LoaderCircleIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -19,20 +21,18 @@ import { PatrolCreateDialog } from "./patrol-create-dialog";
 interface PatrolsListProps {
   team: Team;
   users: User[];
-  currentUser: User;
   allowEditForLowerFunction: boolean;
   setAllowEditForLowerFunction: React.Dispatch<React.SetStateAction<boolean>>;
-  setCurrentUser: React.Dispatch<React.SetStateAction<User>>;
 }
 
 export function PatrolsList({
   team,
   users: initialUsers,
-  currentUser,
   allowEditForLowerFunction,
   setAllowEditForLowerFunction,
-  setCurrentUser,
 }: PatrolsListProps) {
+  const currentUser = useCurrentUser();
+  const setCurrentUser = useSetAtom(setCurrentUserAtom);
   const [patrols, setPatrols] = useState<Patrol[]>(
     team.patrols?.sort((a, b) => a.name.localeCompare(b.name)) ?? [],
   );
@@ -56,7 +56,7 @@ export function PatrolsList({
             )
             .filter((user) => user.team === team.id),
         );
-        if (updated.id === currentUser.id) {
+        if (updated.id === currentUser?.id) {
           setCurrentUser(updated);
         }
         if (updated.function.numberValue >= 4) {
@@ -89,7 +89,7 @@ export function PatrolsList({
     },
     [
       apiClient,
-      currentUser.id,
+      currentUser?.id,
       setAllowEditForLowerFunction,
       setCurrentUser,
       team.id,
@@ -253,17 +253,13 @@ export function PatrolsList({
           )}
         </h2>
         <div className="flex items-center gap-2">
-          <UserCreateDialog
-            onUserCreate={handleCreateUser}
-            currentUser={currentUser}
-            patrols={patrols}
-          >
+          <UserCreateDialog onUserCreate={handleCreateUser} patrols={patrols}>
             <Button variant="outline">
               <span>
                 Załóż konto
                 <span className="hidden sm:inline">
                   {" dla "}
-                  {currentUser.organization === Organization.Female
+                  {currentUser?.organization === Organization.Female
                     ? "harcerki"
                     : "harcerza"}
                 </span>
@@ -285,7 +281,6 @@ export function PatrolsList({
             onPatrolUpdate={handlePatrolUpdate}
             onUserUpdate={handleUserUpdate}
             onPatrolDelete={handleDeletePatrol}
-            currentUser={currentUser}
             updatingUserIds={updatingUserIds}
             allowEditForLowerFunction={allowEditForLowerFunction}
           />
@@ -295,7 +290,6 @@ export function PatrolsList({
             users={inactiveUsers}
             allPatrols={patrols}
             onUserUpdate={handleUserUpdate}
-            currentUser={currentUser}
             updatingUserIds={updatingUserIds}
             allowEditForLowerFunction={allowEditForLowerFunction}
           />

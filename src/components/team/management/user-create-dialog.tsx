@@ -35,6 +35,7 @@ import { ApiError } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { ApiUserResponse } from "@/lib/serializers/user";
 import { capitalizeFirstLetter } from "@/lib/utils";
+import { useCurrentUser } from "@/state/user";
 import { Organization, Patrol } from "@/types/team";
 import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -65,15 +66,14 @@ interface UserEditDialogProps {
     createdUser: Partial<ApiUserResponse>,
   ) => Promise<(User & { newPassword: string }) | Error>;
   children: React.ReactNode;
-  currentUser: User;
 }
 
 export function UserCreateDialog({
   patrols,
   onUserCreate,
   children,
-  currentUser,
 }: UserEditDialogProps) {
+  const currentUser = useCurrentUser();
   const { apiClient } = useApi();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -222,7 +222,7 @@ export function UserCreateDialog({
               <DialogHeader>
                 <DialogTitle>
                   Załóż konto dla{" "}
-                  {currentUser.organization === Organization.Female
+                  {currentUser?.organization === Organization.Female
                     ? "harcerki"
                     : "harcerza"}
                 </DialogTitle>
@@ -230,7 +230,7 @@ export function UserCreateDialog({
                   Możesz ręcznie utworzyć konto dla nowego członka drużyny.
                   <br />
                   Zalecamy użycie tej opcji tylko jeśli{" "}
-                  {currentUser.organization === Organization.Female
+                  {currentUser?.organization === Organization.Female
                     ? "harcerka"
                     : "harcerz"}{" "}
                   nie ma możliwości zarejestrowania się samodzielnie.
@@ -417,12 +417,13 @@ export function UserCreateDialog({
                                   key={fn.value}
                                   value={fn.value.toString()}
                                   disabled={
+                                    !!currentUser &&
                                     fn.value >
                                       currentUser.function.numberValue &&
                                     currentUser.function.value < 4
                                   }
                                 >
-                                  {currentUser.organization ===
+                                  {currentUser?.organization ===
                                   Organization.Female
                                     ? fn.female
                                     : fn.male}
@@ -461,7 +462,7 @@ export function UserCreateDialog({
                                     value={rank.value.toString()}
                                   >
                                     {capitalizeFirstLetter(
-                                      currentUser.organization ===
+                                      currentUser?.organization ===
                                         Organization.Female
                                         ? rank.female
                                         : rank.male,
@@ -501,7 +502,7 @@ export function UserCreateDialog({
                                       value={rank.value.toString()}
                                     >
                                       {capitalizeFirstLetter(
-                                        currentUser.organization ===
+                                        currentUser?.organization ===
                                           Organization.Female
                                           ? rank.female
                                           : rank.male,
@@ -534,7 +535,8 @@ export function UserCreateDialog({
                     <Button
                       type="submit"
                       disabled={
-                        isLoading || currentUser.function.numberValue < 4
+                        isLoading ||
+                        (!!currentUser && currentUser.function.numberValue < 4)
                       }
                     >
                       {isLoading ? "Tworzenie..." : "Utwórz"}

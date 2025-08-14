@@ -1,5 +1,5 @@
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
-import { fetchCurrentUser, fetchReviewWorksheets } from "@/lib/server-api";
+import { fetchReviewWorksheets } from "@/lib/server-api";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,18 +12,9 @@ export default async function ReviewWorksheets() {
     return worksheetsError;
   }
 
-  const { user, error: userError } = await fetchCurrentUser();
-  if (userError) {
-    return userError;
-  }
-
   return (
     <div className="">
-      <WorksheetList
-        orgWorksheets={worksheets!}
-        variant="review"
-        currentUser={user!}
-      />
+      <WorksheetList orgWorksheets={worksheets!} variant="review" />
     </div>
   );
 }

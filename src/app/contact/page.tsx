@@ -1,5 +1,4 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { fetchCurrentUser } from "@/lib/server-api";
 import type { Metadata } from "next";
 
 import ContactForm from "./contact-form";
@@ -9,11 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default async function ContactPage() {
-  const { user } = await fetchCurrentUser();
-
   return (
     <div className="space-y-6">
-      <ContactForm initialEmail={user?.email} />
+      <ContactForm />
       <Card>
         <CardContent>
           <h1 className="text-2xl font-semibold">Informacje kontaktowe</h1>

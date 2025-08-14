@@ -9,13 +9,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useCurrentUser } from "@/state/user";
 import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import React from "react";
 
 interface UserRemoveFromPatrolDialogProps {
   user: User;
-  currentUser: User;
   isLoading: boolean;
   onPatrolClear: () => void;
   children: React.ReactNode;
@@ -23,11 +23,11 @@ interface UserRemoveFromPatrolDialogProps {
 
 export function UserRemoveFromPatrolDialog({
   user,
-  currentUser,
   isLoading,
   onPatrolClear,
   children,
 }: UserRemoveFromPatrolDialogProps) {
+  const currentUser = useCurrentUser();
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
@@ -37,7 +37,7 @@ export function UserRemoveFromPatrolDialog({
           <AlertDialogDescription>
             Czy na pewno chcesz usunąć {user.displayName || user.email} z
             drużyny? Nie będziesz
-            {currentUser.organization === Organization.Female
+            {currentUser?.organization === Organization.Female
               ? " miała"
               : " miał"}{" "}
             możliwości samodzielnego przypisania{" "}

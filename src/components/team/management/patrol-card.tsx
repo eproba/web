@@ -21,7 +21,6 @@ interface PatrolCardProps {
     updatedUser: Partial<ApiUserResponse>,
   ) => Promise<boolean>;
   onPatrolDelete: (id: string) => Promise<boolean>;
-  currentUser: User;
   updatingUserIds: string[];
   allowEditForLowerFunction: boolean;
 }
@@ -33,7 +32,6 @@ export function PatrolCard({
   onPatrolUpdate,
   onUserUpdate,
   onPatrolDelete,
-  currentUser,
   updatingUserIds,
   allowEditForLowerFunction,
 }: PatrolCardProps) {
@@ -91,7 +89,6 @@ export function PatrolCard({
                   user={user}
                   patrols={allPatrols}
                   onUserUpdate={onUserUpdate}
-                  currentUser={currentUser}
                   isUpdating={updatingUserIds.includes(user.id)}
                   allowEditForLowerFunction={allowEditForLowerFunction}
                 />

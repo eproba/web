@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
+import { useCurrentUser } from "@/state/user";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
@@ -17,11 +18,7 @@ type FormData = {
   message: string;
 };
 
-export default function ContactForm({
-  initialEmail,
-}: {
-  initialEmail?: string;
-}) {
+export default function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { apiClient } = useApi();
   const {
@@ -30,6 +27,7 @@ export default function ContactForm({
     formState: { errors },
     reset: resetForm,
   } = useForm<FormData>();
+  const currentUser = useCurrentUser();
 
   async function onSubmit(data: FormData) {
     setIsSubmitting(true);
@@ -100,7 +98,7 @@ export default function ContactForm({
                   message: "Nieprawidłowy format adresu email",
                 },
               })}
-              defaultValue={initialEmail}
+              defaultValue={currentUser?.email || ""}
               type="email"
             />
             {errors.from_email && (

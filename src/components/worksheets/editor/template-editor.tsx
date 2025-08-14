@@ -135,7 +135,6 @@ export const TemplateEditor = ({
             onMoveTaskUp={handleMoveTaskUp}
             onMoveTaskDown={handleMoveTaskDown}
             onMoveTaskToCategory={handleMoveTaskToCategory}
-            currentUser={currentUser}
             variant="template"
           />
 

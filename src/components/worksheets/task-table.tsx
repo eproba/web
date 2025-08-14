@@ -13,7 +13,6 @@ import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { romanize } from "@/lib/utils";
 import { TemplateTask, TemplateWorksheet } from "@/types/template";
-import { User } from "@/types/user";
 import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
 import { ArchiveIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -27,21 +26,18 @@ export function TaskTable({
   variant,
   updateTask,
   removeWorksheet,
-  currentUser,
 }:
   | {
       worksheet: Worksheet;
       variant: "user" | "managed" | "shared" | "archived" | "review";
       updateTask?: (task: Task) => void;
       removeWorksheet?: (worksheetId: string) => void;
-      currentUser?: User;
     }
   | {
       worksheet: TemplateWorksheet;
       variant: "template";
       updateTask?: (task: Task) => void;
       removeWorksheet?: (worksheetId: string) => void;
-      currentUser?: User;
     }) {
   const router = useRouter();
   const { apiClient } = useApi();
@@ -121,7 +117,6 @@ export function TaskTable({
                 variant={variant}
                 worksheet={worksheet}
                 updateTask={updateTask}
-                currentUser={currentUser}
               />
             );
           } else {
@@ -133,7 +128,6 @@ export function TaskTable({
                 variant={variant}
                 worksheet={worksheet}
                 updateTask={updateTask}
-                currentUser={currentUser}
               />
             );
           }
@@ -243,7 +237,6 @@ export function TaskTable({
                   variant={"template"}
                   worksheet={template}
                   updateTask={updateTask}
-                  currentUser={currentUser}
                 />
               ))}
             </Fragment>
@@ -259,7 +252,6 @@ export function TaskTable({
             variant={"template"}
             worksheet={template}
             updateTask={updateTask}
-            currentUser={currentUser}
           />
         ))}
 

@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/tooltip";
 import { ApiUserResponse } from "@/lib/serializers/user";
 import { capitalizeFirstLetter, cn } from "@/lib/utils";
+import { useCurrentUser } from "@/state/user";
 import { Organization, Patrol } from "@/types/team";
 import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -72,7 +73,6 @@ interface UserEditDialogProps {
     updatedUser: Partial<ApiUserResponse>,
   ) => Promise<boolean>;
   children: React.ReactNode;
-  currentUser: User;
   allowEditForLowerFunction: boolean;
 }
 
@@ -81,9 +81,9 @@ export function UserEditDialog({
   patrols,
   onUserUpdate,
   children,
-  currentUser,
   allowEditForLowerFunction,
 }: UserEditDialogProps) {
+  const currentUser = useCurrentUser();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const form = useForm({
@@ -165,7 +165,8 @@ export function UserEditDialog({
                   ? "harcerkę"
                   : "harcerza"}
               </DialogTitle>
-              {user.function.numberValue > currentUser.function.numberValue &&
+              {currentUser &&
+                user.function.numberValue > currentUser.function.numberValue &&
                 currentUser.function.numberValue < 4 &&
                 !allowEditForLowerFunction && (
                   <DialogDescription>
@@ -183,7 +184,9 @@ export function UserEditDialog({
             <div
               className={cn(
                 "flex flex-col gap-4 py-4",
-                user.function.numberValue > currentUser.function.numberValue &&
+                currentUser &&
+                  user.function.numberValue >
+                    currentUser.function.numberValue &&
                   currentUser.function.numberValue < 4 &&
                   !allowEditForLowerFunction &&
                   "pointer-events-none opacity-50",
@@ -294,6 +297,7 @@ export function UserEditDialog({
                                 key={fn.value}
                                 value={fn.value.toString()}
                                 disabled={
+                                  !!currentUser &&
                                   fn.value > currentUser.function.numberValue &&
                                   currentUser.function.value < 4 &&
                                   !allowEditForLowerFunction
@@ -406,7 +410,6 @@ export function UserEditDialog({
                   <Tooltip>
                     <UserRemoveFromPatrolDialog
                       user={user}
-                      currentUser={currentUser}
                       isLoading={isLoading}
                       onPatrolClear={onPatrolClear}
                     >
@@ -417,8 +420,9 @@ export function UserEditDialog({
                           size="icon"
                           disabled={
                             isLoading ||
-                            (user.function.numberValue >
-                              currentUser.function.numberValue &&
+                            (!!currentUser &&
+                              user.function.numberValue >
+                                currentUser.function.numberValue &&
                               currentUser.function.numberValue < 4 &&
                               !allowEditForLowerFunction)
                           }
@@ -442,8 +446,9 @@ export function UserEditDialog({
                           }}
                           disabled={
                             isLoading ||
-                            (user.function.numberValue >
-                              currentUser.function.numberValue &&
+                            (!!currentUser &&
+                              user.function.numberValue >
+                                currentUser.function.numberValue &&
                               currentUser.function.numberValue < 4 &&
                               !allowEditForLowerFunction)
                           }
@@ -464,8 +469,9 @@ export function UserEditDialog({
                           }}
                           disabled={
                             isLoading ||
-                            (user.function.numberValue >
-                              currentUser.function.numberValue &&
+                            (!!currentUser &&
+                              user.function.numberValue >
+                                currentUser.function.numberValue &&
                               currentUser.function.numberValue < 4 &&
                               !allowEditForLowerFunction)
                           }
@@ -521,8 +527,9 @@ export function UserEditDialog({
                     type="submit"
                     disabled={
                       isLoading ||
-                      (user.function.numberValue >
-                        currentUser.function.numberValue &&
+                      (!!currentUser &&
+                        user.function.numberValue >
+                          currentUser.function.numberValue &&
                         currentUser.function.numberValue < 4 &&
                         !allowEditForLowerFunction)
                     }
