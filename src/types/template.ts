@@ -7,6 +7,15 @@ export interface TemplateTask {
   order: number;
 }
 
+export interface TemplateTaskGroup {
+  id: string;
+  name: string;
+  description: string;
+  tasks: string[];
+  minTasks: number;
+  maxTasks: number;
+}
+
 export interface TemplateWorksheet {
   id: string;
   name: string;
@@ -18,4 +27,5 @@ export interface TemplateWorksheet {
   templateNotes: string;
   image?: string | null;
   priority: number;
+  taskGroups: TemplateTaskGroup[];
 }

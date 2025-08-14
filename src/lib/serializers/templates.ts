@@ -1,4 +1,8 @@
-import { TemplateTask, TemplateWorksheet } from "@/types/template";
+import {
+  TemplateTask,
+  TemplateTaskGroup,
+  TemplateWorksheet,
+} from "@/types/template";
 
 // Helper function to transform image URLs for SVG files
 // This is because files that are fetched from the internal server
@@ -42,6 +46,16 @@ export interface ApiTemplateWorksheetResponse {
   template_notes: string;
   image?: string | null;
   priority: number;
+  task_groups: ApiTemplateTaskGroupResponse[];
+}
+
+export interface ApiTemplateTaskGroupResponse {
+  id: string;
+  name: string;
+  description: string;
+  tasks: string[];
+  min_tasks: number;
+  max_tasks: number;
 }
 
 export function templateMetadataSerializer(
@@ -69,6 +83,7 @@ export function templateSerializer(
     createdAt: new Date(apiResponse.created_at),
     templateNotes: apiResponse.template_notes,
     priority: apiResponse.priority,
+    taskGroups: apiResponse.task_groups.map(templateTemplateTaskGroup),
   };
 }
 
@@ -82,5 +97,18 @@ export function templateTaskSerializer(
     category: apiResponse.category,
     templateNotes: apiResponse.template_notes,
     order: apiResponse.order || 0,
+  };
+}
+
+export function templateTemplateTaskGroup(
+  apiResponse: ApiTemplateTaskGroupResponse,
+): TemplateTaskGroup {
+  return {
+    id: apiResponse.id,
+    name: apiResponse.name,
+    description: apiResponse.description,
+    tasks: apiResponse.tasks,
+    minTasks: apiResponse.min_tasks,
+    maxTasks: apiResponse.max_tasks,
   };
 }

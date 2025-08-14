@@ -60,9 +60,6 @@ const WorksheetCreatePage = async ({
               </CardDescription>
             </div>
           </div>
-          {/*<CardContent>*/}
-
-          {/*</CardContent>*/}
         </Card>
         <WorksheetEditor
           mode="create"

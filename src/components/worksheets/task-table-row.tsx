@@ -24,27 +24,30 @@ import { useState } from "react";
 
 export function TaskTableRow({
   task,
-  index,
   variant,
   worksheet,
   updateTask,
   currentUser,
+  displayIndex,
+  grouped,
 }:
   | {
       task: Task;
-      index: number;
       variant: "user" | "managed" | "shared" | "archived" | "review";
       worksheet: Worksheet;
       updateTask?: (task: Task) => void;
       currentUser?: User;
+      displayIndex?: string | number;
+      grouped?: boolean;
     }
   | {
       task: TemplateTask;
-      index: number;
       variant: "template";
       worksheet: TemplateWorksheet;
       updateTask?: (task: Task) => void;
       currentUser?: User;
+      displayIndex?: string | number;
+      grouped?: boolean;
     }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -62,8 +65,10 @@ export function TaskTableRow({
     <Drawer key={task.id} open={isOpen} onOpenChange={setIsOpen}>
       <DrawerTrigger asChild className="sm:hidden">
         <TableRow className={cn("hover:bg-muted/10", rowStyle)}>
-          <TableCell className="w-8 align-text-top font-medium">
-            {index + 1}
+          <TableCell
+            className={cn("w-8 align-text-top font-medium", grouped && "pl-4")}
+          >
+            {displayIndex}
           </TableCell>
           <TableCell>
             {variant === "template" &&
@@ -101,7 +106,12 @@ export function TaskTableRow({
           rowStyle,
         )}
       >
-        <TableCell className="relative w-8 align-text-top font-medium">
+        <TableCell
+          className={cn(
+            "relative w-8 align-text-top font-medium",
+            grouped && "pl-6",
+          )}
+        >
           {["managed", "review", "archived"].includes(variant) &&
             currentUser &&
             (currentUser.function.numberValue >=
@@ -117,7 +127,7 @@ export function TaskTableRow({
                 />
               </div>
             )}
-          {index + 1}
+          {displayIndex}
         </TableCell>
         <TableCell>
           {variant === "template" &&

@@ -11,11 +11,13 @@ import {
 } from "@/components/ui/table";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
+import { romanize } from "@/lib/utils";
 import { TemplateTask, TemplateWorksheet } from "@/types/template";
 import { User } from "@/types/user";
 import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
 import { ArchiveIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { Fragment } from "react";
 import { toast } from "react-toastify";
 
 import { TaskTableRow } from "./task-table-row";
@@ -115,7 +117,7 @@ export function TaskTable({
               <TaskTableRow
                 key={task.id}
                 task={task as TemplateTask}
-                index={index}
+                displayIndex={index + 1}
                 variant={variant}
                 worksheet={worksheet}
                 updateTask={updateTask}
@@ -127,7 +129,7 @@ export function TaskTable({
               <TaskTableRow
                 key={task.id}
                 task={task as Task}
-                index={index}
+                displayIndex={index + 1}
                 variant={variant}
                 worksheet={worksheet}
                 updateTask={updateTask}
@@ -149,12 +151,173 @@ export function TaskTable({
     </TableBody>
   );
 
+  // Render template tasks grouped by TemplateTaskGroup definitions
+  const renderTemplateGrouped = (onlyCategory?: TemplateTask["category"]) => {
+    const template = worksheet as TemplateWorksheet;
+    const groups = template.taskGroups || [];
+    const tasks = ((template.tasks as TemplateTask[]) || [])
+      .filter((t) => (onlyCategory ? t.category === onlyCategory : true))
+      .slice();
+    const taskById = new Map(tasks.map((t) => [t.id, t] as const));
+    const groupedTaskIdSet = new Set<string>();
+
+    // Sort groups by the minimal order of their tasks (fallback 0)
+    const sortedGroups = groups
+      .map((g) => ({
+        group: g,
+        minOrder: Math.min(
+          ...g.tasks
+            .map((id) => taskById.get(id)?.order)
+            .filter((v): v is number => typeof v === "number"),
+        ),
+      }))
+      .sort(
+        (a, b) =>
+          (isFinite(a.minOrder) ? a.minOrder : 0) -
+          (isFinite(b.minOrder) ? b.minOrder : 0),
+      )
+      .map((x) => x.group);
+
+    const requirementText = (min: number, max: number) => {
+      const hasMin = min > 0;
+      const hasMax = max > 0;
+      if (hasMin && hasMax) {
+        if (min === max) return `Wymagania: ${min} zadań`;
+        return `Wymagania: min ${min}, max ${max}`;
+      }
+      if (hasMin) return `Wymagania: min ${min}`;
+      if (hasMax) return `Wymagania: max ${max}`;
+      return "Wymagania: dowolna liczba zadań";
+    };
+
+    let topLevelIndex = 0;
+
+    // Build a combined sequence of rows: [group, groupTasks..., ungroupedTask, ...]
+    const ungroupedTasks = tasks
+      .filter((t) => !groupedTaskIdSet.has(t.id))
+      .sort((a, b) => a.order - b.order);
+
+    return (
+      <TableBody>
+        {sortedGroups.map((group) => {
+          const groupTasks = group.tasks
+            .map((id) => taskById.get(id))
+            .filter((t): t is TemplateTask => !!t)
+            .sort((a, b) => a.order - b.order);
+
+          groupTasks.forEach((t) => groupedTaskIdSet.add(t.id));
+
+          if (groupTasks.length === 0) return null;
+
+          return (
+            <Fragment key={`group-wrap-${group.id}`}>
+              <TableRow
+                key={`group-${group.id}`}
+                className="bg-muted/30 hover:bg-muted/30"
+              >
+                <TableCell className="w-8 align-text-top font-medium">
+                  {++topLevelIndex}
+                </TableCell>
+                <TableCell className="py-2">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-baseline justify-between gap-2">
+                      <h4 className="text-sm font-medium">{group.name}</h4>
+                      <span className="text-muted-foreground text-xs">
+                        {requirementText(group.minTasks, group.maxTasks)}
+                      </span>
+                    </div>
+                    {group.description && (
+                      <p className="text-muted-foreground text-xs whitespace-pre-wrap">
+                        {group.description}
+                      </p>
+                    )}
+                  </div>
+                </TableCell>
+              </TableRow>
+              {groupTasks.map((task, i) => (
+                <TaskTableRow
+                  key={task.id}
+                  task={task}
+                  displayIndex={`${romanize(i + 1).toLowerCase()}.`}
+                  grouped
+                  variant={"template"}
+                  worksheet={template}
+                  updateTask={updateTask}
+                  currentUser={currentUser}
+                />
+              ))}
+            </Fragment>
+          );
+        })}
+
+        {/* Ungrouped tasks appear after all groups, continuing the top-level index */}
+        {ungroupedTasks.map((task) => (
+          <TaskTableRow
+            key={task.id}
+            task={task}
+            displayIndex={++topLevelIndex}
+            variant={"template"}
+            worksheet={template}
+            updateTask={updateTask}
+            currentUser={currentUser}
+          />
+        ))}
+
+        {tasks.length === 0 && (
+          <TableRow>
+            <TableCell colSpan={2} className="text-center">
+              Ta próba nie ma jeszcze zadań.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    );
+  };
+
   const renderProgress = () => (
     <div className="flex items-center justify-end gap-4">
       <Progress value={completionPercentage} className="w-24" />
       <p className="w-8 text-sm">{completionPercentage || 0}%</p>
     </div>
   );
+
+  if (
+    variant === "template" &&
+    (worksheet as TemplateWorksheet).taskGroups?.length > 0
+  ) {
+    if (hasBothCategories) {
+      return (
+        <div className="space-y-4">
+          {generalTasks.length > 0 && (
+            <div>
+              <h3 className="text-lg font-medium">Wymagania ogólne</h3>
+              <Table containerClassName="sm:overflow-x-visible">
+                {renderTableHeader()}
+                {renderTemplateGrouped("general")}
+              </Table>
+            </div>
+          )}
+
+          {individualTasks.length > 0 && (
+            <div>
+              <h3 className="text-lg font-medium">Zadania indywidualne</h3>
+              <Table containerClassName="sm:overflow-x-visible">
+                {renderTableHeader()}
+                {renderTemplateGrouped("individual")}
+              </Table>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <Table containerClassName="sm:overflow-x-visible">
+        {renderTableHeader()}
+        {renderTemplateGrouped()}
+      </Table>
+    );
+  }
 
   if (!hasBothCategories && !hasFinalChallenge) {
     return (
