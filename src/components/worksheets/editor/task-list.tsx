@@ -298,7 +298,7 @@ export const TaskList: React.FC<TaskListProps> = ({
               >
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>
+                    <TooltipTrigger type="button">
                       <InfoIcon className="text-muted-foreground size-4" />
                     </TooltipTrigger>
                     <TooltipContent className="max-w-xs">

@@ -368,8 +368,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               )}
             />
 
-            {showDescription &&
-              variant === "worksheet" &&
+            {variant === "worksheet" &&
               form.getValues(`tasks.${taskIndex}.templateNotes`) && (
                 <Alert>
                   <InfoIcon />
@@ -454,7 +453,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                     setShowSuggestions(true);
                   }}
                   className={cn(
-                    "hidden transition-all group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-700 md:flex md:opacity-0 dark:hover:bg-blue-950 dark:hover:text-blue-300 md:pointer-coarse:opacity-100",
+                    "hidden transition-all group-hover:opacity-100 hover:bg-blue-100 hover:text-blue-700 dark:hover:bg-blue-950 dark:hover:text-blue-300 pointer-fine:flex pointer-fine:opacity-0",
                     showSuggestions &&
                       "bg-blue-100 text-blue-700 !opacity-100 dark:bg-blue-950 dark:text-blue-300",
                   )}
@@ -469,7 +468,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               type="button"
               variant="ghost"
               size="icon"
-              className="hidden transition-opacity group-hover:opacity-100 hover:bg-red-100 hover:text-red-700 md:flex md:opacity-0 md:pointer-coarse:opacity-100"
+              className="hidden transition-opacity group-hover:opacity-100 hover:bg-red-100 hover:text-red-700 pointer-fine:flex pointer-fine:opacity-0"
               onClick={() => handleDelete()}
             >
               <Trash2Icon className="size-4" />
@@ -479,7 +478,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               ref={dragHandleRef}
               className={cn(
                 "cursor-grab touch-manipulation transition-all select-none hover:bg-gray-100 dark:hover:bg-gray-800",
-                "hidden items-center justify-center rounded-md p-2 md:flex",
+                "hidden items-center justify-center rounded-md p-2 pointer-fine:flex",
                 isDragging && "cursor-grabbing bg-blue-100 dark:bg-blue-900",
                 "opacity-60 group-hover:opacity-100",
               )}

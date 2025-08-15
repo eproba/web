@@ -153,7 +153,6 @@ export function TaskTable({
       .filter((t) => (onlyCategory ? t.category === onlyCategory : true))
       .slice();
     const taskById = new Map(tasks.map((t) => [t.id, t] as const));
-    const groupedTaskIdSet = new Set<string>();
 
     // Sort groups by the minimal order of their tasks (fallback 0)
     const sortedGroups = groups
@@ -176,19 +175,19 @@ export function TaskTable({
       const hasMin = min > 0;
       const hasMax = max > 0;
       if (hasMin && hasMax) {
-        if (min === max) return `Wymagania: ${min} zadań`;
-        return `Wymagania: min ${min}, max ${max}`;
+        if (min === max) return `${min} zad.`;
+        return `min ${min}, max ${max}`;
       }
-      if (hasMin) return `Wymagania: min ${min}`;
-      if (hasMax) return `Wymagania: max ${max}`;
-      return "Wymagania: dowolna liczba zadań";
+      if (hasMin) return `min ${min}`;
+      if (hasMax) return `max ${max}`;
+      return "";
     };
 
     let topLevelIndex = 0;
 
     // Build a combined sequence of rows: [group, groupTasks..., ungroupedTask, ...]
     const ungroupedTasks = tasks
-      .filter((t) => !groupedTaskIdSet.has(t.id))
+      .filter((t) => !groups.some((g) => g.tasks.includes(t.id)))
       .sort((a, b) => a.order - b.order);
 
     return (
@@ -198,8 +197,6 @@ export function TaskTable({
             .map((id) => taskById.get(id))
             .filter((t): t is TemplateTask => !!t)
             .sort((a, b) => a.order - b.order);
-
-          groupTasks.forEach((t) => groupedTaskIdSet.add(t.id));
 
           if (groupTasks.length === 0) return null;
 

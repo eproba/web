@@ -23,7 +23,6 @@ import { toast } from "react-toastify";
 interface WorksheetEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
   mode: "create" | "edit";
-  variant?: "template" | "worksheet";
   redirectTo: string;
   currentUser: User;
 }
@@ -133,8 +132,8 @@ export const WorksheetEditor = ({
   // Watch tasks for changes to auto-enable descriptions only if user hasn't made a choice
   useEffect(() => {
     const tasks = watchedTasks || [];
-    const hasDescriptions = tasks.some(
-      (task: Task) => task.description?.trim() || task.templateNotes?.trim(),
+    const hasDescriptions = tasks.some((task: Task) =>
+      task.description?.trim(),
     );
 
     // Only auto-enable if the user hasn't explicitly toggled it

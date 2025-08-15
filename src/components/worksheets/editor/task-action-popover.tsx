@@ -94,7 +94,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
           type="button"
           variant="ghost"
           size="icon"
-          className="h-8 w-8 p-0 hover:bg-gray-100 md:hidden dark:hover:bg-gray-800"
+          className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 pointer-fine:hidden"
           title="Opcje zadania"
         >
           <MoreVerticalIcon className="size-4" />

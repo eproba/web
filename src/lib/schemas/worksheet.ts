@@ -25,7 +25,7 @@ export const worksheetWithTasksSchema = z.object({
     .max(100, { error: "Nazwa próby nie może przekraczać 100 znaków" }),
   description: z
     .string()
-    .max(500, { error: "Opis nie może przekraczać 500 znaków" }),
+    .max(1000, { error: "Opis nie może przekraczać 1000 znaków" }),
   supervisor: z.string().nullable().optional(),
   userId: z.string().nullable().optional(),
   scope: z.enum(["team", "organization"]).optional(),
