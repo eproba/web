@@ -45,7 +45,7 @@ export const useTemplateForm = ({
     scope: initialData?.scope || "team",
     tasks:
       initialData?.tasks && initialData.tasks.length > 0
-        ? initialData.tasks
+        ? initialData.tasks.sort((a, b) => a.order - b.order)
         : defaultTasks,
     templateNotes: initialData?.templateNotes || undefined,
     image:
