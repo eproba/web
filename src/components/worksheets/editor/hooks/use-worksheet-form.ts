@@ -172,7 +172,6 @@ export const useWorksheetForm = ({
           description: task.description.trim(),
           category: task.category,
           order: task.order,
-          template_notes: task.templateNotes?.trim() || undefined,
           ...(effectiveTasksToClear.includes(task.id) && {
             clear_status: true,
           }),

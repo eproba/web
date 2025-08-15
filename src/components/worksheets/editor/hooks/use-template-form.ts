@@ -90,6 +90,7 @@ export const useTemplateForm = ({
       const templateData = {
         name: data.name.trim(),
         description: data.description.trim(),
+        template_notes: data.templateNotes?.trim() || "",
         scope: data.scope,
         tasks: validTasks.map((task) => ({
           id: task.id,
@@ -97,7 +98,7 @@ export const useTemplateForm = ({
           description: task.description.trim(),
           category: task.category,
           order: task.order,
-          template_notes: task.templateNotes?.trim() || undefined,
+          template_notes: task.templateNotes?.trim() || "",
         })),
         priority: data.priority ?? 0,
       };
