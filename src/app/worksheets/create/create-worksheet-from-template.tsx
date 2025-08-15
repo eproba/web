@@ -29,7 +29,9 @@ export const CreateWorksheetFromTemplate = ({
   redirectTo?: string;
   currentUser: User;
 }) => {
-  const [ignoredTasks, setIgnoredTasks] = useState<string[]>([]);
+  const [ignoredTasks, setIgnoredTasks] = useState<string[]>(
+    template.taskGroups.flatMap((g) => g.tasks || []),
+  );
   const [showTasksSelection, setShowTasksSelection] = useState(
     template.taskGroups.length > 0,
   );
@@ -116,20 +118,31 @@ export const CreateWorksheetFromTemplate = ({
           <CardContent className="space-y-4">
             {totalGroups > 0 && currentGroup && (
               <>
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="text-muted-foreground text-sm">
-                    Krok {currentGroupIndex + 1} z {totalGroups}
-                  </div>
-                  <div className="text-sm">
+                {totalGroups > 1 ? (
+                  <>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="text-muted-foreground text-sm">
+                        Krok {currentGroupIndex + 1} z {totalGroups}
+                      </div>
+                      <div className="text-sm">
+                        {requirementText(
+                          currentGroup.minTasks,
+                          currentGroup.maxTasks,
+                        )}
+                      </div>
+                    </div>
+                    <Progress
+                      value={((currentGroupIndex + 1) / totalGroups) * 100}
+                    />
+                  </>
+                ) : (
+                  <div className="text-right text-sm">
                     {requirementText(
                       currentGroup.minTasks,
                       currentGroup.maxTasks,
                     )}
                   </div>
-                </div>
-                <Progress
-                  value={((currentGroupIndex + 1) / totalGroups) * 100}
-                />
+                )}
 
                 <div className="space-y-2">
                   <h3 className="text-base font-semibold">
