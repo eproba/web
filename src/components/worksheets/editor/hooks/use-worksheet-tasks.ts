@@ -55,7 +55,10 @@ export const useWorksheetTasks = ({ form }: UseWorksheetTasksProps) => {
       const existingTasksInCategory = watchedTasks.filter(
         (task) => task.category === category,
       );
-      const newOrder = existingTasksInCategory.length;
+      const newOrder = existingTasksInCategory.reduce(
+        (maxOrder, task) => Math.max(maxOrder, task.order + 1),
+        -1,
+      );
 
       const newTaskId = uuid();
       const newTask: Task = {
