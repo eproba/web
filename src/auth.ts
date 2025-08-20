@@ -1,6 +1,7 @@
 import { userSerializer } from "@/lib/serializers/user";
 import { User } from "@/types/user";
 import NextAuth from "next-auth";
+import { cookies } from "next/headers";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -123,6 +124,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           finalUrl = decodeURIComponent(redirectTo);
         }
       } else if (url === "/signout") {
+        (await cookies()).delete("sessionid"); // Clear session cookie from django
         return baseUrl; // Redirect to home on sign out
       }
 
