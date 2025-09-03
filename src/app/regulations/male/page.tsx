@@ -288,8 +288,8 @@ export default async function MaleRegulationsPage() {
         "\t• Zna strukturę całego ZHR i nazwiska Komendanta Chorągwi, Naczelnika Harcerzy oraz Przewodniczącej/go ZHR",
         "\t• Rozpoznaje oznaczenia funkcji we władzach naczelnych ZHR",
         "Zdobył wymagane sprawności",
-        'Zdobył trzy sprawności trzygwiazdkowe z działu "Obozownictwo i przyroda" (każdą z innej ścieżki), wykazując mistrzostwo w wybranych technikach harcerskich.',
-        "Zdobył wybrane przez siebie sprawności dodatkowe o sumie sześciu gwiazdek.",
+        'Zdobył trzy sprawności trzygwiazdkowe z działu "Obozownictwo i przyroda" (każdą z innej ścieżki), wykazując mistrzostwo w wybranych technikach harcerskich',
+        "Zdobył wybrane przez siebie sprawności dodatkowe o sumie sześciu gwiazdek",
       ],
       badges: [
         {
