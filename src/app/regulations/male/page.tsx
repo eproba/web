@@ -79,15 +79,6 @@ interface BadgeApiResponse {
 }
 
 export default async function MaleRegulationsPage() {
-  // const { templates, error: templatesError } = await fetchTemplates();
-  // if (templatesError) {
-  //   return templatesError;
-  // }
-  //
-  // const organizationTemplates = templates!.filter(
-  //   (worksheet) => worksheet.organization !== null,
-  // );
-
   const badgesResponse = await fetch("https://stamps.zhr.pl/api/badges");
 
   let allBadges: BadgeData[] = [];
@@ -127,14 +118,14 @@ export default async function MaleRegulationsPage() {
       age: "11-13 lat",
       badge: "Krzyż harcerski",
       description:
-        "Młodzik wie, co to znaczy być harcerzem, i chce nim zostać. Potrafi zadbać o siebie. Jest dzielny. Pomaga innym, szczególnie słabszym. Jest dobrym kolegą, synem i uczniem. Odróżnia dobro od zła i stara się być lepszy, niż jest.",
+        "<b>Młodzik wie, co to znaczy być harcerzem, i chce nim zostać.</b> Potrafi zadbać o siebie. Jest dzielny. Pomaga innym, szczególnie słabszym. Jest dobrym kolegą, synem i uczniem. Odróżnia dobro od zła i stara się być lepszy, niż jest.",
       requirements: [
         "Ma wiedzę potrzebną do harcerskich działań:",
-        "• Zna Prawo i Przyrzeczenie Harcerskie",
-        "• Wie, kim byli Robert Baden-Powell i Andrzej Małkowski",
-        "• Potrafi zaśpiewać Hymn Harcerski, Modlitwę Harcerską i pieśni obrzędowe śpiewane w drużynie",
-        "• Rozpoznaje oznaczenia stopni harcerskich i instruktorskich",
-        "• Rozpoznaje oznaczenia funkcji w drużynie i hufcu (ew. szczepie)",
+        "\t• Zna Prawo i Przyrzeczenie Harcerskie",
+        "\t• Wie, kim byli Robert Baden-Powell i Andrzej Małkowski",
+        "\t• Potrafi zaśpiewać Hymn Harcerski, Modlitwę Harcerską i pieśni obrzędowe śpiewane w drużynie",
+        "\t• Rozpoznaje oznaczenia stopni harcerskich i instruktorskich",
+        "\t• Rozpoznaje oznaczenia funkcji w drużynie i hufcu (ew. szczepie)",
         "Zdobył wymagane sprawności",
         "Zdobył wybrane przez siebie sprawności dodatkowe o sumie czterech gwiazdek",
       ],
@@ -210,15 +201,15 @@ export default async function MaleRegulationsPage() {
       age: "12-14 lat",
       badge: "srebrna lilijka na Krzyżu",
       description:
-        "Wywiadowca zasługuje na miano harcerskiego wygi. Doskonali się w technikach harcerskich. Potrafi zadbać o siebie, a także pomaga młodszym w przeżywaniu harcerskiej przygody, nawet podczas złej pogody. Można mu powierzyć samodzielne obowiązki w drużynie. Harcerzem jest nie tylko wtedy, kiedy ma na sobie mundur. Wypełnia powinności, jakie stawia przed nim Prawo Harcerskie. Zna swoje wady i zalety, próbuje pracować nad sobą.",
+        "<b>Wywiadowca zasługuje na miano harcerskiego wygi.</b> Doskonali się w technikach harcerskich. Potrafi zadbać o siebie, a także pomaga młodszym w przeżywaniu harcerskiej przygody, nawet podczas złej pogody. Można mu powierzyć samodzielne obowiązki w drużynie. Harcerzem jest nie tylko wtedy, kiedy ma na sobie mundur. Wypełnia powinności, jakie stawia przed nim Prawo Harcerskie. Zna swoje wady i zalety, próbuje pracować nad sobą.",
       requirements: [
         "Ma wiedzę potrzebną do harcerskich działań:",
-        "• Rozpoznaje inne drużyny działające w jego środowisku harcerskim",
-        "• Wie, kim był bł. ks. phm. S. W. Frelichowski i zna kilka innych postaci z historii ruchu harcerskiego",
-        "• Zna kilka najważniejszych faktów z historii drużyny i harcerstwa",
-        "• Zna kilka piosenek śpiewanych w drużynie",
-        "• Zna strukturę Organizacji Harcerzy ZHR i nazwiska swoich przełożonych do poziomu hufcowego",
-        "• Rozpoznaje oznaczenia funkcji do poziomu chorągwi włącznie",
+        "\t• Rozpoznaje inne drużyny działające w jego środowisku harcerskim",
+        "\t• Wie, kim był bł. ks. phm. S. W. Frelichowski i zna kilka innych postaci z historii ruchu harcerskiego",
+        "\t• Zna kilka najważniejszych faktów z historii drużyny i harcerstwa",
+        "\t• Zna kilka piosenek śpiewanych w drużynie",
+        "\t• Zna strukturę Organizacji Harcerzy ZHR i nazwiska swoich przełożonych do poziomu hufcowego",
+        "\t• Rozpoznaje oznaczenia funkcji do poziomu chorągwi włącznie",
         "Zdobył wymagane sprawności",
         "Zdobył wybrane przez siebie sprawności dodatkowe o sumie pięciu gwiazdek",
       ],
@@ -289,16 +280,16 @@ export default async function MaleRegulationsPage() {
       age: "13-16 lat",
       badge: "złota lilijka na Krzyżu",
       description:
-        "Ćwik daje sobie radę w każdej sytuacji. To mistrz w technikach harcerskich. Jest pogodny i zaradny, nie załamują go trudności. Odpowiedzialnie wywiązuje się z przyjętych na siebie obowiązków. Jest godny zaufania. Potrafi kierować i zgodnie współpracować w zespole. Jest gotów na każde wezwanie do służby. Daje dobry przykład młodszym. Prawo Harcerskie jest dla niego drogowskazem w każdej sferze życia. Osiąga widoczne efekty w pracy nad sobą.",
+        "<b>Ćwik daje sobie radę w każdej sytuacji.</b> To mistrz w technikach harcerskich. Jest pogodny i zaradny, nie załamują go trudności. Odpowiedzialnie wywiązuje się z przyjętych na siebie obowiązków. Jest godny zaufania. Potrafi kierować i zgodnie współpracować w zespole. Jest gotów na każde wezwanie do służby. Daje dobry przykład młodszym. Prawo Harcerskie jest dla niego drogowskazem w każdej sferze życia. Osiąga widoczne efekty w pracy nad sobą.",
       requirements: [
         "Ma wiedzę potrzebną do harcerskich działań:",
-        "• Potrafi wyjaśnić, czym ZHR różni się od innych organizacji harcerskich w Polsce",
-        "• Potrafi scharakteryzować wybrane okresy z historii harcerstwa (np. do 1918 r., XX-lecie międzywojenne, druga wojna światowa, PRL, po 1989 r.)",
-        "• Zna strukturę całego ZHR i nazwiska Komendanta Chorągwi, Naczelnika Harcerzy oraz Przewodniczącej/go",
-        "• Rozpoznaje oznaczenia funkcji we władzach naczelnych ZHR",
+        "\t• Potrafi wyjaśnić, czym ZHR różni się od innych organizacji harcerskich w Polsce",
+        "\t• Potrafi scharakteryzować wybrane okresy z historii harcerstwa (np. do 1918 r., XX-lecie międzywojenne, druga wojna światowa, PRL, po 1989 r.)",
+        "\t• Zna strukturę całego ZHR i nazwiska Komendanta Chorągwi, Naczelnika Harcerzy oraz Przewodniczącej/go ZHR",
+        "\t• Rozpoznaje oznaczenia funkcji we władzach naczelnych ZHR",
         "Zdobył wymagane sprawności",
-        "Zdobył trzy sprawności (***) z działu obozownictwo i przyroda (każdą z innej ścieżki), wykazując mistrzostwo w wybranych technikach harcerskich",
-        "Zdobył wybrane przez siebie sprawności dodatkowe o sumie sześciu gwiazdek",
+        'Zdobył trzy sprawności trzygwiazdkowe z działu "Obozownictwo i przyroda" (każdą z innej ścieżki), wykazując mistrzostwo w wybranych technikach harcerskich.',
+        "Zdobył wybrane przez siebie sprawności dodatkowe o sumie sześciu gwiazdek.",
       ],
       badges: [
         {
@@ -337,34 +328,35 @@ export default async function MaleRegulationsPage() {
       age: "15-18 lat",
       badge: "złota lilijka i krąg na Krzyżu",
       description:
-        "Harcerz orli mierzy wysoko i wyrasta ponad przeciętność - orla jest jego lotów potęga! Poszukuje i sprawdza, odważnie próbuje nowych rzeczy. Próbuje na nowo, w dojrzały sposób, zrozumieć swoje powinności wynikające z Prawa Harcerskiego, Dekalogu i Przykazania Miłości. Stara się swoim przykładem oddziaływać na otoczenie. Rozwija kompetencje przydatne w aktywnym życiu społecznym i buduje własne opinie o otaczającym go świecie. Jest wrażliwy, potrafi stanąć po stronie słabszego i pokrzywdzonego. Ma własne pole służby, którą pełni z oddaniem, systematycznie i rzetelnie. Wprawia się w planowaniu swojego rozwoju i konsekwentnie zmierza do postawionych sobie celów.",
+        "<b>Harcerz orli mierzy wysoko i wyrasta ponad przeciętność - orla jest jego lotów potęga!</b> Poszukuje i sprawdza, odważnie próbuje nowych rzeczy. Próbuje na nowo, w dojrzały sposób, zrozumieć swoje powinności wynikające z Prawa Harcerskiego, Dekalogu i Przykazania Miłości. Stara się swoim przykładem oddziaływać na otoczenie. Rozwija kompetencje przydatne w aktywnym życiu społecznym i buduje własne opinie o otaczającym go świecie. Jest wrażliwy, potrafi stanąć po stronie słabszego i pokrzywdzonego. Ma własne pole służby, którą pełni z oddaniem, systematycznie i rzetelnie. Wprawia się w planowaniu swojego rozwoju i konsekwentnie zmierza do postawionych sobie celów.",
       requirements: [
-        "Spełnił wymagania z kategorii:",
         "Wędrowanie (2 wybrane wymagania):",
-        "• Ma umiejętności niezbędne do wzięcia udziału w wybranej specjalistycznej formie kilkudniowej wędrówki (np. rowerowej, kajakowej, górskiej, wspinaczkowej, żeglarskiej, narciarskiej)",
-        "• Umie zorganizować sobie nocleg w bardzo trudnych warunkach (np. jama śnieżna, legowisko na drzewie, szałas)",
-        "• Umie zaplanować i zorganizować jeden z elementów kilkudniowej wędrówki np. noclegi, wyżywienie, trasa",
+        "\t• Ma umiejętności niezbędne do wzięcia udziału w wybranej specjalistycznej formie kilkudniowej wędrówki (np. rowerowej, kajakowej, górskiej, wspinaczkowej, żeglarskiej, narciarskiej)",
+        "\t• Umie zorganizować sobie nocleg w bardzo trudnych warunkach (np. jama śnieżna, legowisko na drzewie, szałas)",
+        "\t• Umie zaplanować i zorganizować jeden z elementów kilkudniowej wędrówki np. noclegi, wyżywienie, trasa",
         "Praca nad sobą (2 wybrane wymagania):",
-        "• Potrafi stosować wybraną formę zarządzania czasem",
-        "• Umie skutecznie wypracować w sobie pozytywny nawyk",
-        "• Umie w sposób umiarkowany i rozsądny korzystać z technologii (np. urządzeń mobilnych, internetu)",
+        "\t• Potrafi stosować wybraną formę zarządzania czasem",
+        "\t• Umie skutecznie wypracować w sobie pozytywny nawyk",
+        "\t• Umie w sposób umiarkowany i rozsądny korzystać z technologii (np. urządzeń mobilnych, internetu)",
         "Miejsce w społeczeństwie (2 wybrane wymagania):",
-        "• Potrafi wykorzystać w praktyce znajomość języka obcego",
-        "• Zna założenia programowe największych partii politycznych w kraju. Potrafi omówić główne ugrupowania i postacie w samorządzie lokalnym (gmina, powiat) i regionalnym (województwo)",
-        "• Umie brać udział w dyskusji lub debacie, unikając błędów w argumentacji oraz z szacunkiem odnosząc się do rozmówców (np. stosuje założenia komunikacji bez przemocy)",
-        "• Umie wygłosić krótkie (3–5 minut) przemówienie popierające jakąś tezę. Umie znaleźć argumenty za tezą, z którą się nie zgadza",
-        "• Potrafi wykonać pracę budowlaną lub remontową z użyciem elektronarzędzi (np. wymiana syfonu, układanie płytek, szpachlowanie, stolarka ogrodowa, ścianka z płyt g-k, skrzynia)",
-        "• Potrafi zarobić i zaoszczędzić pieniądze na wybrany przez siebie cel (np. obóz, rower, sprzęt elektroniczny)",
-        "• Umie ocenić wiarygodność informacji medialnej oraz dotrzeć do pierwotnego źródła danej informacji. Zna kilka najczęściej popełnianych błędów poznawczych i popularnych technik manipulacyjnych",
-        "Służba (co najmniej 1 zadanie):",
-        "• Dotrzymanie zobowiązania do regularnej służby - zgodnie z ustaleniami z drużynowym lub kapitułą stopnia",
+        "\t• Potrafi wykorzystać w praktyce znajomość języka obcego",
+        "\t• Zna założenia programowe największych partii politycznych w kraju. Potrafi omówić główne ugrupowania i postacie w samorządzie lokalnym (gmina, powiat) i regionalnym (województwo)",
+        "\t• Umie brać udział w dyskusji lub debacie, unikając błędów w argumentacji oraz odnosząc się do rozmówców z szacunkiem (np. stosuje założenia komunikacji bez przemocy)",
+        "\t• Umie wygłosić krótkie (3–5‑minutowe) przemówienie popierające dowolną tezę. Umie znaleźć argumenty za tezą, z którą się nie zgadza",
+        "\t• Potrafi wykonać pracę budowlaną lub remontową z użyciem elektronarzędzi (np. wymiana syfonu, układanie płytek, szpachlowanie, stolarka ogrodowa, ścianka z płyt g-k, skrzynia)",
+        "\t• Potrafi zarobić i zaoszczędzić pieniądze na wybrany przez siebie cel (np. obóz, rower, sprzęt elektroniczny)",
+        "\t• Umie ocenić wiarygodność informacji medialnej oraz dotrzeć do pierwotnego źródła danej informacji. Zna kilka najczęściej popełnianych błędów poznawczych i popularnych technik manipulacyjnych",
+        "Służba:",
+        "\t• Dotrzymanie zobowiązania do regularnej służby - zgodnie z ustaleniami z drużynowym lub kapitułą stopnia",
         "Wyczyn:",
-        "• Zaproponowany przez samego zdobywającego i przeprowadzany zgodnie ze zwyczajem przyjętym w drużynie lub kapitule",
+        "\t• Odbędzie wyczyn – zaproponowany przez siebie, zatwierdzony przez drużynowego i przeprowadzany zgodnie ze zwyczajem przyjętym w drużynie lub kapitule",
       ],
       badges: [],
       individualTasksCount: "4-6",
       expectedTime: "do 10 miesięcy",
       icon: "/rank-regulations/male/icons/harcerz-orli.svg",
+      additionalInfo:
+        "Wymagania na stopień harcerza orlego mogą być realizowane grupowo w ramach pracy drużyny wędrowników. Drużyna wędrowników może na początku roku harcerskiego umówić się, jakie elementy programu będzie realizować w sposób, który umożliwi wędrownikom zdobycie umiejętności potrzebnych do zaliczenia wymagań w danym roku.",
     },
     {
       name: "harcerz Rzeczypospolitej",
@@ -372,9 +364,9 @@ export default async function MaleRegulationsPage() {
       age: "powyżej 17 lat",
       badge: "złota lilijka, krąg i wieniec na Krzyżu",
       description:
-        "Harcerz Rzeczypospolitej wymaga od siebie nawet wtedy, gdy inni od niego nie wymagają. Wstępuje w dorosłe życie jako świadomy i aktywny obywatel. W swoich wyborach kieruje się wiarą i chrześcijańskim systemem wartości. Ma marzenia i je realizuje. Wyróżniającą się postawą i działaniem krzewi harcerskie ideały. Jego życie przepełnione jest miłością do Polski, pożyteczną służbą Ojczyźnie i bliźnim oraz harmonijnym, wszechstronnym rozwojem własnej osoby. Wytrwale podąża obraną drogą.",
+        "<b>Harcerz Rzeczypospolitej wymaga od siebie nawet wtedy, gdy inni od niego nie wymagają.</b> Wstępuje w dorosłe życie jako świadomy i aktywny obywatel. W swoich wyborach kieruje się wiarą i chrześcijańskim systemem wartości. Ma marzenia i je realizuje. Wyróżniającą się postawą i działaniem krzewi harcerskie ideały. Jego życie przepełnione jest miłością do Polski, pożyteczną służbą Ojczyźnie i bliźnim oraz harmonijnym, wszechstronnym rozwojem własnej osoby. Wytrwale podąża obraną drogą.",
       requirements: [
-        "Brak. Zdobywanie harcerza Rzeczypospolitej opiera się w pełni o pracę indywidualną.",
+        "Brak. Zdobywanie stopnia harcerza Rzeczypospolitej opiera się w pełni o pracę indywidualną.",
       ],
       badges: [],
       individualTasksCount: "5-8",
@@ -410,11 +402,8 @@ export default async function MaleRegulationsPage() {
           />
         </div>
         <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
-          STOPNIE HARCERZY
+          Regulamin stopni harcerzy ZHR
         </h1>
-        <p className="text-muted-foreground mb-4 text-xl">
-          Projekt nowego regulaminu stopni harcerzy
-        </p>
         <Button
           variant="outline"
           size="lg"
@@ -440,7 +429,7 @@ export default async function MaleRegulationsPage() {
           </TabsTrigger>
           <TabsTrigger value="ranks">
             <UsersIcon className="size-4" />
-            Sylwetki
+            Sylwetki i wymagania
           </TabsTrigger>
           <TabsTrigger value="individual-tasks">
             <CheckCircleIcon className="size-4" />
@@ -464,8 +453,9 @@ export default async function MaleRegulationsPage() {
                 Stopień harcerski stanowi potwierdzenie rzetelnej pracy nad sobą
                 oraz wyrobienia harcerskiego. Kierunki pracy nad sobą są
                 określone w sylwetkach stopni, a poziom wyrobienia harcerskiego
-                w wymaganiach ogólnych. Sylwetki i wymagania na stopnie
-                wprowadza rozkazem Naczelnik Harcerzy.
+                w wymaganiach na stopnie. Sylwetki stopni stanowią załącznik do
+                regulaminu, a wymagania na stopnie wprowadza rozkazem Naczelnik
+                Harcerzy.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -502,10 +492,10 @@ export default async function MaleRegulationsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Wymagania ogólne</CardTitle>
+              <CardTitle>Wymagania</CardTitle>
               <CardDescription>
                 Stopień jest przyznawany harcerzowi, który spełnia wszystkie
-                poniższe warunki
+                poniższe warunki.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -515,9 +505,9 @@ export default async function MaleRegulationsPage() {
                   <div>
                     <h4 className="font-medium">Praca nad sobą</h4>
                     <p className="text-muted-foreground text-sm">
-                      Wykazał się efektywną pracą nad sobą przybliżającą go do
+                      Wykazał się efektywną pracą nad sobą, przybliżającą go do
                       sylwetki stopnia, realizując zadania indywidualne
-                      zaakceptowane przez drużynowego
+                      zaakceptowane przez drużynowego lub kapitułę stopnia.
                     </p>
                   </div>
                 </div>
@@ -527,7 +517,7 @@ export default async function MaleRegulationsPage() {
                     <h4 className="font-medium">Wiedza i umiejętności</h4>
                     <p className="text-muted-foreground text-sm">
                       Wykazał się wymaganą wiedzą i umiejętnościami oraz zdobył
-                      sprawności wymienione w wymaganiach ogólnych
+                      sprawności określone w wymaganiach na dany stopień.
                     </p>
                   </div>
                 </div>
@@ -536,8 +526,9 @@ export default async function MaleRegulationsPage() {
                   <div>
                     <h4 className="font-medium">Sprawności dodatkowe</h4>
                     <p className="text-muted-foreground text-sm">
-                      Zdobył sprawności wybrane przez siebie, inne niż wymagane,
-                      o łącznej liczbie gwiazdek określonej w załączniku
+                      W trakcie zdobywania stopnia zdobył wybrane przez siebie
+                      inne (niż wymagane) sprawności o łącznej liczbie gwiazdek
+                      określonej w wymaganiach na dany stopień.
                     </p>
                   </div>
                 </div>
@@ -547,7 +538,7 @@ export default async function MaleRegulationsPage() {
                     <h4 className="font-medium">Aktywność</h4>
                     <p className="text-muted-foreground text-sm">
                       Brał aktywny udział w życiu zastępu i drużyny w okresie
-                      zdobywania stopnia
+                      zdobywania stopnia.
                     </p>
                   </div>
                 </div>
@@ -556,9 +547,14 @@ export default async function MaleRegulationsPage() {
                   <div>
                     <h4 className="font-medium">Próba końcowa</h4>
                     <p className="text-muted-foreground text-sm">
-                      Po spełnieniu warunków zaliczył próbę końcową wyznaczoną
-                      przez drużynowego (dotyczy stopni młodzika, wywiadowcy i
-                      ćwika)
+                      Po spełnieniu powyższych warunków zaliczył próbę końcową
+                      (np. terenowy bieg harcerski bądź wyczyn) wyznaczoną przez
+                      drużynowego – obowiązkowo dla stopni młodzika, wywiadowcy
+                      i ćwika.
+                    </p>
+                    <p className="text-muted-foreground text-xs font-light">
+                      (w przypadku ćwika, aby przystąpić do próby końcowej, musi
+                      mieć skończone 14 lat)
                     </p>
                   </div>
                 </div>
@@ -577,8 +573,8 @@ export default async function MaleRegulationsPage() {
                     <div className="size-2 rounded-full bg-blue-500"></div>
                   </div>
                   <p className="text-sm">
-                    Oznaczenia stopni na mundurze wskazane są w tabeli powyżej.
-                    Stopnie mogą być dodatkowo oznaczone na bluzach mundurowych,
+                    Oznaczenia stopni na mundurze wskazane są w tabeli. Stopnie
+                    mogą być dodatkowo oznaczone na bluzach mundurowych,
                     mundurach polowych i okryciach wierzchnich za pomocą
                     naszywek, których wzory i umiejscowienie określa rozkazem
                     Naczelnik Harcerzy.
@@ -605,7 +601,9 @@ export default async function MaleRegulationsPage() {
                     {capitalizeFirstLetter(rank.name)}
                   </div>
                 </CardTitle>
-                <CardDescription>{rank.description}</CardDescription>
+                <CardDescription
+                  dangerouslySetInnerHTML={{ __html: rank.description }}
+                />
                 <CardDescription className="text-xs">
                   Sugerowany czas na wykonanie: {rank.expectedTime}
                 </CardDescription>
@@ -613,7 +611,7 @@ export default async function MaleRegulationsPage() {
               <CardContent className="space-y-4">
                 <div>
                   <h4 className="mb-2 font-medium">Wymagania ogólne:</h4>
-                  <ul className="ml-4 space-y-1 text-sm">
+                  <ul className="ml-4 space-y-1 text-sm whitespace-pre-wrap">
                     {rank.requirements.map((req, i) => (
                       <li key={i}>{req}</li>
                     ))}
@@ -648,6 +646,12 @@ export default async function MaleRegulationsPage() {
                     </span>
                   </div>
                 </div>
+
+                {rank.additionalInfo && (
+                  <div className="mt-2 rounded border-l-4 border-blue-500 bg-blue-50/50 px-4 py-2 text-sm dark:bg-blue-950/50">
+                    {rank.additionalInfo}
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
@@ -690,6 +694,15 @@ export default async function MaleRegulationsPage() {
                     Istnieje możliwość zmiany zadania indywidualnego, jeśli
                     przestało ono odpowiadać postawionym celom lub wizji
                     dalszego rozwoju.
+                  </p>
+                </div>
+                <div className="border-l-4 border-red-500 pl-4">
+                  <h4 className="font-medium">Wyczyn</h4>
+                  <p className="text-muted-foreground mt-1 text-sm">
+                    Jeżeli próba końcowa lub zadanie indywidualne ma charakter
+                    wyczynu, harcerz przed rozpoczęciem ocenia swoje możliwości
+                    i deklaruje gotowość jego wykonania; na każdym etapie może
+                    wycofać się z próby realizacji.
                   </p>
                 </div>
               </div>
@@ -760,8 +773,8 @@ export default async function MaleRegulationsPage() {
                   </div>
                   <p className="text-sm">
                     Zdobywanie pierwszego stopnia rozpoczyna się z chwilą
-                    wstąpienia do drużyny, a każdego kolejnego z chwilą zdobycia
-                    poprzedniego.
+                    wstąpienia do drużyny, a każdego kolejnego – z chwilą
+                    zdobycia poprzedniego.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
@@ -770,7 +783,7 @@ export default async function MaleRegulationsPage() {
                   </div>
                   <p className="text-sm">
                     Harcerz nie może rozpocząć zdobywania innego stopnia niż
-                    przewidziany dla jego wieku (zgodnie z tabelą stopni).
+                    przewidziany dla jego wieku.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
@@ -779,9 +792,9 @@ export default async function MaleRegulationsPage() {
                   </div>
                   <p className="text-sm">
                     Harcerz, który zdobywa stopień z pominięciem jednego lub
-                    kilku poprzednich, musi wykazać się wiedzą i wszystkimi
-                    umiejętnościami określonymi w wymaganiach ogólnych na
-                    zdobywany stopień oraz wszystkie poprzednie.
+                    kilku poprzednich, musi wykazać się wiedzą i umiejętnościami
+                    określonymi w wymaganiach na zdobywany stopień oraz
+                    wszystkie poprzednie.
                   </p>
                 </div>
               </div>
@@ -801,7 +814,8 @@ export default async function MaleRegulationsPage() {
                   <ShieldIcon className="mt-0.5 size-6 flex-shrink-0 text-blue-500 sm:size-5" />
                   <p className="text-sm">
                     Drużynowy przyznaje stopnie rozkazem, po stwierdzeniu
-                    spełnienia przez harcerza wszystkich warunków.
+                    spełnienia przez harcerza wszystkich warunków określonych w
+                    wymaganiach.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
@@ -809,14 +823,16 @@ export default async function MaleRegulationsPage() {
                   <p className="text-sm">
                     Jeśli postawa harcerza jest sprzeczna z Prawem Harcerskim,
                     drużynowy może nie przyznać mu stopnia i wyznaczyć dodatkowe
-                    zadania, pomimo spełnienia wszystkich warunków.
+                    zadania indywidualne, pomimo spełnienia wszystkich warunków.
                   </p>
                 </div>
                 <div className="flex items-start gap-3">
                   <AwardIcon className="mt-0.5 size-6 flex-shrink-0 text-green-500 sm:size-5" />
                   <p className="text-sm">
                     Bezpośrednio po przyznaniu pierwszego stopnia drużynowy
-                    dopuszcza harcerza do złożenia Przyrzeczenia Harcerskiego.
+                    dopuszcza harcerza do złożenia Przyrzeczenia Harcerskiego;
+                    Przyrzeczenie odbiera instruktor Związku Harcerstwa
+                    Rzeczypospolitej.
                   </p>
                 </div>
               </div>
@@ -825,7 +841,52 @@ export default async function MaleRegulationsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Specjalne przypadki</CardTitle>
+              <CardTitle>Dodatkowe sprawności</CardTitle>
+              <CardDescription>
+                Sprawności dodatkowe zdobywane są według następujących zasad
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-purple-100 p-2 dark:bg-purple-900">
+                    <div className="size-2 rounded-full bg-purple-500"></div>
+                  </div>
+                  <p className="text-sm">
+                    Jeżeli podczas zdobywania danego stopnia harcerz zdobędzie
+                    sprawność z pominięciem wcześniejszych sprawności z tej
+                    samej ścieżki, to do sumy gwiazdek wlicza gwiazdki ze
+                    zdobytej sprawności oraz z poprzednich sprawności z tej
+                    ścieżki.
+                    <br />
+                    Przykład: na młodzika zdobył sprawność **Gospodarz ze
+                    ścieżki „Kwatermistrzostwo” , więc do gwiazdek za sprawności
+                    dodatkowe może wliczyć dwie gwiazdki za tę sprawności i
+                    jedną gwiazdkę za sprawność *Sakwa.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-orange-100 p-2 dark:bg-orange-900">
+                    <div className="size-2 rounded-full bg-orange-500"></div>
+                  </div>
+                  <p className="text-sm">
+                    Jeżeli zdobywając niższy stopień, harcerz zdobył jako
+                    dodatkowe sprawności wymagane przy kolejnym stopniu, to musi
+                    zdobyć w ich miejsce inne o takiej samej łącznej liczbie
+                    gwiazdek.
+                    <br />
+                    Przykład: na młodzika zdobył sprawność *Kamyk w ramach
+                    sprawności dodatkowych - zatem na wywiadowcę musi zdobyć 5
+                    gwiazdek + 1 dodatkową.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Przypadki szczególne</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="space-y-3">
@@ -838,10 +899,10 @@ export default async function MaleRegulationsPage() {
                     wniosek kapituły, przed którą harcerz realizował stopień.
                   </p>
                   <p className="text-xs">
-                    Drużynowy w stopniu min. podharcmistrza może, w szczególnych
-                    sytuacjach i za zgodą hufcowego, przyznawać stopień harcerza
-                    Rzeczypospolitej z własnej inicjatywy, po wykonaniu przez
-                    harcerza wyznaczonych zadań.
+                    Drużynowy w stopniu co najmniej podharcmistrza może, w
+                    szczególnych sytuacjach i za zgodą hufcowego, przyznawać
+                    stopień harcerza Rzeczypospolitej z własnej inicjatywy, po
+                    wykonaniu przez harcerza wyznaczonych zadań.
                   </p>
                 </div>
                 <div className="rounded-lg bg-blue-50 p-3 dark:bg-blue-900/20">
@@ -966,7 +1027,7 @@ export default async function MaleRegulationsPage() {
         <TabsContent value="regulations" className="mt-6 space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>Uprawnienia drużynowego</CardTitle>
+              <CardTitle>Uprawnienia i obowiązki</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -975,10 +1036,12 @@ export default async function MaleRegulationsPage() {
                     <ShieldIcon className="size-4 text-blue-500" />
                   </div>
                   <div>
-                    <h4 className="font-medium">Organizacja procesu</h4>
+                    <h4 className="font-medium">
+                      Organizacja i bezpieczeństwo
+                    </h4>
                     <p className="text-muted-foreground text-sm">
-                      Za organizację procesu zdobywania stopni odpowiada
-                      drużynowy.
+                      Za organizację i bezpieczeństwo procesu zdobywania stopni
+                      odpowiada drużynowy.
                     </p>
                   </div>
                 </div>
@@ -995,14 +1058,42 @@ export default async function MaleRegulationsPage() {
                   </div>
                 </div>
                 <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-red-100 p-2 dark:bg-red-900">
+                    <ShieldIcon className="size-4 text-red-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Bezpieczeństwo wyczynów</h4>
+                    <p className="text-muted-foreground text-sm">
+                      Formę i warunki wyczynu (bezpieczeństwo) zaproponowane
+                      przez drużynowego zatwierdza hufcowy lub – jeśli wyczyn
+                      odbywa się podczas obozu/zimowiska – komendant/ka
+                      obozu/zimowiska.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <div className="rounded-full bg-orange-100 p-2 dark:bg-orange-900">
+                    <AwardIcon className="size-4 text-orange-500" />
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Zwolnienie z zatwierdzania</h4>
+                    <p className="text-muted-foreground text-sm">
+                      Hufcowy lub komendant/ka obozu/zimowiska może rozkazem
+                      zwolnić drużynowego (min. podharcmistrza) z obowiązku
+                      zatwierdzania wyczynów, ustalając inne zasady kontroli
+                      bezpieczeństwa.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
                   <div className="rounded-full bg-yellow-100 p-2 dark:bg-yellow-900">
                     <BookOpenIcon className="size-4 text-yellow-500" />
                   </div>
                   <div>
                     <h4 className="font-medium">Dodatkowe wymagania</h4>
                     <p className="text-muted-foreground text-sm">
-                      Drużynowy może określić rozkazem dodatkowe wymagania
-                      ogólne obowiązujące wszystkich harcerzy w drużynie.
+                      Drużynowy może określić rozkazem dodatkowe wymagania na
+                      stopnie obowiązujące wszystkich harcerzy w drużynie.
                     </p>
                   </div>
                 </div>
@@ -1013,9 +1104,9 @@ export default async function MaleRegulationsPage() {
                   <div>
                     <h4 className="font-medium">P.o. drużynowego</h4>
                     <p className="text-muted-foreground text-sm">
-                      Jeżeli drużynę prowadzi pełniący obowiązki drużynowego,
-                      zakres jego uprawnień w ramach regulaminu stopni określa
-                      hufcowy rozkazem powierzającym obowiązki.
+                      Jeżeli drużynę prowadzi p.o. drużynowego, zakres jego
+                      uprawnień określa hufcowy rozkazem powierzającym
+                      obowiązki.
                     </p>
                   </div>
                 </div>
@@ -1042,7 +1133,7 @@ export default async function MaleRegulationsPage() {
                   <p className="text-muted-foreground mt-1 text-sm">
                     Przewodniczący kapituły harcerza Rzeczypospolitej jest
                     odpowiedzialny za współpracę z innymi kapitułami tego
-                    stopnia, działającymi na terenie chorągwi, w celu wymiany
+                    stopnia działającymi na terenie chorągwi, w celu wymiany
                     doświadczeń i promowania dobrych wzorców.
                   </p>
                 </div>
