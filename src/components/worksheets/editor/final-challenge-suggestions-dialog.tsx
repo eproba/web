@@ -63,7 +63,7 @@ export const FinalChallengeSuggestionsDialog: React.FC<
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex h-[85vh] max-w-4xl flex-col sm:h-[70vh]"
+        className="flex h-[85vh] flex-col sm:h-[70vh] sm:max-w-2xl"
         aria-describedby={undefined}
       >
         <DialogHeader className="flex-shrink-0">

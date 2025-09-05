@@ -8,6 +8,7 @@ import { RequiredFunctionLevel } from "@/lib/const";
 import { triggerHapticFeedback } from "@/lib/mobile-utils";
 import { type Task } from "@/lib/schemas/worksheet";
 import { useCurrentUser } from "@/state/user";
+import { Organization } from "@/types/team";
 import {
   ArrowRightLeftIcon,
   ChevronDownIcon,
@@ -153,6 +154,7 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
           {currentUser &&
             currentUser.function.numberValue >=
               RequiredFunctionLevel.TASK_SUGGESTIONS &&
+            currentUser.organization === Organization.Male &&
             variant === "worksheet" &&
             task.category === "individual" && (
               <Button

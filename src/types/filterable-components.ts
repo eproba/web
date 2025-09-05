@@ -3,10 +3,12 @@ export interface FilterableItem {
   name: string;
   description: string;
   tags: string[];
+  minAge?: number;
 }
 
 // Props for the FilterableList component
 export interface FilterableListProps<T extends FilterableItem> {
+  tagGroups?: { name: string; tags: { name: string; description: string }[] }[];
   items: T[];
   isLoading?: boolean;
   searchPlaceholder?: string;

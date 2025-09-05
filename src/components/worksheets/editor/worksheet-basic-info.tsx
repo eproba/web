@@ -20,6 +20,7 @@ import { UserCombobox } from "@/components/user-combobox";
 import { FinalChallengeSuggestionsDialog } from "@/components/worksheets/editor/final-challenge-suggestions-dialog";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { type WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { InfoIcon, SparklesIcon } from "lucide-react";
 import React, { useState } from "react";
@@ -150,20 +151,21 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                     )}
                   />
                   {currentUser.function.numberValue >=
-                    RequiredFunctionLevel.FINAL_CHALLENGE_SUGGESTIONS && (
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => {
-                        setShowFinalChallengeSuggestions(true);
-                      }}
-                      className="bg-blue-100 text-blue-700 opacity-100 hover:bg-blue-200 hover:text-blue-800 dark:bg-blue-950 dark:text-blue-300 dark:hover:bg-blue-900 dark:hover:text-blue-200"
-                      title="Pomysły na zadania"
-                    >
-                      <SparklesIcon className="size-4" />
-                    </Button>
-                  )}
+                    RequiredFunctionLevel.FINAL_CHALLENGE_SUGGESTIONS &&
+                    currentUser.organization === Organization.Male && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => {
+                          setShowFinalChallengeSuggestions(true);
+                        }}
+                        className="bg-blue-100 text-blue-700 opacity-100 hover:bg-blue-200 hover:text-blue-800 dark:bg-blue-950 dark:text-blue-300 dark:hover:bg-blue-900 dark:hover:text-blue-200"
+                        title="Pomysły na zadania"
+                      >
+                        <SparklesIcon className="size-4" />
+                      </Button>
+                    )}
                 </div>
                 <FormField
                   control={form.control}

@@ -39,7 +39,7 @@ Format odpowiedzi:
 3. Lista zadań w formacie: **Nazwa zadania** - opis tego co należy zrobić
 
 Przykładowe zadania:
-${taskIdeasData.map((idea) => `**${idea.name}** - ${idea.description}`).join("\n")}
+${taskIdeasData.ideas.map((idea: { name: string; description: string }) => `**${idea.name}** - ${idea.description}`).join("\n")}
 `;
 
   const result = streamText({

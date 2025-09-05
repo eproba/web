@@ -10,10 +10,21 @@ import taskIdeasData from "@/data/task-ideas.json";
 import { SparklesIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 
+interface Tag {
+  name: string;
+  description: string;
+}
+
+interface TagGroup {
+  name: string;
+  tags: Tag[];
+}
+
 interface TaskIdea {
   name: string;
   description: string;
   tags: string[];
+  minAge?: number;
 }
 
 interface TaskSuggestionsDialogProps {
@@ -27,7 +38,10 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
   onOpenChange,
   onAddTask,
 }) => {
-  const [taskIdeas, setTaskIdeas] = useState<TaskIdea[]>([]);
+  const [taskIdeas, setTaskIdeas] = useState<{
+    tagGroups: TagGroup[];
+    ideas: TaskIdea[];
+  }>({ tagGroups: [], ideas: [] });
   const [isLoading, setIsLoading] = useState(true);
 
   // Load task ideas from JSON file
@@ -36,10 +50,10 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
       try {
         setIsLoading(true);
         // Use the imported JSON data
-        setTaskIdeas(taskIdeasData as TaskIdea[]);
+        setTaskIdeas(taskIdeasData);
       } catch (error) {
         console.error("Failed to load task ideas:", error);
-        setTaskIdeas([]);
+        setTaskIdeas({ tagGroups: [], ideas: [] });
       } finally {
         setIsLoading(false);
       }
@@ -61,7 +75,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
-        className="flex h-[85vh] max-w-4xl flex-col sm:h-[70vh]"
+        className="flex h-[85vh] flex-col pb-2 sm:h-[70vh] sm:max-w-2xl"
         aria-describedby={undefined}
       >
         <DialogHeader className="flex-shrink-0">
@@ -88,10 +102,11 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
 
           <TabsContent
             value="browse"
-            className="flex min-h-0 flex-1 flex-col space-y-4 data-[state=active]:flex"
+            className="flex min-h-0 flex-1 flex-col space-y-2 data-[state=active]:flex"
           >
             <FilterableList
-              items={taskIdeas}
+              tagGroups={taskIdeas.tagGroups}
+              items={taskIdeas.ideas}
               isLoading={isLoading}
               searchPlaceholder="Szukaj pomysłów na zadania..."
               emptyStateMessage="Nie znaleziono pomysłów pasujących do kryteriów"
@@ -100,6 +115,9 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
               loadingMessage="Ładowanie pomysłów na zadania..."
               className="data-[state=active]:flex"
             />
+            <span className="m-0 p-0 text-center text-xs text-gray-500">
+              pomysły na zadania pochodzą od Organizacji Harcerzy ZHR
+            </span>
           </TabsContent>
 
           {/*<TabsContent*/}
