@@ -20,7 +20,7 @@ import {
   FilterableListProps,
 } from "@/types/filterable-components";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { PlusIcon, SearchIcon } from "lucide-react";
+import { GraduationCapIcon, PlusIcon, SearchIcon } from "lucide-react";
 import React, { useMemo, useState } from "react";
 
 interface VirtualizedListProps<T> {
@@ -136,11 +136,24 @@ export function FilterableList<T extends FilterableItem>({
 }: FilterableListProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
-  const [minAgeFilter, setMinAgeFilter] = useState<number | null>(null);
+  const [maxAgeFilter, setMaxAgeFilter] = useState<number | null>(null);
 
   const multiSelectOptions = useMemo(() => {
     if (!tagGroups) return [];
     const allTags = new Set(items.flatMap((item) => item.tags));
+    const disabledTags = new Set(
+      items
+        .flatMap((item) => item.tags)
+        .filter((tag) =>
+          maxAgeFilter != null
+            ? items
+                .filter((item) => item.tags.includes(tag))
+                .every(
+                  (item) => item.minAge == null || item.minAge > maxAgeFilter,
+                )
+            : false,
+        ),
+    );
 
     return tagGroups
       .map((group) => {
@@ -151,11 +164,17 @@ export function FilterableList<T extends FilterableItem>({
             value: tag.name,
             label: tag.name,
             description: tag.description,
+            style: {
+              iconColor: disabledTags.has(tag.name)
+                ? "var(--destructive)"
+                : undefined,
+            },
+            icon: disabledTags.has(tag.name) ? GraduationCapIcon : undefined,
           }));
         return { heading: group.name, options };
       })
       .filter((group) => group.options.length > 0);
-  }, [tagGroups, items]);
+  }, [tagGroups, items, maxAgeFilter]);
 
   const normalizedItems = useMemo(
     () =>
@@ -189,7 +208,7 @@ export function FilterableList<T extends FilterableItem>({
   const loweredSearch = searchQuery.toLowerCase();
 
   const filteredItems = useMemo(() => {
-    if (!loweredSearch && selectedTags.length === 0 && minAgeFilter == null)
+    if (!loweredSearch && selectedTags.length === 0 && maxAgeFilter == null)
       return normalizedItems;
     return normalizedItems.filter(({ raw, search }) => {
       if (loweredSearch && !search.includes(loweredSearch)) return false;
@@ -198,14 +217,12 @@ export function FilterableList<T extends FilterableItem>({
         !selectedTags.every((tag) => raw.tags.includes(tag))
       )
         return false;
-      if (
-        minAgeFilter != null &&
-        (raw.minAge == null || raw.minAge < minAgeFilter)
-      )
-        return false;
-      return true;
+      return !(
+        maxAgeFilter != null &&
+        (raw.minAge == null || raw.minAge > maxAgeFilter)
+      );
     });
-  }, [normalizedItems, loweredSearch, selectedTags, minAgeFilter]);
+  }, [normalizedItems, loweredSearch, selectedTags, maxAgeFilter]);
 
   const defaultRenderItem = (item: T, onSelect?: () => void) => (
     <div
@@ -280,7 +297,7 @@ export function FilterableList<T extends FilterableItem>({
         />
 
         {/* Tag filters */}
-        <div className="flex flex-row space-x-2">
+        <div className="flex flex-row items-center space-x-2">
           <MultiSelect
             options={multiSelectOptions}
             onValueChange={setSelectedTags}
@@ -290,26 +307,27 @@ export function FilterableList<T extends FilterableItem>({
             modalPopover={true}
             hideSelectAll={true}
             singleLine={true}
+            popoverClassName="min-w-[var(--radix-popover-trigger-width)]"
           />
           <Select
-            value={minAgeFilter?.toString() || ""}
+            value={maxAgeFilter?.toString() || ""}
             onValueChange={(value) =>
-              setMinAgeFilter(value === "null" ? null : parseInt(value, 10))
+              setMaxAgeFilter(value === "null" ? null : parseInt(value, 10))
             }
           >
             <SelectTrigger
               size="lg"
-              className="min-w-18 data-[size=lg]:h-12 sm:data-[size=lg]:h-10"
+              className="min-w-16 data-[size=lg]:h-12 sm:data-[size=lg]:h-10"
             >
               <SelectValue placeholder="Wiek" />
             </SelectTrigger>
             <SelectContent className="w-[var(--radix-select-trigger-width)] min-w-auto">
               <SelectItem key="all" value="null">
-                ---
+                --
               </SelectItem>
               {availableAges.map((age) => (
                 <SelectItem key={age} value={age.toString()}>
-                  {age}+
+                  {age}
                 </SelectItem>
               ))}
             </SelectContent>

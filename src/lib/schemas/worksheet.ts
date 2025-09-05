@@ -4,7 +4,7 @@ export const taskSchema = z.object({
   id: z.string(),
   name: z
     .string()
-    .max(750, { error: "Zadanie nie może przekraczać 750 znaków" }),
+    .max(1000, { error: "Zadanie nie może przekraczać 1000 znaków" }),
   description: z
     .string()
     .max(2000, { error: "Opis zadania nie może przekraczać 2000 znaków" }),
