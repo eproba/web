@@ -326,7 +326,7 @@ export function WorksheetActions({
                       updateWorksheet={updateWorksheet || (() => {})}
                       format="mobile"
                     >
-                      <div className="hover:bg-accent hover:text-accent-foreground flex h-auto w-full cursor-pointer items-center justify-start px-2 py-1.5 text-sm">
+                      <div className="hover:bg-accent hover:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground flex h-auto w-full cursor-pointer items-center justify-start px-2 py-1.5 text-sm">
                         <StickyNoteIcon className="mr-2 size-4" />
                         {worksheet.notes ? "Notatka" : "Dodaj notatkę"}
                       </div>
