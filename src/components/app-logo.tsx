@@ -32,6 +32,13 @@ export function AppLogo({
         alt="Epróba"
         className="mb-1 w-[112px]"
       />
+      {process.env.NEXT_PUBLIC_ENV_NAME && (
+        <div className="pointer-events-none absolute w-[112px] -translate-y-1/2 text-center">
+          <span className="bg-accent/50 font-mono text-red-500">
+            {process.env.NEXT_PUBLIC_ENV_NAME}
+          </span>
+        </div>
+      )}
     </Link>
   ) : (
     <div className="h-[32px] w-[112px]"></div>

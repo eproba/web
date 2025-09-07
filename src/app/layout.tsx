@@ -10,8 +10,12 @@ import NextTopLoader from "nextjs-toploader";
 import "./globals.css";
 
 const APP_NAME = "Epróba";
-const APP_DEFAULT_TITLE = "Epróba";
-const APP_TITLE_TEMPLATE = "%s - Epróba";
+const APP_DEFAULT_TITLE = `Epróba${
+  process.env.NEXT_PUBLIC_ENV_NAME
+    ? ` [${process.env.NEXT_PUBLIC_ENV_NAME}]`
+    : ""
+}`;
+const APP_TITLE_TEMPLATE = `%s - ${APP_DEFAULT_TITLE}`;
 const APP_DESCRIPTION =
   "Epróba – kompleksowy system zarządzania próbami na stopnie w drużynie harcerskiej.";
 
