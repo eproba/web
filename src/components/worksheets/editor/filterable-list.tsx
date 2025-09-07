@@ -15,6 +15,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import {
   FilterableItem,
   FilterableListProps,
@@ -131,6 +132,7 @@ export function FilterableList<T extends FilterableItem>({
   onItemSelect,
   selectButtonText = "Select",
   showSelectButton = true,
+  showMaxAgeFilter = true,
   renderItem,
   className = "",
 }: FilterableListProps<T>) {
@@ -139,8 +141,12 @@ export function FilterableList<T extends FilterableItem>({
   const [maxAgeFilter, setMaxAgeFilter] = useState<number | null>(null);
 
   const multiSelectOptions = useMemo(() => {
-    if (!tagGroups) return [];
     const allTags = new Set(items.flatMap((item) => item.tags));
+    if (!tagGroups)
+      return Array.from(allTags).map((tag) => ({
+        value: tag,
+        label: tag,
+      }));
     const disabledTags = new Set(
       items
         .flatMap((item) => item.tags)
@@ -243,7 +249,10 @@ export function FilterableList<T extends FilterableItem>({
         )}
       </div>
 
-      <p className="mb-1 text-sm text-gray-600 sm:mb-3">{item.description}</p>
+      <p className="text-muted-foreground text-sm">{item.description}</p>
+      <p className="text-muted-foreground mb-1 text-xs font-light sm:mb-3">
+        {item.source}
+      </p>
 
       <ScrollArea className="w-full">
         <div className="flex w-max space-x-2 pb-2.5">
@@ -317,7 +326,10 @@ export function FilterableList<T extends FilterableItem>({
           >
             <SelectTrigger
               size="lg"
-              className="min-w-16 data-[size=lg]:h-12 sm:data-[size=lg]:h-10"
+              className={cn(
+                "min-w-16 data-[size=lg]:h-12 sm:data-[size=lg]:h-10",
+                !showMaxAgeFilter && "hidden",
+              )}
             >
               <SelectValue placeholder="Wiek" />
             </SelectTrigger>

@@ -827,13 +827,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                         : "flex-wrap",
                       responsiveSettings.compactMode && "gap-0.5",
                     )}
-                    style={
-                      singleLine
-                        ? {
-                            paddingBottom: "4px",
-                          }
-                        : {}
-                    }
                   >
                     {selectedValues
                       .slice(0, responsiveSettings.maxCount)

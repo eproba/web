@@ -80,6 +80,7 @@ export const FinalChallengeSuggestionsDialog: React.FC<
           emptyStateMessage="Nie znaleziono pomysłów pasujących do kryteriów"
           onItemSelect={handleAddFinalChallengeIdea}
           selectButtonText="Wybierz"
+          showMaxAgeFilter={false}
           loadingMessage="Ładowanie pomysłów na próby końcowe..."
           className="data-[state=active]:flex"
         />

@@ -3,6 +3,7 @@ export interface FilterableItem {
   name: string;
   description: string;
   tags: string[];
+  source?: string;
   minAge?: number;
 }
 
@@ -17,6 +18,7 @@ export interface FilterableListProps<T extends FilterableItem> {
   onItemSelect?: (item: T) => void;
   selectButtonText?: string;
   showSelectButton?: boolean;
+  showMaxAgeFilter?: boolean;
   renderItem?: (item: T, onSelect?: () => void) => React.ReactNode;
   className?: string;
 }
