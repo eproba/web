@@ -416,7 +416,7 @@ export default async function MaleRegulationsPage() {
             rel="noopener noreferrer"
           >
             <DownloadIcon className="size-4" />
-            Pobierz regulamin PDF
+            Pobierz regulamin i wymagania (PDF)
           </a>
         </Button>
       </div>
