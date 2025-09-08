@@ -2031,7 +2031,11 @@
     {
       "name": "Wykonam test szybkości czytania określając ile słów na minutę jestem w stanie przeczytać ze zrozumieniem. Korzystając z dostępnych w sieci informacji i wskazówek dobiorę odpowiednią technikę nauki szybkiego czytania. W ciągu 60 dni stosując systematycznie wybraną technikę poprawię swój wynik o minimum 30%.",
       "description": "Chcę nauczyć się szybkiego czytania, tak aby mieć szanse poznania większej ilości wartościowych tekstów.",
-      "tags": ["zakorzenienie w kulturze", "oczytanie", "szybkie czytanie"],
+      "tags": [
+        "zakorzenienie w kulturze",
+        "oczytanie",
+        "szybkie czytanie"
+      ],
       "minAge": 14
     },
     {
@@ -4296,7 +4300,7 @@
     },
     {
       "name": "Nawiąże kontakt z losowo wybraną drużyną skautów niemieckich. Poproszę, aby mnie przyjęli do siebie i pojadę z nimi na obóz lub przynajmniej kilkudniową wyprawę. W trakcie wspólnego wyjazdu, komunikując się po angielsku lub po niemiecku będę się starał odkryć, jaki jest ich stosunek do Polski i do Polaków. Po powrocie do Polski, opowiem o swoich przeżyciach i refleksjach wędrownikom z mojej drużyny.",
-      "description": "W moim otoczeniu istnieją dwa krańcowo różne stereotypy Niemca. Jeden, to człowiek zblazowany lewacką ideologią, wyzuty z tożsamości narodowej i niepewny własnej orientacji seksualnej. Drugi to przebiegły wróg pragnący odebrać Polsce Ziemie Zachodnie, z reszty uczynić niemiecką kolonię, a z Polaków niewolników.  Chcę sprawdzić czy te stereotypy są prawdziwe. Przeczuwam, że nie ale nie dowiem się tego inaczej niż poprzez osobisty kontakt i nawiązanie relacji z grupą Niemców.  Mam nadzieję, że wykonanie tego zadania zwiększy moje umiejętności i  doświadczenie związane z przezwyciężaniem własnych oraz istniejących w przestrzeni publicznej stereotypów na temat przeciwników politycznych, różnego rodzaju mniejszości, ludzi innych narodowości, kultur, religii i ras.",
+      "description": "W moim otoczeniu funkcjonują dwa skrajne stereotypy dotyczące Niemców. Jeden przedstawia ich jako osoby mocno związane z liberalnymi ideami i odchodzące od tradycyjnych wzorców kulturowych, drugi natomiast ukazuje ich jako potencjalnych przeciwników, dążących do dominacji nad Polską. Chcę sprawdzić, czy te stereotypy mają cokolwiek wspólnego z rzeczywistością. Przeczuwam, że nie, ale mogę się o tym przekonać jedynie poprzez osobisty kontakt i budowanie relacji z Niemcami. Mam nadzieję, że realizacja tego zadania poszerzy moje umiejętności i doświadczenie w zakresie przezwyciężania własnych uprzedzeń oraz stereotypów obecnych w przestrzeni publicznej wobec różnych grup – politycznych, narodowych, kulturowych, religijnych i etnicznych.",
       "tags": [
         "postawy patriotyczne",
         "postawy obywatelskie",
@@ -4887,25 +4891,41 @@
     {
       "name": "Przeczytam  historię jednego bohatera w Biblii w komiksie “Boża historia odkupienia” autorstwa Sergio Cariello i Doug Mauss.",
       "description": "Chcę pogłębić moją wiarę. Nigdy nie czytałem Biblii. Wiem, że to trudna lektura. Chcę zacząć od komiksu. Mam nadzieję, że ta łatwo przyswajalna forma lektury rozbudzi moje zainteresowanie i zdoła zachęcić mnie do pójścia w tym o krok dalej.",
-      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "komiks"],
+      "tags": [
+        "umacnianie wiary",
+        "zgłębianie Pisma Św",
+        "komiks"
+      ],
       "minAge": 11
     },
     {
       "name": "Obejrzę dwa sezony serialu “The Chosen”.",
       "description": "Chcę pogłębić moją wiarę. Słyszałem, że serial w bardzo plastyczny sposób ukazuje dzieje i postać Jezusa oraz pozwala lepiej zrozumieć specyfikę czasów, w których żył.",
-      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "film"],
+      "tags": [
+        "umacnianie wiary",
+        "zgłębianie Pisma Św",
+        "film"
+      ],
       "minAge": 12
     },
     {
       "name": "Przeczytam jedną, wybraną przez siebie Ewangelię.",
       "description": "Chcę pogłębić moją wiarę. Chciałbym przeczytać wszystkie dzieła wchodzące w skład Nowego Testamentu. Zaczną od przeczytania wybranej Ewangelii.",
-      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "lektura"],
+      "tags": [
+        "umacnianie wiary",
+        "zgłębianie Pisma Św",
+        "lektura"
+      ],
       "minAge": 13
     },
     {
       "name": "Przeczytam Dzieje Apostolskie.",
       "description": "Chce pogłębić moją wiarę. Wiem, że lektura Pisma Świętego przyczynia się to do lepszego poznania objawienia, a przez to do wzrastania w jedności z Bogiem. Chce przeczytać Dzieje Apostolskie w całości.",
-      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "lektura"],
+      "tags": [
+        "umacnianie wiary",
+        "zgłębianie Pisma Św",
+        "lektura"
+      ],
       "minAge": 13
     },
     {
@@ -5022,7 +5042,11 @@
     {
       "name": "W czasie Wielkiego Postu przeczytam książkę pt. “Czwarty kielich. Odkrywanie tajemnicy Ostatniej Wieczerzy i krzyża” Scotta Hahn i obejrzę “Pasję” Mela Gibsona.",
       "description": "Chcę pogłębić moją wiarę. Zamierzam bardziej refleksyjnie i bardziej emocjonalnie niż dotąd wejść w Wielki Tydzień i w Tajemnicę Męki Pańskiej.",
-      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "lekltura"],
+      "tags": [
+        "umacnianie wiary",
+        "zgłębianie Pisma Św",
+        "lekltura"
+      ],
       "minAge": 16
     },
     {
@@ -5349,7 +5373,7 @@
     },
     {
       "name": "Przeczytam książkę “Krytyka relatywizmu moralnego. Wywiad z pewnym absolutystą” Petera Kreefta.",
-      "description": "Z przerażeniem obserwuje postawy moich rówieśników, którzy uwierzyli w lewackie ideologie wypływające z relatywizmu moralnego. Chcę to sam dokładnie przemyśleć i uzbroić się w argumenty do dyskusji z nimi. Czy możemy wiedzieć na pewno, co jest obiektywnie dobre, a co złe? Czy te kwestie nie zależą wyłącznie od naszych subiektywnych przekonań, kultury i wychowania? Autor książki odpowiada na te i podobne pytania na temat absolutyzmu moralnego, przedstawiając dobitne dowody na jego prawdziwość i potrzebę jego obecności w życiu społecznym oraz życiu jednostki.",
+      "description": "Z niepokojem obserwuję postawy moich rówieśników, którzy przyjmują różne ideologie zakorzenione w relatywizmie moralnym. Chcę samodzielnie przemyśleć te kwestie i zdobyć argumenty do dyskusji. Czy możemy jednoznacznie określić, co jest obiektywnie dobre, a co złe? A może takie sprawy zależą wyłącznie od naszych przekonań, kultury i wychowania? Autor książki podejmuje próbę odpowiedzi na te i podobne pytania, przedstawiając argumenty na rzecz absolutyzmu moralnego oraz wskazując na jego znaczenie dla życia społecznego i jednostkowego.",
       "tags": [
         "doświadczenie praktyk religijnych",
         "roraty",
