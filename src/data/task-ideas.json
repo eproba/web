@@ -2031,11 +2031,7 @@
     {
       "name": "Wykonam test szybkości czytania określając ile słów na minutę jestem w stanie przeczytać ze zrozumieniem. Korzystając z dostępnych w sieci informacji i wskazówek dobiorę odpowiednią technikę nauki szybkiego czytania. W ciągu 60 dni stosując systematycznie wybraną technikę poprawię swój wynik o minimum 30%.",
       "description": "Chcę nauczyć się szybkiego czytania, tak aby mieć szanse poznania większej ilości wartościowych tekstów.",
-      "tags": [
-        "zakorzenienie w kulturze",
-        "oczytanie",
-        "szybkie czytanie"
-      ],
+      "tags": ["zakorzenienie w kulturze", "oczytanie", "szybkie czytanie"],
       "minAge": 14
     },
     {
@@ -4891,41 +4887,25 @@
     {
       "name": "Przeczytam  historię jednego bohatera w Biblii w komiksie “Boża historia odkupienia” autorstwa Sergio Cariello i Doug Mauss.",
       "description": "Chcę pogłębić moją wiarę. Nigdy nie czytałem Biblii. Wiem, że to trudna lektura. Chcę zacząć od komiksu. Mam nadzieję, że ta łatwo przyswajalna forma lektury rozbudzi moje zainteresowanie i zdoła zachęcić mnie do pójścia w tym o krok dalej.",
-      "tags": [
-        "umacnianie wiary",
-        "zgłębianie Pisma Św",
-        "komiks"
-      ],
+      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "komiks"],
       "minAge": 11
     },
     {
       "name": "Obejrzę dwa sezony serialu “The Chosen”.",
       "description": "Chcę pogłębić moją wiarę. Słyszałem, że serial w bardzo plastyczny sposób ukazuje dzieje i postać Jezusa oraz pozwala lepiej zrozumieć specyfikę czasów, w których żył.",
-      "tags": [
-        "umacnianie wiary",
-        "zgłębianie Pisma Św",
-        "film"
-      ],
+      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "film"],
       "minAge": 12
     },
     {
       "name": "Przeczytam jedną, wybraną przez siebie Ewangelię.",
       "description": "Chcę pogłębić moją wiarę. Chciałbym przeczytać wszystkie dzieła wchodzące w skład Nowego Testamentu. Zaczną od przeczytania wybranej Ewangelii.",
-      "tags": [
-        "umacnianie wiary",
-        "zgłębianie Pisma Św",
-        "lektura"
-      ],
+      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "lektura"],
       "minAge": 13
     },
     {
       "name": "Przeczytam Dzieje Apostolskie.",
       "description": "Chce pogłębić moją wiarę. Wiem, że lektura Pisma Świętego przyczynia się to do lepszego poznania objawienia, a przez to do wzrastania w jedności z Bogiem. Chce przeczytać Dzieje Apostolskie w całości.",
-      "tags": [
-        "umacnianie wiary",
-        "zgłębianie Pisma Św",
-        "lektura"
-      ],
+      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "lektura"],
       "minAge": 13
     },
     {
@@ -5042,11 +5022,7 @@
     {
       "name": "W czasie Wielkiego Postu przeczytam książkę pt. “Czwarty kielich. Odkrywanie tajemnicy Ostatniej Wieczerzy i krzyża” Scotta Hahn i obejrzę “Pasję” Mela Gibsona.",
       "description": "Chcę pogłębić moją wiarę. Zamierzam bardziej refleksyjnie i bardziej emocjonalnie niż dotąd wejść w Wielki Tydzień i w Tajemnicę Męki Pańskiej.",
-      "tags": [
-        "umacnianie wiary",
-        "zgłębianie Pisma Św",
-        "lekltura"
-      ],
+      "tags": ["umacnianie wiary", "zgłębianie Pisma Św", "lekltura"],
       "minAge": 16
     },
     {
