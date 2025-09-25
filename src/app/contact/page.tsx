@@ -1,4 +1,4 @@
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import type { Metadata } from "next";
 
 import ContactForm from "./contact-form";
@@ -10,7 +10,15 @@ export const metadata: Metadata = {
 export default async function ContactPage() {
   return (
     <div className="space-y-6">
-      <ContactForm />
+      <Card>
+        <CardHeader>
+          <h1 className="text-2xl font-semibold">Skontaktuj się z nami</h1>
+          <p>Masz pytania, sugestie lub potrzebujesz pomocy? Napisz do nas!</p>
+        </CardHeader>
+        <CardContent>
+          <ContactForm />
+        </CardContent>
+      </Card>
       <Card>
         <CardContent>
           <h1 className="text-2xl font-semibold">Informacje kontaktowe</h1>

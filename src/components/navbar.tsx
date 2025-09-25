@@ -1,6 +1,10 @@
 import { auth, signIn, signOut } from "@/auth";
 import { AppLogo } from "@/components/app-logo";
 import AutoNotificationSetup from "@/components/auto-notification-setup";
+import {
+  MoreNavMenuDesktop,
+  MoreNavMenuMobile,
+} from "@/components/more-nav-menu";
 import { PatrolAlert } from "@/components/patrol-alert";
 import { PwaInstallAlert } from "@/components/pwa-install-alert";
 import { ThemeSwitch } from "@/components/theme-switch";
@@ -30,12 +34,14 @@ import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
 import Link from "next/link";
+import type { ComponentProps } from "react";
 
 type NavItem = {
   title: string;
   href: string;
   subItems?: NavItem[];
   external?: boolean;
+  kind?: "bug-report";
   access?: (user?: User) => boolean;
 };
 
@@ -100,11 +106,7 @@ const MAIN_NAV_ITEMS: NavItem[] = [
 const MORE_NAV_ITEMS: NavItem[] = [
   { title: "O stronie", href: "/about" },
   { title: "Kontakt", href: "/contact" },
-  {
-    title: "Zgłoś błąd",
-    href: "https://github.com/eproba/web-v2/issues",
-    external: true,
-  },
+  { title: "Zgłoś błąd", href: "", kind: "bug-report" },
 ];
 
 const AuthButtons = ({
@@ -194,71 +196,75 @@ const MobileNavItem = ({
 }: {
   item: NavItem;
   header?: boolean;
-}) => (
-  <Link
-    href={item.href}
-    {...props}
-    className={cn(
-      navigationMenuTriggerStyle(),
-      "h-auto w-full justify-start py-1.5",
-      header &&
-        "text-muted-foreground pointer-events-none h-auto pt-2 pb-0 text-xs",
-    )}
-    target={item.external ? "_blank" : undefined}
-  >
-    {item.title}
-  </Link>
-);
+} & Omit<ComponentProps<typeof Link>, "href">) => {
+  return (
+    <Link
+      href={item.href}
+      {...props}
+      className={cn(
+        navigationMenuTriggerStyle(),
+        "h-auto w-full justify-start py-1.5",
+        header &&
+          "text-muted-foreground pointer-events-none h-auto pt-2 pb-0 text-xs",
+      )}
+      target={item.external ? "_blank" : undefined}
+    >
+      {item.title}
+    </Link>
+  );
+};
 
-const DesktopNavItem = ({ item }: { item: NavItem }) => (
-  <NavigationMenuItem>
-    {item.subItems ? (
-      <>
-        <Link
-          href={item.href}
-          target={item.external ? "_blank" : undefined}
-          className="pointer-coarse:hidden"
-        >
-          <NavigationMenuTrigger className="bg-transparent">
+const DesktopNavItem = ({ item }: { item: NavItem }) => {
+  return (
+    <NavigationMenuItem>
+      {item.subItems ? (
+        <>
+          <Link
+            href={item.href}
+            target={item.external ? "_blank" : undefined}
+            className="pointer-coarse:hidden"
+          >
+            <NavigationMenuTrigger className="bg-transparent">
+              {item.title}
+            </NavigationMenuTrigger>
+          </Link>
+          <NavigationMenuTrigger className="bg-transparent pointer-fine:hidden">
             {item.title}
           </NavigationMenuTrigger>
-        </Link>
-        <NavigationMenuTrigger className="bg-transparent pointer-fine:hidden">
-          {item.title}
-        </NavigationMenuTrigger>
-        <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
-          <ul className="grid w-[240px] gap-1 p-2">
-            {item.subItems.map((subItem) => (
-              <NavigationMenuItem key={subItem.href}>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href={subItem.href}
-                    target={subItem.external ? "_blank" : undefined}
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "w-full items-start bg-transparent",
-                    )}
-                  >
-                    {subItem.title}
-                  </Link>
-                </NavigationMenuLink>
-              </NavigationMenuItem>
-            ))}
-          </ul>
-        </NavigationMenuContent>
-      </>
-    ) : (
-      <NavigationMenuLink
-        asChild
-        className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
-      >
-        <Link href={item.href} target={item.external ? "_blank" : undefined}>
-          {item.title}
-        </Link>
-      </NavigationMenuLink>
-    )}
-  </NavigationMenuItem>
-);
+          <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
+            <ul className="grid w-[240px] gap-1 p-2">
+              {item.subItems.map((subItem) => (
+                <NavigationMenuItem key={subItem.href}>
+                  <NavigationMenuLink asChild>
+                    <Link
+                      href={subItem.href}
+                      target={subItem.external ? "_blank" : undefined}
+                      className={cn(
+                        navigationMenuTriggerStyle(),
+                        "w-full items-start bg-transparent",
+                      )}
+                    >
+                      {subItem.title}
+                    </Link>
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+            </ul>
+          </NavigationMenuContent>
+        </>
+      ) : (
+        <NavigationMenuLink
+          asChild
+          className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
+        >
+          <Link href={item.href} target={item.external ? "_blank" : undefined}>
+            {item.title}
+          </Link>
+        </NavigationMenuLink>
+      )}
+    </NavigationMenuItem>
+  );
+};
 
 export async function Navbar() {
   let user: User | undefined = undefined;
@@ -336,11 +342,7 @@ export async function Navbar() {
                     Więcej
                   </h5>
                   <div className="flex flex-col gap-1">
-                    {filteredMoreNav.map((item) => (
-                      <DrawerClose key={item.href} asChild>
-                        <MobileNavItem item={item} />
-                      </DrawerClose>
-                    ))}
+                    <MoreNavMenuMobile items={filteredMoreNav} />
                   </div>
                 </div>
               </div>
@@ -364,35 +366,11 @@ export async function Navbar() {
                 <DesktopNavItem key={item.href} item={item} />
               ))}
 
-              <NavigationMenuItem>
-                <NavigationMenuTrigger className="bg-transparent">
-                  Więcej
-                </NavigationMenuTrigger>
-                <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
-                  <ul className="grid w-[240px] gap-1 p-2">
-                    {filteredMoreNav.map((item) => (
-                      <NavigationMenuItem key={item.href}>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            href={item.href}
-                            className={cn(
-                              navigationMenuTriggerStyle(),
-                              "w-full items-start bg-transparent",
-                            )}
-                            target={item.external ? "_blank" : undefined}
-                          >
-                            {item.title}
-                          </Link>
-                        </NavigationMenuLink>
-                      </NavigationMenuItem>
-                    ))}
-                  </ul>
-                </NavigationMenuContent>
-              </NavigationMenuItem>
+              <MoreNavMenuDesktop items={filteredMoreNav} />
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="flex gap-2">
+          <div className="flex items-center gap-2">
             <AuthButtons user={user} mobile={false} />
           </div>
         </div>

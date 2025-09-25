@@ -17,6 +17,7 @@ export interface RankCount {
   rank: string;
   rankValue: number;
   count: number;
+  [key: string]: string | number;
 }
 
 export interface RankBreakdown {

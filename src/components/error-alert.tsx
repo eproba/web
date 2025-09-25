@@ -28,7 +28,7 @@ export function ErrorAlert({ error }: { error: Response | ApiError }) {
           Spróbuj odświeżyć stronę, jeśli to nie pomoże, zgłoś błąd{" "}
           <a
             className="font-bold underline"
-            href="https://github.com/eproba/web-v2/issues"
+            href="https://github.com/eproba/web/issues"
             target="_blank"
           >
             tutaj

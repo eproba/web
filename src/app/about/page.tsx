@@ -1,3 +1,4 @@
+import { BugReportDialog } from "@/components/bug-report-dialog";
 import { PwaInstallButton } from "@/components/pwa-install-button";
 import { PwaInstallPrompt } from "@/components/pwa-install-prompt";
 import {
@@ -139,15 +140,14 @@ export default async function AboutPage() {
                 <p>
                   Jeśli napotkałeś błąd lub masz sugestię, możesz zgłosić to
                   poprzez{" "}
-                  <Link
-                    href="/contact"
-                    className="text-[#1abc9c] hover:underline"
-                  >
-                    formularz kontaktowy
-                  </Link>{" "}
+                  <BugReportDialog>
+                    <button className="text-[#1abc9c] hover:underline">
+                      formularz kontaktowy
+                    </button>
+                  </BugReportDialog>{" "}
                   lub bezpośrednio na{" "}
                   <a
-                    href="https://github.com/eproba/web-v2/issues"
+                    href="https://github.com/eproba/web/issues"
                     className="text-[#1abc9c] hover:underline"
                   >
                     GitHubie
