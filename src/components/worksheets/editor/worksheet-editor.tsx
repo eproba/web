@@ -177,7 +177,7 @@ export const WorksheetEditor = ({
             title: "Tworzysz próbę na stopień?",
             description:
               "Skorzystaj z szablonów rekomendowanych przez Organizację Harcerzy ZHR.\nKliknij, aby zobaczyć dostępne szablony.",
-            href: "/worksheets/templates",
+            href: "/worksheets/templates#organization-templates",
           },
         }),
         {

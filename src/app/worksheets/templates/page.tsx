@@ -33,7 +33,9 @@ export default async function TemplatesPage() {
       {teamTemplates.length > 0 && (
         <div className="space-y-4">
           <div className="flex flex-wrap items-center justify-between">
-            <h2 className="text-2xl font-semibold">Szablony twojej drużyny</h2>
+            <h2 className="text-2xl font-semibold" id="team-templates">
+              Szablony twojej drużyny
+            </h2>
             {user!.function.numberValue >=
               RequiredFunctionLevel.TEAM_TEMPLATE_MANAGEMENT && (
               <>
@@ -57,7 +59,7 @@ export default async function TemplatesPage() {
       {organizationTemplates.length > 0 && (
         <div className="mt-8 space-y-4">
           <div className="flex flex-wrap items-center justify-between">
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-semibold" id="organization-templates">
               Szablony twojej organizacji
             </h2>
             {user?.isStaff && (
