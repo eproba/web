@@ -72,7 +72,7 @@ export const PatrolSelectDialog = ({
       }}
     >
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>
             {variant === "change" ? "Zmień drużynę" : "Wybierz drużynę"}

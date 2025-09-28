@@ -122,8 +122,8 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
   );
 
   return (
-    <div className="flex w-full flex-col gap-4 overflow-hidden">
-      <div>
+    <div className="flex w-full min-w-0 flex-col gap-4">
+      <div className="flex flex-col gap-2">
         <Label>Organizacja</Label>
         <Select
           value={selectedOrganization?.toString() ?? ""}
@@ -139,7 +139,7 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
         </Select>
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Okręg</Label>
         <Select
           value={selectedDistrict}
@@ -163,7 +163,7 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
         </Select>
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Drużyna</Label>
         <Select
           value={selectedTeam}
@@ -173,7 +173,7 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Wybierz drużynę" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-[var(--radix-select-trigger-width)]">
             {teams.map((t) => (
               <SelectItem key={t.id} value={t.id}>
                 {t.name}
@@ -190,7 +190,7 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
         </Select>
       </div>
 
-      <div>
+      <div className="flex flex-col gap-2">
         <Label>Zastęp</Label>
         <Select
           value={selectedPatrol}
@@ -200,7 +200,7 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Wybierz zastęp" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="w-[var(--radix-select-trigger-width)]">
             {patrolOptions.map((p) => (
               <SelectItem key={p.value} value={p.value}>
                 {p.label}
