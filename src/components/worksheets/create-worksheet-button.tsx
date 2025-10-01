@@ -4,7 +4,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import type { VariantProps } from "class-variance-authority";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 
 interface CreateWorksheetButtonProps
@@ -38,9 +38,20 @@ export function CreateWorksheetButton({
   ...props
 }: CreateWorksheetButtonProps) {
   const pathname = usePathname();
-  const href = `/worksheets/${itemType === "template" ? "templates/" : ""}/create?redirectTo=${redirectTo || pathname}${
-    templateForOrganization ? "&forOrganization=true" : ""
-  }`;
+  const searchParams = useSearchParams();
+  const userId = searchParams.get("userId");
+
+  const basePath = `/worksheets${itemType === "template" ? "/templates" : ""}/create`;
+
+  const params = new URLSearchParams();
+  const targetRedirect = redirectTo ?? pathname;
+  if (targetRedirect) params.set("redirectTo", targetRedirect);
+  if (templateForOrganization) params.set("forOrganization", "true");
+  if (userId) params.set("defaultUserId", userId);
+
+  const href = params.toString()
+    ? `${basePath}?${params.toString()}`
+    : basePath;
 
   const defaultContent = (
     <>

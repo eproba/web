@@ -110,7 +110,11 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                         onValueChange={field.onChange}
                         placeholder="Wyszukaj opiekuna..."
                         allowsOutsideUserTeamSearch={true}
-                        excludeUserIds={[currentUser.id]}
+                        excludeUserIds={
+                          form.watch("userId")
+                            ? [String(form.watch("userId"))]
+                            : []
+                        }
                       />
                       <FormDescription>Dla prób z kapitułą</FormDescription>
                       <FormMessage />

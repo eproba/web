@@ -46,6 +46,7 @@ export function UserCombobox({
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOutsideTeam, setSearchOutsideTeam] = useState(false);
+  const [hasExcludedResults, setHasExcludedResults] = useState(false);
   const { apiClient, isApiReady } = useApi();
 
   const selectedUser = users.find((user) => user.id === value);
@@ -60,31 +61,90 @@ export function UserCombobox({
       const data = (await response.json()).map(
         publicUserSerializer,
       ) as PublicUser[];
-      setUsers(
-        data.filter((user) => {
-          return !excludeUserIds.includes(user.id);
-        }),
-      );
+      const filteredUsers = data.filter((user) => {
+        return !excludeUserIds.includes(user.id);
+      });
+
+      setHasExcludedResults(filteredUsers.length === 0 && data.length > 0);
+
+      setUsers((prev) => {
+        if (!value) {
+          return filteredUsers;
+        }
+
+        const selectedFromResults = filteredUsers.find(
+          (user) => user.id === value,
+        );
+
+        if (selectedFromResults) {
+          return filteredUsers;
+        }
+
+        const previouslySelected = prev.find((user) => user.id === value);
+
+        if (previouslySelected) {
+          return [...filteredUsers, previouslySelected];
+        }
+
+        return filteredUsers;
+      });
     } catch (error) {
       console.error("Failed to search users:", error);
-      setUsers([]);
+      setHasExcludedResults(false);
+
+      setUsers((prev) => {
+        if (value) {
+          const existingSelected = prev.find((user) => user.id === value);
+          if (existingSelected) {
+            return [existingSelected];
+          }
+        }
+
+        return [];
+      });
     } finally {
       setIsLoading(false);
     }
   }, 300);
 
   useEffect(() => {
-    if (searchQuery) {
-      if (!isApiReady || searchQuery.trim().length < 3) {
-        setUsers([]);
-      } else if (searchQuery.trim().length >= 3) {
-        setIsLoading(true);
-        debouncedSearch(searchQuery);
+    const trimmedQuery = searchQuery.trim();
+
+    const keepOnlySelectedOrClear = () => {
+      if (!value) {
+        setUsers((prev) => (prev.length === 0 ? prev : []));
+        return;
       }
-    } else {
-      setUsers([]);
+
+      setUsers((prev) => {
+        const selected = prev.find((user) => user.id === value);
+        if (selected) {
+          if (prev.length === 1 && prev[0].id === value) {
+            return prev;
+          }
+
+          return [selected];
+        }
+
+        return prev;
+      });
+    };
+
+    if (trimmedQuery.length === 0) {
+      setHasExcludedResults(false);
+      keepOnlySelectedOrClear();
+      return;
     }
-  }, [searchQuery, debouncedSearch, searchOutsideTeam, isApiReady]);
+
+    if (!isApiReady || trimmedQuery.length < 3) {
+      setHasExcludedResults(false);
+      keepOnlySelectedOrClear();
+      return;
+    }
+
+    setIsLoading(true);
+    debouncedSearch(trimmedQuery);
+  }, [searchQuery, debouncedSearch, searchOutsideTeam, isApiReady, value]);
 
   // If we have a selected value but no user data, try to fetch it
   useEffect(() => {
@@ -98,6 +158,7 @@ export function UserCombobox({
             ...prev.filter((u) => u.id !== userData.id),
             userData,
           ]);
+          setHasExcludedResults(false);
         } catch (error) {
           console.error("Failed to fetch selected user:", error);
         } finally {
@@ -153,49 +214,78 @@ export function UserCombobox({
           </div>
           <CommandList>
             {isLoading ? (
-              <div className="text-muted-foreground p-4 text-center text-sm">
+              <CommandEmpty className="text-muted-foreground animate-pulse p-4 text-center text-sm">
                 Wyszukiwanie...
-              </div>
+              </CommandEmpty>
             ) : searchQuery.trim().length < 3 && !selectedUser ? (
-              <div className="text-muted-foreground p-4 text-center text-sm">
+              <CommandEmpty className="text-muted-foreground p-4 text-center text-sm">
                 Wpisz co najmniej 3 znaki aby wyszukać
-              </div>
+              </CommandEmpty>
             ) : users.length === 0 ? (
-              <CommandEmpty>Nie znaleziono użytkowników.</CommandEmpty>
+              hasExcludedResults ? (
+                <CommandEmpty className="p-4 text-center text-sm">
+                  Wszyscy znalezieni użytkownicy są wykluczeni z tego pola.
+                </CommandEmpty>
+              ) : (
+                <CommandEmpty className="p-4 text-center text-sm">
+                  Nie znaleziono użytkowników.
+                </CommandEmpty>
+              )
             ) : (
-              <CommandGroup>
-                {users.map((user) => (
-                  <CommandItem
-                    key={user.id}
-                    value={user.id}
-                    onSelect={() => {
-                      onValueChange?.(user.id === value ? "" : user.id);
-                      setOpen(false);
-                    }}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center gap-2">
-                      <UserIcon className="text-muted-foreground size-4" />
-                      <div className="flex flex-col">
-                        <span className="font-medium">{user.displayName}</span>
-                        {user.patrolName && (
-                          <span className="text-muted-foreground text-xs">
-                            {searchOutsideTeam
-                              ? `${user.teamName} - ${user.patrolName}`
-                              : user.patrolName}
+              <>
+                {hasExcludedResults && (
+                  <div className="border-border/40 bg-muted/40 text-muted-foreground border-b px-4 py-2 text-xs">
+                    Niektórzy znalezieni użytkownicy są wykluczeni z tego pola.
+                  </div>
+                )}
+                <CommandGroup>
+                  {users.map((user) => (
+                    <CommandItem
+                      key={user.id}
+                      value={user.id}
+                      onSelect={() => {
+                        const nextValue = user.id === value ? "" : user.id;
+                        onValueChange?.(nextValue);
+                        setUsers((prev) => {
+                          const withoutUser = prev.filter(
+                            (existing) => existing.id !== user.id,
+                          );
+
+                          if (!nextValue) {
+                            return withoutUser;
+                          }
+
+                          return [...withoutUser, user];
+                        });
+                        setOpen(false);
+                      }}
+                      className="flex items-center justify-between"
+                    >
+                      <div className="flex items-center gap-2">
+                        <UserIcon className="text-muted-foreground size-4" />
+                        <div className="flex flex-col gap-1">
+                          <span className="font-medium">
+                            {user.displayName}
                           </span>
-                        )}
+                          {user.patrolName && (
+                            <span className="text-muted-foreground text-xs">
+                              {searchOutsideTeam
+                                ? `${user.teamName} - ${user.patrolName}`
+                                : user.patrolName}
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <CheckIcon
-                      className={cn(
-                        "size-4",
-                        value === user.id ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                  </CommandItem>
-                ))}
-              </CommandGroup>
+                      <CheckIcon
+                        className={cn(
+                          "size-4",
+                          value === user.id ? "opacity-100" : "opacity-0",
+                        )}
+                      />
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              </>
             )}
             {allowsOutsideUserTeamSearch && (
               <div>

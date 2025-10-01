@@ -8,6 +8,7 @@ import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
 import { TaskStatus } from "@/types/worksheet";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
 import { Resolver, useForm } from "react-hook-form";
@@ -41,6 +42,9 @@ export const useWorksheetForm = ({
   const { apiClient } = useApi();
   const router = useRouter();
 
+  const searchParams = useSearchParams();
+  const defaultUserId = searchParams.get("defaultUserId");
+
   const defaultTasks = [
     ...["general", "individual"].flatMap((category) =>
       Array.from({ length: 3 }, (_, order) => ({
@@ -57,7 +61,7 @@ export const useWorksheetForm = ({
     name: initialData?.name || "",
     description: initialData?.description || "",
     supervisor: initialData?.supervisor || "",
-    userId: initialData?.userId || currentUser.id || "",
+    userId: initialData?.userId || defaultUserId || currentUser.id || "",
     tasks:
       initialData?.tasks && initialData.tasks.length > 0
         ? initialData.tasks.sort((a, b) => a.order - b.order)
@@ -97,6 +101,15 @@ export const useWorksheetForm = ({
     tasksToSkipStatusClear?: string[],
   ) => {
     if (isSubmitting) return;
+
+    if (data.userId === data.supervisor && data.userId) {
+      form.setError("supervisor", {
+        type: "manual",
+        message: "Użytkownik nie może być swoim własnym opiekunem.",
+      });
+      toast.error("Użytkownik nie może być swoim własnym opiekunem.");
+      return;
+    }
 
     try {
       // Check for modified tasks with non-TODO status in edit mode (only if we haven't handled it yet and not skipping)
