@@ -46,4 +46,9 @@ export const RequiredFunctionLevel = {
    * Permission level needed for creating worksheets for users outside the team
    */
   OUTSIDE_TEAM_WORKSHEET_CREATION: 3,
+
+  /**
+   * Permission level needed for managing any worksheets in the team
+   */
+  TEAM_ADMIN: 4,
 };

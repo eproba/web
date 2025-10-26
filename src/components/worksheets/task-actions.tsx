@@ -29,7 +29,7 @@ import { ToastMsg } from "@/lib/toast-msg";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/state/user";
 import { PublicUser } from "@/types/user";
-import { Task, TaskStatus } from "@/types/worksheet";
+import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
 import { composeEventHandlers } from "@radix-ui/primitive";
 import {
   CloudUploadIcon,
@@ -61,7 +61,7 @@ const ERROR_MESSAGES: Record<TaskAction, string> = {
 };
 
 interface TaskActionsProps {
-  worksheetId: string;
+  worksheet: Worksheet;
   task: Task;
   variant: "user" | "managed" | "review";
   updateTask: (task: Task) => void;
@@ -216,13 +216,13 @@ const SubmitDialog = ({
 };
 
 const useTaskActions = ({
-  worksheetId,
+  worksheet,
   task,
   updateTask,
   closeDrawer,
 }: Pick<
   TaskActionsProps,
-  "worksheetId" | "task" | "updateTask" | "closeDrawer"
+  "worksheet" | "task" | "updateTask" | "closeDrawer"
 >) => {
   const { apiClient } = useApi();
   const [isLoading, setIsLoading] = useState(false);
@@ -231,7 +231,7 @@ const useTaskActions = ({
     setIsLoading(true);
     try {
       const response = await apiClient(
-        `/worksheets/${worksheetId}/tasks/${task.id}/${action === "clear" ? "clear-status" : action}/`,
+        `/worksheets/${worksheet.id}/tasks/${task.id}/${action === "clear" ? "clear-status" : action}/`,
         body
           ? { method: "POST", body: JSON.stringify(body) }
           : { method: "POST" },
@@ -257,7 +257,7 @@ const useTaskActions = ({
 };
 
 export function TaskActions({
-  worksheetId,
+  worksheet,
   task,
   variant,
   updateTask,
@@ -267,7 +267,7 @@ export function TaskActions({
 }: TaskActionsProps) {
   const currentUser = useCurrentUser();
   const { isLoading, handleAction } = useTaskActions({
-    worksheetId,
+    worksheet,
     task,
     updateTask,
     closeDrawer,
@@ -284,7 +284,7 @@ export function TaskActions({
   const userActions = {
     [TaskStatus.TODO]: (
       <SubmitDialog
-        worksheetId={worksheetId}
+        worksheetId={worksheet.id}
         task={task}
         onSuccess={handleSubmit}
       >
@@ -302,7 +302,7 @@ export function TaskActions({
     ),
     [TaskStatus.REJECTED]: (
       <SubmitDialog
-        worksheetId={worksheetId}
+        worksheetId={worksheet.id}
         task={task}
         onSuccess={handleSubmit}
       >
@@ -415,18 +415,28 @@ export function TaskActions({
       switch (task.category) {
         case "individual":
           if (
+            (currentUser.function.numberValue >=
+              RequiredFunctionLevel.INDIVIDUAL_TASKS_MANAGEMENT &&
+              currentUser.function.numberValue >=
+                worksheet.user.function.numberValue &&
+              worksheet.user.id !== currentUser.id) ||
             currentUser.function.numberValue >=
-              RequiredFunctionLevel.INDIVIDUAL_TASKS_MANAGEMENT ||
-            task.approver === currentUser.id // Override for if the user is the approver, it shouldn't ever happen but just in case i mess something up
+              RequiredFunctionLevel.TEAM_ADMIN ||
+            worksheet.supervisor === currentUser.id
           ) {
             return managedActions[task.status] || null;
           }
           return null;
         case "general":
           if (
+            (currentUser.function.numberValue >=
+              RequiredFunctionLevel.WORKSHEET_MANAGEMENT &&
+              currentUser.function.numberValue >=
+                worksheet.user.function.numberValue &&
+              worksheet.user.id !== currentUser.id) ||
             currentUser.function.numberValue >=
-              RequiredFunctionLevel.WORKSHEET_MANAGEMENT ||
-            task.approver === currentUser.id
+              RequiredFunctionLevel.TEAM_ADMIN ||
+            worksheet.supervisor === currentUser.id
           ) {
             return managedActions[task.status] || null;
           }

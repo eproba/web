@@ -203,8 +203,9 @@ export function WorksheetActions({
       href: `/worksheets/${worksheet.id}/edit`,
       variant: ["managed"],
       userFilter: (user) =>
-        user.function.numberValue >= worksheet.user.function.numberValue ||
-        user.function.numberValue >= 4 ||
+        (user.function.numberValue >= worksheet.user.function.numberValue &&
+          user.id !== worksheet.user.id) ||
+        user.function.numberValue >= RequiredFunctionLevel.TEAM_ADMIN ||
         user.id === worksheet.supervisor,
     },
     {
@@ -231,8 +232,9 @@ export function WorksheetActions({
         : handleArchiveWorksheet,
       variant: ["managed", "archived"],
       userFilter: (user) =>
-        user.function.numberValue >= worksheet.user.function.numberValue ||
-        user.function.numberValue >= 4 ||
+        (user.function.numberValue >= worksheet.user.function.numberValue &&
+          user.id !== worksheet.user.id) ||
+        user.function.numberValue >= RequiredFunctionLevel.TEAM_ADMIN ||
         user.id === worksheet.supervisor,
     },
     {
@@ -242,8 +244,9 @@ export function WorksheetActions({
       handler: () => setShowDeleteAlert(true),
       variant: ["managed", "archived"],
       userFilter: (user) =>
-        user.function.numberValue >= worksheet.user.function.numberValue ||
-        user.function.numberValue >= 4 ||
+        (user.function.numberValue >= worksheet.user.function.numberValue &&
+          user.id !== worksheet.user.id) ||
+        user.function.numberValue >= RequiredFunctionLevel.TEAM_ADMIN ||
         user.id === worksheet.supervisor,
     },
     {

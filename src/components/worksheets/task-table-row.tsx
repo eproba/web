@@ -159,7 +159,7 @@ export function TaskTableRow({
             <TaskActions
               task={task}
               variant={variant}
-              worksheetId={worksheet.id}
+              worksheet={worksheet}
               updateTask={updateTask!}
             />
           </TableCell>
@@ -243,7 +243,7 @@ export function TaskTableRow({
               <TaskActions
                 task={task}
                 variant={variant}
-                worksheetId={worksheet.id}
+                worksheet={worksheet}
                 updateTask={updateTask!}
                 format="button"
                 closeDrawer={() => setIsOpen(false)}
