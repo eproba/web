@@ -108,7 +108,12 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   );
 
   const handleDelete = () => {
-    if (!task.name && !task.description && !task.templateNotes) {
+    if (
+      !task.name &&
+      !task.description &&
+      !task.templateNotes &&
+      variant === "template"
+    ) {
       onRemove();
     } else {
       setShowDeleteDialog(true);
@@ -582,7 +587,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
         />
       )}
 
-      {/* Delete Task Dialog */}
       <AlertDialog
         open={showDeleteDialog}
         onOpenChange={(open) => {

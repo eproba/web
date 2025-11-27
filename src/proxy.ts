@@ -52,7 +52,7 @@ function isAlwaysAccessible(pathname: string): boolean {
   return ALWAYS_ACCESSIBLE_REGEX.some((regex) => regex.test(pathname));
 }
 
-export default async function middleware(request: NextRequest) {
+export default async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Always allow access to static assets and auth routes

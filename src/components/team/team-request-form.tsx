@@ -169,8 +169,7 @@ export function TeamRequestForm() {
         body: JSON.stringify(submissionData),
       });
 
-      toast.success("Zgłoszenie drużyny zostało wysłane pomyślnie!");
-      router.push("/");
+      router.push("/team/request/success");
     } catch (error) {
       toast.error(
         ToastMsg({
