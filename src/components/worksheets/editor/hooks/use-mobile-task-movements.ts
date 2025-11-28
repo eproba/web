@@ -1,30 +1,26 @@
-import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { useCallback } from "react";
 import { UseFormReturn } from "react-hook-form";
 
 interface UseMobileTaskMovementsProps {
   form: UseFormReturn<WorksheetWithTasks>;
   reorderTasks: (
-    tasks: Task[],
     sourceId: string,
     targetId: string,
     edge: string | null,
-  ) => Task[];
+  ) => void;
   moveTaskBetweenCategories: (
-    tasks: Task[],
     sourceId: string,
     destCategory: string,
-    targetId: string,
+    targetId: string | null,
     edge: string | null,
-  ) => Task[];
-  updateTasksInForm: (tasks: Task[]) => void;
+  ) => void;
 }
 
 export const useMobileTaskMovements = ({
   form,
   reorderTasks,
   moveTaskBetweenCategories,
-  updateTasksInForm,
 }: UseMobileTaskMovementsProps) => {
   const handleMoveTaskUp = useCallback(
     (category: string, taskId: string) => {
@@ -34,16 +30,10 @@ export const useMobileTaskMovements = ({
 
       if (taskIndex > 0) {
         const targetTask = categoryTasks[taskIndex - 1];
-        const reorderedTasks = reorderTasks(
-          tasks,
-          taskId,
-          targetTask.id,
-          "top",
-        );
-        updateTasksInForm(reorderedTasks);
+        reorderTasks(taskId, targetTask.id, "top");
       }
     },
-    [form, reorderTasks, updateTasksInForm],
+    [form, reorderTasks],
   );
 
   const handleMoveTaskDown = useCallback(
@@ -54,16 +44,10 @@ export const useMobileTaskMovements = ({
 
       if (taskIndex < categoryTasks.length - 1) {
         const targetTask = categoryTasks[taskIndex + 1];
-        const reorderedTasks = reorderTasks(
-          tasks,
-          taskId,
-          targetTask.id,
-          "bottom",
-        );
-        updateTasksInForm(reorderedTasks);
+        reorderTasks(taskId, targetTask.id, "bottom");
       }
     },
-    [form, reorderTasks, updateTasksInForm],
+    [form, reorderTasks],
   );
 
   const handleMoveTaskToCategory = useCallback(
@@ -76,25 +60,13 @@ export const useMobileTaskMovements = ({
       if (targetCategoryTasks.length > 0) {
         // Move to the end of the target category
         const lastTask = targetCategoryTasks[targetCategoryTasks.length - 1];
-        const reorderedTasks = moveTaskBetweenCategories(
-          tasks,
-          taskId,
-          toCategory,
-          lastTask.id,
-          "bottom",
-        );
-        updateTasksInForm(reorderedTasks);
+        moveTaskBetweenCategories(taskId, toCategory, lastTask.id, "bottom");
       } else {
         // If target category is empty, just change the category
-        const updatedTasks = tasks.map((task) =>
-          task.id === taskId
-            ? { ...task, category: toCategory as "general" | "individual" }
-            : task,
-        );
-        updateTasksInForm(updatedTasks);
+        moveTaskBetweenCategories(taskId, toCategory, null, null);
       }
     },
-    [form, moveTaskBetweenCategories, updateTasksInForm],
+    [form, moveTaskBetweenCategories],
   );
 
   return {

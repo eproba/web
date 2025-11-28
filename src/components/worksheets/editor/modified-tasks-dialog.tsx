@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { TaskStatusIndicator } from "@/components/worksheets/task-status-indicator";
 import { TaskStatus } from "@/types/worksheet";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 interface ModifiedTask {
   id: string;
@@ -34,15 +34,8 @@ export const ModifiedTasksDialog = ({
 }: ModifiedTasksDialogProps) => {
   // State to track which tasks should keep their status (default: all keep status)
   const [tasksToKeepStatus, setTasksToKeepStatus] = useState<Set<string>>(
-    new Set(),
+    () => new Set(modifiedTasks.map((task) => task.id)),
   );
-
-  // Initialize with all tasks keeping their status when dialog opens
-  useEffect(() => {
-    if (isOpen && modifiedTasks.length > 0) {
-      setTasksToKeepStatus(new Set(modifiedTasks.map((task) => task.id)));
-    }
-  }, [isOpen, modifiedTasks]);
 
   const handleToggleTask = (taskId: string) => {
     setTasksToKeepStatus((prev) => {

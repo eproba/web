@@ -43,7 +43,7 @@ import {
   UserXIcon,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 
@@ -99,6 +99,14 @@ export function UserEditDialog({
       instructorRank: (user.instructorRank.numberValue ?? 0).toString(),
       isActive: user.isActive ?? true,
     },
+  });
+
+  const {
+    function: functionValue,
+    isActive,
+    scoutRank,
+  } = useWatch({
+    control: form.control,
   });
 
   const onSubmit = async (values: z.output<typeof formSchema>) => {
@@ -283,10 +291,8 @@ export function UserEditDialog({
                       <div>
                         <Select
                           onValueChange={field.onChange}
-                          value={String(form.watch("function"))} // Watch this field as it can be changed programmatically
-                          disabled={
-                            !form.watch("isActive") && field.value === 0
-                          }
+                          value={String(functionValue)} // Watch this field as it can be changed programmatically
+                          disabled={!isActive && field.value === 0}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue placeholder="Wybierz zastęp" />
@@ -355,7 +361,7 @@ export function UserEditDialog({
                     </FormItem>
                   )}
                 />
-                {Number(form.watch("scoutRank")) >= 5 && (
+                {Number(scoutRank) >= 5 && (
                   <FormField
                     control={form.control}
                     name="instructorRank"
@@ -398,9 +404,9 @@ export function UserEditDialog({
               </div>
             </div>
             <DialogFooter>
-              {form.watch("isActive") !== user.isActive && (
+              {isActive !== user.isActive && (
                 <span className="text-muted-foreground text-xs sm:hidden">
-                  {form.watch("isActive")
+                  {isActive
                     ? "Zapisz aby aktywować"
                     : "Zapisz aby dezaktywować"}
                 </span>
@@ -435,7 +441,7 @@ export function UserEditDialog({
                   </Tooltip>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      {form.watch("isActive") ? (
+                      {isActive ? (
                         <Button
                           type="button"
                           variant="warning"
@@ -481,7 +487,7 @@ export function UserEditDialog({
                       )}
                     </TooltipTrigger>
                     <TooltipContent>
-                      {form.watch("isActive")
+                      {isActive
                         ? "Dezaktywuj konto użytkownika"
                         : "Aktywuj konto użytkownika"}
                     </TooltipContent>
@@ -505,9 +511,9 @@ export function UserEditDialog({
                     </UserPasswordResetDialog>
                     <TooltipContent>Zresetuj hasło</TooltipContent>
                   </Tooltip>
-                  {form.watch("isActive") !== user.isActive && (
+                  {isActive !== user.isActive && (
                     <span className="text-muted-foreground hidden text-xs sm:inline">
-                      {form.watch("isActive")
+                      {isActive
                         ? "Zapisz aby aktywować"
                         : "Zapisz aby dezaktywować"}
                     </span>

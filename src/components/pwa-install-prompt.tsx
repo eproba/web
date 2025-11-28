@@ -95,6 +95,7 @@ export function PwaInstallPrompt({
     router.replace(pathname);
   };
 
+  // eslint-disable-next-line react-hooks/preserve-manual-memoization
   const handleInstallClick = useCallback(() => {
     if (isStandalone) {
       return;
@@ -139,6 +140,7 @@ export function PwaInstallPrompt({
       !installTriggered.current &&
       (installPromptEvent || isIos || isMacSafari)
     ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsAutoInstallModalOpen(true);
       installTriggered.current = true;
     }

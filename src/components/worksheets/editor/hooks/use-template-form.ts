@@ -87,12 +87,19 @@ export const useTemplateForm = ({
         return;
       }
 
+      const groupedTasks = Object.groupBy(validTasks, (task) => task.category);
+      const tasksWithUpdatedOrder = Object.values(groupedTasks)
+        .filter((group): group is Task[] => group !== undefined)
+        .flatMap((group) =>
+          group.map((task, index) => ({ ...task, order: index })),
+        );
+
       const templateData = {
         name: data.name.trim(),
         description: data.description.trim(),
         template_notes: data.templateNotes?.trim() || "",
         scope: data.scope,
-        tasks: validTasks.map((task) => ({
+        tasks: tasksWithUpdatedOrder.map((task) => ({
           id: task.id,
           task: task.name.trim(),
           description: task.description.trim(),

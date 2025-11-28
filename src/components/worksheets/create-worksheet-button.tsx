@@ -8,7 +8,8 @@ import { usePathname, useSearchParams } from "next/navigation";
 import * as React from "react";
 
 interface CreateWorksheetButtonProps
-  extends Omit<React.ComponentProps<"button">, "type">,
+  extends
+    Omit<React.ComponentProps<"button">, "type">,
     VariantProps<typeof buttonVariants> {
   /**
    * The type of item to create

@@ -69,8 +69,9 @@ export function AutoNotificationSetup() {
         }
       };
 
-      setupNotifications();
-      setHasAttemptedSetup(true);
+      setupNotifications().finally(() => {
+        setHasAttemptedSetup(true);
+      });
     }
   }, [isApiReady, hasAttemptedSetup, apiClient]);
 

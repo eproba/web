@@ -19,6 +19,7 @@ export function PwaInstallAlert() {
 
   useEffect(() => {
     const dismissed = localStorage.getItem(PWA_INSTALL_ALERT_DISMISSED_KEY);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setIsDismissed(dismissed === "true");
   }, []);
 

@@ -611,6 +611,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                 onRemove();
                 setShowDeleteDialog(false);
               }}
+              disabled={!showDeleteDialog}
             >
               Usuń
             </AlertDialogAction>

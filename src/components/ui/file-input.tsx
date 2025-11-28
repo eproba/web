@@ -21,11 +21,10 @@ function isAcceptedFile(file: File, accept?: string): boolean {
   });
 }
 
-export interface FileInputProps
-  extends Omit<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    "value" | "onChange"
-  > {
+export interface FileInputProps extends Omit<
+  React.InputHTMLAttributes<HTMLInputElement>,
+  "value" | "onChange"
+> {
   value?: File | string | null;
   onChange?: (file: File | string | null) => void;
   accept?: string;

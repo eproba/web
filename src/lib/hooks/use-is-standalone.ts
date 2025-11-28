@@ -1,28 +1,20 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 export function useIsStandalone() {
-  const [isStandalone, setIsStandalone] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
+  return useSyncExternalStore(
+    (callback) => {
       const mediaQuery = window.matchMedia(
         "(display-mode: standalone), (display-mode: window-controls-overlay)",
       );
-      setIsStandalone(mediaQuery.matches);
-
-      const handleChange = (event: MediaQueryListEvent) => {
-        setIsStandalone(event.matches);
-      };
-
-      mediaQuery.addEventListener("change", handleChange);
-
-      return () => {
-        mediaQuery.removeEventListener("change", handleChange);
-      };
-    }
-  }, []);
-
-  return isStandalone;
+      mediaQuery.addEventListener("change", callback);
+      return () => mediaQuery.removeEventListener("change", callback);
+    },
+    () =>
+      window.matchMedia(
+        "(display-mode: standalone), (display-mode: window-controls-overlay)",
+      ).matches,
+    () => false,
+  );
 }

@@ -1,79 +1,37 @@
-import { Task } from "@/lib/schemas/worksheet";
 import { extractClosestEdge } from "@atlaskit/pragmatic-drag-and-drop-hitbox/closest-edge";
 import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/adapter";
 import { useCallback, useEffect, useRef } from "react";
 
 interface UseDragDropHandlerProps {
-  watchedTasks: Task[];
-  updateTasksInForm: (tasks: Task[]) => void;
   reorderTasks: (
-    tasks: Task[],
     sourceId: string,
     targetId: string,
     edge: string | null,
-  ) => Task[];
+  ) => void;
   moveTaskBetweenCategories: (
-    tasks: Task[],
     sourceId: string,
     destCategory: string,
-    targetId: string,
+    targetId: string | null,
     edge: string | null,
-  ) => Task[];
+  ) => void;
 }
 
 export const useDragDropHandler = ({
-  watchedTasks,
-  updateTasksInForm,
   reorderTasks,
   moveTaskBetweenCategories,
 }: UseDragDropHandlerProps) => {
   const cleanupRef = useRef<(() => void) | null>(null);
 
-  // Use refs to store the latest values to avoid recreating the handler
-  const watchedTasksRef = useRef(watchedTasks);
-  const updateTasksInFormRef = useRef(updateTasksInForm);
   const reorderTasksRef = useRef(reorderTasks);
   const moveTaskBetweenCategoriesRef = useRef(moveTaskBetweenCategories);
 
-  // Performance optimization: Only update refs when the reference changes
-  // This prevents unnecessary re-renders when functions are recreated with same logic
-  if (watchedTasksRef.current !== watchedTasks) {
-    watchedTasksRef.current = watchedTasks;
-  }
-
-  if (updateTasksInFormRef.current !== updateTasksInForm) {
-    updateTasksInFormRef.current = updateTasksInForm;
-  }
-
-  if (reorderTasksRef.current !== reorderTasks) {
+  useEffect(() => {
     reorderTasksRef.current = reorderTasks;
-  }
+  }, [reorderTasks]);
 
-  if (moveTaskBetweenCategoriesRef.current !== moveTaskBetweenCategories) {
+  useEffect(() => {
     moveTaskBetweenCategoriesRef.current = moveTaskBetweenCategories;
-  }
-
-  // Helper function to move task to category (for empty drops)
-  const moveTaskToCategory = useCallback(
-    (tasks: Task[], sourceId: string, destCategory: string): Task[] => {
-      const newTasks = [...tasks];
-      const taskToMoveIndex = newTasks.findIndex(
-        (task) => task.id === sourceId,
-      );
-
-      if (taskToMoveIndex === -1) return tasks;
-
-      const taskToMove = {
-        ...newTasks[taskToMoveIndex],
-        category: destCategory as "general" | "individual",
-      };
-      newTasks.splice(taskToMoveIndex, 1);
-      newTasks.push(taskToMove);
-
-      return newTasks.map((task, index) => ({ ...task, order: index }));
-    },
-    [],
-  );
+  }, [moveTaskBetweenCategories]);
 
   const dragDropHandler = useCallback(() => {
     return monitorForElements({
@@ -92,45 +50,25 @@ export const useDragDropHandler = ({
         requestAnimationFrame(() => {
           // Same category reordering
           if (sourceCategory === destCategory && targetId) {
-            const newTasks = reorderTasksRef.current(
-              watchedTasksRef.current,
-              sourceId,
-              targetId,
-              closestEdge,
-            );
-            updateTasksInFormRef.current(newTasks);
+            reorderTasksRef.current(sourceId, targetId, closestEdge);
             return;
           }
 
           // Cross-category movement
           if (sourceCategory !== destCategory) {
-            if (targetId) {
-              // Drop at specific position relative to another task
-              const newTasks = moveTaskBetweenCategoriesRef.current(
-                watchedTasksRef.current,
-                sourceId,
-                destCategory,
-                targetId,
-                closestEdge,
-              );
-              updateTasksInFormRef.current(newTasks);
-            } else {
-              // Drop on empty list or at the end of a list
-              const newTasks = moveTaskToCategory(
-                watchedTasksRef.current,
-                sourceId,
-                destCategory,
-              );
-              updateTasksInFormRef.current(newTasks);
-            }
+            moveTaskBetweenCategoriesRef.current(
+              sourceId,
+              destCategory,
+              targetId || null,
+              closestEdge,
+            );
           }
         });
       },
     });
-  }, [moveTaskToCategory]);
+  }, []);
 
   useEffect(() => {
-    // Clean up previous listeners
     if (cleanupRef.current) {
       cleanupRef.current();
     }
@@ -139,8 +77,7 @@ export const useDragDropHandler = ({
     cleanupRef.current = cleanup;
 
     return cleanup;
-    /* eslint-disable-next-line react-hooks/exhaustive-deps */
-  }, []);
+  }, [dragDropHandler]);
 
   useEffect(() => {
     return () => {

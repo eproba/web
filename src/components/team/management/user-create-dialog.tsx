@@ -40,8 +40,8 @@ import { Organization, Patrol } from "@/types/team";
 import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { PopoverClose } from "@radix-ui/react-popover";
-import React, { useCallback, useMemo, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useCallback, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import { z } from "zod";
 
@@ -102,6 +102,11 @@ export function UserCreateDialog({
     },
   });
 
+  const scoutRank = useWatch({
+    control: form.control,
+    name: "scoutRank",
+  });
+
   const onSubmit = async (values: z.output<typeof formSchema>) => {
     console.log("Submitting user creation with values:", values);
     setIsLoading(true);
@@ -130,7 +135,7 @@ export function UserCreateDialog({
     setIsLoading(false);
   };
 
-  const emailAvailabilityCache = useMemo(() => new Map<string, boolean>(), []);
+  const emailAvailabilityCache = React.useRef(new Map<string, boolean>());
 
   const checkEmailAvailability = useCallback(
     async (email: string) => {
@@ -142,9 +147,9 @@ export function UserCreateDialog({
         return;
       }
 
-      if (emailAvailabilityCache.has(email)) {
+      if (emailAvailabilityCache.current.has(email)) {
         setIsInternalEmailLoginState(
-          emailAvailabilityCache.get(email) ? "valid" : "invalid",
+          emailAvailabilityCache.current.get(email) ? "valid" : "invalid",
         );
         return;
       }
@@ -157,10 +162,10 @@ export function UserCreateDialog({
             `/users/email-available/?email=${encodeURIComponent(email)}`,
           )
         ).json()) as { available: boolean };
-        emailAvailabilityCache.set(email, result.available || false);
+        emailAvailabilityCache.current.set(email, result.available || false);
         setIsInternalEmailLoginState(result.available ? "valid" : "invalid");
       } catch (error) {
-        emailAvailabilityCache.set(email, false);
+        emailAvailabilityCache.current.set(email, false);
         setIsInternalEmailLoginState("invalid");
         console.error("Error checking email availability:", error);
       }
@@ -172,7 +177,7 @@ export function UserCreateDialog({
     form.reset();
     setCreatedUser(null);
     setInternalEmailLogin("");
-    emailAvailabilityCache.clear();
+    emailAvailabilityCache.current.clear();
   }, 500);
 
   return (
@@ -477,7 +482,7 @@ export function UserCreateDialog({
                       </FormItem>
                     )}
                   />
-                  {Number(form.watch("scoutRank")) >= 5 && (
+                  {Number(scoutRank) >= 5 && (
                     <FormField
                       control={form.control}
                       name="instructorRank"

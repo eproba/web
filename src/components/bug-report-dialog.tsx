@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface BugReportDialogProps {
   children?: React.ReactNode;
@@ -22,20 +22,20 @@ export function BugReportDialog({
   open,
   onOpenChange,
 }: BugReportDialogProps) {
-  const [internalOpen, setInternalOpen] = useState(open);
-  const setOpen = (isOpen: boolean) => {
-    setInternalOpen(isOpen);
-    onOpenChange?.(isOpen);
+  const isControlled = open !== undefined;
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+
+  const isOpen = isControlled ? open : uncontrolledOpen;
+
+  const handleOpenChange = (newOpen: boolean) => {
+    if (!isControlled) {
+      setUncontrolledOpen(newOpen);
+    }
+    onOpenChange?.(newOpen);
   };
 
-  useEffect(() => {
-    if (open !== undefined) {
-      setInternalOpen(open);
-    }
-  }, [open]);
-
   return (
-    <Dialog open={internalOpen} onOpenChange={setOpen}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -44,7 +44,7 @@ export function BugReportDialog({
             Jeśli znalazłeś błąd lub masz jakąś sugestię, daj nam znać!
           </DialogDescription>
         </DialogHeader>
-        <ContactForm type="bug" onSuccess={() => setOpen(false)} />
+        <ContactForm type="bug" onSuccess={() => handleOpenChange(false)} />
       </DialogContent>
     </Dialog>
   );

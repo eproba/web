@@ -51,6 +51,7 @@ function VirtualizedList<T>({
     [viewportEl],
   );
 
+  // eslint-disable-next-line react-hooks/incompatible-library
   const rowVirtualizer = useVirtualizer({
     count: items.length,
     getScrollElement: () => viewportEl,

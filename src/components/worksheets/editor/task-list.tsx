@@ -18,9 +18,14 @@ import { InfoIcon, ListTodoIcon, PlusIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
+interface TaskField extends Task {
+  fieldId: string;
+  taskIndex: number;
+}
+
 interface TaskListProps {
   title?: string | null;
-  tasks: Task[];
+  tasks: TaskField[];
   category: "general" | "individual";
   showDescriptions: boolean;
   enableCategories: boolean;
@@ -104,12 +109,9 @@ export const TaskList: React.FC<TaskListProps> = ({
       <motion.div layout className="space-y-1">
         <AnimatePresence mode="popLayout">
           {tasks.map((task, index) => {
-            const allTasks = form.getValues("tasks");
-            const taskIndex = allTasks.findIndex((t) => t.id === task.id);
-
             return (
               <motion.div
-                key={task.id}
+                key={task.fieldId}
                 layout
                 initial={false}
                 animate={{ opacity: 1 }}
@@ -126,7 +128,7 @@ export const TaskList: React.FC<TaskListProps> = ({
                   }}
                   task={task}
                   index={index}
-                  taskIndex={taskIndex}
+                  taskIndex={task.taskIndex}
                   showDescription={showDescriptions}
                   onUpdate={(updates) => onUpdateTask(task.id, updates)}
                   onRemove={() => onRemoveTask(category, task.id)}

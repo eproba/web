@@ -4,10 +4,15 @@ import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 
+interface TaskField extends Task {
+  fieldId: string;
+  taskIndex: number;
+}
+
 interface TasksSectionProps {
   form: UseFormReturn<WorksheetWithTasks>;
-  generalTasks: Task[];
-  individualTasks: Task[];
+  generalTasks: TaskField[];
+  individualTasks: TaskField[];
   showDescriptions: boolean;
   enableCategories: boolean;
   onUpdateTask: (

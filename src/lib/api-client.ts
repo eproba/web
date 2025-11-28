@@ -125,6 +125,7 @@ export function useApi() {
   }, [session, status, sessionRef, statusRef]);
 
   const apiClient = useMemo(
+    // eslint-disable-next-line react-hooks/refs
     () => createApiClient(getSession, update),
     [getSession, update],
   );
