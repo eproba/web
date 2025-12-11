@@ -83,29 +83,6 @@ export const useTaskFieldArray = ({ form }: UseTaskFieldArrayProps) => {
     [remove, watchedTasks],
   );
 
-  const updateTask = useCallback(
-    (taskId: string, updates: { field: string; value: string }[]) => {
-      const index = watchedTasks.findIndex((task) => task.id === taskId);
-      if (index === -1) return;
-
-      const currentTask = watchedTasks[index];
-      const updatedTask = { ...currentTask };
-
-      updates.forEach((upd) => {
-        if (upd.field === "task" || upd.field === "name") {
-          updatedTask.name = upd.value;
-        } else if (upd.field === "description") {
-          updatedTask.description = upd.value;
-        } else if (upd.field === "templateNotes") {
-          updatedTask.templateNotes = upd.value;
-        }
-      });
-
-      update(index, updatedTask);
-    },
-    [update, watchedTasks],
-  );
-
   const reorderTasks = useCallback(
     (sourceId: string, targetId: string, edge: string | null) => {
       const sourceIndex = watchedTasks.findIndex(
@@ -205,7 +182,6 @@ export const useTaskFieldArray = ({ form }: UseTaskFieldArrayProps) => {
     individualFields,
     addTask,
     removeTask,
-    updateTask,
     reorderTasks,
     moveTaskBetweenCategories,
     transferAllTasks,

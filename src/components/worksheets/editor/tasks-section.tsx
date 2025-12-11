@@ -15,10 +15,6 @@ interface TasksSectionProps {
   individualTasks: TaskField[];
   showDescriptions: boolean;
   enableCategories: boolean;
-  onUpdateTask: (
-    id: string,
-    updates: { field: string; value: string }[],
-  ) => void;
   onAddTask: (category: string) => string;
   onRemoveTask: (category: string, id: string) => void;
   onMoveTaskUp: (category: string, taskId: string) => void;
@@ -37,7 +33,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
   individualTasks,
   showDescriptions,
   enableCategories,
-  onUpdateTask,
   onAddTask,
   onRemoveTask,
   onMoveTaskUp,
@@ -55,7 +50,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
           category="general"
           showDescriptions={showDescriptions}
           enableCategories={enableCategories}
-          onUpdateTask={onUpdateTask}
           onAddTask={onAddTask}
           onRemoveTask={onRemoveTask}
           onMoveTaskUp={onMoveTaskUp}
@@ -73,7 +67,6 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
             category="individual"
             showDescriptions={showDescriptions}
             enableCategories={enableCategories}
-            onUpdateTask={onUpdateTask}
             onAddTask={onAddTask}
             onRemoveTask={onRemoveTask}
             onMoveTaskUp={onMoveTaskUp}

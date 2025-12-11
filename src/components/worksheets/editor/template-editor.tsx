@@ -39,7 +39,6 @@ export const TemplateEditor = ({
     watchedTasks,
     generalFields,
     individualFields,
-    updateTask,
     addTask,
     removeTask,
     reorderTasks,
@@ -118,7 +117,6 @@ export const TemplateEditor = ({
             individualTasks={individualFields}
             showDescriptions={shouldShowDescriptions}
             enableCategories={enableCategories}
-            onUpdateTask={updateTask}
             onAddTask={addTask}
             onRemoveTask={removeTask}
             onMoveTaskUp={handleMoveTaskUp}

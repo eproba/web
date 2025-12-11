@@ -39,7 +39,6 @@ import {
 } from "lucide-react";
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
-import { useDebouncedCallback } from "use-debounce";
 
 import { useDragDrop } from "./drag-drop-provider";
 import { TaskActionPopover } from "./task-action-popover";
@@ -50,7 +49,6 @@ interface TaskItemProps {
   index: number;
   taskIndex: number;
   showDescription: boolean;
-  onUpdate: (updates: { field: string; value: string }[]) => void;
   onRemove: () => void;
   onMoveUp?: () => void;
   onMoveDown?: () => void;
@@ -70,7 +68,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   index,
   taskIndex,
   showDescription,
-  onUpdate,
   onRemove,
   onMoveUp,
   onMoveDown,
@@ -99,13 +96,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       taskInputRef.current?.focus();
     },
   }));
-
-  const debouncedUpdate = useDebouncedCallback(
-    (updates: { field: string; value: string }[]) => {
-      onUpdate(updates);
-    },
-    300,
-  );
 
   const handleDelete = () => {
     if (
@@ -360,12 +350,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                       placeholder="Wprowadź zadanie..."
                       onMouseDown={(e) => e.stopPropagation()}
                       onDragStart={(e) => e.preventDefault()}
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        debouncedUpdate([
-                          { field: "task", value: e.target.value },
-                        ]);
-                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -396,12 +380,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                         rows={2}
                         onMouseDown={(e) => e.stopPropagation()}
                         onDragStart={(e) => e.preventDefault()}
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          debouncedUpdate([
-                            { field: "description", value: e.target.value },
-                          ]);
-                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -426,12 +404,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                         rows={2}
                         onMouseDown={(e) => e.stopPropagation()}
                         onDragStart={(e) => e.preventDefault()}
-                        onChange={(e) => {
-                          field.onChange(e.target.value);
-                          debouncedUpdate([
-                            { field: "templateNotes", value: e.target.value },
-                          ]);
-                        }}
                       />
                     </FormControl>
                     <FormMessage />
@@ -578,11 +550,6 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               `tasks.${taskIndex}.description`,
               suggestion.description,
             );
-
-            onUpdate([
-              { field: "name", value: suggestion.name },
-              { field: "description", value: suggestion.description },
-            ]);
           }}
         />
       )}

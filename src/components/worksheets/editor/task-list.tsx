@@ -29,10 +29,6 @@ interface TaskListProps {
   category: "general" | "individual";
   showDescriptions: boolean;
   enableCategories: boolean;
-  onUpdateTask: (
-    id: string,
-    updates: { field: string; value: string }[],
-  ) => void;
   onAddTask: (category: string) => string;
   onRemoveTask: (category: string, id: string) => void;
   onMoveTaskUp: (category: string, taskId: string) => void;
@@ -52,7 +48,6 @@ export const TaskList: React.FC<TaskListProps> = ({
   category,
   showDescriptions,
   enableCategories,
-  onUpdateTask,
   onAddTask,
   onRemoveTask,
   onMoveTaskUp,
@@ -130,7 +125,6 @@ export const TaskList: React.FC<TaskListProps> = ({
                   index={index}
                   taskIndex={task.taskIndex}
                   showDescription={showDescriptions}
-                  onUpdate={(updates) => onUpdateTask(task.id, updates)}
                   onRemove={() => onRemoveTask(category, task.id)}
                   onMoveUp={() => onMoveTaskUp(category, task.id)}
                   onMoveDown={() => onMoveTaskDown(category, task.id)}
