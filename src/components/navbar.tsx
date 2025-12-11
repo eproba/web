@@ -173,7 +173,7 @@ const AuthButtons = ({
         )}
       </>
     ) : (
-      <a href="/auth/signin/eproba" className="w-full">
+      <a href="/auth/signin/eproba?callbackUrl=%2F" className="w-full">
         <Button className="w-full">
           <LogInIcon />
           Zaloguj się
