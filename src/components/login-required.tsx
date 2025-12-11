@@ -1,4 +1,3 @@
-import { signIn } from "@/auth";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -96,19 +95,14 @@ export function LoginRequired({ redirectTo, error }: LoginRequiredProps) {
         <p className="text-muted-foreground">
           Aby uzyskać dostęp do tej strony, musisz się zalogować.
         </p>
-        <form
-          action={async () => {
-            "use server";
-            await signIn("eproba", {
-              redirectTo: redirectTo || "/",
-            });
-          }}
+        <a
+          href={`/auth/signin/eproba?callbackUrl=${encodeURIComponent(redirectTo || "/")}`}
         >
           <Button className="w-full">
             <LogInIcon />
             Zaloguj się
           </Button>
-        </form>
+        </a>
       </CardContent>
     </Card>
   );

@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorPageParam, SignInPageErrorParam } from "@auth/core/types";
 import { FootprintsIcon } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -54,12 +53,12 @@ async function LoginRequiredContent({ searchParams }: LoginRequiredPageProps) {
               Jeśli przekierowanie nie nastąpi automatycznie, kliknij przycisk
               poniżej.
             </p>
-            <Link href={redirectUrl}>
+            <a href={redirectUrl}>
               <Button className="w-full">
                 <FootprintsIcon />
                 Kontynuuj
               </Button>
-            </Link>
+            </a>
           </CardContent>
         </Card>
         <script
