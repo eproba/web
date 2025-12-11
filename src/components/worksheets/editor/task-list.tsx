@@ -106,13 +106,13 @@ export const TaskList: React.FC<TaskListProps> = ({
         "relative w-full touch-manipulation space-y-1 transition-all duration-300",
       )}
     >
-      <motion.div layout className="space-y-1">
+      <motion.div layout="position" className="space-y-1">
         <AnimatePresence mode="popLayout">
           {tasks.map((task, index) => {
             return (
               <motion.div
                 key={task.fieldId}
-                layout
+                layout="position"
                 initial={false}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0, height: 0, marginBottom: 0 }}
@@ -154,7 +154,7 @@ export const TaskList: React.FC<TaskListProps> = ({
 
         {tasks.length !== 0 && (
           <motion.div
-            layout
+            layout="position"
             className="pt-2"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -179,7 +179,7 @@ export const TaskList: React.FC<TaskListProps> = ({
 
       {tasks.length === 0 && (
         <motion.div
-          layout
+          layout="position"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{

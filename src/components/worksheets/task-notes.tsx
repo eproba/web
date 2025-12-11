@@ -238,6 +238,7 @@ export function TaskNotes({
           ) : isEditing ? (
             <motion.div
               key="edit-note"
+              layout="position"
               initial={{
                 opacity: isFirstRender ? 1 : 0,
                 height: isFirstRender ? "auto" : 0,
@@ -250,6 +251,7 @@ export function TaskNotes({
                 ease: [0.4, 0.0, 0.2, 1],
                 height: { duration: 0.4, ease: [0.4, 0.0, 0.2, 1] },
                 scale: { duration: 0.2 },
+                layout: { duration: 0 },
               }}
               className="overflow-hidden"
             >
@@ -446,6 +448,7 @@ export function TaskNotes({
           ) : (
             <motion.div
               key="edit-note"
+              layout="position"
               initial={{
                 opacity: isFirstRender && isPopoverOpen ? 1 : 0,
                 height: isFirstRender && isPopoverOpen ? "auto" : 0,
@@ -456,6 +459,7 @@ export function TaskNotes({
                 duration: 0.3,
                 ease: [0.4, 0.0, 0.2, 1],
                 height: { duration: 0.35, ease: [0.4, 0.0, 0.2, 1] },
+                layout: { duration: 0 },
               }}
               className="overflow-hidden"
             >

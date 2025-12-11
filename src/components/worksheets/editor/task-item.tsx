@@ -328,7 +328,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
       {/* Main Task Item */}
       <motion.div
         ref={elementRef}
-        layout
+        layout="position"
         className={cn(
           "group bg-card hover:bg-accent/30 relative touch-manipulation rounded-lg border p-4 transition-all duration-200",
           isBeingDragged && "bg-muted scale-95 border-dashed opacity-30",
