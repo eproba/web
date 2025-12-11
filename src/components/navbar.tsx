@@ -1,4 +1,4 @@
-import { auth, signIn, signOut } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { AppLogo } from "@/components/app-logo";
 import AutoNotificationSetup from "@/components/auto-notification-setup";
 import {
@@ -173,18 +173,12 @@ const AuthButtons = ({
         )}
       </>
     ) : (
-      <form
-        className="w-full"
-        action={async () => {
-          "use server";
-          await signIn("eproba");
-        }}
-      >
+      <a href="/auth/signin/eproba" className="w-full">
         <Button className="w-full">
           <LogInIcon />
           Zaloguj się
         </Button>
-      </form>
+      </a>
     )}
   </>
 );
