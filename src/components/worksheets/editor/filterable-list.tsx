@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MultiSelect } from "@/components/multi-select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -363,19 +364,23 @@ export function FilterableList<T extends FilterableItem>({
                 <p>{emptyStateMessage}</p>
               </div>
             ) : (
-              <VirtualizedList
-                items={filteredItems}
-                itemSize={300}
-                overscan={6}
-                onSelectFactory={
-                  onItemSelect ? (i) => () => onItemSelect(i) : undefined
-                }
-                render={(item, onSelect) =>
-                  renderItem
-                    ? renderItem(item, onSelect)
-                    : defaultRenderItem(item, onSelect)
-                }
-              />
+              // <VirtualizedList
+              //   items={filteredItems}
+              //   itemSize={300}
+              //   overscan={6}
+              //   onSelectFactory={
+              //     onItemSelect ? (i) => () => onItemSelect(i) : undefined
+              //   }
+              //   render={(item, onSelect) =>
+              //     renderItem
+              //       ? renderItem(item, onSelect)
+              //       : defaultRenderItem(item, onSelect)
+              //   }
+              // />
+              <p>
+                Ta funkcja jest obecnie niedostępna, pracujemy nad jej
+                przywróceniem.
+              </p>
             )}
           </div>
         </ScrollArea>
