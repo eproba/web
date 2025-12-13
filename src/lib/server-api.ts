@@ -1,4 +1,5 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { API_URL, INTERNAL_API_URL } from "@/lib/api";
 import { handleError } from "@/lib/error-alert-handler";
 import {
@@ -58,9 +59,12 @@ async function apiRequest<T>(
   options: ApiOptions = {},
 ): Promise<{ data?: T; error?: JSX.Element }> {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+    const accessToken = (session?.session)?.accessToken;
     if (
-      (!session || !session.user || !session.accessToken) &&
+      (!session || !session.user || !accessToken) &&
       !options.allowUnauthorized
     ) {
       return {
@@ -77,8 +81,8 @@ async function apiRequest<T>(
       method: options.method || "GET",
       headers: {
         "Content-Type": "application/json",
-        ...(session?.accessToken
-          ? { Authorization: `Bearer ${session.accessToken}` }
+        ...(accessToken
+          ? { Authorization: `Bearer ${accessToken}` }
           : {}),
         ...options.headers,
       },

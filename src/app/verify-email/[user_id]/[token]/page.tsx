@@ -1,7 +1,7 @@
-import { signIn } from "@/auth";
 import { ResendVerificationEmailButton } from "@/components/profile/resend-verification-email-button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { SocialSignInButton } from "@/components/auth/social-signin-button";
 import {
   Card,
   CardContent,
@@ -139,17 +139,14 @@ function EmailVerificationError({
               </Button>
             </Link>
             {!isAuthenticated && (
-              <form
-                className="w-full"
-                action={async () => {
-                  "use server";
-                  await signIn("eproba");
-                }}
+              <SocialSignInButton
+                provider="eproba"
+                redirectTo="/"
               >
                 <Button className="w-full">
                   Zaloguj się aby wysyłać ponownie
                 </Button>
-              </form>
+              </SocialSignInButton>
             )}
             {showResendButton && <ResendVerificationEmailButton />}
           </div>
@@ -193,15 +190,12 @@ function EmailVerificationSuccess({
               </Button>
             </Link>
             {showLoginButton && (
-              <form
-                className="w-full"
-                action={async () => {
-                  "use server";
-                  await signIn("eproba", { redirectTo: "/" });
-                }}
+              <SocialSignInButton
+                provider="eproba"
+                redirectTo="/"
               >
                 <Button className="w-full">Zaloguj się</Button>
-              </form>
+              </SocialSignInButton>
             )}
           </div>
         </CardContent>

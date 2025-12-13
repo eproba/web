@@ -1,10 +1,13 @@
 import NewsPage from "@/app/news/page";
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { WorksheetList } from "@/components/worksheets/worksheet-list";
 import { fetchUserWorksheets } from "@/lib/server-api";
+import { headers } from "next/headers";
 
 export default async function Home() {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (session) {
     const { worksheets, error } = await fetchUserWorksheets();

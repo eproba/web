@@ -1,5 +1,6 @@
-import { auth, signIn, signOut } from "@/auth";
+import { auth } from "@/lib/auth";
 import { AppLogo } from "@/components/app-logo";
+import { SocialSignInButton } from "@/components/auth/social-signin-button";
 import AutoNotificationSetup from "@/components/auto-notification-setup";
 import {
   MoreNavMenuDesktop,
@@ -33,7 +34,9 @@ import { cn } from "@/lib/utils";
 import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
+import { cookies, headers } from "next/headers";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import type { ComponentProps } from "react";
 
 type NavItem = {
@@ -124,7 +127,12 @@ const AuthButtons = ({
           className="flex-1"
           action={async () => {
             "use server";
-            await signOut({ redirectTo: "/signout" });
+            await auth.api.signOut({
+              headers: await headers(),
+            });
+            const cookieStore = await cookies();
+            cookieStore.delete("sessionid");
+            redirect("/");
           }}
         >
           {mobile ? (
@@ -173,18 +181,16 @@ const AuthButtons = ({
         )}
       </>
     ) : (
-      <form
-        className="w-full"
-        action={async () => {
-          "use server";
-          await signIn("eproba");
-        }}
+      <SocialSignInButton
+        provider="eproba"
+        redirectTo="/"
+        className="w-fit"
       >
-        <Button className="w-full">
+        <>
           <LogInIcon />
           Zaloguj się
-        </Button>
-      </form>
+        </>
+      </SocialSignInButton>
     )}
   </>
 );
@@ -268,7 +274,9 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => {
 
 export async function Navbar() {
   let user: User | undefined = undefined;
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   // if (session?.error === "RefreshTokenError") {
   //   await signOut({ redirectTo: "/signout" });

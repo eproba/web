@@ -1,4 +1,5 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
@@ -66,7 +67,9 @@ export default async function proxy(request: NextRequest) {
   }
 
   // For all other routes, check authentication
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     // Redirect to login-required page with the original URL as a parameter

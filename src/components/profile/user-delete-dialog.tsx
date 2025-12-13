@@ -14,9 +14,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useApi } from "@/lib/api-client";
+import { authClient } from "@/lib/auth-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
-import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -30,6 +31,7 @@ export const UserDeleteDialog = ({
   const CONFIRMATION_MESSAGE = "USUŃ KONTO";
 
   const { apiClient } = useApi();
+  const router = useRouter();
 
   const [inputValue, setInputValue] = useState("");
 
@@ -44,7 +46,8 @@ export const UserDeleteDialog = ({
         method: "DELETE",
       });
       toast.success("Twoje konto zostało usunięte");
-      await signOut({ redirectTo: "/signout" });
+      await authClient.signOut();
+      router.push("/");
     } catch (error) {
       toast.error(
         ToastMsg({

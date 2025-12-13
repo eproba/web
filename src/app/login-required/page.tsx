@@ -1,9 +1,12 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
 import { LoginRequired } from "@/components/login-required";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ErrorPageParam, SignInPageErrorParam } from "@auth/core/types";
 import { FootprintsIcon } from "lucide-react";
+import { headers } from "next/headers";
+
+type ErrorPageParam = string;
+type SignInPageErrorParam = string;
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -34,7 +37,9 @@ export default async function LoginRequiredPage({
 
 async function LoginRequiredContent({ searchParams }: LoginRequiredPageProps) {
   const { redirectTo, openSelectPatrolDialog, error } = await searchParams;
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   const redirectUrl = openSelectPatrolDialog
     ? `${redirectTo || "/"}${redirectTo?.includes("?") ? "&" : "?"}openSelectPatrolDialog=true`

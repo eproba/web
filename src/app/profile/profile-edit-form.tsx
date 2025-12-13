@@ -83,7 +83,7 @@ export function ProfileEditForm({ user }: { user: User }) {
       });
       const updated = userSerializer(await response.json());
       setCurrentUser(updated);
-      await updateSession(updated);
+      await updateSession();
       toast.success("Profil został zaktualizowany");
       router.refresh();
     } catch (error) {

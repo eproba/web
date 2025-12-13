@@ -1,4 +1,5 @@
-import { auth } from "@/auth";
+import { auth } from "@/lib/auth";
+import { headers as getHeaders } from "next/headers";
 import { NextResponse } from "next/server";
 
 function handleRedirect(response: Response, request: Request) {
@@ -111,7 +112,10 @@ async function handleRequest(
   params: Promise<{ path: string[] }>,
   method: string,
 ) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await getHeaders(),
+  });
+  const accessToken = (session?.session as { accessToken?: string })?.accessToken;
   if (!session?.user) {
     return NextResponse.redirect("/login");
   }
@@ -129,7 +133,7 @@ async function handleRequest(
     headers: {
       "Content-Type": request.headers.get("Content-Type") || "application/json",
       Cookie: request.headers.get("cookie") || "",
-      Authorization: `Bearer ${session.accessToken}`,
+      Authorization: `Bearer ${accessToken}`,
     },
     redirect: "manual",
   };

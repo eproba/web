@@ -1,7 +1,21 @@
 import { API_URL, ApiError } from "@/lib/api";
-import { Session } from "next-auth";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+interface Session {
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    image?: string | null;
+  } | null;
+  session: {
+    id: string;
+    userId: string;
+    expiresAt: Date;
+    accessToken?: string;
+  } | null;
+}
 
 export function createApiClient(
   getSession: () => Promise<Session | null>,
@@ -26,7 +40,7 @@ export function createApiClient(
     if (!session) {
       throw new ApiError("Session not found", 401, "Unauthorized");
     }
-    accessToken = session?.accessToken || "";
+    accessToken = session?.session?.accessToken || "";
 
     const executeRequest = async (): Promise<Response> => {
       const headers: HeadersInit = {
@@ -49,7 +63,7 @@ export function createApiClient(
         isRefreshing = true;
         try {
           const newSession = await updateSession();
-          accessToken = newSession?.accessToken || "";
+          accessToken = newSession?.session?.accessToken || "";
           isRefreshing = false;
           return executeRequest(); // Retry with new token
         } catch (error) {
@@ -78,28 +92,30 @@ export function createApiClient(
 }
 
 export function useApi() {
-  const { data: session, update, status } = useSession();
+  const { data: session, refetch, isPending } = authClient.useSession();
   const sessionRef = useRef<Session | null>(null);
-  const statusRef = useRef(status);
+  const statusRef = useRef(isPending ? "loading" : session ? "authenticated" : "unauthenticated");
   const [isReady, setIsReady] = useState(false);
 
   // Track session status and set ready state
   useEffect(() => {
+    const status = isPending ? "loading" : session ? "authenticated" : "unauthenticated";
     statusRef.current = status;
 
     if (status !== "loading") {
       setIsReady(true);
-      sessionRef.current = session;
+      sessionRef.current = session as Session | null;
       return;
     }
 
     const timeoutId = setTimeout(() => setIsReady(true), 5000);
     return () => clearTimeout(timeoutId);
-  }, [status, session]);
+  }, [isPending, session]);
 
   const getSession = useCallback(async () => {
+    const status = statusRef.current;
     if (status !== "loading") {
-      return session;
+      return session as Session | null;
     }
 
     return new Promise<Session | null>((resolve) => {
@@ -122,13 +138,18 @@ export function useApi() {
 
       checkSession();
     });
-  }, [session, status, sessionRef, statusRef]);
+  }, [session]);
+
+  const updateSession = useCallback(async () => {
+    await refetch();
+    return session as Session | null;
+  }, [refetch, session]);
 
   const apiClient = useMemo(
     // eslint-disable-next-line react-hooks/refs
-    () => createApiClient(getSession, update),
-    [getSession, update],
+    () => createApiClient(getSession, updateSession),
+    [getSession, updateSession],
   );
 
-  return { apiClient, isApiReady: isReady, updateSession: update };
+  return { apiClient, isApiReady: isReady, updateSession };
 }

@@ -12,9 +12,10 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useApi } from "@/lib/api-client";
+import { authClient } from "@/lib/auth-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
-import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "react-toastify";
 
@@ -26,6 +27,7 @@ export const UserDeactivateDialog = ({
   user: User;
 }) => {
   const { apiClient } = useApi();
+  const router = useRouter();
 
   const handleSubmit = async () => {
     try {
@@ -34,7 +36,8 @@ export const UserDeactivateDialog = ({
         body: JSON.stringify({ is_active: false }),
       });
       toast.success("Twoje konto zostało dezaktywowane");
-      await signOut({ redirectTo: "/signout" });
+      await authClient.signOut();
+      router.push("/");
     } catch (error) {
       toast.error(
         ToastMsg({
