@@ -1,6 +1,7 @@
-import { auth, signIn, signOut } from "@/auth";
+import { auth, signOut } from "@/auth";
 import { AppLogo } from "@/components/app-logo";
 import AutoNotificationSetup from "@/components/auto-notification-setup";
+import { LoginButton } from "@/components/login-button";
 import {
   MoreNavMenuDesktop,
   MoreNavMenuMobile,
@@ -32,7 +33,7 @@ import { fetchCurrentUser } from "@/lib/server-api";
 import { cn } from "@/lib/utils";
 import { Organization } from "@/types/team";
 import { User } from "@/types/user";
-import { LogInIcon, LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
+import { LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
 import Link from "next/link";
 import type { ComponentProps } from "react";
 
@@ -173,18 +174,7 @@ const AuthButtons = ({
         )}
       </>
     ) : (
-      <form
-        className="w-full"
-        action={async () => {
-          "use server";
-          await signIn("eproba");
-        }}
-      >
-        <Button className="w-full">
-          <LogInIcon />
-          Zaloguj się
-        </Button>
-      </form>
+      <LoginButton className="w-fit" />
     )}
   </>
 );
@@ -232,7 +222,7 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => {
             {item.title}
           </NavigationMenuTrigger>
           <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
-            <ul className="grid w-[240px] gap-1 p-2">
+            <ul className="grid w-60 gap-1 p-2">
               {item.subItems.map((subItem) => (
                 <NavigationMenuItem key={subItem.href}>
                   <NavigationMenuLink asChild>

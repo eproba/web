@@ -1,9 +1,8 @@
-import { signIn } from "@/auth";
+import { LoginButton } from "@/components/login-button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ErrorPageParam, SignInPageErrorParam } from "@auth/core/types";
-import { AlertCircleIcon, LogInIcon } from "lucide-react";
+import { AlertCircleIcon } from "lucide-react";
 
 interface LoginRequiredProps {
   redirectTo?: string;
@@ -96,19 +95,7 @@ export function LoginRequired({ redirectTo, error }: LoginRequiredProps) {
         <p className="text-muted-foreground">
           Aby uzyskać dostęp do tej strony, musisz się zalogować.
         </p>
-        <form
-          action={async () => {
-            "use server";
-            await signIn("eproba", {
-              redirectTo: redirectTo || "/",
-            });
-          }}
-        >
-          <Button className="w-full">
-            <LogInIcon />
-            Zaloguj się
-          </Button>
-        </form>
+        <LoginButton redirectTo={redirectTo} className="w-full" />
       </CardContent>
     </Card>
   );
