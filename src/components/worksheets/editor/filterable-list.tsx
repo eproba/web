@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { MultiSelect } from "@/components/multi-select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -58,13 +57,6 @@ function VirtualizedList<T>({
     getScrollElement: () => viewportEl,
     estimateSize: () => itemSize,
     overscan,
-    // Provide a key for stability if items may reorder; fallback to index.
-    getItemKey: (index) => {
-      const raw = items[index]?.raw as unknown as
-        | { id?: string | number; name?: string }
-        | undefined;
-      return (raw && (raw.id ?? raw.name)) ?? index;
-    },
   });
 
   // Fallback render (non-virtualized) until viewport is resolved to avoid blank area.
@@ -243,7 +235,7 @@ export function FilterableList<T extends FilterableItem>({
           <Button
             size="sm"
             onClick={onSelect}
-            className="ml-2 hidden flex-shrink-0 sm:inline-flex"
+            className="ml-2 hidden shrink-0 sm:inline-flex"
           >
             <PlusIcon />
             {selectButtonText}
@@ -287,7 +279,7 @@ export function FilterableList<T extends FilterableItem>({
         <Button
           size="sm"
           onClick={onSelect}
-          className="w-full flex-shrink-0 sm:hidden"
+          className="w-full shrink-0 sm:hidden"
         >
           <PlusIcon />
           {selectButtonText}
@@ -298,8 +290,7 @@ export function FilterableList<T extends FilterableItem>({
 
   return (
     <div className={`flex min-h-0 flex-1 flex-col space-y-4 ${className}`}>
-      {/* Search and Filters */}
-      <div className="flex-shrink-0 space-y-3">
+      <div className="shrink-0 space-y-3">
         <Input
           placeholder={searchPlaceholder}
           value={searchQuery}
@@ -307,7 +298,6 @@ export function FilterableList<T extends FilterableItem>({
           startIcon={SearchIcon}
         />
 
-        {/* Tag filters */}
         <div className="flex flex-row items-center space-x-2">
           <MultiSelect
             options={multiSelectOptions}
@@ -335,7 +325,7 @@ export function FilterableList<T extends FilterableItem>({
             >
               <SelectValue placeholder="Wiek" />
             </SelectTrigger>
-            <SelectContent className="w-[var(--radix-select-trigger-width)] min-w-auto">
+            <SelectContent className="w-(--radix-select-trigger-width) min-w-auto">
               <SelectItem key="all" value="null">
                 --
               </SelectItem>
@@ -349,7 +339,6 @@ export function FilterableList<T extends FilterableItem>({
         </div>
       </div>
 
-      {/* Items List */}
       <div className="min-h-0 flex-1">
         <ScrollArea className="h-full w-full sm:pr-4">
           <div className="space-y-3">
@@ -364,23 +353,19 @@ export function FilterableList<T extends FilterableItem>({
                 <p>{emptyStateMessage}</p>
               </div>
             ) : (
-              // <VirtualizedList
-              //   items={filteredItems}
-              //   itemSize={300}
-              //   overscan={6}
-              //   onSelectFactory={
-              //     onItemSelect ? (i) => () => onItemSelect(i) : undefined
-              //   }
-              //   render={(item, onSelect) =>
-              //     renderItem
-              //       ? renderItem(item, onSelect)
-              //       : defaultRenderItem(item, onSelect)
-              //   }
-              // />
-              <p>
-                Ta funkcja jest obecnie niedostępna, pracujemy nad jej
-                przywróceniem.
-              </p>
+              <VirtualizedList
+                items={filteredItems}
+                itemSize={300}
+                overscan={6}
+                onSelectFactory={
+                  onItemSelect ? (i) => () => onItemSelect(i) : undefined
+                }
+                render={(item, onSelect) =>
+                  renderItem
+                    ? renderItem(item, onSelect)
+                    : defaultRenderItem(item, onSelect)
+                }
+              />
             )}
           </div>
         </ScrollArea>
