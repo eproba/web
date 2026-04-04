@@ -39,6 +39,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
 import { UAParser } from "ua-parser-js";
 
+import { WebhooksCard } from "./webhooks-card";
+
 type DeviceInfo = {
   os?: { name: string; version: string };
   device?: { type: string; vendor: string; model: string };
@@ -437,6 +439,8 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <WebhooksCard />
     </>
   );
 }

@@ -1,4 +1,4 @@
-import { z } from "zod";
+import * as z from "zod";
 
 export const teamRequestSchema = z.object({
   district: z.string().min(1, { error: "Okręg jest wymagany" }),

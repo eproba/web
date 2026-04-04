@@ -43,7 +43,7 @@ import { PopoverClose } from "@radix-ui/react-popover";
 import React, { useCallback, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
-import { z } from "zod";
+import * as z from "zod";
 
 const formSchema = z.object({
   firstName: z.string().optional(),

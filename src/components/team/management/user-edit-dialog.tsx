@@ -45,7 +45,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { toast } from "react-toastify";
-import { z } from "zod";
+import * as z from "zod";
 
 import { UserPasswordResetDialog } from "./user-password-reset-dialog";
 import { UserRemoveFromPatrolDialog } from "./user-remove-from-patrol-dialog";

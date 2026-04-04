@@ -31,7 +31,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
-import { z } from "zod";
+import * as z from "zod";
 
 const formSchema = z.object({
   firstName: z.string().min(1, { error: "Imię jest wymagane" }),

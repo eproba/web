@@ -1,6 +1,7 @@
 import { FlatCompat } from "@eslint/eslintrc";
 import nextCoreWebVitals from "eslint-config-next/core-web-vitals";
 import nextTypescript from "eslint-config-next/typescript";
+import importZod from "eslint-plugin-import-zod";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -24,6 +25,7 @@ const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
   ...compat.extends("prettier"),
+  ...importZod.configs.recommended,
 ];
 
 export default eslintConfig;

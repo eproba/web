@@ -27,7 +27,7 @@ import { Patrol } from "@/types/team";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { z } from "zod";
+import * as z from "zod";
 
 const formSchema = z.object({
   name: z.string().min(1, { error: "Nazwa zastępu jest wymagana." }),
