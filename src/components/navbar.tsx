@@ -44,6 +44,7 @@ type NavItem = {
   external?: boolean;
   kind?: "bug-report";
   access?: (user?: User) => boolean;
+  mobileHidden?: boolean; // workaround for bug where "Prośby o zatwierdzenie" is not rendered in desktop popup
 };
 
 const MAIN_NAV_ITEMS: NavItem[] = [
@@ -59,6 +60,11 @@ const MAIN_NAV_ITEMS: NavItem[] = [
       user.function.numberValue >= RequiredFunctionLevel.WORKSHEET_MANAGEMENT,
     subItems: [
       { title: "Zarządzaj próbami", href: "/worksheets/manage" },
+      {
+        title: "Prośby o zatwierdzenie",
+        href: "/worksheets/review/",
+        mobileHidden: true,
+      },
       { title: "Prośby o zatwierdzenie", href: "/worksheets/review" },
       { title: "Archiwum", href: "/worksheets/archive" },
       { title: "Szablony", href: "/worksheets/templates" },
@@ -311,21 +317,25 @@ export async function Navbar() {
               </DrawerHeader>
 
               <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
-                {filteredMainNav.map((item) => (
-                  <div key={item.href} className="flex flex-col gap-1">
-                    <DrawerClose asChild>
-                      <MobileNavItem
-                        item={item}
-                        header={(item.subItems?.length ?? 0) > 0}
-                      />
-                    </DrawerClose>
-                    {item.subItems?.map((subItem) => (
-                      <DrawerClose key={subItem.href} asChild>
-                        <MobileNavItem item={subItem} />
+                {filteredMainNav.map((item) =>
+                  item.mobileHidden ? null : (
+                    <div key={item.href} className="flex flex-col gap-1">
+                      <DrawerClose asChild>
+                        <MobileNavItem
+                          item={item}
+                          header={(item.subItems?.length ?? 0) > 0}
+                        />
                       </DrawerClose>
-                    ))}
-                  </div>
-                ))}
+                      {item.subItems?.map((subItem) =>
+                        subItem.mobileHidden ? null : (
+                          <DrawerClose key={subItem.href} asChild>
+                            <MobileNavItem item={subItem} />
+                          </DrawerClose>
+                        ),
+                      )}
+                    </div>
+                  ),
+                )}
 
                 <div className="mt-4 border-t pt-2">
                   <h5 className="text-muted-foreground mb-2 px-3 text-xs">

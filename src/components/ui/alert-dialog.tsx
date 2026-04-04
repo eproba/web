@@ -2,8 +2,8 @@
 
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog";
 import type { VariantProps } from "class-variance-authority";
+import { AlertDialog as AlertDialogPrimitive } from "radix-ui";
 import * as React from "react";
 
 function AlertDialog({

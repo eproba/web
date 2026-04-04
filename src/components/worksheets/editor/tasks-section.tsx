@@ -1,4 +1,3 @@
-import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { TaskList } from "@/components/worksheets/editor/task-list";
 import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import React from "react";
@@ -79,15 +78,16 @@ export const TasksSection: React.FC<TasksSectionProps> = ({
       </div>
 
       {/* Tasks validation error message */}
-      <FormField
-        control={form.control}
-        name="tasks"
-        render={() => (
-          <FormItem>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      {form.formState.errors.tasks?.message && (
+        <p className="text-destructive text-[0.8rem] font-medium">
+          {String(form.formState.errors.tasks.message)}
+        </p>
+      )}
+      {form.formState.errors.tasks?.root?.message && (
+        <p className="text-destructive text-[0.8rem] font-medium">
+          {String(form.formState.errors.tasks.root.message)}
+        </p>
+      )}
     </div>
   );
 };
