@@ -126,7 +126,7 @@ export default async function MaleRegulationsPage() {
         "\t• Potrafi zaśpiewać Hymn Harcerski, Modlitwę Harcerską i pieśni obrzędowe śpiewane w drużynie",
         "\t• Rozpoznaje oznaczenia stopni harcerskich i instruktorskich",
         "\t• Rozpoznaje oznaczenia funkcji w drużynie i hufcu (ew. szczepie)",
-        "Zdobył wymagane sprawności",
+        "Zdobył sprawności",
         "Zdobył wybrane przez siebie sprawności dodatkowe o sumie czterech gwiazdek",
       ],
       badges: [
@@ -210,7 +210,7 @@ export default async function MaleRegulationsPage() {
         "\t• Zna kilka piosenek śpiewanych w drużynie",
         "\t• Zna strukturę Organizacji Harcerzy ZHR i nazwiska swoich przełożonych do poziomu hufcowego",
         "\t• Rozpoznaje oznaczenia funkcji do poziomu chorągwi włącznie",
-        "Zdobył wymagane sprawności",
+        "Zdobył sprawności",
         "Zdobył wybrane przez siebie sprawności dodatkowe o sumie pięciu gwiazdek",
       ],
       badges: [
@@ -287,7 +287,7 @@ export default async function MaleRegulationsPage() {
         "\t• Potrafi scharakteryzować wybrane okresy z historii harcerstwa (np. do 1918 r., XX-lecie międzywojenne, druga wojna światowa, PRL, po 1989 r.)",
         "\t• Zna strukturę całego ZHR i nazwiska Komendanta Chorągwi, Naczelnika Harcerzy oraz Przewodniczącej/go ZHR",
         "\t• Rozpoznaje oznaczenia funkcji we władzach naczelnych ZHR",
-        "Zdobył wymagane sprawności",
+        "Zdobył sprawności",
         'Zdobył trzy sprawności trzygwiazdkowe z działu "Obozownictwo i przyroda" (każdą z innej ścieżki), wykazując mistrzostwo w wybranych technikach harcerskich',
         "Zdobył wybrane przez siebie sprawności dodatkowe o sumie sześciu gwiazdek",
       ],
@@ -330,33 +330,28 @@ export default async function MaleRegulationsPage() {
       description:
         "<b>Harcerz orli mierzy wysoko i wyrasta ponad przeciętność - orla jest jego lotów potęga!</b> Poszukuje i sprawdza, odważnie próbuje nowych rzeczy. Próbuje na nowo, w dojrzały sposób, zrozumieć swoje powinności wynikające z Prawa Harcerskiego, Dekalogu i Przykazania Miłości. Stara się swoim przykładem oddziaływać na otoczenie. Rozwija kompetencje przydatne w aktywnym życiu społecznym i buduje własne opinie o otaczającym go świecie. Jest wrażliwy, potrafi stanąć po stronie słabszego i pokrzywdzonego. Ma własne pole służby, którą pełni z oddaniem, systematycznie i rzetelnie. Wprawia się w planowaniu swojego rozwoju i konsekwentnie zmierza do postawionych sobie celów.",
       requirements: [
-        "Wędrowanie (2 wybrane wymagania):",
+        "Wędrowanie (spełnił 2 wybrane wymagania):",
         "\t• Ma umiejętności niezbędne do wzięcia udziału w wybranej specjalistycznej formie kilkudniowej wędrówki (np. rowerowej, kajakowej, górskiej, wspinaczkowej, żeglarskiej, narciarskiej)",
-        "\t• Umie zorganizować sobie nocleg w bardzo trudnych warunkach (np. jama śnieżna, legowisko na drzewie, szałas)",
+        "\t• Umie zorganizować sobie nocleg w bardzo trudnych warunkach (np. jama śnieżna, legowisko na drzewie, szałas w ulewie, nocleg w hamaku poza sezonem)",
         "\t• Umie zaplanować i zorganizować jeden z elementów kilkudniowej wędrówki np. noclegi, wyżywienie, trasa",
-        "Praca nad sobą (2 wybrane wymagania):",
+        "Praca nad sobą (spełnił 2 wybrane wymagania):",
         "\t• Potrafi stosować wybraną formę zarządzania czasem",
         "\t• Umie skutecznie wypracować w sobie pozytywny nawyk",
-        "\t• Umie w sposób umiarkowany i rozsądny korzystać z technologii (np. urządzeń mobilnych, internetu)",
-        "Miejsce w społeczeństwie (2 wybrane wymagania):",
+        "\t• Zna i stosuje metody dbania o higienę cyfrową",
+        "Miejsce w społeczeństwie (spełnił 2 wybrane wymagania):",
         "\t• Potrafi wykorzystać w praktyce znajomość języka obcego",
-        "\t• Zna założenia programowe największych partii politycznych w kraju. Potrafi omówić główne ugrupowania i postacie w samorządzie lokalnym (gmina, powiat) i regionalnym (województwo)",
-        "\t• Umie brać udział w dyskusji lub debacie, unikając błędów w argumentacji oraz odnosząc się do rozmówców z szacunkiem (np. stosuje założenia komunikacji bez przemocy)",
-        "\t• Umie wygłosić krótkie (3–5‑minutowe) przemówienie popierające dowolną tezę. Umie znaleźć argumenty za tezą, z którą się nie zgadza",
-        "\t• Potrafi wykonać pracę budowlaną lub remontową z użyciem elektronarzędzi (np. wymiana syfonu, układanie płytek, szpachlowanie, stolarka ogrodowa, ścianka z płyt g-k, skrzynia)",
-        "\t• Potrafi zarobić i zaoszczędzić pieniądze na wybrany przez siebie cel (np. obóz, rower, sprzęt elektroniczny)",
+        "\t• Zna założenia programowe największych partii politycznych w kraju. Potrafi omówić główne ugrupowania i postacie w lokalnym samorządzie",
+        "\t• Potrafi wziąć aktywny udział w debacie zgodnie z jej regułami (np. w debacie oksfordzkiej, zebraniu wyborczym, debacie wyborczej)",
+        "\t• Umie wygłosić krótkie (3–5-minutowe) przemówienie popierające jakąś tezę, stosując wybrane zabiegi retoryczne i odnosząc się do argumentacji za tezą przeciwną.",
         "\t• Umie ocenić wiarygodność informacji medialnej oraz dotrzeć do pierwotnego źródła danej informacji. Zna kilka najczęściej popełnianych błędów poznawczych i popularnych technik manipulacyjnych",
-        "Służba:",
-        "\t• Dotrzymanie zobowiązania do regularnej służby - zgodnie z ustaleniami z drużynowym lub kapitułą stopnia",
-        "Wyczyn:",
-        "\t• Odbędzie wyczyn – zaproponowany przez siebie, zatwierdzony przez drużynowego i przeprowadzany zgodnie ze zwyczajem przyjętym w drużynie lub kapitule",
+        "\t• Potrafi wykonać pracę budowlaną lub remontową z użyciem elektronarzędzi (np. wymiana syfonu, układanie płytek, szpachlowanie, stolarka ogrodowa, ścianka z płyt g-k, skrzynia)",
       ],
       badges: [],
       individualTasksCount: "4-6",
       expectedTime: "do 10 miesięcy",
       icon: "/rank-regulations/male/icons/harcerz-orli.svg",
       additionalInfo:
-        "Wymagania na stopień harcerza orlego mogą być realizowane grupowo w ramach pracy drużyny wędrowników. Drużyna wędrowników może na początku roku harcerskiego umówić się, jakie elementy programu będzie realizować w sposób, który umożliwi wędrownikom zdobycie umiejętności potrzebnych do zaliczenia wymagań w danym roku.",
+        "W ramach jednego z zadań indywidualnych indywidualnych podejmij się służby – zgodnie z ustaleniami z drużynowym lub kapitułą stopnia.\nW ramach kolejnego odbądź wyczyn – zaproponowany przez siebie, zatwierdzony przez drużynowego i przeprowadzany zgodnie ze zwyczajem przyjętym w drużynie lub kapitule.\nWięcej wskazówek dotyczących zdobywania stopni harcerza orlego i harcerza Rzeczypospolitej znajdziesz w 'Vademecum - Próby indywidualne na stopnie HO i HR'",
     },
     {
       name: "harcerz Rzeczypospolitej",
@@ -366,12 +361,14 @@ export default async function MaleRegulationsPage() {
       description:
         "<b>Harcerz Rzeczypospolitej wymaga od siebie nawet wtedy, gdy inni od niego nie wymagają.</b> Wstępuje w dorosłe życie jako świadomy i aktywny obywatel. W swoich wyborach kieruje się wiarą i chrześcijańskim systemem wartości. Ma marzenia i je realizuje. Wyróżniającą się postawą i działaniem krzewi harcerskie ideały. Jego życie przepełnione jest miłością do Polski, pożyteczną służbą Ojczyźnie i bliźnim oraz harmonijnym, wszechstronnym rozwojem własnej osoby. Wytrwale podąża obraną drogą.",
       requirements: [
-        "Brak. Zdobywanie stopnia harcerza Rzeczypospolitej opiera się w pełni o pracę indywidualną.",
+        "Zdobywanie stopnia harcerza Rzeczypospolitej opiera się w pełni o zadania indywidualne. Zadaniem przyszłego harcerza Rzeczypospolitej jest skonstruowanie i wykonanie próby indywidualnej, która możliwie blisko przybliży go do sylwetki tego stopnia.",
       ],
       badges: [],
       individualTasksCount: "5-8",
       expectedTime: "do 12 miesięcy",
-      icon: "/rank-regulations/male/icons/harcerz-rzeczypospolitej.svg",
+      icon: "/rank-regulations/male/icons/harcerz-rzeczypospolitej.svg", 
+      additionalInfo:
+        "Więcej wskazówek dotyczących zdobywania stopni harcerza orlego i harcerza Rzeczypospolitej znajdziesz w 'Vademecum - Próby indywidualne na stopnie HO i HR'",
     },
   ];
 
@@ -433,7 +430,7 @@ export default async function MaleRegulationsPage() {
           </TabsTrigger>
           <TabsTrigger value="individual-tasks">
             <CheckCircleIcon className="size-4" />
-            Zadania indywidualne
+            Wytyczne do zadań indywidualne
           </TabsTrigger>
           <TabsTrigger value="process">
             <ShieldIcon className="size-4" />
@@ -454,7 +451,7 @@ export default async function MaleRegulationsPage() {
                 oraz wyrobienia harcerskiego. Kierunki pracy nad sobą są
                 określone w sylwetkach stopni, a poziom wyrobienia harcerskiego
                 w wymaganiach na stopnie. Sylwetki stopni stanowią załącznik do
-                regulaminu, a wymagania na stopnie wprowadza rozkazem Naczelnik
+                regulaminu, a wytyczne do zadań indywidualnych i wymagania na stopnie wprowadza rozkazem Naczelnik
                 Harcerzy.
               </CardDescription>
             </CardHeader>
@@ -492,7 +489,7 @@ export default async function MaleRegulationsPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Wymagania</CardTitle>
+              <CardTitle>Warunki zdobycia stopnia</CardTitle>
               <CardDescription>
                 Stopień jest przyznawany harcerzowi, który spełnia wszystkie
                 poniższe warunki.
@@ -506,8 +503,9 @@ export default async function MaleRegulationsPage() {
                     <h4 className="font-medium">Praca nad sobą</h4>
                     <p className="text-muted-foreground text-sm">
                       Wykazał się efektywną pracą nad sobą, przybliżającą go do
-                      sylwetki stopnia, realizując zadania indywidualne
-                      zaakceptowane przez drużynowego lub kapitułę stopnia.
+                      sylwetki stopnia, realizując zadania indywidualne,
+                      zaakceptowane przez drużynowego lub kapitułę stopnia, zgodne 
+                      z wytycznymi na dany stopień;
                     </p>
                   </div>
                 </div>
@@ -516,19 +514,7 @@ export default async function MaleRegulationsPage() {
                   <div>
                     <h4 className="font-medium">Wiedza i umiejętności</h4>
                     <p className="text-muted-foreground text-sm">
-                      Wykazał się wymaganą wiedzą i umiejętnościami oraz zdobył
-                      sprawności określone w wymaganiach na dany stopień.
-                    </p>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <AwardIcon className="mt-0.5 size-6 flex-shrink-0 text-green-500 sm:size-5" />
-                  <div>
-                    <h4 className="font-medium">Sprawności dodatkowe</h4>
-                    <p className="text-muted-foreground text-sm">
-                      W trakcie zdobywania stopnia zdobył wybrane przez siebie
-                      inne (niż wymagane) sprawności o łącznej liczbie gwiazdek
-                      określonej w wymaganiach na dany stopień.
+                      Wykazał się wiedzą i umiejętnościami określonymi w wymaganiach na dany stopień.
                     </p>
                   </div>
                 </div>
