@@ -1,11 +1,16 @@
 import { MultiSelect } from "@/components/multi-select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -128,7 +133,6 @@ export function FilterableList<T extends FilterableItem>({
   showSelectButton = true,
   showMaxAgeFilter = true,
   renderItem,
-  className = "",
 }: FilterableListProps<T>) {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -204,6 +208,17 @@ export function FilterableList<T extends FilterableItem>({
     });
     return Array.from(ages).sort((a, b) => a - b);
   }, [items]);
+
+  const ageItems = useMemo(
+    () => [
+      { label: "--", value: null },
+      ...availableAges.map((age) => ({
+        label: age,
+        value: age.toString(),
+      })),
+    ],
+    [availableAges],
+  );
 
   const loweredSearch = searchQuery.toLowerCase();
 
@@ -289,16 +304,20 @@ export function FilterableList<T extends FilterableItem>({
   );
 
   return (
-    <div className={`flex min-h-0 flex-1 flex-col space-y-4 ${className}`}>
+    <div className="flex min-h-0 flex-1 flex-col space-y-4">
       <div className="shrink-0 space-y-3">
-        <Input
-          placeholder={searchPlaceholder}
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          startIcon={SearchIcon}
-        />
+        <InputGroup>
+          <InputGroupInput
+            placeholder={searchPlaceholder}
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <InputGroupAddon>
+            <SearchIcon />
+          </InputGroupAddon>
+        </InputGroup>
 
-        <div className="flex flex-row items-center space-x-2">
+        <div className="flex flex-row items-center gap-x-2">
           <MultiSelect
             options={multiSelectOptions}
             onValueChange={setSelectedTags}
@@ -308,32 +327,31 @@ export function FilterableList<T extends FilterableItem>({
             modalPopover={true}
             hideSelectAll={true}
             singleLine={true}
-            popoverClassName="min-w-[var(--radix-popover-trigger-width)]"
+            popoverClassName="min-w-(--anchor-width)"
           />
           <Select
-            value={maxAgeFilter?.toString() || ""}
+            items={ageItems}
+            value={maxAgeFilter?.toString() ?? null}
             onValueChange={(value) =>
-              setMaxAgeFilter(value === "null" ? null : parseInt(value, 10))
+              setMaxAgeFilter(value === null ? null : parseInt(value, 10))
             }
           >
             <SelectTrigger
-              size="lg"
               className={cn(
-                "min-w-16 data-[size=lg]:h-12 sm:data-[size=lg]:h-10",
+                "h-12! min-w-16 sm:h-10!",
                 !showMaxAgeFilter && "hidden",
               )}
             >
               <SelectValue placeholder="Wiek" />
             </SelectTrigger>
-            <SelectContent className="w-(--radix-select-trigger-width) min-w-auto">
-              <SelectItem key="all" value="null">
-                --
-              </SelectItem>
-              {availableAges.map((age) => (
-                <SelectItem key={age} value={age.toString()}>
-                  {age}
-                </SelectItem>
-              ))}
+            <SelectContent className="w-(--anchor-width) min-w-auto">
+              <SelectGroup>
+                {ageItems.map((age) => (
+                  <SelectItem key={age.value ?? "all"} value={age.value}>
+                    {age.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>

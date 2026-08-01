@@ -13,18 +13,18 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
 import { signOut } from "next-auth/react";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 
 export const UserDeleteDialog = ({
   children,
   user,
 }: {
-  children: React.ReactNode;
+  children: React.ReactElement;
   user: User;
 }) => {
   const CONFIRMATION_MESSAGE = "USUŃ KONTO";
@@ -35,7 +35,7 @@ export const UserDeleteDialog = ({
 
   const handleSubmit = async () => {
     if (inputValue !== CONFIRMATION_MESSAGE) {
-      toast.error("Wpisz 'USUŃ KONTO' aby potwierdzić");
+      toast.add({ title: "Wpisz 'USUŃ KONTO' aby potwierdzić", type: "error" });
       return;
     }
 
@@ -43,24 +43,25 @@ export const UserDeleteDialog = ({
       await apiClient(`/user/`, {
         method: "DELETE",
       });
-      toast.success("Twoje konto zostało usunięte");
+      toast.add({ title: "Twoje konto zostało usunięte", type: "success" });
       await signOut({ redirectTo: "/signout" });
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title:
               "Nie udało się usunąć twojego konta, skontaktuj się z administratorem",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
   return (
     <AlertDialog onOpenChange={(open) => open && setInputValue("")}>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger render={children} />
       <AlertDialogContent className="">
         <AlertDialogHeader>
           <AlertDialogTitle>Usuń konto</AlertDialogTitle>

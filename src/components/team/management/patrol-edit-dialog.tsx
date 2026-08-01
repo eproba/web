@@ -9,14 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Tooltip,
@@ -26,7 +19,7 @@ import {
 import { Patrol } from "@/types/team";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -35,7 +28,7 @@ const formSchema = z.object({
 
 interface PatrolEditDialogProps {
   patrol: Patrol;
-  children: React.ReactNode;
+  children: React.ReactElement;
   onPatrolUpdate: (patrolId: string, name: string) => Promise<boolean>;
   onPatrolDelete: (patrolId: string) => Promise<boolean>;
   allowDelete: boolean;
@@ -93,9 +86,9 @@ export function PatrolEditDialog({
         form.reset();
       }}
     >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent>
-        <Form {...form}>
+        <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
               <DialogTitle>Edytuj zastęp</DialogTitle>
@@ -108,17 +101,23 @@ export function PatrolEditDialog({
               )}
             </DialogHeader>
             <div className="flex flex-col gap-4 py-4">
-              <FormField
+              <Controller
                 control={form.control}
                 name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nazwa zastępu</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Nazwa zastępu</FieldLabel>
+
+                    <Input
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
             </div>
@@ -135,16 +134,18 @@ export function PatrolEditDialog({
                   </Button>
                 ) : (
                   <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        disabled
-                        className="cursor-not-allowed disabled:pointer-events-auto"
-                      >
-                        Usuń zastęp
-                      </Button>
-                    </TooltipTrigger>
+                    <TooltipTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          disabled
+                          className="cursor-not-allowed disabled:pointer-events-auto"
+                        >
+                          Usuń zastęp
+                        </Button>
+                      }
+                    />
                     <TooltipContent>
                       {isLastPatrol
                         ? "Nie można usunąć ostatniego zastępu"
@@ -153,15 +154,17 @@ export function PatrolEditDialog({
                   </Tooltip>
                 )}
                 <div className="flex items-center gap-2">
-                  <DialogClose asChild>
-                    <Button
-                      type="button"
-                      variant="outline"
-                      disabled={isLoading}
-                    >
-                      Anuluj
-                    </Button>
-                  </DialogClose>
+                  <DialogClose
+                    render={
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={isLoading}
+                      >
+                        Anuluj
+                      </Button>
+                    }
+                  />
                   <Button type="submit" disabled={isLoading}>
                     {isLoading ? "Zapisywanie..." : "Zapisz"}
                   </Button>
@@ -169,7 +172,7 @@ export function PatrolEditDialog({
               </div>
             </DialogFooter>
           </form>
-        </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

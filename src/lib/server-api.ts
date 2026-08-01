@@ -591,3 +591,23 @@ export async function fetchTeamRequests(
 
   return { data: [] };
 }
+
+/**
+ * Fetch the current user's most recent team request.
+ */
+export async function fetchLatestTeamRequest(): Promise<{
+  data?: TeamRequest;
+  error?: JSX.Element;
+}> {
+  const result = await apiRequest<ApiTeamRequestResponse>(
+    "/team-requests/mine/latest/",
+  );
+
+  if (result.error) {
+    return { error: result.error };
+  }
+
+  return {
+    data: result.data ? teamRequestSerializer(result.data) : undefined,
+  };
+}

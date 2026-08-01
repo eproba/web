@@ -4,13 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/state/user";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 
 import packageInfo from "../../../package.json";
 
@@ -65,25 +65,30 @@ Wersja aplikacji: ${packageInfo.version}
         }),
       });
       if (type === "bug") {
-        toast.success(
-          "Dziękujemy za zgłoszenie błędu! Twoja wiadomość została wysłana pomyślnie. Odpowiemy na nią tak szybko, jak to możliwe.",
-        );
+        toast.add({
+          title:
+            "Dziękujemy za zgłoszenie błędu! Twoja wiadomość została wysłana pomyślnie. Odpowiemy na nią tak szybko, jak to możliwe.",
+          type: "success",
+        });
         onSuccess?.();
       } else {
-        toast.success(
-          "Wiadomość została wysłana pomyślnie! Odpowiemy na nią tak szybko, jak to możliwe.",
-        );
+        toast.add({
+          title:
+            "Wiadomość została wysłana pomyślnie! Odpowiemy na nią tak szybko, jak to możliwe.",
+          type: "success",
+        });
       }
       resetForm();
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się wysłać wiadomości",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
       console.error("Error sending email:", error);
     } finally {
       setIsSubmitting(false);
@@ -91,11 +96,7 @@ Wersja aplikacji: ${packageInfo.version}
   }
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="mt-4 space-y-4"
-      noValidate
-    >
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
       <div>
         <Label htmlFor="subject" className="mb-1 block font-medium">
           Temat

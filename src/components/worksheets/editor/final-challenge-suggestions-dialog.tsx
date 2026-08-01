@@ -82,7 +82,6 @@ export const FinalChallengeSuggestionsDialog: React.FC<
           selectButtonText="Wybierz"
           showMaxAgeFilter={false}
           loadingMessage="Ładowanie pomysłów na próby końcowe..."
-          className="data-[state=active]:flex"
         />
       </DialogContent>
     </Dialog>

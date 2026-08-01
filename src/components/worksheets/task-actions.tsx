@@ -11,10 +11,12 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/components/ui/toast";
 import {
   Tooltip,
   TooltipContent,
@@ -30,7 +32,6 @@ import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/state/user";
 import { PublicUser } from "@/types/user";
 import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
-import { composeEventHandlers } from "@radix-ui/primitive";
 import {
   CloudUploadIcon,
   EraserIcon,
@@ -40,9 +41,21 @@ import {
   TicketXIcon,
 } from "lucide-react";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 
 type TaskAction = "submit" | "unsubmit" | "accept" | "reject" | "clear";
+
+function composeClickHandlers(
+  firstHandler?: React.MouseEventHandler,
+  secondHandler?: React.MouseEventHandler,
+): React.MouseEventHandler {
+  return (event) => {
+    firstHandler?.(event);
+
+    if (!event.defaultPrevented) {
+      secondHandler?.(event);
+    }
+  };
+}
 
 const ACTION_MESSAGES: Record<TaskAction, string> = {
   submit: "Zgłoszenie wysłane",
@@ -94,6 +107,7 @@ const ActionButton = ({
   icon: Icon,
   color,
   tooltip,
+  dialogTrigger = false,
   variant,
   children,
   ref,
@@ -102,22 +116,34 @@ const ActionButton = ({
   icon: React.ComponentType<{ className?: string }>;
   color?: string;
   tooltip?: string;
+  dialogTrigger?: boolean;
   variant: "ghost" | "default";
   children?: React.ReactNode;
   ref?: React.Ref<HTMLButtonElement>;
-} & React.ComponentPropsWithoutRef<typeof Button>) => (
-  <TooltipProvider>
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <Button ref={ref} {...props} variant={variant}>
-          <Icon className={cn("size-5", color)} />
-          {children}
-        </Button>
-      </TooltipTrigger>
-      {tooltip && <TooltipContent>{tooltip}</TooltipContent>}
-    </Tooltip>
-  </TooltipProvider>
-);
+} & React.ComponentPropsWithoutRef<typeof Button>) => {
+  const button = (
+    <Button
+      ref={ref}
+      {...props}
+      aria-label={props["aria-label"] ?? (children ? undefined : tooltip)}
+      variant={variant}
+    >
+      <Icon className={cn("size-5", color)} />
+      {children}
+    </Button>
+  );
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger
+          render={dialogTrigger ? <DialogTrigger render={button} /> : button}
+        />
+        {tooltip && <TooltipContent>{tooltip}</TooltipContent>}
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
 
 const SubmitDialog = ({
   worksheetId,
@@ -127,7 +153,7 @@ const SubmitDialog = ({
 }: {
   worksheetId: string;
   task: Task;
-  children: React.ReactNode;
+  children: React.ReactElement;
   onSuccess: (id: string) => void;
 }) => {
   const { apiClient } = useApi();
@@ -145,14 +171,15 @@ const SubmitDialog = ({
       setApprovers(data);
       if (data.length === 1) setSelectedApprover(data[0].id);
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie można pobrać osób do zgłoszenia",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -164,7 +191,7 @@ const SubmitDialog = ({
         open ? fetchApprovers() : setSelectedApprover(undefined)
       }
     >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      {children}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Do kogo chcesz zgłosić to zadanie?</DialogTitle>
@@ -173,8 +200,12 @@ const SubmitDialog = ({
             <q>{task.name}</q>.
           </DialogDescription>
           <Select
-            value={selectedApprover ?? ""}
-            onValueChange={setSelectedApprover}
+            items={approvers.map((approver) => ({
+              label: approver.displayName,
+              value: approver.id,
+            }))}
+            value={selectedApprover ?? null}
+            onValueChange={(value) => setSelectedApprover(value ?? undefined)}
             disabled={!approvers.length || isLoading}
           >
             <SelectTrigger className="w-full">
@@ -189,25 +220,27 @@ const SubmitDialog = ({
               />
             </SelectTrigger>
             <SelectContent>
-              {approvers.map((approver) => (
-                <SelectItem key={approver.id} value={approver.id}>
-                  {approver.displayName}
-                </SelectItem>
-              ))}
+              <SelectGroup>
+                {approvers.map((approver) => (
+                  <SelectItem key={approver.id} value={approver.id}>
+                    {approver.displayName}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
           <div className="mt-4 flex justify-end gap-2">
-            <DialogClose asChild>
-              <Button variant="outline">Anuluj</Button>
-            </DialogClose>
-            <DialogClose asChild>
-              <Button
-                onClick={() => onSuccess(selectedApprover ?? "")}
-                disabled={!selectedApprover}
-              >
-                Wyślij
-              </Button>
-            </DialogClose>
+            <DialogClose render={<Button variant="outline">Anuluj</Button>} />
+            <DialogClose
+              render={
+                <Button
+                  onClick={() => onSuccess(selectedApprover ?? "")}
+                  disabled={!selectedApprover}
+                >
+                  Wyślij
+                </Button>
+              }
+            />
           </div>
         </DialogHeader>
       </DialogContent>
@@ -236,18 +269,19 @@ const useTaskActions = ({
           ? { method: "POST", body: JSON.stringify(body) }
           : { method: "POST" },
       );
-      toast.success(ACTION_MESSAGES[action]);
+      toast.add({ title: ACTION_MESSAGES[action], type: "success" });
       updateTask(taskSerializer(await response.json()));
       closeDrawer?.();
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: ERROR_MESSAGES[action],
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -292,6 +326,7 @@ export function TaskActions({
           icon={SendIcon}
           color="text-blue-500"
           tooltip="Zgłoś wykonanie"
+          dialogTrigger
           className="w-full sm:w-fit"
           variant={format === "button" ? "default" : "ghost"}
           onClick={onClick}
@@ -310,6 +345,7 @@ export function TaskActions({
           icon={SendIcon}
           color="text-blue-500"
           tooltip="Wyślij ponownie"
+          dialogTrigger
           className="w-full sm:w-fit"
           variant={format === "button" ? "default" : "ghost"}
           onClick={onClick}
@@ -325,7 +361,7 @@ export function TaskActions({
         tooltip="Wycofaj zgłoszenie"
         className="w-full sm:w-fit"
         variant={format === "button" ? "default" : "ghost"}
-        onClick={composeEventHandlers(() => handleAction("unsubmit"), onClick)}
+        onClick={composeClickHandlers(() => handleAction("unsubmit"), onClick)}
       >
         {format === "button" && "Wycofaj zgłoszenie"}
       </ActionButton>
@@ -341,7 +377,7 @@ export function TaskActions({
         tooltip="Podpisz zadanie"
         className="w-full sm:w-fit"
         variant={format === "button" ? "default" : "ghost"}
-        onClick={composeEventHandlers(() => handleAction("accept"), onClick)}
+        onClick={composeClickHandlers(() => handleAction("accept"), onClick)}
       >
         {format === "button" && "Podpisz zadanie"}
       </ActionButton>
@@ -353,7 +389,7 @@ export function TaskActions({
         tooltip="Anuluj wykonanie zadania"
         className="w-full sm:w-fit"
         variant={format === "button" ? "default" : "ghost"}
-        onClick={composeEventHandlers(() => handleAction("reject"), onClick)}
+        onClick={composeClickHandlers(() => handleAction("reject"), onClick)}
       >
         {format === "button" && "Anuluj wykonanie zadania"}
       </ActionButton>
@@ -365,7 +401,7 @@ export function TaskActions({
           color="text-green-500"
           tooltip="Zatwierdź zadanie"
           variant={format === "button" ? "default" : "ghost"}
-          onClick={composeEventHandlers(() => handleAction("accept"), onClick)}
+          onClick={composeClickHandlers(() => handleAction("accept"), onClick)}
         >
           {format === "button" && "Zatwierdź zadanie"}
         </ActionButton>
@@ -374,7 +410,7 @@ export function TaskActions({
           color="text-red-500"
           tooltip="Odrzuć zadanie"
           variant={format === "button" ? "default" : "ghost"}
-          onClick={composeEventHandlers(() => handleAction("reject"), onClick)}
+          onClick={composeClickHandlers(() => handleAction("reject"), onClick)}
         >
           {format === "button" && "Odrzuć zadanie"}
         </ActionButton>
@@ -387,7 +423,7 @@ export function TaskActions({
           color="text-green-500"
           tooltip="Podpisz zadanie"
           variant={format === "button" ? "default" : "ghost"}
-          onClick={composeEventHandlers(() => handleAction("accept"), onClick)}
+          onClick={composeClickHandlers(() => handleAction("accept"), onClick)}
         >
           {format === "button" && "Podpisz zadanie"}
         </ActionButton>
@@ -396,7 +432,7 @@ export function TaskActions({
           color="text-gray-500"
           tooltip="Wyczyść status"
           variant={format === "button" ? "default" : "ghost"}
-          onClick={composeEventHandlers(() => handleAction("clear"), onClick)}
+          onClick={composeClickHandlers(() => handleAction("clear"), onClick)}
         >
           {format === "button" && "Wyczyść status"}
         </ActionButton>

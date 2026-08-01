@@ -16,21 +16,24 @@ interface BadgePopoverProps {
 export function BadgePopover({ badge, imageUrl }: BadgePopoverProps) {
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Badge
-          variant="outline"
-          className="hover:bg-muted cursor-pointer transition-colors"
-        >
-          {badge.name}
-          <div className="inline-flex items-center">
-            {Array.from({ length: badge.stars }).map((_, i) => (
-              <StarIcon
-                key={i}
-                className="h-3 w-3 fill-yellow-500 text-yellow-500"
-              />
-            ))}
-          </div>
-        </Badge>
+      <PopoverTrigger
+        render={
+          <Badge
+            render={<button type="button" />}
+            variant="outline"
+            className="hover:bg-muted cursor-pointer transition-colors"
+          />
+        }
+      >
+        {badge.name}
+        <div className="inline-flex items-center">
+          {Array.from({ length: badge.stars }).map((_, i) => (
+            <StarIcon
+              key={i}
+              className="h-3 w-3 fill-yellow-500 text-yellow-500"
+            />
+          ))}
+        </div>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="space-y-3">

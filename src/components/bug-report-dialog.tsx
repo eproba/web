@@ -12,7 +12,7 @@ import {
 import { useState } from "react";
 
 interface BugReportDialogProps {
-  children?: React.ReactNode;
+  children?: React.ReactElement;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 }
@@ -36,7 +36,7 @@ export function BugReportDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
-      {children && <DialogTrigger asChild>{children}</DialogTrigger>}
+      {children && <DialogTrigger render={children} />}
       <DialogContent className="max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Zgłoś błąd</DialogTitle>

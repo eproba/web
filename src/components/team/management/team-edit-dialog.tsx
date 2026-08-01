@@ -8,19 +8,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Team } from "@/types/team";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -30,7 +23,7 @@ const formSchema = z.object({
 
 interface TeamEditDialogProps {
   team: Team;
-  children: React.ReactNode;
+  children: React.ReactElement;
   onTeamUpdate: (name: string, shortName: string) => Promise<boolean>;
 }
 
@@ -73,53 +66,67 @@ export function TeamEditDialog({
         form.reset();
       }}
     >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent>
-        <Form {...form}>
+        <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
               <DialogTitle>Edytuj dane drużyny</DialogTitle>
             </DialogHeader>
             <div className="flex flex-col gap-4 py-4">
-              <FormField
+              <Controller
                 control={form.control}
                 name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nazwa drużyny</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Nazwa drużyny</FieldLabel>
+
+                    <Input
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
-              <FormField
+              <Controller
                 control={form.control}
                 name="shortName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Skrócona nazwa</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Skrócona nazwa</FieldLabel>
+
+                    <Input
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
             </div>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="outline" disabled={isLoading}>
-                  Anuluj
-                </Button>
-              </DialogClose>
+              <DialogClose
+                render={
+                  <Button type="button" variant="outline" disabled={isLoading}>
+                    Anuluj
+                  </Button>
+                }
+              />
               <Button type="submit" disabled={isLoading}>
                 {isLoading ? "Zapisywanie..." : "Zapisz"}
               </Button>
             </DialogFooter>
           </form>
-        </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

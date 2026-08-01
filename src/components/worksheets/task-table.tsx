@@ -9,6 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { romanize } from "@/lib/utils";
@@ -17,7 +18,6 @@ import { Task, TaskStatus, Worksheet } from "@/types/worksheet";
 import { ArchiveIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Fragment } from "react";
-import { toast } from "react-toastify";
 
 import { TaskTableRow } from "./task-table-row";
 
@@ -67,21 +67,25 @@ export function TaskTable({
         method: "PATCH",
         body: JSON.stringify({ is_archived: true }),
       });
-      toast.success("Próba została przeniesiona do archiwum");
+      toast.add({
+        title: "Próba została przeniesiona do archiwum",
+        type: "success",
+      });
       if (removeWorksheet) {
         removeWorksheet(worksheet.id);
       } else {
         router.refresh();
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie można przenieść próby do archiwum",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   }
 

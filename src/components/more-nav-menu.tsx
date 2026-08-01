@@ -40,36 +40,33 @@ export function MoreNavMenuDesktop({ items }: MoreNavMenuDesktopProps) {
       <NavigationMenuTrigger className="bg-transparent">
         Więcej
       </NavigationMenuTrigger>
-      <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
-        <ul className="grid w-[240px] gap-1 p-2">
+      <NavigationMenuContent>
+        <ul className="grid w-50">
           {items.map((item) =>
             item.kind === "bug-report" ? (
-              <NavigationMenuItem key="bug-report">
-                <button
-                  className={cn(
-                    navigationMenuTriggerStyle(),
-                    "w-full items-start justify-start bg-transparent text-start",
-                  )}
+              <li key="bug-report">
+                <NavigationMenuLink
+                  render={<button />}
                   onClick={() => setIsBugDialogOpen(true)}
+                  className="w-full"
                 >
                   {item.title}
-                </button>
-              </NavigationMenuItem>
-            ) : (
-              <NavigationMenuItem key={item.href}>
-                <NavigationMenuLink asChild>
-                  <Link
-                    href={item.href}
-                    target={item.external ? "_blank" : undefined}
-                    className={cn(
-                      navigationMenuTriggerStyle(),
-                      "w-full items-start bg-transparent",
-                    )}
-                  >
-                    {item.title}
-                  </Link>
                 </NavigationMenuLink>
-              </NavigationMenuItem>
+              </li>
+            ) : (
+              <li key={item.href}>
+                <NavigationMenuLink
+                  closeOnClick
+                  render={
+                    <Link
+                      href={item.href}
+                      target={item.external ? "_blank" : undefined}
+                    />
+                  }
+                >
+                  {item.title}
+                </NavigationMenuLink>
+              </li>
             ),
           )}
         </ul>
@@ -101,17 +98,21 @@ export function MoreNavMenuMobile({ items }: MoreNavMenuMobileProps) {
             {item.title}
           </button>
         ) : (
-          <DrawerClose key={item.href} asChild>
-            <Link
-              href={item.href}
-              className={cn(
-                navigationMenuTriggerStyle(),
-                "h-auto w-full justify-start py-1.5",
-              )}
-              target={item.external ? "_blank" : undefined}
-            >
-              {item.title}
-            </Link>
+          <DrawerClose
+            key={item.href}
+            nativeButton={false}
+            render={
+              <Link
+                href={item.href}
+                className={cn(
+                  navigationMenuTriggerStyle(),
+                  "h-auto w-full justify-start py-1.5",
+                )}
+                target={item.external ? "_blank" : undefined}
+              />
+            }
+          >
+            {item.title}
           </DrawerClose>
         ),
       )}

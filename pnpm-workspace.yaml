@@ -1,0 +1,17 @@
+allowBuilds:
+  "@firebase/util": true
+  "@tsparticles/engine": true
+  protobufjs: true
+  unrs-resolver: true
+
+minimumReleaseAgeExclude:
+  - "@ai-sdk/gateway@4.0.34"
+  - "@ai-sdk/mcp@2.0.21"
+  - "@ai-sdk/openai-compatible@3.0.19"
+  - "@ai-sdk/provider-utils@5.0.17"
+  - "@ai-sdk/react@4.0.48"
+  - "@ai-sdk/xai@4.0.24"
+  - ai@7.0.45
+
+overrides:
+  postcss: 8.5.25

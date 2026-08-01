@@ -10,7 +10,11 @@ export interface TeamRequest {
   createdAt: Date;
   notes: string;
   requestedFunctionLevel: number;
+  approvalOutcome: TeamRequestApprovalOutcome;
 }
+
+export type TeamRequestApprovalOutcome =
+  "auto_approved" | "can_auto_approve" | "awaiting_review";
 
 export const ORGANIZATION_CHOICES = [
   { value: 0, label: "Organizacja Harcerzy" },

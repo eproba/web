@@ -1,3 +1,4 @@
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import {
   Task,
@@ -8,8 +9,7 @@ import { ToastMsg } from "@/lib/toast-msg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
-import { Resolver, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { Resolver, useForm, useWatch } from "react-hook-form";
 import { v4 as uuid } from "uuid";
 
 interface UseTemplateFormProps {
@@ -76,14 +76,16 @@ export const useTemplateForm = ({
           task.templateNotes?.trim(),
       );
       if (validTasks.length === 0) {
-        toast.error("Dodaj przynajmniej jedno zadanie");
+        toast.add({ title: "Dodaj przynajmniej jedno zadanie", type: "error" });
         return;
       }
 
       if (!data.scope) {
-        toast.error(
-          "Template must be associated with either a team or an organization",
-        );
+        toast.add({
+          title:
+            "Template must be associated with either a team or an organization",
+          type: "error",
+        });
         return;
       }
 
@@ -149,23 +151,26 @@ export const useTemplateForm = ({
         });
       }
 
-      toast.success(
-        mode === "create"
-          ? "Szablon został utworzony"
-          : "Szablon został zaktualizowany",
-      );
+      toast.add({
+        title:
+          mode === "create"
+            ? "Szablon został utworzony"
+            : "Szablon został zaktualizowany",
+        type: "success",
+      });
 
       router.push(redirectTo);
     } catch (error) {
       console.error("Error creating worksheet:", error);
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Błąd podczas tworzenia szablonu",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -174,7 +179,7 @@ export const useTemplateForm = ({
   const isDirty = form.formState.isDirty;
   const isValid = form.formState.isValid;
   const errors = form.formState.errors;
-  const tasks = form.watch("tasks");
+  const tasks = useWatch({ control: form.control, name: "tasks" });
 
   const canSubmit = isValid && !isSubmitting && tasks.length > 0;
 

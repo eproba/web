@@ -55,39 +55,14 @@ export default async function VerifyEmailPage({ params }: PageProps) {
     );
   }
 
+  let result: Awaited<ReturnType<typeof verifyEmail>> | null = null;
   try {
-    const result = await verifyEmail(userId, token);
-
-    if (result.error) {
-      return (
-        <EmailVerificationError
-          error="Nie udało się zweryfikować adresu e-mail. Sprawdź, czy link jest poprawny i spróbuj ponownie."
-          showResendButton={!!currentUser}
-          isAuthenticated={!!currentUser}
-          email={currentUser?.email}
-        />
-      );
-    }
-
-    // Success - determine message and login button visibility
-    let message = "Twój adres e-mail został pomyślnie zweryfikowany.";
-    let showLoginButton = !currentUser;
-
-    if (currentUser && !isCurrentUser) {
-      message =
-        "Adres e-mail został pomyślnie zweryfikowany, ale nie jest to Twój adres e-mail.";
-      showLoginButton = true;
-    }
-
-    return (
-      <EmailVerificationSuccess
-        message={message}
-        showLoginButton={showLoginButton}
-        alreadyVerified={false}
-      />
-    );
+    result = await verifyEmail(userId, token);
   } catch (error) {
     console.error("Email verification error:", error);
+  }
+
+  if (!result) {
     return (
       <EmailVerificationError
         error="Wystąpił błąd podczas weryfikacji adresu e-mail. Spróbuj ponownie później."
@@ -97,6 +72,35 @@ export default async function VerifyEmailPage({ params }: PageProps) {
       />
     );
   }
+
+  if (result.error) {
+    return (
+      <EmailVerificationError
+        error="Nie udało się zweryfikować adresu e-mail. Sprawdź, czy link jest poprawny i spróbuj ponownie."
+        showResendButton={!!currentUser}
+        isAuthenticated={!!currentUser}
+        email={currentUser?.email}
+      />
+    );
+  }
+
+  // Success - determine message and login button visibility
+  let message = "Twój adres e-mail został pomyślnie zweryfikowany.";
+  let showLoginButton = !currentUser;
+
+  if (currentUser && !isCurrentUser) {
+    message =
+      "Adres e-mail został pomyślnie zweryfikowany, ale nie jest to Twój adres e-mail.";
+    showLoginButton = true;
+  }
+
+  return (
+    <EmailVerificationSuccess
+      message={message}
+      showLoginButton={showLoginButton}
+      alreadyVerified={false}
+    />
+  );
 }
 
 function EmailVerificationError({

@@ -1,7 +1,7 @@
 import { Footer } from "@/components/footer";
 import { Navbar } from "@/components/navbar";
 import { Providers } from "@/components/providers";
-import { ThemedToastContainer } from "@/components/themed-toast-container";
+import { Toaster } from "@/components/ui/toast";
 import { GoogleTagManager } from "@next/third-parties/google";
 import { Metadata, Viewport } from "next";
 import { Space_Grotesk } from "next/font/google";
@@ -125,7 +125,7 @@ export default function RootLayout({
             </main>
           </div>
 
-          <ThemedToastContainer />
+          <Toaster />
 
           {/* Footer */}
           <Footer />

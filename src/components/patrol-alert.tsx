@@ -16,7 +16,7 @@ export function PatrolAlert() {
     searchParams.get("openSelectPatrolDialog") === "true",
   );
 
-  if (!user || user.patrol || pathname === "/team/request") {
+  if (!user || user.patrol || pathname.startsWith("/team/request")) {
     return null;
   }
 

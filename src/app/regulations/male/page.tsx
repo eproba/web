@@ -1,6 +1,6 @@
 import { BadgePopover } from "@/components/badge-popover";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -366,7 +366,7 @@ export default async function MaleRegulationsPage() {
       badges: [],
       individualTasksCount: "5-8",
       expectedTime: "do 12 miesięcy",
-      icon: "/rank-regulations/male/icons/harcerz-rzeczypospolitej.svg", 
+      icon: "/rank-regulations/male/icons/harcerz-rzeczypospolitej.svg",
       additionalInfo:
         "Więcej wskazówek dotyczących zdobywania stopni harcerza orlego i harcerza Rzeczypospolitej znajdziesz w 'Vademecum - Próby indywidualne na stopnie HO i HR'",
     },
@@ -394,32 +394,30 @@ export default async function MaleRegulationsPage() {
             src="/rank-regulations/male/logo.svg"
             alt="Logo regulaminu stopni harcerzy"
             width={218}
-            height={219}
-            className="mx-auto max-w-1/2 rounded-full dark:invert"
+            height={218}
+            className="mx-auto h-auto max-w-1/2 rounded-full dark:invert"
           />
         </div>
         <h1 className="mb-4 text-4xl font-bold text-gray-900 dark:text-gray-100">
           Regulamin stopni harcerzy ZHR
         </h1>
-        <Button
-          variant="outline"
-          size="lg"
-          className="inline-flex items-center gap-2"
-          asChild
+        <a
+          href="/rank-regulations/male/regulations.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={buttonVariants({
+            variant: "outline",
+            size: "lg",
+            className: "inline-flex items-center gap-2",
+          })}
         >
-          <a
-            href="/rank-regulations/male/regulations.pdf"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <DownloadIcon className="size-4" />
-            Pobierz regulamin i wymagania (PDF)
-          </a>
-        </Button>
+          <DownloadIcon className="size-4" />
+          Pobierz regulamin i wymagania (PDF)
+        </a>
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="flex h-auto w-full flex-wrap justify-between gap-2">
+        <TabsList className="flex h-auto! w-full flex-wrap justify-between gap-2">
           <TabsTrigger value="overview">
             <AwardIcon className="size-4" />
             Przegląd
@@ -451,8 +449,8 @@ export default async function MaleRegulationsPage() {
                 oraz wyrobienia harcerskiego. Kierunki pracy nad sobą są
                 określone w sylwetkach stopni, a poziom wyrobienia harcerskiego
                 w wymaganiach na stopnie. Sylwetki stopni stanowią załącznik do
-                regulaminu, a wytyczne do zadań indywidualnych i wymagania na stopnie wprowadza rozkazem Naczelnik
-                Harcerzy.
+                regulaminu, a wytyczne do zadań indywidualnych i wymagania na
+                stopnie wprowadza rozkazem Naczelnik Harcerzy.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -504,8 +502,8 @@ export default async function MaleRegulationsPage() {
                     <p className="text-muted-foreground text-sm">
                       Wykazał się efektywną pracą nad sobą, przybliżającą go do
                       sylwetki stopnia, realizując zadania indywidualne,
-                      zaakceptowane przez drużynowego lub kapitułę stopnia, zgodne 
-                      z wytycznymi na dany stopień;
+                      zaakceptowane przez drużynowego lub kapitułę stopnia,
+                      zgodne z wytycznymi na dany stopień;
                     </p>
                   </div>
                 </div>
@@ -514,7 +512,8 @@ export default async function MaleRegulationsPage() {
                   <div>
                     <h4 className="font-medium">Wiedza i umiejętności</h4>
                     <p className="text-muted-foreground text-sm">
-                      Wykazał się wiedzą i umiejętnościami określonymi w wymaganiach na dany stopień.
+                      Wykazał się wiedzą i umiejętnościami określonymi w
+                      wymaganiach na dany stopień.
                     </p>
                   </div>
                 </div>

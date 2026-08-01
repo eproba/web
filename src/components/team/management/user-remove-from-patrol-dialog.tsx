@@ -18,7 +18,7 @@ interface UserRemoveFromPatrolDialogProps {
   user: User;
   isLoading: boolean;
   onPatrolClear: () => void;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 export function UserRemoveFromPatrolDialog({
@@ -30,7 +30,7 @@ export function UserRemoveFromPatrolDialog({
   const currentUser = useCurrentUser();
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger render={children} />
       <AlertDialogContent className="">
         <AlertDialogHeader>
           <AlertDialogTitle>Usuń użytkownika z drużyny</AlertDialogTitle>

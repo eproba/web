@@ -15,7 +15,6 @@ import {
   DrawerFooter,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import {
   Popover,
@@ -23,6 +22,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { Worksheet } from "@/types/worksheet";
@@ -35,13 +35,14 @@ import {
   XIcon,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
 
 interface WorksheetNotesDialogProps {
   worksheet: Worksheet;
   updateWorksheet: (worksheet: Worksheet) => void;
   format?: "overlay" | "mobile";
-  children: React.ReactNode;
+  children?: React.ReactElement;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 }
 
 export function WorksheetNotesDialog({
@@ -49,26 +50,28 @@ export function WorksheetNotesDialog({
   updateWorksheet,
   format = "overlay",
   children,
+  open: isOpen,
+  onOpenChange,
 }: WorksheetNotesDialogProps) {
   const { apiClient } = useApi();
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(worksheet.notes || "");
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [isFirstRender, setIsFirstRender] = useState(true);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const showEditor = isEditing || (isOpen && !worksheet.notes && isFirstRender);
 
   // Effect to set cursor position to end when editing starts
   useEffect(() => {
-    if (isEditing && textareaRef.current) {
+    if (showEditor && textareaRef.current) {
       const textarea = textareaRef.current;
       // Set cursor to end of text
       const length = textarea.value.length;
       textarea.setSelectionRange(length, length);
       textarea.focus();
     }
-  }, [isEditing]);
+  }, [showEditor]);
 
   const handleSaveNote = async () => {
     if (editValue.trim() === worksheet.notes?.trim()) {
@@ -86,18 +89,20 @@ export function WorksheetNotesDialog({
       const updatedWorksheet = { ...worksheet, notes: editValue.trim() };
       updateWorksheet(updatedWorksheet);
       setIsEditing(false);
-      toast.success(
-        worksheet.notes ? "Notatka zaktualizowana" : "Notatka dodana",
-      );
+      toast.add({
+        title: worksheet.notes ? "Notatka zaktualizowana" : "Notatka dodana",
+        type: "success",
+      });
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zapisać notatki",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
       setIsFirstRender(false);
@@ -113,19 +118,20 @@ export function WorksheetNotesDialog({
 
       const updatedWorksheet = { ...worksheet, notes: "" };
       updateWorksheet(updatedWorksheet);
-      toast.success("Notatka usunięta");
+      toast.add({ title: "Notatka usunięta", type: "success" });
       setIsDeleteDialogOpen(false);
-      setIsOpen(false);
+      onOpenChange(false);
       setEditValue("");
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się usunąć notatki",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
       setIsFirstRender(true);
@@ -143,25 +149,20 @@ export function WorksheetNotesDialog({
     setIsEditing(false);
     setIsFirstRender(!worksheet.notes);
     if (!worksheet.notes) {
-      setIsOpen(false);
+      onOpenChange(false);
     }
   };
 
   const handleOpenChange = (open: boolean) => {
-    setIsOpen(open);
     if (!open) {
       setIsFirstRender(true);
-    } else {
-      // If opening and there's no note, start in edit mode
-      if (!worksheet.notes) {
-        setIsEditing(true);
-      }
     }
+    onOpenChange(open);
   };
 
   const renderNoteContent = () => (
     <AnimatePresence>
-      {!isEditing ? (
+      {!showEditor ? (
         <motion.div
           key="display-note"
           initial={{
@@ -196,16 +197,18 @@ export function WorksheetNotesDialog({
                 open={isDeleteDialogOpen}
                 onOpenChange={setIsDeleteDialogOpen}
               >
-                <DialogTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    disabled={isLoading}
-                    className="h-6 w-6 p-0"
-                  >
-                    <TrashIcon className="h-3 w-3" />
-                  </Button>
-                </DialogTrigger>
+                <DialogTrigger
+                  render={
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      disabled={isLoading}
+                      className="h-6 w-6 p-0"
+                    >
+                      <TrashIcon className="h-3 w-3" />
+                    </Button>
+                  }
+                />
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Usuń notatkę</DialogTitle>
@@ -299,8 +302,7 @@ export function WorksheetNotesDialog({
   // Mobile format - render as drawer
   if (format === "mobile") {
     return (
-      <Drawer open={isOpen} onOpenChange={handleOpenChange}>
-        <DrawerTrigger asChild>{children}</DrawerTrigger>
+      <Drawer showSwipeHandle open={isOpen} onOpenChange={handleOpenChange}>
         <DrawerContent>
           <DrawerHeader>
             <DrawerTitle>
@@ -316,8 +318,8 @@ export function WorksheetNotesDialog({
           <div className="px-4 pb-4">{renderNoteContent()}</div>
 
           <DrawerFooter>
-            <DrawerClose asChild>
-              <Button variant="outline">Zamknij</Button>
+            <DrawerClose render={<Button variant="outline" />}>
+              Zamknij
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>
@@ -328,7 +330,7 @@ export function WorksheetNotesDialog({
   // Desktop format - render as popover
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
+      {children && <PopoverTrigger render={children} />}
       <PopoverContent className="w-80 p-0" align="center" side="bottom">
         {renderNoteContent()}
       </PopoverContent>

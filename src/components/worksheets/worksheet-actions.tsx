@@ -8,13 +8,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/toast";
 import {
   Tooltip,
   TooltipContent,
@@ -26,6 +28,7 @@ import { API_URL } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { ToastMsg } from "@/lib/toast-msg";
+import { cn } from "@/lib/utils";
 import { useCurrentUser } from "@/state/user";
 import { User } from "@/types/user";
 import { Worksheet } from "@/types/worksheet";
@@ -43,8 +46,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { useState } from "react";
 
 type WorksheetAction = {
   id: string;
@@ -54,7 +56,7 @@ type WorksheetAction = {
   href?: string;
   variant: ("managed" | "archived" | "user" | "review")[];
   userFilter?: (user: User) => boolean;
-  renderContent?: (action: WorksheetAction, baseUrl: string) => React.ReactNode;
+  renderContent?: (action: WorksheetAction) => React.ReactElement;
 };
 
 export function WorksheetActions({
@@ -71,17 +73,16 @@ export function WorksheetActions({
   const currentUser = useCurrentUser();
   const router = useRouter();
   const { apiClient } = useApi();
-  const [baseUrl, setBaseUrl] = useState("");
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-
-  useEffect(() => {
-    setBaseUrl(window.location.origin);
-  }, []);
+  const [showDesktopNotes, setShowDesktopNotes] = useState(false);
+  const [showMobileNotes, setShowMobileNotes] = useState(false);
 
   function copyLink() {
-    if (typeof navigator !== "undefined") {
-      navigator.clipboard.writeText(`${baseUrl}/worksheets/${worksheet.id}`);
-      toast.success("Link skopiowany do schowka");
+    if (typeof window !== "undefined" && typeof navigator !== "undefined") {
+      navigator.clipboard.writeText(
+        `${window.location.origin}/worksheets/${worksheet.id}`,
+      );
+      toast.add({ title: "Link skopiowany do schowka", type: "success" });
     }
   }
 
@@ -93,21 +94,22 @@ export function WorksheetActions({
           method: "DELETE",
         },
       );
-      toast.success("Próba została usunięta");
+      toast.add({ title: "Próba została usunięta", type: "success" });
       if (removeWorksheet) {
         removeWorksheet(worksheet.id);
       } else {
         router.refresh();
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie można usunąć próby",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setShowDeleteAlert(false);
     }
@@ -119,21 +121,25 @@ export function WorksheetActions({
         method: "PATCH",
         body: JSON.stringify({ is_archived: true }),
       });
-      toast.success("Próba została przeniesiona do archiwum");
+      toast.add({
+        title: "Próba została przeniesiona do archiwum",
+        type: "success",
+      });
       if (removeWorksheet) {
         removeWorksheet(worksheet.id);
       } else {
         router.refresh();
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie można przenieść próby do archiwum",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   }
 
@@ -143,21 +149,25 @@ export function WorksheetActions({
         method: "PATCH",
         body: JSON.stringify({ is_archived: false }),
       });
-      toast.success("Próba została przywrócona z archiwum");
+      toast.add({
+        title: "Próba została przywrócona z archiwum",
+        type: "success",
+      });
       if (removeWorksheet) {
         removeWorksheet(worksheet.id);
       } else {
         router.refresh();
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie można przywrócić próby z archiwum",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   }
 
@@ -178,17 +188,27 @@ export function WorksheetActions({
             worksheet={worksheet}
             updateWorksheet={updateWorksheet || (() => {})}
             format="overlay"
+            open={showDesktopNotes}
+            onOpenChange={setShowDesktopNotes}
           >
-            <TooltipTrigger asChild>
-              <action.icon
-                className={`cursor-pointer ${
-                  worksheet.notes
-                    ? "text-amber-600 hover:text-amber-700"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-                size={20}
-              />
-            </TooltipTrigger>
+            <TooltipTrigger
+              render={
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={action.label}
+                >
+                  <action.icon
+                    className={cn(
+                      "size-5",
+                      worksheet.notes
+                        ? "text-amber-600 hover:text-amber-700"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  />
+                </Button>
+              }
+            />
           </WorksheetNotesDialog>
           <TooltipContent>
             <p>{action.label}</p>
@@ -268,39 +288,45 @@ export function WorksheetActions({
 
   const renderActionIcon = (action: WorksheetAction) => {
     if (action.renderContent) {
-      return action.renderContent(action, baseUrl);
+      return action.renderContent(action);
     }
 
     if (action.href) {
       return (
-        <Link href={action.href}>
-          <action.icon className="text-muted-foreground" size={20} />
+        <Link
+          href={action.href}
+          className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+        >
+          <action.icon className="text-muted-foreground size-5" />
         </Link>
       );
     }
 
     return (
-      <action.icon
-        className="text-muted-foreground cursor-pointer"
-        size={20}
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label={action.label}
         onClick={action.handler}
-      />
+      >
+        <action.icon className="text-muted-foreground size-5" />
+      </Button>
     );
   };
 
   const renderDesktopIcons = () => (
-    <div className="hidden gap-2 md:flex">
+    <ButtonGroup className="hidden md:flex">
       {filteredActions.map((action) => (
         <TooltipProvider key={action.id}>
           <Tooltip>
-            <TooltipTrigger asChild>{renderActionIcon(action)}</TooltipTrigger>
+            <TooltipTrigger render={renderActionIcon(action)} />
             <TooltipContent>
               <p>{action.label}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       ))}
-    </div>
+    </ButtonGroup>
   );
 
   const renderMobileMenu = () =>
@@ -308,53 +334,46 @@ export function WorksheetActions({
     filteredActions.length > 1 ? (
       <div className="md:hidden">
         <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="data-[state=open]:bg-muted size-8 p-0"
-            >
-              <EllipsisVerticalIcon className="size-5" />
-              <span className="sr-only">Otwórz menu</span>
-            </Button>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="data-popup-open:bg-muted size-8 p-0"
+              />
+            }
+          >
+            <EllipsisVerticalIcon className="size-5" />
+            <span className="sr-only">Otwórz menu</span>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
+          <DropdownMenuContent className="w-50" align="end">
             {filteredActions.map((action) => {
-              // Special case for notes in mobile view - open as drawer
+              // Keep the controlled drawer mounted outside the closing menu.
               if (action.id === "notes") {
                 return (
-                  <DropdownMenuItem key={action.id} asChild>
-                    <WorksheetNotesDialog
-                      worksheet={worksheet}
-                      updateWorksheet={updateWorksheet || (() => {})}
-                      format="mobile"
-                    >
-                      <div className="hover:bg-accent hover:text-accent-foreground [&_svg:not([class*='text-'])]:text-muted-foreground flex h-auto w-full cursor-pointer items-center justify-start px-2 py-1.5 text-sm">
-                        <StickyNoteIcon className="mr-2 size-4" />
-                        {worksheet.notes ? "Notatka" : "Dodaj notatkę"}
-                      </div>
-                    </WorksheetNotesDialog>
+                  <DropdownMenuItem
+                    key={action.id}
+                    onClick={() => setShowMobileNotes(true)}
+                  >
+                    <StickyNoteIcon className="size-4" />
+                    {worksheet.notes ? "Notatka" : "Dodaj notatkę"}
                   </DropdownMenuItem>
                 );
               }
 
-              return (
+              return action.href ? (
                 <DropdownMenuItem
                   key={action.id}
-                  onSelect={action.handler}
-                  asChild={!!action.href}
+                  nativeButton={false}
+                  render={<Link href={action.href} />}
                 >
-                  {action.href ? (
-                    <Link href={action.href} className="flex items-center">
-                      <action.icon className="size-4" />
-                      {action.label}
-                    </Link>
-                  ) : (
-                    <div className="flex items-center">
-                      <action.icon className="mr-2 size-4" />
-                      {action.label}
-                    </div>
-                  )}
+                  <action.icon className="size-4" />
+                  {action.label}
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem key={action.id} onClick={action.handler}>
+                  <action.icon className="size-4" />
+                  {action.label}
                 </DropdownMenuItem>
               );
             })}
@@ -367,9 +386,7 @@ export function WorksheetActions({
         {filteredActions.map((action) => (
           <TooltipProvider key={action.id}>
             <Tooltip>
-              <TooltipTrigger asChild>
-                {renderActionIcon(action)}
-              </TooltipTrigger>
+              <TooltipTrigger render={renderActionIcon(action)} />
               <TooltipContent>
                 <p>{action.label}</p>
               </TooltipContent>
@@ -390,6 +407,16 @@ export function WorksheetActions({
         {renderDesktopIcons()}
         {renderMobileMenu()}
       </div>
+
+      {filteredActions.some((action) => action.id === "notes") && (
+        <WorksheetNotesDialog
+          worksheet={worksheet}
+          updateWorksheet={updateWorksheet || (() => {})}
+          format="mobile"
+          open={showMobileNotes}
+          onOpenChange={setShowMobileNotes}
+        />
+      )}
 
       <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
         <AlertDialogContent>

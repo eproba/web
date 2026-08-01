@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { FileInput } from "@/components/ui/file-input";
-import { FormField, FormItem, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -15,7 +15,7 @@ import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { InfoIcon } from "lucide-react";
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 
 interface WorksheetBasicInfoProps {
   form: UseFormReturn<WorksheetWithTasks>;
@@ -30,12 +30,12 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
     <Card>
       <CardContent>
         <div className="space-y-4">
-          <FormField
+          <Controller
             control={form.control}
             name="scope"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Dla kogo jest ten szablon? *</Label>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel>Dla kogo jest ten szablon? *</FieldLabel>
                 <RadioGroup
                   value={field.value}
                   onValueChange={field.onChange}
@@ -60,79 +60,99 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                     </div>
                   )}
                 </RadioGroup>
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Nazwa *</Label>
-                <Input placeholder="np. Wywiadowca" {...field} />
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Nazwa *</FieldLabel>
+                <Input
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="np. Wywiadowca"
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="description"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Opis</Label>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Opis</FieldLabel>
                 <Textarea
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
                   placeholder="Jeśli chcesz, możesz opisać tę próbę."
                   rows={2}
                   {...field}
                 />
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="templateNotes"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Notatka</Label>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Notatka</FieldLabel>
                 <Textarea
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
                   placeholder="Notatka - widoczna do momentu utworzenie próby z szablonu."
                   rows={2}
                   {...field}
                 />
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="image"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Obrazek szablonu</Label>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Obrazek szablonu</FieldLabel>
                 <FileInput
+                  id={field.name}
                   value={field.value || null}
                   onChange={field.onChange}
                   accept="image/jpeg,image/jpg,image/png,image/gif,image/svg+xml"
                   maxSizeInMB={5}
                   preview={true}
                 />
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="priority"
-            render={({ field }) => (
-              <FormItem>
-                <Label>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>
                   Priorytet
                   <Tooltip>
                     <TooltipTrigger>
@@ -144,8 +164,10 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                       szablony będą sortowane alfabetycznie.
                     </TooltipContent>
                   </Tooltip>
-                </Label>
+                </FieldLabel>
                 <Input
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
                   type="number"
                   inputMode="numeric"
                   placeholder="0"
@@ -160,8 +182,10 @@ export const TemplateWorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                   }}
                   {...field}
                 />
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
         </div>

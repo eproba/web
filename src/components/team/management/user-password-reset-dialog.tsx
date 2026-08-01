@@ -9,18 +9,18 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 import { useDebouncedCallback } from "use-debounce";
 
 interface UserPasswordResetDialogProps {
   user: User;
   isLoading: boolean;
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 export function UserPasswordResetDialog({
@@ -44,19 +44,21 @@ export function UserPasswordResetDialog({
       const data = await response.json();
       setNewPassword(data.new_password);
       setIsLoading(false);
-      toast.success(
-        `Hasło zostało zresetowane${!user.email.endsWith("@eproba.zhr.pl") && "i wysłane na email użytkownika"}`,
-      );
+      toast.add({
+        title: `Hasło zostało zresetowane${!user.email.endsWith("@eproba.zhr.pl") && "i wysłane na email użytkownika"}`,
+        type: "success",
+      });
     } catch (error) {
       setIsLoading(false);
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zresetować hasła",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
@@ -68,7 +70,7 @@ export function UserPasswordResetDialog({
         }
       }}
     >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Zresetuj hasło użytkownika</DialogTitle>
@@ -99,18 +101,23 @@ export function UserPasswordResetDialog({
           )}
         </DialogDescription>
         <DialogFooter className="mt-4 flex flex-row justify-end gap-2">
-          <DialogClose asChild>
-            <Button type="button" variant="outline" disabled={isLoading}>
-              {newPassword ? "Zamknij" : "Anuluj"}
-            </Button>
-          </DialogClose>
+          <DialogClose
+            render={
+              <Button type="button" variant="outline" disabled={isLoading}>
+                {newPassword ? "Zamknij" : "Anuluj"}
+              </Button>
+            }
+          />
           {newPassword ? (
             <Button
               type="button"
-              variant="info"
+              variant="secondary"
               onClick={() => {
                 navigator.clipboard.writeText(newPassword);
-                toast.success("Hasło skopiowane do schowka");
+                toast.add({
+                  title: "Hasło skopiowane do schowka",
+                  type: "success",
+                });
               }}
               disabled={isLoading}
             >
@@ -118,7 +125,7 @@ export function UserPasswordResetDialog({
             </Button>
           ) : (
             <Button
-              variant="info"
+              variant="secondary"
               onClick={onPasswordReset}
               disabled={isLoading}
             >

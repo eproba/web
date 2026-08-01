@@ -11,18 +11,18 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { User } from "@/types/user";
 import { signOut } from "next-auth/react";
 import React from "react";
-import { toast } from "react-toastify";
 
 export const UserDeactivateDialog = ({
   children,
   user,
 }: {
-  children: React.ReactNode;
+  children: React.ReactElement;
   user: User;
 }) => {
   const { apiClient } = useApi();
@@ -33,24 +33,28 @@ export const UserDeactivateDialog = ({
         method: "PATCH",
         body: JSON.stringify({ is_active: false }),
       });
-      toast.success("Twoje konto zostało dezaktywowane");
+      toast.add({
+        title: "Twoje konto zostało dezaktywowane",
+        type: "success",
+      });
       await signOut({ redirectTo: "/signout" });
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title:
               "Nie udało się dezaktywować twojego konta, skontaktuj się z administratorem",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
+      <AlertDialogTrigger render={children} />
       <AlertDialogContent className="">
         <AlertDialogHeader>
           <AlertDialogTitle>Dezaktywuj konto</AlertDialogTitle>

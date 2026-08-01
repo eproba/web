@@ -1,6 +1,7 @@
 "use client";
 
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { teamSerializer } from "@/lib/serializers/team";
@@ -10,7 +11,6 @@ import { Team } from "@/types/team";
 import { User } from "@/types/user";
 import { AlertCircleIcon } from "lucide-react";
 import { useState } from "react";
-import { toast } from "react-toastify";
 
 import { PatrolsList } from "./patrols-list";
 import { TeamHeader } from "./team-header";
@@ -45,14 +45,15 @@ export function TeamManagementClient({
       setTeam(teamSerializer(await response.json()));
       return true;
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zaktualizować drużyny",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
       console.error("Error updating team:", error);
       return false;
     }

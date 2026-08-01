@@ -10,13 +10,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RequiredFunctionLevel } from "@/lib/const";
@@ -38,7 +32,7 @@ import {
   Trash2Icon,
 } from "lucide-react";
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 
 import { useDragDrop } from "./drag-drop-provider";
 import { TaskActionPopover } from "./task-action-popover";
@@ -338,22 +332,25 @@ export const TaskItem: React.FC<TaskItemProps> = ({
 
           {/* Task Content */}
           <div className="flex-1 space-y-3">
-            <FormField
+            <Controller
               control={form.control}
               name={`tasks.${taskIndex}.name` as const}
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      ref={taskInputRef}
-                      placeholder="Wprowadź zadanie..."
-                      onMouseDown={(e) => e.stopPropagation()}
-                      onDragStart={(e) => e.preventDefault()}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <Input
+                    {...field}
+                    ref={taskInputRef}
+                    placeholder="Wprowadź zadanie..."
+                    onMouseDown={(e) => e.stopPropagation()}
+                    onDragStart={(e) => e.preventDefault()}
+                    aria-invalid={fieldState.invalid}
+                    id={field.name}
+                  />
+
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
             />
 
@@ -368,46 +365,56 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               )}
 
             {showDescription && (
-              <FormField
+              <Controller
                 control={form.control}
                 name={`tasks.${taskIndex}.description` as const}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="Opis zadania (opcjonalnie)..."
-                        rows={2}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onDragStart={(e) => e.preventDefault()}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <Textarea
+                      {...field}
+                      placeholder="Opis zadania (opcjonalnie)..."
+                      rows={2}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onDragStart={(e) => e.preventDefault()}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
             )}
 
             {showDescription && variant === "template" && (
-              <FormField
+              <Controller
                 control={form.control}
                 name={`tasks.${taskIndex}.templateNotes` as const}
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-muted-foreground text-xs">
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel
+                      className="text-muted-foreground text-xs"
+                      htmlFor={field.name}
+                    >
                       Notatki do szablonu, znikają po utworzeniu próby
-                    </FormLabel>
-                    <FormControl>
-                      <Textarea
-                        {...field}
-                        placeholder="To zadanie ma na celu..."
-                        rows={2}
-                        onMouseDown={(e) => e.stopPropagation()}
-                        onDragStart={(e) => e.preventDefault()}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                    </FieldLabel>
+
+                    <Textarea
+                      {...field}
+                      placeholder="To zadanie ma na celu..."
+                      rows={2}
+                      onMouseDown={(e) => e.stopPropagation()}
+                      onDragStart={(e) => e.preventDefault()}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
             )}

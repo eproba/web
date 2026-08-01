@@ -1,6 +1,16 @@
 "use client";
 
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,13 +20,19 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
+import {
+  ApiTeamRequestResponse,
+  teamRequestSerializer,
+} from "@/lib/serializers/team-request";
 import { ToastMsg } from "@/lib/toast-msg";
 import { TeamRequest } from "@/types/team-request";
 import { FieldInfo, UserFunction } from "@/types/user";
@@ -27,12 +43,15 @@ import {
   LoaderCircleIcon,
   MailIcon,
   MapPinIcon,
+  RotateCcwIcon,
   SearchIcon,
+  ShieldCheckIcon,
   ShieldIcon,
+  ShieldQuestionIcon,
+  ShieldXIcon,
   UsersIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { toast } from "react-toastify";
 import { useDebouncedCallback } from "use-debounce";
 
 type FilterStatus =
@@ -58,6 +77,54 @@ const STATUS_COLORS = {
     "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300",
   rejected: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300",
 } as const;
+
+const filterStatusItems = [
+  {
+    label: "Zgłoszone / Oczekuje na weryfikację",
+    value: "submitted_pending_verification",
+  },
+  { label: "Wszystkie", value: "all" },
+  { label: "Zgłoszone", value: "submitted" },
+  { label: "Oczekuje na weryfikację", value: "pending_verification" },
+  { label: "Zaakceptowane", value: "approved" },
+  { label: "Odrzucone", value: "rejected" },
+] satisfies ReadonlyArray<{ label: string; value: FilterStatus }>;
+
+type TeamRequestAction =
+  "approve" | "reject" | "request-verification" | "reopen";
+
+const ACTION_CONTENT = {
+  approve: {
+    label: "Zatwierdź",
+    title: "Zatwierdzić drużynę?",
+    description:
+      "Drużyna zostanie aktywowana, a wnioskodawca otrzyma wybraną funkcję.",
+    success: "Zgłoszenie zostało zatwierdzone",
+  },
+  reject: {
+    label: "Odrzuć",
+    title: "Odrzucić zgłoszenie?",
+    description:
+      "Drużyna pozostanie nieaktywna. Tę decyzję można później zmienić.",
+    success: "Zgłoszenie zostało odrzucone",
+  },
+  "request-verification": {
+    label: "Poproś o weryfikację",
+    title: "Poprosić o dodatkową weryfikację?",
+    description:
+      "Zgłoszenie zostanie oznaczone jako oczekujące na dodatkowe informacje.",
+    success: "Zgłoszenie oczekuje na weryfikację",
+  },
+  reopen: {
+    label: "Otwórz ponownie",
+    title: "Otworzyć zgłoszenie ponownie?",
+    description: "Zgłoszenie wróci do kolejki do rozpatrzenia.",
+    success: "Zgłoszenie zostało otwarte ponownie",
+  },
+} satisfies Record<
+  TeamRequestAction,
+  { label: string; title: string; description: string; success: string }
+>;
 
 interface TeamRequestsClientProps {
   initialRequests: TeamRequest[];
@@ -143,9 +210,9 @@ export function TeamRequestsClient({
     setFilterStatus(value);
   }, []);
 
-  const handleStatusChange = async (
+  const handleAction = async (
     requestId: string,
-    newStatus: string,
+    action: TeamRequestAction,
     note: string,
     sendEmail: boolean,
     sendNote: boolean,
@@ -153,37 +220,35 @@ export function TeamRequestsClient({
     try {
       setProcessingIds((prev) => new Set(prev).add(requestId));
 
-      await apiClient(`/team-requests/${requestId}/`, {
-        method: "PATCH",
-        body: JSON.stringify({
-          status: newStatus,
-          notes: note,
-          send_email: sendEmail,
-          send_note: sendNote,
-        }),
-      });
+      const response = await apiClient(
+        `/team-requests/${requestId}/${action}/`,
+        {
+          method: "POST",
+          body: JSON.stringify({
+            note,
+            send_email: sendEmail,
+            send_note: sendNote,
+          }),
+        },
+      );
+      const updatedRequest = teamRequestSerializer(
+        (await response.json()) as ApiTeamRequestResponse,
+      );
 
-      toast.success("Zgłoszenie zostało zaktualizowane");
+      toast.add({ title: ACTION_CONTENT[action].success, type: "success" });
       setRequests((prev) =>
-        prev.map((req) =>
-          req.id === requestId
-            ? {
-                ...req,
-                status: newStatus as TeamRequest["status"],
-                notes: note,
-              }
-            : req,
-        ),
+        prev.map((req) => (req.id === requestId ? updatedRequest : req)),
       );
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zaktualizować zgłoszenia",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
       console.error("Error updating team request:", error);
     } finally {
       setProcessingIds((prev) => {
@@ -216,21 +281,26 @@ export function TeamRequestsClient({
       <div className="mb-6 flex flex-col gap-4 sm:flex-row">
         <div className="flex items-center gap-2">
           <FilterIcon className="text-muted-foreground size-4" />
-          <Select value={filterStatus} onValueChange={handleFilterStatusChange}>
+          <Select
+            items={filterStatusItems}
+            value={filterStatus}
+            onValueChange={(value) => {
+              if (value !== null) {
+                handleFilterStatusChange(value);
+              }
+            }}
+          >
             <SelectTrigger className="w-[280px]">
               <SelectValue placeholder="Filtruj po statusie" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="submitted_pending_verification">
-                Zgłoszone / Oczekuje na weryfikację
-              </SelectItem>
-              <SelectItem value="all">Wszystkie</SelectItem>
-              <SelectItem value="submitted">Zgłoszone</SelectItem>
-              <SelectItem value="pending_verification">
-                Oczekuje na weryfikację
-              </SelectItem>
-              <SelectItem value="approved">Zaakceptowane</SelectItem>
-              <SelectItem value="rejected">Odrzucone</SelectItem>
+              <SelectGroup>
+                {filterStatusItems.map((item) => (
+                  <SelectItem key={item.value} value={item.value}>
+                    {item.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             </SelectContent>
           </Select>
         </div>
@@ -302,7 +372,7 @@ export function TeamRequestsClient({
             <TeamRequestCard
               key={request.id}
               request={request}
-              onStatusChange={handleStatusChange}
+              onAction={handleAction}
               isProcessing={processingIds.has(request.id)}
               formatDate={formatDate}
               getFunctionLevelName={getFunctionLevelName}
@@ -316,9 +386,9 @@ export function TeamRequestsClient({
 
 interface TeamRequestCardProps {
   request: TeamRequest;
-  onStatusChange: (
+  onAction: (
     requestId: string,
-    newStatus: string,
+    action: TeamRequestAction,
     note: string,
     sendEmail: boolean,
     sendNote: boolean,
@@ -333,25 +403,23 @@ interface TeamRequestCardProps {
 
 function TeamRequestCard({
   request,
-  onStatusChange,
+  onAction,
   isProcessing,
   formatDate,
   getFunctionLevelName,
 }: TeamRequestCardProps) {
   const [note, setNote] = useState(request.notes || "");
-  const [status, setStatus] = useState<TeamRequest["status"]>(request.status);
-  const [sendEmail, setSendEmail] = useState(false);
+  const [sendEmail, setSendEmail] = useState(true);
   const [sendNote, setSendNote] = useState(false);
+  const [pendingAction, setPendingAction] = useState<TeamRequestAction | null>(
+    null,
+  );
 
-  const handleSave = () => {
-    onStatusChange(request.id, status, note, sendEmail, sendNote);
+  const handleConfirmedAction = () => {
+    if (!pendingAction) return;
+    onAction(request.id, pendingAction, note, sendEmail, sendNote);
+    setPendingAction(null);
   };
-
-  const hasChanges =
-    status !== request.status ||
-    note !== (request.notes || "") ||
-    sendEmail ||
-    sendNote;
 
   return (
     <Card>
@@ -448,35 +516,6 @@ function TeamRequestCard({
         )}
 
         <div className="space-y-4 border-t pt-6">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div>
-              <Label
-                htmlFor={`status-${request.id}`}
-                className="text-sm font-medium"
-              >
-                Status
-              </Label>
-              <Select
-                value={status}
-                onValueChange={(value: TeamRequest["status"]) =>
-                  setStatus(value)
-                }
-              >
-                <SelectTrigger className="mt-1">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="submitted">Zgłoszone</SelectItem>
-                  <SelectItem value="pending_verification">
-                    Oczekuje na weryfikację
-                  </SelectItem>
-                  <SelectItem value="approved">Zaakceptowane</SelectItem>
-                  <SelectItem value="rejected">Odrzucone</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
           <div>
             <Label
               htmlFor={`note-${request.id}`}
@@ -498,7 +537,10 @@ function TeamRequestCard({
               <Checkbox
                 id={`send-email-${request.id}`}
                 checked={sendEmail}
-                onCheckedChange={(checked: boolean) => setSendEmail(checked)}
+                onCheckedChange={(checked: boolean) => {
+                  setSendEmail(checked);
+                  if (!checked) setSendNote(false);
+                }}
               />
               <Label htmlFor={`send-email-${request.id}`} className="text-sm">
                 Wyślij e-mail z powiadomieniem
@@ -508,6 +550,7 @@ function TeamRequestCard({
               <Checkbox
                 id={`send-note-${request.id}`}
                 checked={sendNote}
+                disabled={!sendEmail || !note.trim()}
                 onCheckedChange={(checked: boolean) => setSendNote(checked)}
               />
               <Label htmlFor={`send-note-${request.id}`} className="text-sm">
@@ -516,17 +559,93 @@ function TeamRequestCard({
             </div>
           </div>
 
-          <div className="flex justify-end">
-            <Button
-              onClick={handleSave}
-              disabled={!hasChanges || isProcessing}
-              className="min-w-[120px]"
-            >
-              {isProcessing ? "Zapisywanie..." : "Zapisz"}
-            </Button>
+          <div className="flex flex-wrap justify-end gap-2 border-t pt-4">
+            {request.status !== "submitted" && (
+              <Button
+                variant="ghost"
+                onClick={() => setPendingAction("reopen")}
+                disabled={isProcessing}
+              >
+                <RotateCcwIcon />
+                Otwórz ponownie
+              </Button>
+            )}
+            {request.status !== "pending_verification" && (
+              <Button
+                variant="outline"
+                onClick={() => setPendingAction("request-verification")}
+                disabled={isProcessing || !sendEmail}
+                title={
+                  sendEmail
+                    ? undefined
+                    : "Włącz powiadomienie e-mail, aby poprosić o weryfikację"
+                }
+              >
+                <ShieldQuestionIcon />
+                Poproś o weryfikację
+              </Button>
+            )}
+            {request.status !== "rejected" && (
+              <Button
+                variant="destructive"
+                onClick={() => setPendingAction("reject")}
+                disabled={isProcessing}
+              >
+                <ShieldXIcon />
+                Odrzuć
+              </Button>
+            )}
+            {request.status !== "approved" && (
+              <Button
+                onClick={() => setPendingAction("approve")}
+                disabled={isProcessing}
+              >
+                {isProcessing ? (
+                  <LoaderCircleIcon className="animate-spin" />
+                ) : (
+                  <ShieldCheckIcon />
+                )}
+                Zatwierdź
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
+
+      <AlertDialog
+        open={pendingAction !== null}
+        onOpenChange={(open) => {
+          if (!open) setPendingAction(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {pendingAction ? ACTION_CONTENT[pendingAction].title : ""}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {pendingAction ? ACTION_CONTENT[pendingAction].description : ""}
+              {sendEmail && (
+                <span className="mt-2 block">
+                  Wnioskodawca otrzyma powiadomienie e-mail
+                  {sendNote && note.trim() ? " wraz z notatką" : ""}.
+                </span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Anuluj</AlertDialogCancel>
+            <AlertDialogAction
+              variant={pendingAction === "reject" ? "destructive" : "default"}
+              onClick={handleConfirmedAction}
+            >
+              {pendingAction
+                ? ACTION_CONTENT[pendingAction].label
+                : "Potwierdź"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Card>
   );
 }

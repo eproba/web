@@ -1,6 +1,10 @@
 import { TeamStatistics } from "@/types/team-statistics";
 import { xai } from "@ai-sdk/xai";
-import { streamText } from "ai";
+import {
+  createUIMessageStreamResponse,
+  streamText,
+  toUIMessageStream,
+} from "ai";
 import { NextRequest } from "next/server";
 
 // Allow streaming responses up to 60 seconds
@@ -18,10 +22,12 @@ export async function POST(req: NextRequest) {
   Postaraj się wyciągnąć wnioski z danych, które mogą być przydatne dla drużynowego.`;
 
   const result = streamText({
-    model: xai("grok-3-mini"),
+    model: xai.chat("grok-3-mini"),
     prompt: JSON.stringify(statistics),
-    system: systemPrompt,
+    instructions: systemPrompt,
     temperature: 0.7,
   });
-  return result.toUIMessageStreamResponse();
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream }),
+  });
 }

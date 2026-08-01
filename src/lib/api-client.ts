@@ -81,21 +81,22 @@ export function useApi() {
   const { data: session, update, status } = useSession();
   const sessionRef = useRef<Session | null>(null);
   const statusRef = useRef(status);
-  const [isReady, setIsReady] = useState(false);
+  const [didSessionLoadTimeOut, setDidSessionLoadTimeOut] = useState(false);
 
-  // Track session status and set ready state
+  // Keep the latest session available to requests that started while it loaded.
   useEffect(() => {
     statusRef.current = status;
+    sessionRef.current = session;
 
     if (status !== "loading") {
-      setIsReady(true);
-      sessionRef.current = session;
       return;
     }
 
-    const timeoutId = setTimeout(() => setIsReady(true), 5000);
+    const timeoutId = setTimeout(() => setDidSessionLoadTimeOut(true), 5000);
     return () => clearTimeout(timeoutId);
   }, [status, session]);
+
+  const isReady = status !== "loading" || didSessionLoadTimeOut;
 
   const getSession = useCallback(async () => {
     if (status !== "loading") {

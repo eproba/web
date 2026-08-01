@@ -1,6 +1,7 @@
 import { PatrolCard } from "@/components/team/management/patrol-card";
 import { UserCreateDialog } from "@/components/team/management/user-create-dialog";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 import { ApiError } from "@/lib/api";
 import { useApi } from "@/lib/api-client";
 import { patrolSerializer } from "@/lib/serializers/team";
@@ -13,7 +14,6 @@ import { monitorForElements } from "@atlaskit/pragmatic-drag-and-drop/element/ad
 import { useSetAtom } from "jotai";
 import { LoaderCircleIcon } from "lucide-react";
 import React, { useCallback, useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 import { InactiveUsersCard } from "./inactive-users-card";
 import { PatrolCreateDialog } from "./patrol-create-dialog";
@@ -39,6 +39,7 @@ export function PatrolsList({
   const [users, setUsers] = useState<User[]>(initialUsers);
   const [updatingUserIds, setUpdatingUserIds] = useState<string[]>([]);
   const { apiClient } = useApi();
+  const currentUserId = currentUser?.id;
 
   const handleUserUpdate = useCallback(
     async (userId: string, updatedUser: Partial<ApiUserResponse>) => {
@@ -56,7 +57,7 @@ export function PatrolsList({
             )
             .filter((user) => user.team === team.id),
         );
-        if (updated.id === currentUser?.id) {
+        if (updated.id === currentUserId) {
           setCurrentUser(updated);
         }
         if (updated.function.numberValue >= 4) {
@@ -73,14 +74,15 @@ export function PatrolsList({
         }
         return true;
       } catch (error) {
-        toast.error(
-          ToastMsg({
+        toast.add({
+          ...ToastMsg({
             data: {
               title: "Nie udało się zaktualizować użytkownika",
               description: error as Error,
             },
           }),
-        );
+          type: "error",
+        });
         console.error("Error updating user:", error);
         return false;
       } finally {
@@ -89,7 +91,7 @@ export function PatrolsList({
     },
     [
       apiClient,
-      currentUser?.id,
+      currentUserId,
       setAllowEditForLowerFunction,
       setCurrentUser,
       team.id,
@@ -136,14 +138,15 @@ export function PatrolsList({
       );
       return true;
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zaktualizować zastępu",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
       console.error("Error updating patrol:", error);
       return false;
     }
@@ -174,14 +177,15 @@ export function PatrolsList({
       });
       return true;
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się dodać zastępu",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
       console.error("Error creating patrol:", error);
       return false;
     }
@@ -195,14 +199,15 @@ export function PatrolsList({
       setPatrols((prevPatrols) => prevPatrols.filter((p) => p.id !== patrolId));
       return true;
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się usunąć zastępu",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
       console.error("Error deleting patrol:", error);
       return false;
     }
@@ -224,14 +229,15 @@ export function PatrolsList({
       setUsers((prevUsers) => [...prevUsers, newUser]);
       return newUser;
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się dodać użytkownika",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
       console.error("Error creating user:", error);
       if (error instanceof ApiError) {
         return error;

@@ -10,7 +10,6 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { fetchCurrentUser } from "@/lib/server-api";
 import {
-  ConstructionIcon,
   KeyRoundIcon,
   MailIcon,
   MailWarningIcon,
@@ -42,43 +41,38 @@ export default async function UserProfilePage() {
   return (
     <Tabs
       defaultValue="profile"
-      orientation="vertical"
-      className="flex lg:flex-row"
+      orientation="horizontal"
+      className="lg:data-horizontal:flex-row"
     >
-      <div className="flex h-full justify-center lg:justify-start">
-        <TabsList className="flex h-full flex-wrap lg:w-64 lg:flex-col">
-          <TabsTrigger
-            value="profile"
-            className="w-full text-wrap sm:justify-start"
-          >
-            Profil
-          </TabsTrigger>
-          <TabsTrigger
-            value="edit"
-            className="w-full text-wrap sm:justify-start"
-          >
-            Edytuj
-          </TabsTrigger>
-          <TabsTrigger
-            value="security"
-            className="hidden w-full text-wrap sm:flex sm:justify-start"
-          >
-            Bezpieczeństwo i synchronizacja
-          </TabsTrigger>
-          <TabsTrigger
-            value="security"
-            className="w-full text-wrap sm:hidden sm:justify-start"
-          >
-            Bezpieczeństwo
-          </TabsTrigger>
-          <TabsTrigger
-            value="notifications"
-            className="w-full text-wrap sm:justify-start"
-          >
-            Powiadomienia
-          </TabsTrigger>
-        </TabsList>
-      </div>
+      <TabsList className="flex flex-wrap group-data-horizontal/tabs:h-full lg:w-64 lg:flex-col">
+        <TabsTrigger
+          value="profile"
+          className="w-full text-wrap sm:justify-start"
+        >
+          Profil
+        </TabsTrigger>
+        <TabsTrigger value="edit" className="w-full text-wrap sm:justify-start">
+          Edytuj
+        </TabsTrigger>
+        <TabsTrigger
+          value="security"
+          className="hidden w-full text-wrap sm:flex sm:justify-start"
+        >
+          Bezpieczeństwo i synchronizacja
+        </TabsTrigger>
+        <TabsTrigger
+          value="security"
+          className="w-full text-wrap sm:hidden sm:justify-start"
+        >
+          Bezpieczeństwo
+        </TabsTrigger>
+        <TabsTrigger
+          value="notifications"
+          className="w-full text-wrap sm:justify-start"
+        >
+          Powiadomienia
+        </TabsTrigger>
+      </TabsList>
       <TabsContent value="profile">
         <Card className="gap-2">
           <CardHeader>
@@ -164,7 +158,7 @@ export default async function UserProfilePage() {
               variant={user.patrol ? "change" : "set"}
             >
               {user.patrol ? (
-                <Button variant="warning" className="">
+                <Button variant="warning">
                   <ReplaceIcon size={20} />
                   Zmień drużynę
                 </Button>
@@ -218,17 +212,17 @@ export default async function UserProfilePage() {
                   </div>
                 </div>
 
-                <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
-                  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
-                    <div className="flex items-center gap-2">
-                      <ConstructionIcon size={20} />
-                      Logowanie z cz!appka
-                    </div>
-                  </div>
-                  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
-                    <Badge variant="info">Wkrótce</Badge>
-                  </div>
-                </div>
+                {/*<div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">*/}
+                {/*  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">*/}
+                {/*    <div className="flex items-center gap-2">*/}
+                {/*      <ConstructionIcon size={20} />*/}
+                {/*      Logowanie z cz!appka*/}
+                {/*    </div>*/}
+                {/*  </div>*/}
+                {/*  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">*/}
+                {/*    <Badge variant="info">Wkrótce</Badge>*/}
+                {/*  </div>*/}
+                {/*</div>*/}
 
                 <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
                   <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
@@ -283,31 +277,31 @@ export default async function UserProfilePage() {
             </div>
           </CardContent>
         </Card>
-        <Card className="gap-2">
-          <CardHeader>
-            <h2 className="text-xl font-semibold">Synchronizacja</h2>
-          </CardHeader>
-          <CardContent>
-            <div className="block w-full sm:table">
-              <div className="sm:table-header-group">
-                <div className="hidden sm:table-row"></div>
-              </div>
-              <div className="sm:table-row-group">
-                <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">
-                  <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">
-                    <div className="flex items-center gap-2">
-                      <ConstructionIcon size={20} />
-                      Synchronizacja z cz!appka
-                    </div>
-                  </div>
-                  <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">
-                    <Badge variant="info">Wkrótce</Badge>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+        {/*<Card className="gap-2">*/}
+        {/*  <CardHeader>*/}
+        {/*    <h2 className="text-xl font-semibold">Synchronizacja</h2>*/}
+        {/*  </CardHeader>*/}
+        {/*  <CardContent>*/}
+        {/*    <div className="block w-full sm:table">*/}
+        {/*      <div className="sm:table-header-group">*/}
+        {/*        <div className="hidden sm:table-row"></div>*/}
+        {/*      </div>*/}
+        {/*      <div className="sm:table-row-group">*/}
+        {/*        <div className="block border-b py-2 last:border-b-0 sm:table-row sm:py-0">*/}
+        {/*          <div className="block px-4 py-2 font-medium sm:table-cell sm:py-4">*/}
+        {/*            <div className="flex items-center gap-2">*/}
+        {/*              <ConstructionIcon size={20} />*/}
+        {/*              Synchronizacja z cz!appka*/}
+        {/*            </div>*/}
+        {/*          </div>*/}
+        {/*          <div className="block px-4 py-2 sm:table-cell sm:py-4 sm:text-right">*/}
+        {/*            <Badge variant="info">Wkrótce</Badge>*/}
+        {/*          </div>*/}
+        {/*        </div>*/}
+        {/*      </div>*/}
+        {/*    </div>*/}
+        {/*  </CardContent>*/}
+        {/*</Card>*/}
       </TabsContent>
       <TabsContent value="notifications" className="flex flex-col gap-2">
         <ProfileNotificationsTab user={user} />

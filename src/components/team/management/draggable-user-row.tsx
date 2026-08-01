@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -82,7 +82,7 @@ export function DraggableUserRow({
       <div
         ref={ref}
         className={cn(
-          "hover:bg-muted data-[state=open]:bg-muted flex items-center justify-between gap-2 rounded-md p-2",
+          "hover:bg-muted data-popup-open:bg-muted flex items-center justify-between gap-2 rounded-md p-2",
           isUpdating && "pointer-events-none opacity-50 select-none",
           isHighlighted && "focus:ring-primary focus:ring-2 focus:outline-none",
         )}
@@ -122,15 +122,19 @@ export function DraggableUserRow({
             <Badge>{user.function.fullName}</Badge>
           )}
           <Tooltip>
-            <TooltipTrigger asChild>
-              <Link
-                href={`/worksheets/manage?userId=${user.id}&userName=${encodeURIComponent(user.displayName || user.email)}`}
-              >
-                <Button variant="ghost" size="icon">
+            <TooltipTrigger
+              render={
+                <Link
+                  href={`/worksheets/manage?userId=${user.id}&userName=${encodeURIComponent(user.displayName || user.email)}`}
+                  className={buttonVariants({ variant: "ghost", size: "icon" })}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                  }}
+                >
                   <ListStartIcon className="size-4" />
-                </Button>
-              </Link>
-            </TooltipTrigger>
+                </Link>
+              }
+            />
             <TooltipContent>
               Przejdź do prób{" "}
               {user.organization === Organization.Female

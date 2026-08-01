@@ -102,7 +102,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
 
           <TabsContent
             value="browse"
-            className="flex min-h-0 flex-1 flex-col space-y-2 data-[state=active]:flex"
+            className="flex min-h-0 flex-1 flex-col space-y-2"
           >
             <FilterableList
               tagGroups={taskIdeas.tagGroups}
@@ -113,7 +113,6 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
               onItemSelect={handleAddTaskIdea}
               selectButtonText="Wybierz"
               loadingMessage="Ładowanie pomysłów na zadania..."
-              className="data-[state=active]:flex"
             />
             <span className="m-0 p-0 text-center text-xs text-gray-500">
               pomysły na zadania pochodzą od Organizacji Harcerzy ZHR
@@ -122,7 +121,7 @@ export const TaskSuggestionsDialog: React.FC<TaskSuggestionsDialogProps> = ({
 
           {/*<TabsContent*/}
           {/*  value="ai-chat"*/}
-          {/*  className="min-h-0 flex-1 data-[state=active]:flex"*/}
+          {/*  className="min-h-0 flex-1"*/}
           {/*>*/}
           {/*  <TaskSuggestionsChat*/}
           {/*    onAddTask={(suggestion: {*/}

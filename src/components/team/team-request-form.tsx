@@ -3,22 +3,17 @@
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import {
   TeamRequestFormData,
@@ -34,8 +29,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { PlusIcon, TrashIcon, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 
 export function TeamRequestForm() {
   const { apiClient, isApiReady } = useApi();
@@ -72,31 +66,29 @@ export function TeamRequestForm() {
           data.sort((a: District, b: District) => a.name.localeCompare(b.name)),
         );
       } catch (error) {
-        toast.error(
-          ToastMsg({
+        toast.add({
+          ...ToastMsg({
             data: {
               title: "Nie udało się pobrać okręgów",
               description: error as Error,
             },
           }),
-        );
+          type: "error",
+        });
       }
     };
 
     fetchDistricts();
   }, [isApiReady, apiClient]);
 
-  const watchedPatrols = form.watch("patrols");
-
-  useEffect(() => {
-    if (userPatrolIndex >= watchedPatrols.length || userPatrolIndex < 0) {
-      setUserPatrolIndex(0);
-    }
-    const currentPatrolName = watchedPatrols[userPatrolIndex];
-    if (currentPatrolName !== undefined) {
-      form.setValue("userPatrol", currentPatrolName);
-    }
-  }, [watchedPatrols, userPatrolIndex, form]);
+  const watchedPatrols = useWatch({
+    control: form.control,
+    name: "patrols",
+  });
+  const watchedOrganization = useWatch({
+    control: form.control,
+    name: "organization",
+  });
 
   const addPatrol = () => {
     const currentPatrols = form.getValues("patrols");
@@ -109,11 +101,15 @@ export function TeamRequestForm() {
 
     form.setValue("patrols", newPatrols);
 
+    let nextUserPatrolIndex = userPatrolIndex;
     if (index === userPatrolIndex) {
-      setUserPatrolIndex(0);
+      nextUserPatrolIndex = 0;
     } else if (index < userPatrolIndex) {
-      setUserPatrolIndex(userPatrolIndex - 1);
+      nextUserPatrolIndex = userPatrolIndex - 1;
     }
+
+    setUserPatrolIndex(nextUserPatrolIndex);
+    form.setValue("userPatrol", newPatrols[nextUserPatrolIndex] ?? "");
   };
 
   const updatePatrolName = (index: number, value: string) => {
@@ -145,7 +141,7 @@ export function TeamRequestForm() {
       );
 
       if (validPatrols.length === 0) {
-        toast.error("Dodaj przynajmniej jeden zastęp.");
+        toast.add({ title: "Dodaj przynajmniej jeden zastęp.", type: "error" });
         setIsSubmitting(false);
         return;
       }
@@ -171,14 +167,15 @@ export function TeamRequestForm() {
 
       router.push("/team/request/success");
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się wysłać zgłoszenia",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -204,137 +201,202 @@ export function TeamRequestForm() {
             </Alert>
           )}
 
-          <Form {...form}>
+          <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
-              <FormField
+              <Controller
                 control={form.control}
                 name="organization"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Twoja organizacja</FormLabel>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Twoja organizacja
+                    </FieldLabel>
                     <Select
-                      onValueChange={(value) => field.onChange(Number(value))}
+                      items={ORGANIZATION_CHOICES.map((org) => ({
+                        label: org.label,
+                        value: org.value.toString(),
+                      }))}
+                      onValueChange={(value) => {
+                        if (value !== null) {
+                          field.onChange(Number(value));
+                        }
+                      }}
                       value={field.value.toString()}
                     >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Wybierz organizację" />
-                        </SelectTrigger>
-                      </FormControl>
+                      <SelectTrigger
+                        className="w-full"
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                      >
+                        <SelectValue placeholder="Wybierz organizację" />
+                      </SelectTrigger>
+
                       <SelectContent>
-                        {ORGANIZATION_CHOICES.map((org) => (
-                          <SelectItem
-                            key={org.value}
-                            value={org.value.toString()}
-                          >
-                            {org.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="district"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Okręg</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Wybierz okręg" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {districts.map((district) => (
-                          <SelectItem key={district.id} value={district.id}>
-                            {district.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="teamName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Nazwa drużyny</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="np. 30 Zielonogórska Drużyna Harcerzy Orlęta im. Cichociemnych"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="teamShortName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Skrócona nazwa drużyny</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="np. 30 ZDH"
-                        maxLength={10}
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="functionLevel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Twoja funkcja</FormLabel>
-                    <Select
-                      onValueChange={(value) => field.onChange(Number(value))}
-                      value={field.value.toString()}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="w-full">
-                          <SelectValue placeholder="Wybierz funkcję" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        {UserFunction.values
-                          .filter((func) => func.value >= 3)
-                          .map((func) => (
+                        <SelectGroup>
+                          {ORGANIZATION_CHOICES.map((org) => (
                             <SelectItem
-                              key={func.value}
-                              value={func.value.toString()}
+                              key={org.value}
+                              value={org.value.toString()}
                             >
-                              {form.watch("organization") === 0
-                                ? func.male
-                                : func.female}
+                              {org.label}
                             </SelectItem>
                           ))}
+                        </SelectGroup>
                       </SelectContent>
                     </Select>
-                    <FormMessage />
-                  </FormItem>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="district"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Okręg</FieldLabel>
+                    <Select
+                      items={districts.map((district) => ({
+                        label: district.name,
+                        value: district.id,
+                      }))}
+                      onValueChange={(value) => {
+                        if (value !== null) {
+                          field.onChange(value);
+                        }
+                      }}
+                      value={field.value}
+                    >
+                      <SelectTrigger
+                        className="w-full"
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                      >
+                        <SelectValue placeholder="Wybierz okręg" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectGroup>
+                          {districts.map((district) => (
+                            <SelectItem key={district.id} value={district.id}>
+                              {district.name}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="teamName"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Nazwa drużyny</FieldLabel>
+
+                    <Input
+                      placeholder="np. 30 Zielonogórska Drużyna Harcerzy Orlęta im. Cichociemnych"
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="teamShortName"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>
+                      Skrócona nazwa drużyny
+                    </FieldLabel>
+
+                    <Input
+                      placeholder="np. 30 ZDH"
+                      maxLength={10}
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="functionLevel"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Twoja funkcja</FieldLabel>
+                    <Select
+                      items={UserFunction.values
+                        .filter((func) => func.value >= 3)
+                        .map((func) => ({
+                          label:
+                            watchedOrganization === 0 ? func.male : func.female,
+                          value: func.value.toString(),
+                        }))}
+                      onValueChange={(value) => {
+                        if (value !== null) {
+                          field.onChange(Number(value));
+                        }
+                      }}
+                      value={field.value.toString()}
+                    >
+                      <SelectTrigger
+                        className="w-full"
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                      >
+                        <SelectValue placeholder="Wybierz funkcję" />
+                      </SelectTrigger>
+
+                      <SelectContent>
+                        <SelectGroup>
+                          {UserFunction.values
+                            .filter((func) => func.value >= 3)
+                            .map((func) => (
+                              <SelectItem
+                                key={func.value}
+                                value={func.value.toString()}
+                              >
+                                {watchedOrganization === 0
+                                  ? func.male
+                                  : func.female}
+                              </SelectItem>
+                            ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
 
               <div className="space-y-4">
                 <div className="flex items-center justify-between gap-8">
-                  <FormLabel className="text-sm font-medium">Zastępy</FormLabel>
+                  <FieldLabel className="text-sm font-medium">
+                    Zastępy
+                  </FieldLabel>
                   <span className="text-muted-foreground max-w-xs truncate text-xs">
                     {watchedPatrols[userPatrolIndex] &&
                       `Twój zastęp: ${watchedPatrols[userPatrolIndex]}`}
@@ -394,13 +456,15 @@ export function TeamRequestForm() {
                   Dodaj zastęp
                 </Button>
 
-                <FormField
+                <Controller
                   control={form.control}
                   name="patrols"
-                  render={() => (
-                    <FormItem>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
               </div>
@@ -415,7 +479,7 @@ export function TeamRequestForm() {
                 </Button>
               </div>
             </form>
-          </Form>
+          </FormProvider>
         </CardContent>
       </Card>
     </div>

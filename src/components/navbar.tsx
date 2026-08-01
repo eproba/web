@@ -9,7 +9,7 @@ import {
 import { PatrolAlert } from "@/components/patrol-alert";
 import { PwaInstallAlert } from "@/components/pwa-install-alert";
 import { ThemeSwitch } from "@/components/theme-switch";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Drawer,
   DrawerClose,
@@ -44,7 +44,6 @@ type NavItem = {
   external?: boolean;
   kind?: "bug-report";
   access?: (user?: User) => boolean;
-  mobileHidden?: boolean; // workaround for bug where "Prośby o zatwierdzenie" is not rendered in desktop popup
 };
 
 const MAIN_NAV_ITEMS: NavItem[] = [
@@ -60,11 +59,6 @@ const MAIN_NAV_ITEMS: NavItem[] = [
       user.function.numberValue >= RequiredFunctionLevel.WORKSHEET_MANAGEMENT,
     subItems: [
       { title: "Zarządzaj próbami", href: "/worksheets/manage" },
-      {
-        title: "Prośby o zatwierdzenie",
-        href: "/worksheets/review/",
-        mobileHidden: true,
-      },
       { title: "Prośby o zatwierdzenie", href: "/worksheets/review" },
       { title: "Archiwum", href: "/worksheets/archive" },
       { title: "Szablony", href: "/worksheets/templates" },
@@ -135,17 +129,22 @@ const AuthButtons = ({
           }}
         >
           {mobile ? (
-            <Button variant="destructive" className="w-full">
+            <Button type="submit" variant="destructive" className="w-full">
               <LogOutIcon />
               Wyloguj
             </Button>
           ) : (
             <>
-              <Button variant="destructive" className="hidden w-full xl:flex">
+              <Button
+                type="submit"
+                variant="destructive"
+                className="hidden w-full xl:flex"
+              >
                 <LogOutIcon />
                 Wyloguj
               </Button>
               <Button
+                type="submit"
                 variant="destructive"
                 className="min-w-full xl:hidden"
                 size="icon"
@@ -156,13 +155,20 @@ const AuthButtons = ({
           )}
         </form>
         {mobile ? (
-          <DrawerClose asChild>
-            <Link href="/profile" className="flex-1">
-              <Button className="w-full bg-[#1abc9c] hover:bg-[#16a085]">
-                <UserIcon />
-                Profil
-              </Button>
-            </Link>
+          <DrawerClose
+            nativeButton={false}
+            render={
+              <Link
+                href="/profile"
+                className={cn(
+                  buttonVariants(),
+                  "flex-1 bg-[#1abc9c] hover:bg-[#16a085]",
+                )}
+              />
+            }
+          >
+            <UserIcon />
+            Profil
           </DrawerClose>
         ) : (
           <Link href="/profile" className="flex-1">
@@ -215,47 +221,47 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => {
     <NavigationMenuItem>
       {item.subItems ? (
         <>
-          <Link
-            href={item.href}
-            target={item.external ? "_blank" : undefined}
-            className="pointer-coarse:hidden"
-          >
-            <NavigationMenuTrigger className="bg-transparent">
+          <NavigationMenuTrigger>
+            <span className="pointer-fine:hidden">{item.title}</span>
+            <Link
+              href={item.href}
+              target={item.external ? "_blank" : undefined}
+              className={cn("pointer-coarse:hidden")}
+            >
               {item.title}
-            </NavigationMenuTrigger>
-          </Link>
-          <NavigationMenuTrigger className="bg-transparent pointer-fine:hidden">
-            {item.title}
+            </Link>
           </NavigationMenuTrigger>
-          <NavigationMenuContent className="z-50 dark:bg-[#161b22]">
-            <ul className="grid w-60 gap-1 p-2">
+          <NavigationMenuContent>
+            <ul className="grid w-50">
               {item.subItems.map((subItem) => (
-                <NavigationMenuItem key={subItem.href}>
-                  <NavigationMenuLink asChild>
-                    <Link
-                      href={subItem.href}
-                      target={subItem.external ? "_blank" : undefined}
-                      className={cn(
-                        navigationMenuTriggerStyle(),
-                        "w-full items-start bg-transparent",
-                      )}
-                    >
-                      {subItem.title}
-                    </Link>
+                <li key={subItem.href}>
+                  <NavigationMenuLink
+                    closeOnClick
+                    render={
+                      <Link
+                        href={subItem.href}
+                        target={subItem.external ? "_blank" : undefined}
+                      />
+                    }
+                  >
+                    {subItem.title}
                   </NavigationMenuLink>
-                </NavigationMenuItem>
+                </li>
               ))}
             </ul>
           </NavigationMenuContent>
         </>
       ) : (
         <NavigationMenuLink
-          asChild
+          render={
+            <Link
+              href={item.href}
+              target={item.external ? "_blank" : undefined}
+            />
+          }
           className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
         >
-          <Link href={item.href} target={item.external ? "_blank" : undefined}>
-            {item.title}
-          </Link>
+          {item.title}
         </NavigationMenuLink>
       )}
     </NavigationMenuItem>
@@ -298,44 +304,54 @@ export async function Navbar() {
           <AppLogo />
 
           {/* Mobile Navigation */}
-          <Drawer direction="right">
-            <DrawerTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
-                <MenuIcon className="size-6" />
-              </Button>
+          <Drawer swipeDirection="right">
+            <DrawerTrigger
+              render={
+                <Button variant="ghost" size="icon" className="md:hidden" />
+              }
+            >
+              <MenuIcon className="size-6" />
+              <span className="sr-only">Otwórz menu nawigacji</span>
             </DrawerTrigger>
-            <DrawerContent className="rounded-l-lgflex ml-auto h-full w-[300px] flex-col p-4">
-              <DrawerHeader className="mb-4 p-0">
-                <DrawerTitle className="flex items-center justify-between">
+            <DrawerContent className="ml-auto flex h-full max-w-75 flex-col p-2">
+              <DrawerHeader className="mb-4 flex-row items-center justify-between">
+                <DrawerTitle>
                   <AppLogo />
-                  <DrawerClose asChild>
-                    <Button variant="ghost" size="icon">
-                      <XIcon className="h-5 w-5" />
-                    </Button>
-                  </DrawerClose>
                 </DrawerTitle>
+                <DrawerClose
+                  render={
+                    <Button
+                      aria-label="Zamknij menu nawigacji"
+                      variant="ghost"
+                      size="icon"
+                    />
+                  }
+                >
+                  <XIcon className="h-5 w-5" />
+                </DrawerClose>
               </DrawerHeader>
 
               <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
-                {filteredMainNav.map((item) =>
-                  item.mobileHidden ? null : (
-                    <div key={item.href} className="flex flex-col gap-1">
-                      <DrawerClose asChild>
+                {filteredMainNav.map((item) => (
+                  <div key={item.href} className="flex flex-col gap-1">
+                    <DrawerClose
+                      nativeButton={false}
+                      render={
                         <MobileNavItem
                           item={item}
                           header={(item.subItems?.length ?? 0) > 0}
                         />
-                      </DrawerClose>
-                      {item.subItems?.map((subItem) =>
-                        subItem.mobileHidden ? null : (
-                          <DrawerClose key={subItem.href} asChild>
-                            <MobileNavItem item={subItem} />
-                          </DrawerClose>
-                        ),
-                      )}
-                    </div>
-                  ),
-                )}
+                      }
+                    />
+                    {item.subItems?.map((subItem) => (
+                      <DrawerClose
+                        key={subItem.href}
+                        nativeButton={false}
+                        render={<MobileNavItem item={subItem} />}
+                      />
+                    ))}
+                  </div>
+                ))}
 
                 <div className="mt-4 border-t pt-2">
                   <h5 className="text-muted-foreground mb-2 px-3 text-xs">
@@ -360,7 +376,7 @@ export async function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden flex-1 items-center justify-between md:flex">
-          <NavigationMenu viewport={false}>
+          <NavigationMenu align="start">
             <NavigationMenuList className="hidden flex-wrap md:flex lg:flex-nowrap">
               {filteredMainNav.map((item) => (
                 <DesktopNavItem key={item.href} item={item} />

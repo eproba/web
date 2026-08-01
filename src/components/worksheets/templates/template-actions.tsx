@@ -10,13 +10,15 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { ButtonGroup } from "@/components/ui/button-group";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { toast } from "@/components/ui/toast";
 import {
   Tooltip,
   TooltipContent,
@@ -40,7 +42,6 @@ import {
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { toast } from "react-toastify";
 
 type TemplateAction = {
   id: string;
@@ -83,21 +84,22 @@ export function TemplateActions({
       await apiClient(`/templates/${template.id}/`, {
         method: "DELETE",
       });
-      toast.success("Szablon został usunięty");
+      toast.add({ title: "Szablon został usunięty", type: "success" });
       if (removeTemplate) {
         removeTemplate(template.id);
       } else {
         router.refresh();
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie można usunąć szablonu",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setShowDeleteAlert(false);
     }
@@ -129,18 +131,25 @@ export function TemplateActions({
   const renderActionIcon = (action: TemplateAction) => {
     if (action.href) {
       return (
-        <Link href={action.href}>
-          <action.icon className="text-muted-foreground" size={20} />
+        <Link
+          href={action.href}
+          aria-label={action.label}
+          className={buttonVariants({ variant: "ghost", size: "icon-sm" })}
+        >
+          <action.icon className="text-muted-foreground size-5" />
         </Link>
       );
     }
 
     return (
-      <action.icon
-        className="text-muted-foreground cursor-pointer"
-        size={20}
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label={action.label}
         onClick={action.handler}
-      />
+      >
+        <action.icon className="text-muted-foreground size-5" />
+      </Button>
     );
   };
 
@@ -150,58 +159,71 @@ export function TemplateActions({
   );
 
   const renderDesktopIcons = () => (
-    <div className="hidden gap-2 md:flex">
+    <ButtonGroup className="hidden md:flex">
       {filteredActions.map((action) => (
         <TooltipProvider key={action.id}>
           <Tooltip>
-            <TooltipTrigger asChild>{renderActionIcon(action)}</TooltipTrigger>
+            <TooltipTrigger render={renderActionIcon(action)} />
             <TooltipContent>
               <p>{action.label}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
       ))}
-    </div>
+    </ButtonGroup>
   );
 
-  const renderMobileMenu = () => (
-    <div className="md:hidden">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="ghost"
-            className="data-[state=open]:bg-muted size-8 p-0"
+  const renderMobileMenu = () =>
+    filteredActions.length > 1 ? (
+      <div className="md:hidden">
+        <DropdownMenu>
+          <DropdownMenuTrigger
+            render={
+              <Button
+                variant="ghost"
+                size="icon"
+                className="data-popup-open:bg-muted size-8 p-0"
+              />
+            }
           >
             <EllipsisVerticalIcon className="size-5" />
             <span className="sr-only">Otwórz menu</span>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end">
-          {filteredActions.map((action) => {
-            return (
-              <DropdownMenuItem
-                key={action.id}
-                onSelect={action.handler}
-                asChild={!!action.href}
-              >
-                {action.href ? (
-                  <Link href={action.href} className="flex items-center">
-                    <action.icon className="size-4" />
-                    {action.label}
-                  </Link>
-                ) : (
-                  <div className="flex items-center">
-                    <action.icon className="mr-2 size-4" />
-                    {action.label}
-                  </div>
-                )}
-              </DropdownMenuItem>
-            );
-          })}
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
-  );
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-50" align="end">
+            {filteredActions.map((action) =>
+              action.href ? (
+                <DropdownMenuItem
+                  key={action.id}
+                  nativeButton={false}
+                  render={<Link href={action.href} />}
+                >
+                  <action.icon className="size-4" />
+                  {action.label}
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem key={action.id} onClick={action.handler}>
+                  <action.icon className="size-4" />
+                  {action.label}
+                </DropdownMenuItem>
+              ),
+            )}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    ) : (
+      <div className="md:hidden">
+        {filteredActions.map((action) => (
+          <TooltipProvider key={action.id}>
+            <Tooltip>
+              <TooltipTrigger render={renderActionIcon(action)} />
+              <TooltipContent>
+                <p>{action.label}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        ))}
+      </div>
+    );
 
   return (
     <>

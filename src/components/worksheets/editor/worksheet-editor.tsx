@@ -1,6 +1,6 @@
 "use client";
 
-import { Form } from "@/components/ui/form";
+import { toast } from "@/components/ui/toast";
 import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
 import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
 import { useMobileTaskMovements } from "@/components/worksheets/editor/hooks/use-mobile-task-movements";
@@ -18,7 +18,7 @@ import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { TaskStatus } from "@/types/worksheet";
 import React, { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import { FormProvider } from "react-hook-form";
 
 interface WorksheetEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
@@ -147,8 +147,8 @@ export const WorksheetEditor = ({
       currentUser.function.numberValue >=
         RequiredFunctionLevel.WORKSHEET_MANAGEMENT
     ) {
-      toast.info(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Tworzysz próbę na stopień?",
             description:
@@ -156,15 +156,14 @@ export const WorksheetEditor = ({
             href: "/worksheets/templates#organization-templates",
           },
         }),
-        {
-          autoClose: 30000,
-          toastId: "worksheet-template-hint",
-        },
-      );
+        type: "info",
+        timeout: 30000,
+        id: "worksheet-template-hint",
+      });
     }
     return () => {
       // Cleanup toast when component unmounts
-      toast.dismiss("worksheet-template-hint");
+      toast.close("worksheet-template-hint");
     };
   }, [
     currentUser.function.numberValue,
@@ -175,7 +174,7 @@ export const WorksheetEditor = ({
 
   return (
     <DragDropProvider>
-      <Form {...form}>
+      <FormProvider {...form}>
         <form
           onSubmit={onSubmit}
           className="duration-300relative space-y-8 transition-all"
@@ -213,7 +212,7 @@ export const WorksheetEditor = ({
             variant="worksheet"
           />
         </form>
-      </Form>
+      </FormProvider>
 
       <ModifiedTasksDialog
         key={modifiedTasks.map((t) => t.id).join(",")}

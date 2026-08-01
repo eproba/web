@@ -90,16 +90,18 @@ export const TaskActionPopover: React.FC<TaskActionPopoverProps> = ({
         setIsOpen(open);
       }}
     >
-      <PopoverTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 pointer-fine:hidden"
-          title="Opcje zadania"
-        >
-          <MoreVerticalIcon className="size-4" />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800 pointer-fine:hidden"
+            title="Opcje zadania"
+          />
+        }
+      >
+        <MoreVerticalIcon className="size-4" />
       </PopoverTrigger>
       <PopoverContent className="w-48 p-2" align="end">
         <div className="space-y-1">

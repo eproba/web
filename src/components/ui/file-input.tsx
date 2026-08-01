@@ -1,9 +1,9 @@
+import { toast } from "@/components/ui/toast";
 import { cn } from "@/lib/utils";
 import { ImageIcon, UploadIcon, XIcon } from "lucide-react";
 import Image from "next/image";
 import * as React from "react";
-import { useState } from "react";
-import { toast } from "react-toastify";
+import { useEffect, useState } from "react";
 
 import { Button } from "./button";
 
@@ -32,6 +32,27 @@ export interface FileInputProps extends Omit<
   preview?: boolean;
 }
 
+function FilePreviewImage({ file }: { file: File }) {
+  const [url, setUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => {
+      setUrl(typeof reader.result === "string" ? reader.result : null);
+    });
+    reader.readAsDataURL(file);
+
+    return () => reader.abort();
+  }, [file]);
+
+  if (!url) {
+    return null;
+  }
+
+  return <Image src={url} alt="Preview" fill className="object-cover" />;
+}
+
 const FileInput = ({
   className,
   value,
@@ -42,23 +63,7 @@ const FileInput = ({
   ...props
 }: FileInputProps) => {
   const [dragActive, setDragActive] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
-
-  // Generate preview URL when file changes
-  React.useEffect(() => {
-    if (value && preview) {
-      if (value instanceof File) {
-        const url = URL.createObjectURL(value);
-        setPreviewUrl(url);
-        return () => URL.revokeObjectURL(url);
-      } else if (value) {
-        setPreviewUrl(value);
-      }
-    } else {
-      setPreviewUrl(null);
-    }
-  }, [value, preview]);
 
   const handleFileChange = (file: File | string | null) => {
     if (file instanceof File) {
@@ -81,7 +86,10 @@ const FileInput = ({
     if (files.length > 0) {
       const file = files[0];
       if (!isAcceptedFile(file, accept)) {
-        toast.error(`Nieprawidłowy format pliku.`);
+        toast.add({
+          title: "Nieprawidłowy format pliku.",
+          type: "error",
+        });
         return;
       }
       handleFileChange(file);
@@ -165,16 +173,23 @@ const FileInput = ({
           </Button>
         )}
 
-        {preview && previewUrl ? (
+        {preview && value ? (
           <div className="flex w-full flex-col items-center justify-center space-y-3">
             {/* Image preview */}
             <div className="border-border/20 relative h-24 w-24 overflow-hidden rounded-lg border">
-              <Image
-                src={previewUrl}
-                alt="Preview"
-                fill
-                className="object-cover"
-              />
+              {value instanceof File ? (
+                <FilePreviewImage
+                  key={`${value.name}-${value.size}-${value.lastModified}`}
+                  file={value}
+                />
+              ) : (
+                <Image
+                  src={value}
+                  alt="Preview"
+                  fill
+                  className="object-cover"
+                />
+              )}
             </div>
 
             {/* File info */}

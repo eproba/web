@@ -43,112 +43,92 @@ export function UserCombobox({
 }: UserComboboxProps) {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<PublicUser[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchOutsideTeam, setSearchOutsideTeam] = useState(false);
   const [hasExcludedResults, setHasExcludedResults] = useState(false);
   const { apiClient, isApiReady } = useApi();
 
   const selectedUser = users.find((user) => user.id === value);
+  const trimmedQuery = searchQuery.trim();
+  const canSearch = isApiReady && trimmedQuery.length >= 3;
+  const visibleUsers = canSearch ? users : selectedUser ? [selectedUser] : [];
 
-  const debouncedSearch = useDebouncedCallback(async (query: string) => {
-    setIsLoading(true);
+  const debouncedSearch = useDebouncedCallback(
+    async (query: string, outsideTeam: boolean) => {
+      setIsLoading(true);
 
-    try {
-      const response = await apiClient(
-        `/users/search/?q=${encodeURIComponent(query)}&outside_team=${searchOutsideTeam}`,
-      );
-      const data = (await response.json()).map(
-        publicUserSerializer,
-      ) as PublicUser[];
-      const filteredUsers = data.filter((user) => {
-        return !excludeUserIds.includes(user.id);
-      });
-
-      setHasExcludedResults(filteredUsers.length === 0 && data.length > 0);
-
-      setUsers((prev) => {
-        if (!value) {
-          return filteredUsers;
-        }
-
-        const selectedFromResults = filteredUsers.find(
-          (user) => user.id === value,
+      try {
+        const response = await apiClient(
+          `/users/search/?q=${encodeURIComponent(query)}&outside_team=${outsideTeam}`,
         );
+        const data = (await response.json()).map(
+          publicUserSerializer,
+        ) as PublicUser[];
+        const filteredUsers = data.filter((user) => {
+          return !excludeUserIds.includes(user.id);
+        });
 
-        if (selectedFromResults) {
-          return filteredUsers;
-        }
+        setHasExcludedResults(filteredUsers.length === 0 && data.length > 0);
 
-        const previouslySelected = prev.find((user) => user.id === value);
-
-        if (previouslySelected) {
-          return [...filteredUsers, previouslySelected];
-        }
-
-        return filteredUsers;
-      });
-    } catch (error) {
-      console.error("Failed to search users:", error);
-      setHasExcludedResults(false);
-
-      setUsers((prev) => {
-        if (value) {
-          const existingSelected = prev.find((user) => user.id === value);
-          if (existingSelected) {
-            return [existingSelected];
+        setUsers((prev) => {
+          if (!value) {
+            return filteredUsers;
           }
-        }
 
-        return [];
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, 300);
+          const selectedFromResults = filteredUsers.find(
+            (user) => user.id === value,
+          );
+
+          if (selectedFromResults) {
+            return filteredUsers;
+          }
+
+          const previouslySelected = prev.find((user) => user.id === value);
+
+          if (previouslySelected) {
+            return [...filteredUsers, previouslySelected];
+          }
+
+          return filteredUsers;
+        });
+      } catch (error) {
+        console.error("Failed to search users:", error);
+        setHasExcludedResults(false);
+
+        setUsers((prev) => {
+          if (value) {
+            const existingSelected = prev.find((user) => user.id === value);
+            if (existingSelected) {
+              return [existingSelected];
+            }
+          }
+
+          return [];
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    300,
+  );
 
   useEffect(() => {
-    const trimmedQuery = searchQuery.trim();
-
-    const keepOnlySelectedOrClear = () => {
-      if (!value) {
-        setUsers((prev) => (prev.length === 0 ? prev : []));
-        return;
-      }
-
-      setUsers((prev) => {
-        const selected = prev.find((user) => user.id === value);
-        if (selected) {
-          if (prev.length === 1 && prev[0].id === value) {
-            return prev;
-          }
-
-          return [selected];
-        }
-
-        return prev;
-      });
-    };
-
-    if (trimmedQuery.length === 0) {
-      setHasExcludedResults(false);
-      keepOnlySelectedOrClear();
+    if (!canSearch) {
+      debouncedSearch.cancel();
       return;
     }
 
-    if (!isApiReady || trimmedQuery.length < 3) {
-      setHasExcludedResults(false);
-      keepOnlySelectedOrClear();
-      return;
-    }
-
-    setIsLoading(true);
-    debouncedSearch(trimmedQuery);
-  }, [searchQuery, debouncedSearch, searchOutsideTeam, isApiReady, value]);
+    // Query changes synchronize this component with the remote user directory.
+    debouncedSearch(trimmedQuery, searchOutsideTeam);
+    return () => debouncedSearch.cancel();
+  }, [canSearch, debouncedSearch, searchOutsideTeam, trimmedQuery]);
 
   // If we have a selected value but no user data, try to fetch it
   useEffect(() => {
     if (value && !selectedUser && isApiReady) {
+      // A controlled value may require loading its display data from the API.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsLoading(true);
       const fetchSelectedUser = async () => {
         try {
@@ -166,50 +146,60 @@ export function UserCombobox({
         }
       };
       fetchSelectedUser();
-    } else if (!value) {
-      setIsLoading(false);
     }
   }, [value, selectedUser, isApiReady, apiClient]);
 
+  const handleSearchQueryChange = (query: string) => {
+    setSearchQuery(query);
+    setHasExcludedResults(false);
+    setIsLoading(isApiReady && query.trim().length >= 3);
+  };
+
+  const handleSearchScopeChange = () => {
+    setSearchOutsideTeam((outsideTeam) => !outsideTeam);
+    if (canSearch) {
+      setIsLoading(true);
+    }
+  };
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          className={cn("w-full justify-between", className)}
-          disabled={disabled}
-        >
-          <div className="flex items-center gap-2">
-            <UserIcon className="text-muted-foreground size-4" />
-            {selectedUser ? (
-              <span className="truncate">{selectedUser.displayName}</span>
-            ) : value ? (
-              isLoading ? (
-                <span className="text-muted-foreground">Ładowanie...</span>
-              ) : (
-                <span className="text-muted-foreground">
-                  Nie znaleziono użytkownika
-                </span>
-              )
-            ) : (
-              <span className="text-muted-foreground">{placeholder}</span>
-            )}
-          </div>
-          <ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        className="w-[var(--radix-popover-trigger-width)] p-0"
-        align="start"
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className={cn("w-full justify-between", className)}
+            disabled={disabled}
+          />
+        }
       >
+        <div className="flex items-center gap-2">
+          <UserIcon className="text-muted-foreground size-4" />
+          {selectedUser ? (
+            <span className="truncate">{selectedUser.displayName}</span>
+          ) : value ? (
+            isLoading ? (
+              <span className="text-muted-foreground">Ładowanie...</span>
+            ) : (
+              <span className="text-muted-foreground">
+                Nie znaleziono użytkownika
+              </span>
+            )
+          ) : (
+            <span className="text-muted-foreground">{placeholder}</span>
+          )}
+        </div>
+        <ChevronsUpDownIcon className="ml-2 size-4 shrink-0 opacity-50" />
+      </PopoverTrigger>
+      <PopoverContent className="w-(--anchor-width) p-0" align="start">
         <Command shouldFilter={false}>
           <div className="flex items-center [&>[data-slot=command-input-wrapper]]:w-full">
             <CommandInput
               placeholder="Wyszukaj użytkownika..."
               value={searchQuery}
-              onValueChange={setSearchQuery}
+              onValueChange={handleSearchQueryChange}
             />
           </div>
           <CommandList>
@@ -221,8 +211,8 @@ export function UserCombobox({
               <CommandEmpty className="text-muted-foreground p-4 text-center text-sm">
                 Wpisz co najmniej 3 znaki aby wyszukać
               </CommandEmpty>
-            ) : users.length === 0 ? (
-              hasExcludedResults ? (
+            ) : visibleUsers.length === 0 ? (
+              canSearch && hasExcludedResults ? (
                 <CommandEmpty className="p-4 text-center text-sm">
                   Wszyscy znalezieni użytkownicy są wykluczeni z tego pola.
                 </CommandEmpty>
@@ -233,13 +223,13 @@ export function UserCombobox({
               )
             ) : (
               <>
-                {hasExcludedResults && (
+                {canSearch && hasExcludedResults && (
                   <div className="border-border/40 bg-muted/40 text-muted-foreground border-b px-4 py-2 text-xs">
                     Niektórzy znalezieni użytkownicy są wykluczeni z tego pola.
                   </div>
                 )}
                 <CommandGroup>
-                  {users.map((user) => (
+                  {visibleUsers.map((user) => (
                     <CommandItem
                       key={user.id}
                       value={user.id}
@@ -293,7 +283,7 @@ export function UserCombobox({
                   variant="ghost"
                   size="sm"
                   className="text-muted-foreground w-full justify-start text-xs"
-                  onClick={() => setSearchOutsideTeam(!searchOutsideTeam)}
+                  onClick={handleSearchScopeChange}
                 >
                   {!searchOutsideTeam
                     ? "Szukaj również poza twoją drużyną"

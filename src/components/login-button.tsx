@@ -1,10 +1,10 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/toast";
 import { LogInIcon } from "lucide-react";
 import { signIn } from "next-auth/react";
 import { useState } from "react";
-import { toast } from "react-toastify";
 
 interface LoginButtonProps {
   redirectTo?: string;
@@ -27,7 +27,7 @@ export function LoginButton({
       });
     } catch (error) {
       console.error("Login error:", error);
-      toast.error("Wystąpił błąd podczas logowania");
+      toast.add({ title: "Wystąpił błąd podczas logowania", type: "error" });
     } finally {
       setIsLoading(false);
     }

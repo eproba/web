@@ -2,10 +2,15 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -37,7 +42,7 @@ export function WorksheetList({
 }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState("");
-  const [selectedPatrol, setSelectedPatrol] = useState<string>("null");
+  const [selectedPatrol, setSelectedPatrol] = useState<string | null>(null);
   const [worksheets, setWorksheets] = useState<Worksheet[]>(orgWorksheets);
   const [isFiltering, setIsFiltering] = useState(false);
   const searchParams = useSearchParams();
@@ -62,7 +67,7 @@ export function WorksheetList({
     [debouncedSearch],
   );
 
-  const handlePatrolChange = useCallback((value: string) => {
+  const handlePatrolChange = useCallback((value: string | null) => {
     setIsFiltering(true);
     setSelectedPatrol(value);
 
@@ -120,7 +125,7 @@ export function WorksheetList({
       return worksheets.filter((worksheet) => worksheet.user.id === userId);
     }
     let filteredByPatrol = worksheets;
-    if (selectedPatrol !== "null") {
+    if (selectedPatrol !== null) {
       filteredByPatrol = worksheets.filter(
         (worksheet) => worksheet.user.patrol === selectedPatrol,
       );
@@ -149,6 +154,17 @@ export function WorksheetList({
     return searchResults.map((result) => result.item);
   }, [searchParams, worksheets, selectedPatrol, debouncedSearchQuery]);
 
+  const patrolItems = useMemo(
+    () => [
+      { label: "Wszystkie", value: null },
+      ...patrols.map((patrol) => ({
+        label: patrol.name,
+        value: patrol.id,
+      })),
+    ],
+    [patrols],
+  );
+
   return (
     <div className="space-y-4">
       {showFilters ? (
@@ -156,14 +172,17 @@ export function WorksheetList({
           {title && <h2 className="text-2xl font-semibold">{title}</h2>}
           <div className="flex items-center justify-between gap-2">
             <div className="relative flex-1">
-              <Input
-                startIcon={SearchIcon}
-                type="text"
-                placeholder="Wyszukaj próbę"
-                className="max-w-fit"
-                value={searchQuery}
-                onChange={handleSearchChange}
-              />
+              <InputGroup className="max-w-fit">
+                <InputGroupInput
+                  type="text"
+                  placeholder="Wyszukaj próbę"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <InputGroupAddon>
+                  <SearchIcon />
+                </InputGroupAddon>
+              </InputGroup>
               {isFiltering && searchQuery && (
                 <div className="absolute top-1/2 right-3 -translate-y-1/2 transform">
                   <div className="border-muted-foreground size-4 animate-spin rounded-full border-2 border-t-transparent" />
@@ -189,6 +208,7 @@ export function WorksheetList({
               ) : (
                 <div className="overflow-hidden">
                   <Select
+                    items={patrolItems}
                     onValueChange={handlePatrolChange}
                     value={selectedPatrol}
                   >
@@ -196,12 +216,16 @@ export function WorksheetList({
                       <SelectValue placeholder="Wybierz zastęp" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="null">Wszystkie</SelectItem>
-                      {patrols.map((patrol) => (
-                        <SelectItem key={patrol.id} value={patrol.id}>
-                          {patrol.name}
-                        </SelectItem>
-                      ))}
+                      <SelectGroup>
+                        {patrolItems.map((patrol) => (
+                          <SelectItem
+                            key={patrol.value ?? "all"}
+                            value={patrol.value}
+                          >
+                            {patrol.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
                     </SelectContent>
                   </Select>
                 </div>

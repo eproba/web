@@ -8,13 +8,12 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
-  FormDescription,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { UserCombobox } from "@/components/user-combobox";
 import { FinalChallengeSuggestionsDialog } from "@/components/worksheets/editor/final-challenge-suggestions-dialog";
@@ -24,7 +23,7 @@ import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { InfoIcon, SparklesIcon } from "lucide-react";
 import React, { useState } from "react";
-import { UseFormReturn } from "react-hook-form";
+import { Controller, UseFormReturn } from "react-hook-form";
 
 interface WorksheetBasicInfoProps {
   form: UseFormReturn<WorksheetWithTasks>;
@@ -43,12 +42,12 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
         <div className="space-y-4">
           {currentUser.function.numberValue >=
             RequiredFunctionLevel.WORKSHEET_MANAGEMENT && (
-            <FormField
+            <Controller
               control={form.control}
               name="userId"
-              render={({ field }) => (
-                <FormItem>
-                  <Label>Dla kogo jest ta próba? *</Label>
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel>Dla kogo jest ta próba? *</FieldLabel>
                   <UserCombobox
                     value={field.value || ""}
                     onValueChange={field.onChange}
@@ -58,53 +57,64 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                       RequiredFunctionLevel.OUTSIDE_TEAM_WORKSHEET_CREATION
                     }
                   />
-                  <FormMessage />
-                </FormItem>
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
               )}
             />
           )}
 
-          <FormField
+          <Controller
             control={form.control}
             name="name"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Nazwa *</Label>
-                <Input placeholder="np. Wywiadowca" {...field} />
-                <FormMessage />
-              </FormItem>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Nazwa *</FieldLabel>
+                <Input
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
+                  placeholder="np. Wywiadowca"
+                  {...field}
+                />
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
-          <FormField
+          <Controller
             control={form.control}
             name="description"
-            render={({ field }) => (
-              <FormItem>
-                <Label>Opis</Label>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Opis</FieldLabel>
                 <Textarea
+                  id={field.name}
+                  aria-invalid={fieldState.invalid}
                   placeholder="Jeśli chcesz, możesz opisać tę próbę."
                   rows={2}
                   {...field}
                 />
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
 
           <Accordion
-            type="single"
-            collapsible
-            defaultValue={form.getValues("supervisor") ? "supervisor" : ""}
+            defaultValue={form.getValues("supervisor") ? ["supervisor"] : []}
           >
             <AccordionItem value="supervisor">
               <AccordionTrigger className="py-0">Opiekun</AccordionTrigger>
               <AccordionContent className="pb-0">
-                <FormField
+                <Controller
                   control={form.control}
                   name="supervisor"
-                  render={({ field }) => (
-                    <FormItem className="pt-2">
+                  render={({ field, fieldState }) => (
+                    <Field className="pt-2" data-invalid={fieldState.invalid}>
                       <UserCombobox
                         value={field.value || ""}
                         onValueChange={field.onChange}
@@ -116,9 +126,11 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                             : []
                         }
                       />
-                      <FormDescription>Dla prób z kapitułą</FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                      <FieldDescription>Dla prób z kapitułą</FieldDescription>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
               </AccordionContent>
@@ -126,32 +138,36 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
           </Accordion>
 
           <Accordion
-            type="single"
-            collapsible
             defaultValue={
               form.getValues("finalChallenge") ||
               form.getValues("finalChallengeDescription")
-                ? "finalChallenge"
-                : ""
+                ? ["finalChallenge"]
+                : []
             }
           >
             <AccordionItem value="finalChallenge">
               <AccordionTrigger className="py-0">
                 Próba końcowa
               </AccordionTrigger>
-              <AccordionContent
-                className="space-y-4"
-                containerClassName="overflow-x-visible overflow-y-clip"
-              >
+              <AccordionContent className="space-y-4">
                 <div className="flex items-center gap-2 pt-2">
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="finalChallenge"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <Input {...field} />
-                        <FormMessage />
-                      </FormItem>
+                    render={({ field, fieldState }) => (
+                      <Field
+                        className="flex-1"
+                        data-invalid={fieldState.invalid}
+                      >
+                        <Input
+                          id={field.name}
+                          aria-invalid={fieldState.invalid}
+                          {...field}
+                        />
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
                     )}
                   />
                   {currentUser.function.numberValue >=
@@ -171,15 +187,24 @@ export const WorksheetBasicInfo: React.FC<WorksheetBasicInfoProps> = ({
                       </Button>
                     )}
                 </div>
-                <FormField
+                <Controller
                   control={form.control}
                   name="finalChallengeDescription"
-                  render={({ field }) => (
-                    <FormItem>
-                      <Label>Opis próby końcowej</Label>
-                      <Textarea rows={2} {...field} />
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        Opis próby końcowej
+                      </FieldLabel>
+                      <Textarea
+                        id={field.name}
+                        aria-invalid={fieldState.invalid}
+                        rows={2}
+                        {...field}
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
               </AccordionContent>

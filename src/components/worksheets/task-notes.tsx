@@ -14,6 +14,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { taskSerializer } from "@/lib/serializers/worksheet";
 import { ToastMsg } from "@/lib/toast-msg";
@@ -29,7 +30,6 @@ import {
   XIcon,
 } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import { toast } from "react-toastify";
 
 interface TaskNotesProps {
   task: Task;
@@ -85,16 +85,20 @@ export function TaskNotes({
       const updatedTask = taskSerializer(await response.json());
       updateTask(updatedTask);
       setIsEditing(false);
-      toast.success(task.notes ? "Notatka zaktualizowana" : "Notatka dodana");
+      toast.add({
+        title: task.notes ? "Notatka zaktualizowana" : "Notatka dodana",
+        type: "success",
+      });
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zapisać notatki",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
       setIsFirstRender(false);
@@ -113,19 +117,20 @@ export function TaskNotes({
 
       const updatedTask = taskSerializer(await response.json());
       updateTask(updatedTask);
-      toast.success("Notatka usunięta");
+      toast.add({ title: "Notatka usunięta", type: "success" });
       setIsDeleteDialogOpen(false);
       setIsPopoverOpen(false);
       setEditValue("");
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się usunąć notatki",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
       setIsFirstRender(true);
@@ -190,15 +195,17 @@ export function TaskNotes({
                         open={isDeleteDialogOpen}
                         onOpenChange={setIsDeleteDialogOpen}
                       >
-                        <DialogTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            disabled={isLoading}
-                          >
-                            <TrashIcon className="h-3 w-3" />
-                          </Button>
-                        </DialogTrigger>
+                        <DialogTrigger
+                          render={
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              disabled={isLoading}
+                            >
+                              <TrashIcon className="h-3 w-3" />
+                            </Button>
+                          }
+                        />
                         <DialogContent>
                           <DialogHeader>
                             <DialogTitle>Usuń notatkę</DialogTitle>
@@ -345,22 +352,24 @@ export function TaskNotes({
         }
       }}
     >
-      <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className={cn(
-            "h-8 w-8 p-0 shadow-lg transition-all duration-200 hover:shadow-xl",
-            "border-2 bg-white/95 backdrop-blur-sm",
-            task.notes
-              ? "border-amber-300 bg-amber-50/95 text-amber-600 hover:bg-amber-100/95 hover:text-amber-700"
-              : "border-gray-300 bg-white/95 text-gray-600 hover:bg-gray-50/95 hover:text-gray-700",
-            "animate-in fade-in-0 slide-in-from-left-2 duration-300",
-            className,
-          )}
-        >
-          <StickyNoteIcon className="size-4" />
-        </Button>
+      <PopoverTrigger
+        render={
+          <Button
+            variant="outline"
+            size="icon"
+            className={cn(
+              "h-8 w-8 p-0 shadow-lg transition-all duration-200 hover:shadow-xl",
+              "border-2 bg-white/95 backdrop-blur-sm",
+              task.notes
+                ? "border-amber-300 bg-amber-50/95 text-amber-600 hover:bg-amber-100/95 hover:text-amber-700"
+                : "border-gray-300 bg-white/95 text-gray-600 hover:bg-gray-50/95 hover:text-gray-700",
+              "animate-in fade-in-0 slide-in-from-left-2 duration-300",
+              className,
+            )}
+          />
+        }
+      >
+        <StickyNoteIcon className="size-4" />
       </PopoverTrigger>
       <PopoverContent className="w-80 p-0" align="start" side="bottom">
         <AnimatePresence>
@@ -399,16 +408,18 @@ export function TaskNotes({
                     open={isDeleteDialogOpen}
                     onOpenChange={setIsDeleteDialogOpen}
                   >
-                    <DialogTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        disabled={isLoading}
-                        className="h-6 w-6 p-0"
-                      >
-                        <TrashIcon className="h-3 w-3" />
-                      </Button>
-                    </DialogTrigger>
+                    <DialogTrigger
+                      render={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          disabled={isLoading}
+                          className="h-6 w-6 p-0"
+                        >
+                          <TrashIcon className="h-3 w-3" />
+                        </Button>
+                      }
+                    />
                     <DialogContent>
                       <DialogHeader>
                         <DialogTitle>Usuń notatkę</DialogTitle>

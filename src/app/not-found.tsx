@@ -2,28 +2,18 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
+import Particles, { ParticlesProvider } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useTheme } from "next-themes";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 export default function NotFound() {
   const { resolvedTheme } = useTheme();
-  const [initParticles, setInitParticles] = useState(false);
   const particlesColor = resolvedTheme === "dark" ? "#ffffff" : "#000000";
-
-  useEffect(() => {
-    initParticlesEngine(async (engine) => {
-      await loadSlim(engine);
-    }).then(() => {
-      setInitParticles(true);
-    });
-  }, []);
 
   return (
     <>
-      {initParticles && (
+      <ParticlesProvider init={loadSlim}>
         <Particles
           id="tsparticles"
           options={{
@@ -96,7 +86,7 @@ export default function NotFound() {
           }}
           className="-z-1"
         />
-      )}
+      </ParticlesProvider>
       <div className="pointer-events-none fixed inset-0 mx-10 flex touch-none flex-col items-center justify-center text-center">
         <Card className="bg-muted/20 pointer-events-auto backdrop-blur-xs select-none">
           <CardContent>

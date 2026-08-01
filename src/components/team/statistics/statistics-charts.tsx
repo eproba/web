@@ -103,7 +103,7 @@ export function ActivityTrendsChart({ statistics }: ChartsProps) {
               tickMargin={8}
             />
             <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-            <ChartTooltip cursor={false} content={ChartTooltipContent} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <ChartLegend content={<ChartLegendContent />} />
             <Bar
               dataKey="tasks"
@@ -154,10 +154,11 @@ export function ScoutRanksChart({ statistics }: ChartsProps) {
           className="mx-auto aspect-square max-h-80"
         >
           <PieChart>
-            <ChartTooltip cursor={false} content={ChartTooltipContent} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <ChartLegend
-              content={<ChartLegendContent />}
-              className="flex-wrap"
+              content={
+                <ChartLegendContent nameKey="rank" className="flex-wrap" />
+              }
             />
             <Pie
               data={statistics.rankDistribution.scoutRanks}
@@ -203,10 +204,11 @@ export function InstructorRanksChart({ statistics }: ChartsProps) {
           className="mx-auto aspect-square max-h-80"
         >
           <PieChart>
-            <ChartTooltip cursor={false} content={ChartTooltipContent} />
+            <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             <ChartLegend
-              content={<ChartLegendContent />}
-              className="flex-wrap"
+              content={
+                <ChartLegendContent nameKey="rank" className="flex-wrap" />
+              }
             />
             <Pie
               data={statistics.rankDistribution.instructorRanks}
@@ -305,7 +307,7 @@ export function FunctionsChart({ statistics }: ChartsProps) {
               tickMargin={8}
               allowDecimals={false}
             />
-            <ChartTooltip content={ChartTooltipContent} />
+            <ChartTooltip content={<ChartTooltipContent />} />
             {allRanks.map((rank) => (
               <Bar
                 key={rank}
@@ -361,7 +363,7 @@ export function PatrolComparisonChart({ statistics }: ChartsProps) {
               tickMargin={8}
             />
             <YAxis tickLine={false} axisLine={false} tickMargin={8} />
-            <ChartTooltip content={ChartTooltipContent} />
+            <ChartTooltip content={<ChartTooltipContent />} />
             <Bar
               dataKey="memberCount"
               fill="var(--color-chart-1)"
@@ -401,7 +403,7 @@ export function PatrolPerformanceRadarChart({ statistics }: ChartsProps) {
           className="w-full sm:min-h-80"
         >
           <RadarChart data={statistics.patrolComparison}>
-            <ChartTooltip content={ChartTooltipContent} />
+            <ChartTooltip content={<ChartTooltipContent />} />
             <PolarAngleAxis dataKey="name" />
             <PolarGrid />
             <Radar

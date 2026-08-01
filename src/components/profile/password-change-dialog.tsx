@@ -10,22 +10,15 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 const getFormSchema = (variant: "change" | "set") => {
@@ -59,7 +52,7 @@ export const PasswordChangeDialog = ({
   children,
 }: {
   variant?: "change" | "set";
-  children: React.ReactNode;
+  children: React.ReactElement;
 }) => {
   const { apiClient } = useApi();
   const router = useRouter();
@@ -84,11 +77,13 @@ export const PasswordChangeDialog = ({
         body: JSON.stringify(body),
       });
 
-      toast.success(
-        variant === "change"
-          ? "Hasło zostało zmienione"
-          : "Hasło zostało ustawione",
-      );
+      toast.add({
+        title:
+          variant === "change"
+            ? "Hasło zostało zmienione"
+            : "Hasło zostało ustawione",
+        type: "success",
+      });
       setOpen(false);
       router.refresh();
     } catch (error) {
@@ -115,14 +110,15 @@ export const PasswordChangeDialog = ({
       }
 
       if (!hasFieldErrors) {
-        toast.error(
-          ToastMsg({
+        toast.add({
+          ...ToastMsg({
             data: {
               title: "Nie udało się zmienić hasła",
               description: error as Error,
             },
           }),
-        );
+          type: "error",
+        });
       }
     } finally {
       if (form.formState.isSubmitSuccessful) {
@@ -140,9 +136,9 @@ export const PasswordChangeDialog = ({
         }
       }}
     >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent className="sm:max-w-md">
-        <Form {...form}>
+        <FormProvider {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <DialogHeader>
               <DialogTitle>
@@ -152,64 +148,89 @@ export const PasswordChangeDialog = ({
 
             <div className="flex flex-col gap-4 py-4">
               {variant === "change" && (
-                <FormField
+                <Controller
                   control={form.control}
                   name="oldPassword"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel htmlFor="oldPassword">Obecne hasło</FormLabel>
-                      <FormControl>
-                        <Input id="oldPassword" type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="oldPassword">
+                        Obecne hasło
+                      </FieldLabel>
+
+                      <Input
+                        id="oldPassword"
+                        type="password"
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                      />
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
               )}
 
-              <FormField
+              <Controller
                 control={form.control}
                 name="newPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="newPassword">Nowe hasło</FormLabel>
-                    <FormControl>
-                      <Input id="newPassword" type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="newPassword">Nowe hasło</FieldLabel>
+
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
 
-              <FormField
+              <Controller
                 control={form.control}
                 name="confirmPassword"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel htmlFor="confirmPassword">
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="confirmPassword">
                       Powtórz hasło
-                    </FormLabel>
-                    <FormControl>
-                      <Input id="confirmPassword" type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                    </FieldLabel>
+
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
             </div>
 
             <DialogFooter className="mt-4 flex flex-row justify-end gap-2">
-              <DialogClose asChild>
-                <Button type="button" variant="outline">
-                  Anuluj
-                </Button>
-              </DialogClose>
+              <DialogClose
+                render={
+                  <Button type="button" variant="outline">
+                    Anuluj
+                  </Button>
+                }
+              />
               <Button type="submit" disabled={form.formState.isSubmitting}>
                 {form.formState.isSubmitting ? "Zapisywanie..." : "Zapisz"}
               </Button>
             </DialogFooter>
           </form>
-        </Form>
+        </FormProvider>
       </DialogContent>
     </Dialog>
   );

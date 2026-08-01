@@ -1,3 +1,4 @@
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import {
   Task,
@@ -11,8 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
 import { useState } from "react";
-import { Resolver, useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { Resolver, useForm, useWatch } from "react-hook-form";
 import { v4 as uuid } from "uuid";
 
 interface UseWorksheetFormProps {
@@ -107,7 +107,10 @@ export const useWorksheetForm = ({
         type: "manual",
         message: "Użytkownik nie może być swoim własnym opiekunem.",
       });
-      toast.error("Użytkownik nie może być swoim własnym opiekunem.");
+      toast.add({
+        title: "Użytkownik nie może być swoim własnym opiekunem.",
+        type: "error",
+      });
       return;
     }
 
@@ -167,7 +170,7 @@ export const useWorksheetForm = ({
       );
 
       if (validTasks.length === 0) {
-        toast.error("Dodaj przynajmniej jedno zadanie");
+        toast.add({ title: "Dodaj przynajmniej jedno zadanie", type: "error" });
         return;
       }
 
@@ -210,23 +213,26 @@ export const useWorksheetForm = ({
         body: JSON.stringify(worksheetData),
       });
 
-      toast.success(
-        mode === "create"
-          ? "Próba została utworzona"
-          : "Próba została zaktualizowana",
-      );
+      toast.add({
+        title:
+          mode === "create"
+            ? "Próba została utworzona"
+            : "Próba została zaktualizowana",
+        type: "success",
+      });
 
       router.push(redirectTo);
     } catch (error) {
       console.error("Error creating worksheet:", error);
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Błąd podczas tworzenia próby",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsSubmitting(false);
       setTasksToClearStatus([]);
@@ -254,7 +260,7 @@ export const useWorksheetForm = ({
   const isDirty = form.formState.isDirty;
   const isValid = form.formState.isValid;
   const errors = form.formState.errors;
-  const tasks = form.watch("tasks");
+  const tasks = useWatch({ control: form.control, name: "tasks" });
 
   const canSubmit = isValid && !isSubmitting && tasks.length > 0;
 

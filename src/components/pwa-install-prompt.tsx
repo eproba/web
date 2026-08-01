@@ -140,7 +140,6 @@ export function PwaInstallPrompt({
       !installTriggered.current &&
       (installPromptEvent || isIos || isMacSafari)
     ) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsAutoInstallModalOpen(true);
       installTriggered.current = true;
     }
@@ -239,9 +238,7 @@ export function PwaInstallPrompt({
           </DialogHeader>
           <DialogFooter>
             <Button onClick={handleAutoInstall}>Zainstaluj</Button>
-            <DialogClose asChild>
-              <Button variant="outline">Anuluj</Button>
-            </DialogClose>
+            <DialogClose render={<Button variant="outline">Anuluj</Button>} />
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -260,17 +257,18 @@ export function PwaInstallPrompt({
             <DialogContent>
               <DialogHeader>
                 <DialogTitle>{instructionTitle}</DialogTitle>
-                <DialogDescription asChild>{instructions}</DialogDescription>
+                <DialogDescription render={instructions} />
               </DialogHeader>
               <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Zamknij</Button>
-                </DialogClose>
+                <DialogClose
+                  render={<Button variant="outline">Zamknij</Button>}
+                />
               </DialogFooter>
             </DialogContent>
           </Dialog>
         ) : (
           <Drawer
+            showSwipeHandle
             open={isInstructionsOpen}
             onOpenChange={(open) => {
               setIsInstructionsOpen(open);
@@ -282,10 +280,10 @@ export function PwaInstallPrompt({
             <DrawerContent>
               <DrawerHeader>
                 <DrawerTitle>{instructionTitle}</DrawerTitle>
-                <DrawerDescription asChild>{instructions}</DrawerDescription>
+                <DrawerDescription render={instructions} />
                 <DrawerFooter>
-                  <DrawerClose asChild>
-                    <Button variant="outline">Zamknij</Button>
+                  <DrawerClose render={<Button variant="outline" />}>
+                    Zamknij
                   </DrawerClose>
                 </DrawerFooter>
               </DrawerHeader>
@@ -306,19 +304,18 @@ export function PwaInstallPrompt({
           <DialogContent>
             <DialogHeader>
               <DialogTitle>Instrukcja instalacji</DialogTitle>
-              <DialogDescription asChild>
-                {fallbackInstructions}
-              </DialogDescription>
+              <DialogDescription render={fallbackInstructions} />
             </DialogHeader>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button variant="outline">Zamknij</Button>
-              </DialogClose>
+              <DialogClose
+                render={<Button variant="outline">Zamknij</Button>}
+              />
             </DialogFooter>
           </DialogContent>
         </Dialog>
       ) : (
         <Drawer
+          showSwipeHandle
           open={isFallbackInstructionsOpen}
           onOpenChange={(open) => {
             setIsFallbackInstructionsOpen(open);
@@ -330,12 +327,10 @@ export function PwaInstallPrompt({
           <DrawerContent>
             <DrawerHeader>
               <DrawerTitle>Instrukcja instalacji</DrawerTitle>
-              <DrawerDescription asChild>
-                {fallbackInstructions}
-              </DrawerDescription>
+              <DrawerDescription render={fallbackInstructions} />
               <DrawerFooter>
-                <DrawerClose asChild>
-                  <Button variant="outline">Zamknij</Button>
+                <DrawerClose render={<Button variant="outline" />}>
+                  Zamknij
                 </DrawerClose>
               </DrawerFooter>
             </DrawerHeader>

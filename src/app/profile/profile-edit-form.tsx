@@ -2,22 +2,21 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { teamSerializer } from "@/lib/serializers/team";
 import { userSerializer } from "@/lib/serializers/user";
@@ -29,8 +28,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useSetAtom } from "jotai";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 const formSchema = z.object({
@@ -84,17 +82,18 @@ export function ProfileEditForm({ user }: { user: User }) {
       const updated = userSerializer(await response.json());
       setCurrentUser(updated);
       await updateSession(updated);
-      toast.success("Profil został zaktualizowany");
+      toast.add({ title: "Profil został zaktualizowany", type: "success" });
       router.refresh();
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zaktualizować profilu",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
@@ -111,14 +110,15 @@ export function ProfileEditForm({ user }: { user: User }) {
           ),
         );
       } catch (error) {
-        toast.error(
-          ToastMsg({
+        toast.add({
+          ...ToastMsg({
             data: {
               title: "Nie udało się pobrać zastępów",
               description: error as Error,
             },
           }),
-        );
+          type: "error",
+        });
       }
     }
 
@@ -137,101 +137,131 @@ export function ProfileEditForm({ user }: { user: User }) {
   }, [user, patrols, form]);
 
   return (
-    <Form {...form}>
+    <FormProvider {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        <FormField
+        <Controller
           control={form.control}
           name="firstName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Imię</FormLabel>
-              <FormControl>
-                <Input placeholder="Podaj imię" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Imię</FieldLabel>
+
+              <Input
+                placeholder="Podaj imię"
+                {...field}
+                aria-invalid={fieldState.invalid}
+                id={field.name}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
         />
 
-        <FormField
+        <Controller
           control={form.control}
           name="lastName"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Nazwisko</FormLabel>
-              <FormControl>
-                <Input placeholder="Podaj nazwisko" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Nazwisko</FieldLabel>
+
+              <Input
+                placeholder="Podaj nazwisko"
+                {...field}
+                aria-invalid={fieldState.invalid}
+                id={field.name}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
         />
 
-        <FormField
+        <Controller
           control={form.control}
           name="nickname"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Pseudonim</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder="Podaj twój pseudonim (jeśli masz)"
-                  {...field}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Pseudonim</FieldLabel>
+
+              <Input
+                placeholder="Podaj twój pseudonim (jeśli masz)"
+                {...field}
+                aria-invalid={fieldState.invalid}
+                id={field.name}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
         />
 
-        <FormField
+        <Controller
           control={form.control}
           name="email"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
-              <FormControl>
-                <Input type="email" placeholder="twoj.mail@zhr.pl" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
+          render={({ field, fieldState }) => (
+            <Field data-invalid={fieldState.invalid}>
+              <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+
+              <Input
+                type="email"
+                placeholder="twoj.mail@zhr.pl"
+                {...field}
+                aria-invalid={fieldState.invalid}
+                id={field.name}
+              />
+
+              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+            </Field>
           )}
         />
 
         {user.patrol && (
-          <FormField
+          <Controller
             control={form.control}
             name="patrol"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Zastęp</FormLabel>
+            render={({ field, fieldState }) => (
+              <Field data-invalid={fieldState.invalid}>
+                <FieldLabel htmlFor={field.name}>Zastęp</FieldLabel>
                 <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  items={patrols.map((patrol) => ({
+                    label: patrol.name,
+                    value: patrol.id,
+                  }))}
+                  inputRef={field.ref}
+                  name={field.name}
+                  onValueChange={(value) => field.onChange(value ?? "")}
+                  value={field.value || null}
                   disabled={!patrols.length}
-                  {...field}
                 >
-                  <FormControl>
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Wybierz twój zastęp" />
-                    </SelectTrigger>
-                  </FormControl>
+                  <SelectTrigger
+                    className="w-full"
+                    aria-invalid={fieldState.invalid}
+                    id={field.name}
+                  >
+                    <SelectValue placeholder="Wybierz twój zastęp" />
+                  </SelectTrigger>
+
                   <SelectContent>
-                    {patrols.map((patrol) => (
-                      <SelectItem key={patrol.id} value={patrol.id || "null"}>
-                        {patrol.name}
-                      </SelectItem>
-                    ))}
+                    <SelectGroup>
+                      {patrols.map((patrol) => (
+                        <SelectItem key={patrol.id} value={patrol.id}>
+                          {patrol.name}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
                   </SelectContent>
                 </Select>
                 {[1, 2].includes(user.function.numberValue) && (
-                  <FormDescription>
+                  <FieldDescription>
                     Po zmianie zastępu twoja funkcja ({user.function.fullName})
                     zostanie zresetowana.
-                  </FormDescription>
+                  </FieldDescription>
                 )}
-                <FormMessage />
-              </FormItem>
+                {fieldState.invalid && (
+                  <FieldError errors={[fieldState.error]} />
+                )}
+              </Field>
             )}
           />
         )}
@@ -242,6 +272,6 @@ export function ProfileEditForm({ user }: { user: User }) {
           </Button>
         </div>
       </form>
-    </Form>
+    </FormProvider>
   );
 }

@@ -236,7 +236,7 @@ export default async function TeamStatisticsPage() {
                 </div>
                 <Progress
                   value={statistics.worksheetProgress.averageCompletionRate}
-                  className="h-2"
+                  className="[&_[data-slot=progress-track]]:h-2"
                 />
                 <p className="text-muted-foreground text-xs">
                   Średni poziom ukończenia:{" "}

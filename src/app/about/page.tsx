@@ -68,10 +68,11 @@ export default async function AboutPage() {
               <PwaInstallButton />
             </PwaInstallPrompt>
             <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="icon">
-                  <QrCodeIcon className="size-4" />
-                </Button>
+              <DialogTrigger
+                aria-label="Pokaż kod QR"
+                render={<Button size="icon" variant="outline" />}
+              >
+                <QrCodeIcon />
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
@@ -100,7 +101,7 @@ export default async function AboutPage() {
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Accordion type="multiple">
+          <Accordion multiple>
             <AccordionItem value="item-1">
               <AccordionTrigger>
                 Jak mogę dodać swoją drużynę do Epróby?
@@ -156,18 +157,18 @@ export default async function AboutPage() {
                 </p>
               </AccordionContent>
             </AccordionItem>
-            <AccordionItem value="item-4">
-              <AccordionTrigger>
-                Kiedy będzie dostępna synchroniazacja z cz!appką?
-              </AccordionTrigger>
-              <AccordionContent>
-                <p>
-                  Synchronizacja z cz!appką jest planowana, ale nie mamy jeszcze
-                  konkretnej daty jej wdrożenia. O postępach będziemy informować
-                  na stronie.
-                </p>
-              </AccordionContent>
-            </AccordionItem>
+            {/*<AccordionItem value="item-4">*/}
+            {/*  <AccordionTrigger>*/}
+            {/*    Kiedy będzie dostępna synchroniazacja z cz!appką?*/}
+            {/*  </AccordionTrigger>*/}
+            {/*  <AccordionContent>*/}
+            {/*    <p>*/}
+            {/*      Synchronizacja z cz!appką jest planowana, ale nie mamy jeszcze*/}
+            {/*      konkretnej daty jej wdrożenia. O postępach będziemy informować*/}
+            {/*      na stronie.*/}
+            {/*    </p>*/}
+            {/*  </AccordionContent>*/}
+            {/*</AccordionItem>*/}
             <AccordionItem value="item-5">
               <AccordionTrigger>
                 Czy powstanie aplikacja na iOS?

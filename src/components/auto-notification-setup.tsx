@@ -1,5 +1,6 @@
 "use client";
 
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import {
   getExistingToken,
@@ -9,7 +10,6 @@ import {
 } from "@/lib/firebase";
 import { ToastMsg } from "@/lib/toast-msg";
 import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
 
 export function AutoNotificationSetup() {
   const [hasAttemptedSetup, setHasAttemptedSetup] = useState(false);
@@ -31,14 +31,15 @@ export function AutoNotificationSetup() {
             if (existingToken) {
               const registered = await registerDevice(existingToken, apiClient);
               if (!registered) {
-                toast.warn(
-                  ToastMsg({
+                toast.add({
+                  ...ToastMsg({
                     data: {
                       title: "Nie udało się aktywować powiadomień",
                       description: "Odśwież stronę, aby spróbować ponownie.",
                     },
                   }),
-                );
+                  type: "warning",
+                });
               }
             }
           } else if (permission === "default") {
@@ -51,14 +52,15 @@ export function AutoNotificationSetup() {
 
               const registered = await registerDevice(token, apiClient);
               if (!registered) {
-                toast.warn(
-                  ToastMsg({
+                toast.add({
+                  ...ToastMsg({
                     data: {
                       title: "Nie udało się aktywować powiadomień",
                       description: "Odśwież stronę, aby spróbować ponownie.",
                     },
                   }),
-                );
+                  type: "warning",
+                });
               }
             }
           } else {
@@ -84,8 +86,8 @@ export function AutoNotificationSetup() {
             "AutoNotificationSetup: Firebase onMessage received:",
             notificationPayload,
           );
-          toast.info(
-            ToastMsg({
+          toast.add({
+            ...ToastMsg({
               data: {
                 title:
                   notificationPayload.notification?.title || "Nowa wiadomość",
@@ -95,7 +97,8 @@ export function AutoNotificationSetup() {
                 href: notificationPayload.fcmOptions?.link,
               },
             }),
-          );
+            type: "info",
+          });
         });
 
         return unsubscribe;

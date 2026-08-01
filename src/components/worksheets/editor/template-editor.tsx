@@ -1,6 +1,5 @@
 "use client";
 
-import { Form } from "@/components/ui/form";
 import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
 import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
 import { useMobileTaskMovements } from "@/components/worksheets/editor/hooks/use-mobile-task-movements";
@@ -13,6 +12,7 @@ import { WorksheetSubmitButton } from "@/components/worksheets/editor/worksheet-
 import { Task, WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { User } from "@/types/user";
 import React, { useState } from "react";
+import { FormProvider } from "react-hook-form";
 
 interface TemplateEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
@@ -91,7 +91,7 @@ export const TemplateEditor = ({
 
   return (
     <DragDropProvider>
-      <Form {...form}>
+      <FormProvider {...form}>
         <form
           onSubmit={onSubmit}
           className="duration-300relative space-y-8 transition-all"
@@ -131,7 +131,7 @@ export const TemplateEditor = ({
             variant="template"
           />
         </form>
-      </Form>
+      </FormProvider>
     </DragDropProvider>
   );
 };

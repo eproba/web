@@ -49,11 +49,6 @@ export function TemplateItem({
             {template.description}
           </p>
         )}
-        {template.updatedAt && (
-          <p className="text-muted-foreground text-xs">
-            Ostatnia aktualizacja: {template.updatedAt.toLocaleString()}
-          </p>
-        )}
       </div>
 
       <TaskTable worksheet={template} variant="template" />

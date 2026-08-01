@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "@/components/ui/toast";
 import { Toggle } from "@/components/ui/toggle";
 import { useApi } from "@/lib/api-client";
 import {
@@ -36,10 +37,7 @@ import {
   TrashIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "react-toastify";
 import { UAParser } from "ua-parser-js";
-
-import { WebhooksCard } from "./webhooks-card";
 
 type DeviceInfo = {
   os?: { name: string; version: string };
@@ -87,20 +85,23 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
       const data = await response.json();
       setDevices(data);
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się pobrać urządzeń",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
   }, [apiClient]);
 
   useEffect(() => {
+    // This effect synchronizes the component with the remote device inventory.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchDevices();
     getExistingToken().then((token) => {
       setCurrentDeviceToken(token);
@@ -115,7 +116,10 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
       if (token) {
         const ok = await registerDevice(token, apiClient);
         if (ok) {
-          toast.success("Powiadomienia zostały włączone na tym urządzeniu");
+          toast.add({
+            title: "Powiadomienia zostały włączone na tym urządzeniu",
+            type: "success",
+          });
           await fetchDevices();
           const refreshed = await getExistingToken();
           setCurrentDeviceToken(refreshed);
@@ -156,23 +160,27 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
           method: "PATCH",
           body: JSON.stringify({ active: !deviceToUpdate?.active }),
         });
-        toast.success("Zaktualizowano ustawienia urządzenia");
+        toast.add({
+          title: "Zaktualizowano ustawienia urządzenia",
+          type: "success",
+        });
       } else {
         await apiClient(`/fcm/devices/${registrationId}/`, {
           method: "DELETE",
         });
-        toast.success("Urządzenie zostało usunięte");
+        toast.add({ title: "Urządzenie zostało usunięte", type: "success" });
       }
       fetchDevices();
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się wykonać operacji",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
@@ -183,18 +191,20 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
         body: JSON.stringify({ email_notifications: enabled }),
       });
       setEmailNotifications(enabled);
-      toast.success(
-        `Powiadomienia e-mail zostały ${enabled ? "włączone" : "wyłączone"}`,
-      );
+      toast.add({
+        title: `Powiadomienia e-mail zostały ${enabled ? "włączone" : "wyłączone"}`,
+        type: "success",
+      });
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zaktualizować powiadomień e-mail",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
@@ -202,18 +212,18 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
     switch (deviceType) {
       case "android":
       case "ios":
-        return <SmartphoneIcon className="size-8 flex-shrink-0" />;
+        return <SmartphoneIcon className="size-8 shrink-0" />;
       case "web":
         if (deviceInfo.device?.type === "tablet") {
-          return <TabletIcon className="size-8 flex-shrink-0" />;
+          return <TabletIcon className="size-8 shrink-0" />;
         }
         return deviceInfo.device?.type === "mobile" ? (
-          <SmartphoneIcon className="size-8 flex-shrink-0" />
+          <SmartphoneIcon className="size-8 shrink-0" />
         ) : (
-          <LaptopIcon className="size-8 flex-shrink-0" />
+          <LaptopIcon className="size-8 shrink-0" />
         );
       default:
-        return <MonitorIcon className="size-8 flex-shrink-0" />;
+        return <MonitorIcon className="size-8 shrink-0" />;
     }
   };
 
@@ -440,7 +450,7 @@ export function ProfileNotificationsTab({ user }: { user: User }) {
         </DialogContent>
       </Dialog>
 
-      <WebhooksCard />
+      {/*<WebhooksCard />*/}
     </>
   );
 }

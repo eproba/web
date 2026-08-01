@@ -1,6 +1,6 @@
 import { ApiTeamResponse, teamSerializer } from "@/lib/serializers/team";
 import { ApiUserResponse, userSerializer } from "@/lib/serializers/user";
-import { TeamRequest } from "@/types/team-request";
+import { TeamRequest, TeamRequestApprovalOutcome } from "@/types/team-request";
 
 export interface ApiTeamRequestResponse {
   id: string;
@@ -11,6 +11,7 @@ export interface ApiTeamRequestResponse {
   created_at: string;
   notes: string;
   function_level: number;
+  approval_outcome: TeamRequestApprovalOutcome;
 }
 
 export function teamRequestSerializer(
@@ -25,5 +26,6 @@ export function teamRequestSerializer(
     createdAt: new Date(apiResponse.created_at),
     notes: apiResponse.notes,
     requestedFunctionLevel: apiResponse.function_level,
+    approvalOutcome: apiResponse.approval_outcome,
   };
 }

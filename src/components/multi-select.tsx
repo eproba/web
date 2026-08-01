@@ -156,12 +156,6 @@ interface MultiSelectProps
   modalPopover?: boolean;
 
   /**
-   * If true, renders the multi-select component as a child of another component.
-   * Optional, defaults to false.
-   */
-  asChild?: boolean;
-
-  /**
    * Additional class names to apply custom styles to the multi-select component.
    * Optional, can be used to add custom styles.
    */
@@ -313,8 +307,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       animationConfig,
       maxCount = 3,
       modalPopover = false,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      asChild = false,
       className,
       hideSelectAll = false,
       searchable = true,
@@ -635,11 +627,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
       onValueChange([]);
     };
 
-    const handleTogglePopover = () => {
-      if (disabled) return;
-      setIsPopoverOpen((prev) => !prev);
-    };
-
     const clearExtraOptions = () => {
       if (disabled) return;
       const newSelectedValues = selectedValues.slice(
@@ -788,211 +775,208 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                   .join(", ")}`}
           </div>
 
-          <PopoverTrigger asChild>
-            <Button
-              ref={buttonRef}
-              {...props}
-              onClick={handleTogglePopover}
-              disabled={disabled}
-              role="combobox"
-              aria-expanded={isPopoverOpen}
-              aria-haspopup="listbox"
-              aria-controls={isPopoverOpen ? listboxId : undefined}
-              aria-describedby={`${triggerDescriptionId} ${selectedCountId}`}
-              aria-label={`Multi-select: ${selectedValues.length} of ${
-                getAllOptions().length
-              } options selected. ${placeholder}`}
-              className={cn(
-                "flex h-auto min-h-10 items-center justify-between rounded-md border bg-inherit p-1 hover:bg-inherit [&_svg]:pointer-events-auto",
-                autoSize ? "w-auto" : "w-full",
-                responsiveSettings.compactMode && "min-h-8 text-sm",
-                screenSize === "mobile" && "min-h-12 text-base",
-                disabled && "cursor-not-allowed opacity-50",
-                className,
-              )}
-              style={{
-                ...widthConstraints,
-                maxWidth: `min(${widthConstraints.maxWidth}, 100%)`,
-              }}
-            >
-              {selectedValues.length > 0 ? (
-                <div className="flex w-full items-center justify-between">
-                  <div
-                    className={cn(
-                      "flex items-center gap-1",
-                      singleLine
-                        ? "multiselect-singleline-scroll overflow-x-auto"
-                        : "flex-wrap",
-                      responsiveSettings.compactMode && "gap-0.5",
-                    )}
-                  >
-                    {selectedValues
-                      .slice(0, responsiveSettings.maxCount)
-                      .map((value) => {
-                        const option = getOptionByValue(value);
-                        const IconComponent = option?.icon;
-                        const customStyle = option?.style;
-                        if (!option) {
-                          return null;
-                        }
-                        const badgeStyle: React.CSSProperties = {
-                          animationDuration: `${animation}s`,
-                          ...(customStyle?.badgeColor && {
-                            backgroundColor: customStyle.badgeColor,
-                          }),
-                          ...(customStyle?.gradient && {
-                            background: customStyle.gradient,
-                            color: "white",
-                          }),
-                        };
-                        return (
-                          <Badge
-                            key={value}
-                            className={cn(
-                              getBadgeAnimationClass(),
-                              multiSelectVariants({ variant }),
-                              customStyle?.gradient &&
-                                "border-transparent text-white",
-                              responsiveSettings.compactMode &&
-                                "px-1.5 py-0.5 text-xs",
-                              screenSize === "mobile" &&
-                                "max-w-[120px] truncate",
-                              singleLine && "flex-shrink-0 whitespace-nowrap",
-                              "[&>svg]:pointer-events-auto",
-                            )}
-                            style={{
-                              ...badgeStyle,
-                              animationDuration: `${
-                                animationConfig?.duration || animation
-                              }s`,
-                              animationDelay: `${animationConfig?.delay || 0}s`,
-                            }}
-                          >
-                            {IconComponent && !responsiveSettings.hideIcons && (
-                              <IconComponent
-                                className={cn(
-                                  "mr-2 h-4 w-4",
-                                  responsiveSettings.compactMode &&
-                                    "mr-1 h-3 w-3",
-                                  customStyle?.iconColor && "text-current",
-                                )}
-                                {...(customStyle?.iconColor && {
-                                  style: { color: customStyle.iconColor },
-                                })}
-                              />
-                            )}
-                            <span
+          <PopoverTrigger
+            render={
+              <Button
+                ref={buttonRef}
+                {...props}
+                disabled={disabled}
+                role="combobox"
+                variant="outline"
+                aria-expanded={isPopoverOpen}
+                aria-haspopup="listbox"
+                aria-controls={isPopoverOpen ? listboxId : undefined}
+                aria-describedby={`${triggerDescriptionId} ${selectedCountId}`}
+                aria-label={`Multi-select: ${selectedValues.length} of ${
+                  getAllOptions().length
+                } options selected. ${placeholder}`}
+                className={cn(
+                  "flex h-auto min-h-10 items-center justify-between rounded-md border bg-inherit p-1 hover:bg-inherit [&_svg]:pointer-events-auto",
+                  autoSize ? "w-auto" : "w-full",
+                  responsiveSettings.compactMode && "min-h-8 text-sm",
+                  screenSize === "mobile" && "min-h-12 text-base",
+                  disabled && "cursor-not-allowed opacity-50",
+                  className,
+                )}
+                style={{
+                  ...widthConstraints,
+                  maxWidth: `min(${widthConstraints.maxWidth}, 100%)`,
+                }}
+              />
+            }
+          >
+            {selectedValues.length > 0 ? (
+              <div className="flex w-full items-center justify-between">
+                <div
+                  className={cn(
+                    "flex items-center gap-1",
+                    singleLine
+                      ? "multiselect-singleline-scroll overflow-x-auto"
+                      : "flex-wrap",
+                    responsiveSettings.compactMode && "gap-0.5",
+                  )}
+                >
+                  {selectedValues
+                    .slice(0, responsiveSettings.maxCount)
+                    .map((value) => {
+                      const option = getOptionByValue(value);
+                      const IconComponent = option?.icon;
+                      const customStyle = option?.style;
+                      if (!option) {
+                        return null;
+                      }
+                      const badgeStyle: React.CSSProperties = {
+                        animationDuration: `${animation}s`,
+                        ...(customStyle?.badgeColor && {
+                          backgroundColor: customStyle.badgeColor,
+                        }),
+                        ...(customStyle?.gradient && {
+                          background: customStyle.gradient,
+                          color: "white",
+                        }),
+                      };
+                      return (
+                        <Badge
+                          key={value}
+                          className={cn(
+                            getBadgeAnimationClass(),
+                            multiSelectVariants({ variant }),
+                            customStyle?.gradient &&
+                              "border-transparent text-white",
+                            responsiveSettings.compactMode &&
+                              "px-1.5 py-0.5 text-xs",
+                            screenSize === "mobile" && "max-w-[120px] truncate",
+                            singleLine && "flex-shrink-0 whitespace-nowrap",
+                            "[&>svg]:pointer-events-auto",
+                          )}
+                          style={{
+                            ...badgeStyle,
+                            animationDuration: `${
+                              animationConfig?.duration || animation
+                            }s`,
+                            animationDelay: `${animationConfig?.delay || 0}s`,
+                          }}
+                        >
+                          {IconComponent && !responsiveSettings.hideIcons && (
+                            <IconComponent
                               className={cn(
-                                screenSize === "mobile" && "truncate",
+                                "mr-2 h-4 w-4",
+                                responsiveSettings.compactMode &&
+                                  "mr-1 h-3 w-3",
+                                customStyle?.iconColor && "text-current",
                               )}
-                            >
-                              {option.label}
-                            </span>
-                            <div
-                              role="button"
-                              tabIndex={0}
-                              onClick={(event) => {
+                              {...(customStyle?.iconColor && {
+                                style: { color: customStyle.iconColor },
+                              })}
+                            />
+                          )}
+                          <span
+                            className={cn(
+                              screenSize === "mobile" && "truncate",
+                            )}
+                          >
+                            {option.label}
+                          </span>
+                          <div
+                            role="button"
+                            tabIndex={0}
+                            onClick={(event) => {
+                              event.stopPropagation();
+                              toggleOption(value);
+                            }}
+                            onKeyDown={(event) => {
+                              if (event.key === "Enter" || event.key === " ") {
+                                event.preventDefault();
                                 event.stopPropagation();
                                 toggleOption(value);
-                              }}
-                              onKeyDown={(event) => {
-                                if (
-                                  event.key === "Enter" ||
-                                  event.key === " "
-                                ) {
-                                  event.preventDefault();
-                                  event.stopPropagation();
-                                  toggleOption(value);
-                                }
-                              }}
-                              aria-label={`Remove ${option.label} from selection`}
-                              className="-m-0.5 ml-2 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm p-0.5 hover:bg-white/20 focus:ring-1 focus:ring-white/50 focus:outline-none"
-                            >
-                              <XCircle
-                                className={cn(
-                                  "h-3 w-3",
-                                  responsiveSettings.compactMode &&
-                                    "h-2.5 w-2.5",
-                                )}
-                              />
-                            </div>
-                          </Badge>
-                        );
-                      })
-                      .filter(Boolean)}
-                    {selectedValues.length > responsiveSettings.maxCount && (
-                      <Badge
+                              }
+                            }}
+                            aria-label={`Remove ${option.label} from selection`}
+                            className="-m-0.5 ml-2 inline-flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm p-0.5 hover:bg-white/20 focus:ring-1 focus:ring-white/50 focus:outline-none"
+                          >
+                            <XCircle
+                              className={cn(
+                                "h-3 w-3",
+                                responsiveSettings.compactMode && "h-2.5 w-2.5",
+                              )}
+                            />
+                          </div>
+                        </Badge>
+                      );
+                    })
+                    .filter(Boolean)}
+                  {selectedValues.length > responsiveSettings.maxCount && (
+                    <Badge
+                      className={cn(
+                        "text-foreground border-foreground/1 bg-transparent hover:bg-transparent",
+                        getBadgeAnimationClass(),
+                        multiSelectVariants({ variant }),
+                        responsiveSettings.compactMode &&
+                          "px-1.5 py-0.5 text-xs",
+                        singleLine && "flex-shrink-0 whitespace-nowrap",
+                        "[&>svg]:pointer-events-auto",
+                      )}
+                      style={{
+                        animationDuration: `${
+                          animationConfig?.duration || animation
+                        }s`,
+                        animationDelay: `${animationConfig?.delay || 0}s`,
+                      }}
+                    >
+                      {`+ ${
+                        selectedValues.length - responsiveSettings.maxCount
+                      } more`}
+                      <XCircle
                         className={cn(
-                          "text-foreground border-foreground/1 bg-transparent hover:bg-transparent",
-                          getBadgeAnimationClass(),
-                          multiSelectVariants({ variant }),
-                          responsiveSettings.compactMode &&
-                            "px-1.5 py-0.5 text-xs",
-                          singleLine && "flex-shrink-0 whitespace-nowrap",
-                          "[&>svg]:pointer-events-auto",
+                          "ml-2 h-4 w-4 cursor-pointer",
+                          responsiveSettings.compactMode && "ml-1 h-3 w-3",
                         )}
-                        style={{
-                          animationDuration: `${
-                            animationConfig?.duration || animation
-                          }s`,
-                          animationDelay: `${animationConfig?.delay || 0}s`,
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          clearExtraOptions();
                         }}
-                      >
-                        {`+ ${
-                          selectedValues.length - responsiveSettings.maxCount
-                        } more`}
-                        <XCircle
-                          className={cn(
-                            "ml-2 h-4 w-4 cursor-pointer",
-                            responsiveSettings.compactMode && "ml-1 h-3 w-3",
-                          )}
-                          onClick={(event) => {
-                            event.stopPropagation();
-                            clearExtraOptions();
-                          }}
-                        />
-                      </Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={(event) => {
+                      />
+                    </Badge>
+                  )}
+                </div>
+                <div className="flex items-center justify-between">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      handleClear();
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
                         event.stopPropagation();
                         handleClear();
-                      }}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter" || event.key === " ") {
-                          event.preventDefault();
-                          event.stopPropagation();
-                          handleClear();
-                        }
-                      }}
-                      aria-label={`Clear all ${selectedValues.length} selected options`}
-                      className="text-muted-foreground hover:text-foreground focus:ring-ring mx-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm focus:ring-2 focus:ring-offset-1 focus:outline-none"
-                    >
-                      <XIcon className="h-4 w-4" />
-                    </div>
-                    <Separator
-                      orientation="vertical"
-                      className="flex h-full min-h-6"
-                    />
-                    <ChevronDown
-                      className="text-muted-foreground mx-2 h-4 cursor-pointer"
-                      aria-hidden="true"
-                    />
+                      }
+                    }}
+                    aria-label={`Clear all ${selectedValues.length} selected options`}
+                    className="text-muted-foreground hover:text-foreground focus:ring-ring mx-2 flex h-4 w-4 cursor-pointer items-center justify-center rounded-sm focus:ring-2 focus:ring-offset-1 focus:outline-none"
+                  >
+                    <XIcon className="h-4 w-4" />
                   </div>
+                  <Separator
+                    orientation="vertical"
+                    className="flex h-full min-h-6"
+                  />
+                  <ChevronDown
+                    className="text-muted-foreground mx-2 h-4 cursor-pointer"
+                    aria-hidden="true"
+                  />
                 </div>
-              ) : (
-                <div className="mx-auto flex w-full items-center justify-between">
-                  <span className="text-muted-foreground mx-3 text-sm">
-                    {placeholder}
-                  </span>
-                  <ChevronDown className="text-muted-foreground mx-2 h-4 cursor-pointer" />
-                </div>
-              )}
-            </Button>
+              </div>
+            ) : (
+              <div className="mx-auto flex w-full items-center justify-between">
+                <span className="text-muted-foreground mx-3 truncate text-sm">
+                  {placeholder}
+                </span>
+                <ChevronDown className="text-muted-foreground mx-2 h-4 cursor-pointer" />
+              </div>
+            )}
           </PopoverTrigger>
           <PopoverContent
             id={listboxId}
@@ -1015,7 +999,6 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
               touchAction: "manipulation",
             }}
             align="start"
-            onEscapeKeyDown={() => setIsPopoverOpen(false)}
           >
             <Command>
               {searchable && (

@@ -1,11 +1,9 @@
 import { ApiError } from "@/lib/api";
 import Link from "next/link";
-import { ToastContentProps } from "react-toastify";
 
 export function ToastMsg({
   data,
-  closeToast,
-}: Partial<ToastContentProps> & {
+}: {
   data: {
     title: string;
     description: string | ApiError | Error;
@@ -30,19 +28,14 @@ export function ToastMsg({
       description = "Nieznany błąd";
   }
   if (data.href) {
-    return (
-      <div>
-        <Link href={data.href} onClick={closeToast}>
-          <p className="font-semibold">{data.title}</p>
-          <p className="text-sm whitespace-break-spaces">{description}</p>
+    return {
+      title: data.title,
+      description: (
+        <Link href={data.href} className="whitespace-break-spaces">
+          {description}
         </Link>
-      </div>
-    );
+      ),
+    };
   }
-  return (
-    <div>
-      <p className="font-semibold">{data.title}</p>
-      <p className="text-sm whitespace-break-spaces">{description}</p>
-    </div>
-  );
+  return { title: data.title, description };
 }

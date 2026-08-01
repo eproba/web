@@ -10,14 +10,11 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import {
   Popover,
@@ -27,6 +24,7 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -39,9 +37,8 @@ import { useCurrentUser } from "@/state/user";
 import { Organization, Patrol } from "@/types/team";
 import { InstructorRank, ScoutRank, User, UserFunction } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { PopoverClose } from "@radix-ui/react-popover";
 import React, { useCallback, useState } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, FormProvider, useForm, useWatch } from "react-hook-form";
 import { useDebounce, useDebouncedCallback } from "use-debounce";
 import * as z from "zod";
 
@@ -65,7 +62,7 @@ interface UserEditDialogProps {
   onUserCreate: (
     createdUser: Partial<ApiUserResponse>,
   ) => Promise<(User & { newPassword: string }) | Error>;
-  children: React.ReactNode;
+  children: React.ReactElement;
 }
 
 export function UserCreateDialog({
@@ -77,6 +74,7 @@ export function UserCreateDialog({
   const { apiClient } = useApi();
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isEmailPopoverOpen, setIsEmailPopoverOpen] = useState(false);
   const [internalEmailLogin, setInternalEmailLogin] = useState("");
   const [internalEmailLoginState, setIsInternalEmailLoginState] = useState<
     "valid" | "invalid" | "checking"
@@ -190,7 +188,7 @@ export function UserCreateDialog({
         }
       }}
     >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent>
         {createdUser ? (
           <>
@@ -214,15 +212,17 @@ export function UserCreateDialog({
                 : "Dane logowania zostały również wysłane na podany adres email."}
             </DialogDescription>
             <DialogFooter>
-              <DialogClose asChild>
-                <Button type="button" variant="outline" disabled={isLoading}>
-                  Zamknij
-                </Button>
-              </DialogClose>
+              <DialogClose
+                render={
+                  <Button type="button" variant="outline" disabled={isLoading}>
+                    Zamknij
+                  </Button>
+                }
+              />
             </DialogFooter>
           </>
         ) : (
-          <Form {...form}>
+          <FormProvider {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)}>
               <DialogHeader>
                 <DialogTitle>
@@ -242,56 +242,82 @@ export function UserCreateDialog({
                 </DialogDescription>
               </DialogHeader>
               <div className="flex flex-col gap-4 py-4">
-                <FormField
+                <Controller
                   control={form.control}
                   name="firstName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Imię</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Imię</FieldLabel>
+
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                      />
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
-                <FormField
+                <Controller
                   control={form.control}
                   name="lastName"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Nazwisko</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Nazwisko</FieldLabel>
+
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                      />
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
-                <FormField
+                <Controller
                   control={form.control}
                   name="nickname"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Pseudonim</FormLabel>
-                      <FormControl>
-                        <Input {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Pseudonim</FieldLabel>
+
+                      <Input
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                      />
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
-                <FormField
+                <Controller
                   control={form.control}
                   name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email *</FormLabel>
-                      <FormControl>
-                        <Input type="email" {...field} />
-                      </FormControl>
-                      <FormDescription>
-                        <Popover>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Email *</FieldLabel>
+
+                      <Input
+                        type="email"
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                        id={field.name}
+                      />
+
+                      <FieldDescription>
+                        <Popover
+                          open={isEmailPopoverOpen}
+                          onOpenChange={setIsEmailPopoverOpen}
+                        >
                           <PopoverTrigger className="text-xs">
                             Brak adresu email? Kliknij aby wygenerować.
                           </PopoverTrigger>
@@ -325,8 +351,7 @@ export function UserCreateDialog({
                                   value="@eproba.zhr.pl"
                                   readOnly
                                   disabled
-                                  containerClassName="w-fit"
-                                  className="rounded-l-none px-2"
+                                  className="w-fit rounded-l-none px-2"
                                 />
                               </div>
                               {internalEmailLoginState === "invalid" &&
@@ -344,163 +369,239 @@ export function UserCreateDialog({
                                   Co najmniej 5 znaków, bez spacji.
                                 </p>
                               )}
-                              <PopoverClose asChild>
-                                <Button
-                                  type="button"
-                                  variant="outline"
-                                  onClick={async () => {
-                                    form.setValue(
-                                      "email",
-                                      `${internalEmailLogin.trim()}@eproba.zhr.pl`,
-                                    );
-                                    setInternalEmailLogin("");
-                                  }}
-                                  disabled={
-                                    isLoading ||
-                                    !internalEmailLogin.trim() ||
-                                    internalEmailLoginState !== "valid"
-                                  }
-                                >
-                                  Użyj tego adresu
-                                </Button>
-                              </PopoverClose>
+                              <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                  form.setValue(
+                                    "email",
+                                    `${internalEmailLogin.trim()}@eproba.zhr.pl`,
+                                    {
+                                      shouldValidate: true,
+                                      shouldDirty: true,
+                                    },
+                                  );
+                                  setInternalEmailLogin("");
+                                  setIsEmailPopoverOpen(false);
+                                }}
+                                disabled={
+                                  isLoading ||
+                                  !internalEmailLogin.trim() ||
+                                  internalEmailLoginState !== "valid"
+                                }
+                              >
+                                Użyj tego adresu
+                              </Button>
                             </div>
                           </PopoverContent>
                         </Popover>
-                      </FormDescription>
-                      <FormMessage />
-                    </FormItem>
+                      </FieldDescription>
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
-                <FormField
+                <Controller
                   control={form.control}
                   name="patrol"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Zastęp *</FormLabel>
-                      <FormControl>
-                        <div>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Wybierz zastęp" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {patrols.map((patrol) => (
-                                <SelectItem key={patrol.id} value={patrol.id}>
-                                  {patrol.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Zastęp *</FieldLabel>
+
+                      <Select
+                        items={patrols.map((patrol) => ({
+                          label: patrol.name,
+                          value: patrol.id,
+                        }))}
+                        onValueChange={(value) => {
+                          if (value !== null) {
+                            field.onChange(value);
+                          }
+                        }}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger
+                          className="w-full"
+                          aria-invalid={fieldState.invalid}
+                          id={field.name}
+                        >
+                          <SelectValue placeholder="Wybierz zastęp" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {patrols.map((patrol) => (
+                              <SelectItem key={patrol.id} value={patrol.id}>
+                                {patrol.name}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
-                <FormField
+                <Controller
                   control={form.control}
                   name="function"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Funkcja</FormLabel>
-                      <FormControl>
-                        <div>
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={String(field.value)}
-                          >
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Wybierz zastęp" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {UserFunction.values.map((fn) => (
-                                <SelectItem
-                                  key={fn.value}
-                                  value={fn.value.toString()}
-                                  disabled={
-                                    !!currentUser &&
-                                    fn.value >
-                                      currentUser.function.numberValue &&
-                                    currentUser.function.value < 4
-                                  }
-                                >
-                                  {currentUser?.organization ===
-                                  Organization.Female
-                                    ? fn.female
-                                    : fn.male}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={field.name}>Funkcja</FieldLabel>
+
+                      <Select
+                        items={UserFunction.values.map((fn) => ({
+                          label:
+                            currentUser?.organization === Organization.Female
+                              ? fn.female
+                              : fn.male,
+                          value: fn.value.toString(),
+                        }))}
+                        onValueChange={(value) => {
+                          if (value !== null) {
+                            field.onChange(value);
+                          }
+                        }}
+                        defaultValue={String(field.value)}
+                      >
+                        <SelectTrigger
+                          className="w-full"
+                          aria-invalid={fieldState.invalid}
+                          id={field.name}
+                        >
+                          <SelectValue placeholder="Wybierz zastęp" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {UserFunction.values.map((fn) => (
+                              <SelectItem
+                                key={fn.value}
+                                value={fn.value.toString()}
+                                disabled={
+                                  !!currentUser &&
+                                  fn.value > currentUser.function.numberValue &&
+                                  currentUser.function.value < 4
+                                }
+                              >
+                                {currentUser?.organization ===
+                                Organization.Female
+                                  ? fn.female
+                                  : fn.male}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
                   )}
                 />
                 <div className="flex w-full flex-row gap-2">
-                  <FormField
+                  <Controller
                     control={form.control}
                     name="scoutRank"
-                    render={({ field }) => (
-                      <FormItem className="flex-1">
-                        <FormLabel className="truncate">
+                    render={({ field, fieldState }) => (
+                      <Field
+                        className="flex-1"
+                        data-invalid={fieldState.invalid}
+                      >
+                        <FieldLabel className="truncate" htmlFor={field.name}>
                           Stopień harcerski
-                        </FormLabel>
-                        <FormControl className="overflow-hidden">
-                          <div>
+                        </FieldLabel>
+
+                        <Select
+                          items={ScoutRank.values.map((rank) => ({
+                            label: capitalizeFirstLetter(
+                              currentUser?.organization === Organization.Female
+                                ? rank.female
+                                : rank.male,
+                            ),
+                            value: rank.value.toString(),
+                          }))}
+                          onValueChange={(value) => {
+                            if (value !== null) {
+                              field.onChange(value);
+                            }
+                          }}
+                          defaultValue={String(field.value)}
+                        >
+                          <SelectTrigger
+                            className="w-full"
+                            aria-invalid={fieldState.invalid}
+                            id={field.name}
+                          >
+                            <SelectValue placeholder="Wybierz stopień" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              {ScoutRank.values.map((rank) => (
+                                <SelectItem
+                                  key={rank.value}
+                                  value={rank.value.toString()}
+                                >
+                                  {capitalizeFirstLetter(
+                                    currentUser?.organization ===
+                                      Organization.Female
+                                      ? rank.female
+                                      : rank.male,
+                                  )}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+
+                        {fieldState.invalid && (
+                          <FieldError errors={[fieldState.error]} />
+                        )}
+                      </Field>
+                    )}
+                  />
+                  {Number(scoutRank) >= 5 && (
+                    <Controller
+                      control={form.control}
+                      name="instructorRank"
+                      render={({ field, fieldState }) => (
+                        <Field
+                          className="flex-1"
+                          data-invalid={fieldState.invalid}
+                        >
+                          <FieldLabel className="truncate" htmlFor={field.name}>
+                            Stopień instruktorski
+                          </FieldLabel>
+
+                          <div
+                            aria-invalid={fieldState.invalid}
+                            id={field.name}
+                          >
                             <Select
-                              onValueChange={field.onChange}
+                              items={InstructorRank.values.map((rank) => ({
+                                label: capitalizeFirstLetter(
+                                  currentUser?.organization ===
+                                    Organization.Female
+                                    ? rank.female
+                                    : rank.male,
+                                ),
+                                value: rank.value.toString(),
+                              }))}
+                              onValueChange={(value) => {
+                                if (value !== null) {
+                                  field.onChange(value);
+                                }
+                              }}
                               defaultValue={String(field.value)}
                             >
                               <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Wybierz stopień" />
                               </SelectTrigger>
                               <SelectContent>
-                                {ScoutRank.values.map((rank) => (
-                                  <SelectItem
-                                    key={rank.value}
-                                    value={rank.value.toString()}
-                                  >
-                                    {capitalizeFirstLetter(
-                                      currentUser?.organization ===
-                                        Organization.Female
-                                        ? rank.female
-                                        : rank.male,
-                                    )}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                          </div>
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  {Number(scoutRank) >= 5 && (
-                    <FormField
-                      control={form.control}
-                      name="instructorRank"
-                      render={({ field }) => (
-                        <FormItem className="flex-1">
-                          <FormLabel className="truncate">
-                            Stopień instruktorski
-                          </FormLabel>
-                          <FormControl className="overflow-hidden">
-                            <div>
-                              <Select
-                                onValueChange={field.onChange}
-                                defaultValue={String(field.value)}
-                              >
-                                <SelectTrigger className="w-full">
-                                  <SelectValue placeholder="Wybierz stopień" />
-                                </SelectTrigger>
-                                <SelectContent>
+                                <SelectGroup>
                                   {InstructorRank.values.map((rank) => (
                                     <SelectItem
                                       key={rank.value}
@@ -514,12 +615,15 @@ export function UserCreateDialog({
                                       )}
                                     </SelectItem>
                                   ))}
-                                </SelectContent>
-                              </Select>
-                            </div>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
+                                </SelectGroup>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {fieldState.invalid && (
+                            <FieldError errors={[fieldState.error]} />
+                          )}
+                        </Field>
                       )}
                     />
                   )}
@@ -528,15 +632,17 @@ export function UserCreateDialog({
               <DialogFooter>
                 <div className="flex w-full items-center justify-end gap-4">
                   <div className="flex items-center gap-2">
-                    <DialogClose asChild>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={isLoading}
-                      >
-                        Anuluj
-                      </Button>
-                    </DialogClose>
+                    <DialogClose
+                      render={
+                        <Button
+                          type="button"
+                          variant="outline"
+                          disabled={isLoading}
+                        >
+                          Anuluj
+                        </Button>
+                      }
+                    />
                     <Button
                       type="submit"
                       disabled={
@@ -550,7 +656,7 @@ export function UserCreateDialog({
                 </div>
               </DialogFooter>
             </form>
-          </Form>
+          </FormProvider>
         )}
       </DialogContent>
     </Dialog>

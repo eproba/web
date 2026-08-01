@@ -12,13 +12,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { FieldInfo } from "@/types/user";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
-import { toast } from "react-toastify";
 
 export const PatrolSelectDialog = ({
   variant = "change",
@@ -28,7 +28,7 @@ export const PatrolSelectDialog = ({
 }: {
   variant?: "change" | "set";
   userGender: FieldInfo | null;
-  children: React.ReactNode;
+  children: React.ReactElement;
 } & React.ComponentProps<typeof Dialog>) => {
   const { apiClient } = useApi();
   const router = useRouter();
@@ -42,21 +42,24 @@ export const PatrolSelectDialog = ({
         method: "PATCH",
         body: JSON.stringify({ patrol: selectedPatrol }),
       });
-      toast.success(
-        variant === "change"
-          ? "Drużyna została zmieniona"
-          : "Zostałeś przypisany do drużyny",
-      );
+      toast.add({
+        title:
+          variant === "change"
+            ? "Drużyna została zmieniona"
+            : "Zostałeś przypisany do drużyny",
+        type: "success",
+      });
       router.refresh();
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zmienić drużyny",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setSelectedPatrol("");
     }
@@ -64,14 +67,14 @@ export const PatrolSelectDialog = ({
   return (
     <Dialog
       {...props}
-      onOpenChange={(open) => {
+      onOpenChange={(open, eventDetails) => {
         if (open) {
           setSelectedPatrol("");
         }
-        props.onOpenChange?.(open);
+        props.onOpenChange?.(open, eventDetails);
       }}
     >
-      <DialogTrigger asChild>{children}</DialogTrigger>
+      <DialogTrigger render={children} />
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
@@ -91,25 +94,28 @@ export const PatrolSelectDialog = ({
         <span className="text-xs text-gray-500">
           Chcesz dodać swoją drużynę? Jeśli należysz do kadry, możesz to zrobić
           klikając{" "}
-          <DialogClose asChild>
-            <Link
-              href="/team/request"
-              className="text-blue-500 hover:underline"
-            >
-              tutaj
-            </Link>
-          </DialogClose>
+          <DialogClose
+            nativeButton={false}
+            render={
+              <Link
+                href="/team/request"
+                className="text-blue-500 hover:underline"
+              >
+                tutaj
+              </Link>
+            }
+          />
           .
         </span>
         <DialogFooter className="mt-4 flex flex-row justify-end gap-2">
-          <DialogClose asChild>
-            <Button variant="outline">Anuluj</Button>
-          </DialogClose>
-          <DialogClose asChild>
-            <Button onClick={handleSubmit} disabled={!selectedPatrol}>
-              Zapisz
-            </Button>
-          </DialogClose>
+          <DialogClose render={<Button variant="outline">Anuluj</Button>} />
+          <DialogClose
+            render={
+              <Button onClick={handleSubmit} disabled={!selectedPatrol}>
+                Zapisz
+              </Button>
+            }
+          />
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -1,6 +1,12 @@
 import taskIdeasData from "@/data/task-ideas.json";
 import { xai } from "@ai-sdk/xai";
-import { UIMessage, convertToModelMessages, streamText } from "ai";
+import {
+  type UIMessage,
+  convertToModelMessages,
+  createUIMessageStreamResponse,
+  streamText,
+  toUIMessageStream,
+} from "ai";
 import { NextRequest } from "next/server";
 
 // Allow streaming responses up to 60 seconds
@@ -43,11 +49,13 @@ ${taskIdeasData.ideas.map((idea: { name: string; description: string }) => `**${
 `;
 
   const result = streamText({
-    model: xai("grok-3-mini"),
-    prompt: convertToModelMessages(messages),
-    system: systemPrompt,
+    model: xai.chat("grok-3-mini"),
+    messages: await convertToModelMessages(messages),
+    instructions: systemPrompt,
     temperature: 0.7,
   });
 
-  return result.toUIMessageStreamResponse();
+  return createUIMessageStreamResponse({
+    stream: toUIMessageStream({ stream: result.stream }),
+  });
 }

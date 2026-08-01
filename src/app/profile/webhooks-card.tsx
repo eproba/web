@@ -11,25 +11,18 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Switch } from "@/components/ui/switch";
+import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
 import { ToastMsg } from "@/lib/toast-msg";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, PlusIcon, TrashIcon, WebhookIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import * as z from "zod";
 
 export type Webhook = {
@@ -83,20 +76,23 @@ export function WebhooksCard() {
         setWebhooks(data);
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się pobrać webhooków",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
   }, [apiClient]);
 
   useEffect(() => {
+    // This effect synchronizes the component with the remote webhook inventory.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     fetchWebhooks();
   }, [fetchWebhooks]);
 
@@ -107,18 +103,19 @@ export function WebhooksCard() {
         body: JSON.stringify({ is_active: !currentState }),
       });
       if (response.ok) {
-        toast.success("Zaktualizowano status webhooka");
+        toast.add({ title: "Zaktualizowano status webhooka", type: "success" });
         fetchWebhooks();
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się zaktualizować webhooka",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
@@ -129,18 +126,19 @@ export function WebhooksCard() {
         method: "DELETE",
       });
       if (response.ok) {
-        toast.success("Webhook usunięty");
+        toast.add({ title: "Webhook usunięty", type: "success" });
         fetchWebhooks();
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się usunąć webhooka",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     }
   };
 
@@ -152,23 +150,27 @@ export function WebhooksCard() {
         body: JSON.stringify(values),
       });
       if (response.ok) {
-        toast.success("Webhook utworzony");
+        toast.add({ title: "Webhook utworzony", type: "success" });
         setIsCreateModalOpen(false);
         form.reset();
         fetchWebhooks();
       } else {
         const errorData = await response.json();
-        toast.error(errorData?.url?.[0] || "Błąd podczas tworzenia webhooka");
+        toast.add({
+          title: errorData?.url?.[0] || "Błąd podczas tworzenia webhooka",
+          type: "error",
+        });
       }
     } catch (error) {
-      toast.error(
-        ToastMsg({
+      toast.add({
+        ...ToastMsg({
           data: {
             title: "Nie udało się utworzyć webhooka",
             description: error as Error,
           },
         }),
-      );
+        type: "error",
+      });
     } finally {
       setIsCreating(false);
     }
@@ -287,79 +289,87 @@ export function WebhooksCard() {
               wybierz zdarzenia.
             </DialogDescription>
           </DialogHeader>
-          <Form {...form}>
+          <FormProvider {...form}>
             <form
               id="create-webhook-form"
               onSubmit={form.handleSubmit(onSubmit)}
               className="space-y-4 py-4"
             >
-              <FormField
+              <Controller
                 control={form.control}
                 name="url"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Adres URL</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="https://twoja-domena.pl/webhook"
-                        type="url"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={field.name}>Adres URL</FieldLabel>
+
+                    <Input
+                      placeholder="https://twoja-domena.pl/webhook"
+                      type="url"
+                      {...field}
+                      aria-invalid={fieldState.invalid}
+                      id={field.name}
+                    />
+
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
-              <FormField
+              <Controller
                 control={form.control}
                 name="events"
-                render={() => (
-                  <FormItem>
+                render={({ fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
                     <div className="mb-3">
-                      <FormLabel className="text-base">Zdarzenia</FormLabel>
+                      <FieldLabel className="text-base">Zdarzenia</FieldLabel>
                     </div>
                     {AVAILABLE_EVENTS.map((event) => (
-                      <FormField
+                      <Controller
                         key={event.id}
                         control={form.control}
                         name="events"
-                        render={({ field }) => {
+                        render={({ field, fieldState }) => {
                           return (
-                            <FormItem
+                            <Field
                               key={event.id}
                               className="flex flex-row items-start space-y-0 space-x-3"
+                              data-invalid={fieldState.invalid}
                             >
-                              <FormControl>
-                                <Checkbox
-                                  checked={field.value?.includes(event.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange([
-                                          ...field.value,
-                                          event.id,
-                                        ])
-                                      : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== event.id,
-                                          ),
-                                        );
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="cursor-pointer font-normal">
+                              <Checkbox
+                                id={`event-${event.id}`}
+                                checked={field.value?.includes(event.id)}
+                                onCheckedChange={(checked) => {
+                                  return checked
+                                    ? field.onChange([...field.value, event.id])
+                                    : field.onChange(
+                                        field.value?.filter(
+                                          (value) => value !== event.id,
+                                        ),
+                                      );
+                                }}
+                                aria-invalid={fieldState.invalid}
+                              />
+
+                              <FieldLabel
+                                className="cursor-pointer font-normal"
+                                htmlFor={`event-${event.id}`}
+                              >
                                 {event.label}
-                              </FormLabel>
-                            </FormItem>
+                              </FieldLabel>
+                            </Field>
                           );
                         }}
                       />
                     ))}
-                    <FormMessage />
-                  </FormItem>
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
                 )}
               />
             </form>
-          </Form>
+          </FormProvider>
           <DialogFooter>
             <Button
               variant="outline"

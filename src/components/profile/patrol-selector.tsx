@@ -2,6 +2,7 @@ import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
@@ -26,6 +27,11 @@ const extractNumber = (name: string) =>
 const sortTeams = (a: Team, b: Team) =>
   extractNumber(a.name) - extractNumber(b.name) || a.name.localeCompare(b.name);
 
+const organizationItems = [
+  { label: "Organizacja Harcerzy", value: "0" },
+  { label: "Organizacja Harcerek", value: "1" },
+];
+
 export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
   userGender,
   selectedPatrol,
@@ -40,8 +46,8 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
   const [selectedOrganization, setSelectedOrganization] = useState<
     number | null
   >([0, 1].includes(initialOrganization ?? -1) ? initialOrganization : null);
-  const [selectedDistrict, setSelectedDistrict] = useState("");
-  const [selectedTeam, setSelectedTeam] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
+  const [selectedTeam, setSelectedTeam] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchDistricts = async () => {
@@ -64,7 +70,7 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
   const handleDistrictChange = useCallback(
     async (value: string, orgOverride?: number | null) => {
       setSelectedDistrict(value);
-      setSelectedTeam("");
+      setSelectedTeam(null);
       setPatrols([]);
       setSelectedPatrol("");
 
@@ -126,15 +132,25 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
       <div className="flex flex-col gap-2">
         <Label>Organizacja</Label>
         <Select
-          value={selectedOrganization?.toString() ?? ""}
-          onValueChange={handleOrganizationChange}
+          items={organizationItems}
+          value={selectedOrganization?.toString() ?? null}
+          onValueChange={(value) => {
+            if (value !== null) {
+              handleOrganizationChange(value);
+            }
+          }}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Wybierz organizację" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="0">Organizacja Harcerzy</SelectItem>
-            <SelectItem value="1">Organizacja Harcerek</SelectItem>
+            <SelectGroup>
+              {organizationItems.map((organization) => (
+                <SelectItem key={organization.value} value={organization.value}>
+                  {organization.label}
+                </SelectItem>
+              ))}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
@@ -142,23 +158,33 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
       <div className="flex flex-col gap-2">
         <Label>Okręg</Label>
         <Select
+          items={districts.map((district) => ({
+            label: district.name,
+            value: district.id,
+          }))}
           value={selectedDistrict}
-          onValueChange={(v) => handleDistrictChange(v, selectedOrganization)}
+          onValueChange={(value) => {
+            if (value !== null) {
+              handleDistrictChange(value, selectedOrganization);
+            }
+          }}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Wybierz okręg" />
           </SelectTrigger>
           <SelectContent>
-            {districts.map((d) => (
-              <SelectItem key={d.id} value={d.id}>
-                {d.name}
-              </SelectItem>
-            ))}
-            {!districts.length && (
-              <SelectItem disabled value="null">
-                Brak dostępnych okręgów
-              </SelectItem>
-            )}
+            <SelectGroup>
+              {districts.map((d) => (
+                <SelectItem key={d.id} value={d.id}>
+                  {d.name}
+                </SelectItem>
+              ))}
+              {!districts.length && (
+                <SelectItem disabled value="__no-options">
+                  Brak dostępnych okręgów
+                </SelectItem>
+              )}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
@@ -166,26 +192,36 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
       <div className="flex flex-col gap-2">
         <Label>Drużyna</Label>
         <Select
+          items={teams.map((team) => ({
+            label: team.name,
+            value: team.id,
+          }))}
           value={selectedTeam}
-          onValueChange={handleTeamChange}
+          onValueChange={(value) => {
+            if (value !== null) {
+              handleTeamChange(value);
+            }
+          }}
           disabled={!selectedDistrict}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Wybierz drużynę" />
           </SelectTrigger>
-          <SelectContent className="w-[var(--radix-select-trigger-width)]">
-            {teams.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.name}
-              </SelectItem>
-            ))}
-            {!teams.length && (
-              <SelectItem disabled value="null">
-                {selectedOrganization !== null
-                  ? "Brak drużyn w tym okręgu dla wybranej organizacji"
-                  : "Brak drużyn w tym okręgu"}
-              </SelectItem>
-            )}
+          <SelectContent className="w-(--anchor-width)">
+            <SelectGroup>
+              {teams.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  {t.name}
+                </SelectItem>
+              ))}
+              {!teams.length && (
+                <SelectItem disabled value="__no-options">
+                  {selectedOrganization !== null
+                    ? "Brak drużyn w tym okręgu dla wybranej organizacji"
+                    : "Brak drużyn w tym okręgu"}
+                </SelectItem>
+              )}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
@@ -193,24 +229,27 @@ export const PatrolSelector: React.FC<PatrolSelectFormProps> = ({
       <div className="flex flex-col gap-2">
         <Label>Zastęp</Label>
         <Select
-          value={selectedPatrol}
-          onValueChange={setSelectedPatrol}
+          items={patrolOptions}
+          value={selectedPatrol || null}
+          onValueChange={(value) => setSelectedPatrol(value ?? "")}
           disabled={!selectedTeam}
         >
           <SelectTrigger className="w-full">
             <SelectValue placeholder="Wybierz zastęp" />
           </SelectTrigger>
-          <SelectContent className="w-[var(--radix-select-trigger-width)]">
-            {patrolOptions.map((p) => (
-              <SelectItem key={p.value} value={p.value}>
-                {p.label}
-              </SelectItem>
-            ))}
-            {!patrols.length && (
-              <SelectItem disabled value="null">
-                Brak zastępów w tej drużynie
-              </SelectItem>
-            )}
+          <SelectContent className="w-(--anchor-width)">
+            <SelectGroup>
+              {patrolOptions.map((p) => (
+                <SelectItem key={p.value} value={p.value}>
+                  {p.label}
+                </SelectItem>
+              ))}
+              {!patrols.length && (
+                <SelectItem disabled value="__no-options">
+                  Brak zastępów w tej drużynie
+                </SelectItem>
+              )}
+            </SelectGroup>
           </SelectContent>
         </Select>
       </div>
