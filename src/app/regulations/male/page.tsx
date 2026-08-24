@@ -351,7 +351,7 @@ export default async function MaleRegulationsPage() {
       expectedTime: "do 10 miesięcy",
       icon: "/rank-regulations/male/icons/harcerz-orli.svg",
       additionalInfo:
-        "W ramach jednego z zadań indywidualnych indywidualnych podejmij się służby – zgodnie z ustaleniami z drużynowym lub kapitułą stopnia.\nW ramach kolejnego odbądź wyczyn – zaproponowany przez siebie, zatwierdzony przez drużynowego i przeprowadzany zgodnie ze zwyczajem przyjętym w drużynie lub kapitule.\nWięcej wskazówek dotyczących zdobywania stopni harcerza orlego i harcerza Rzeczypospolitej znajdziesz w 'Vademecum - Próby indywidualne na stopnie HO i HR'",
+        "W ramach jednego z zadań indywidualnych indywidualnych podejmij się służby – zgodnie z ustaleniami z drużynowym lub kapitułą stopnia.<br /><br />W ramach kolejnego odbądź wyczyn – zaproponowany przez siebie, zatwierdzony przez drużynowego i przeprowadzany zgodnie ze zwyczajem przyjętym w drużynie lub kapitule.<br /><br />Więcej wskazówek dotyczących zdobywania stopni harcerza orlego i harcerza Rzeczypospolitej znajdziesz w 'Vademecum - Próby indywidualne na stopnie HO i HR'",
     },
     {
       name: "harcerz Rzeczypospolitej",
@@ -428,7 +428,7 @@ export default async function MaleRegulationsPage() {
           </TabsTrigger>
           <TabsTrigger value="individual-tasks">
             <CheckCircleIcon className="size-4" />
-            Wytyczne do zadań indywidualne
+            Wytyczne do zadań indywidualnych
           </TabsTrigger>
           <TabsTrigger value="process">
             <ShieldIcon className="size-4" />
