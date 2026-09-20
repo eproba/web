@@ -18,6 +18,8 @@ import { InfoIcon, ListTodoIcon, PlusIcon } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
+import { TaskCategory } from "./editor-model";
+
 interface TaskField extends Task {
   fieldId: string;
   taskIndex: number;
@@ -29,14 +31,14 @@ interface TaskListProps {
   category: "general" | "individual";
   showDescriptions: boolean;
   enableCategories: boolean;
-  onAddTask: (category: string) => string;
-  onRemoveTask: (category: string, id: string) => void;
-  onMoveTaskUp: (category: string, taskId: string) => void;
-  onMoveTaskDown: (category: string, taskId: string) => void;
+  onAddTask: (category: TaskCategory) => string;
+  onRemoveTask: (category: TaskCategory, id: string) => void;
+  onMoveTaskUp: (category: TaskCategory, taskId: string) => void;
+  onMoveTaskDown: (category: TaskCategory, taskId: string) => void;
   onMoveTaskToCategory: (
     taskId: string,
-    fromCategory: string,
-    toCategory: string,
+    fromCategory: TaskCategory,
+    toCategory: TaskCategory,
   ) => void;
   form: UseFormReturn<WorksheetWithTasks>;
   variant: "template" | "worksheet";
@@ -102,7 +104,9 @@ export const TaskList: React.FC<TaskListProps> = ({
       )}
     >
       <motion.div layout className="space-y-1">
-        <AnimatePresence mode="popLayout">
+        {/* Field-array rows must unmount immediately: exit animations retain
+            Controllers at deleted indices and can recreate partial tasks. */}
+        <>
           {tasks.map((task, index) => {
             return (
               <motion.div
@@ -144,7 +148,7 @@ export const TaskList: React.FC<TaskListProps> = ({
               </motion.div>
             );
           })}
-        </AnimatePresence>
+        </>
 
         {tasks.length !== 0 && (
           <motion.div

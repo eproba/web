@@ -11,7 +11,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { isTouchDevice, triggerHapticFeedback } from "@/lib/mobile-utils";
@@ -76,7 +75,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
   const currentUser = useCurrentUser();
   const elementRef = useRef<HTMLDivElement>(null);
   const dragHandleRef = useRef<HTMLDivElement>(null);
-  const taskInputRef = useRef<HTMLInputElement>(null);
+  const taskInputRef = useRef<HTMLTextAreaElement>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [draggedOver, setDraggedOver] = useState<"top" | "bottom" | null>(null);
@@ -168,7 +167,8 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                                 color: var(--foreground);
                                 line-height: 1.4;
                             `;
-              taskText.textContent = task.name || "Nowe zadanie";
+              taskText.textContent =
+                taskInputRef.current?.value || "Nowe zadanie";
 
               content.appendChild(number);
               content.appendChild(taskText);
@@ -246,15 +246,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
     );
 
     return () => cleanup.forEach((fn) => fn());
-  }, [
-    task.id,
-    task.category,
-    task.name,
-    task.templateNotes,
-    setDragState,
-    index,
-    variant,
-  ]);
+  }, [task.id, task.category, setDragState, index, variant]);
 
   const isBeingDragged = dragState.draggedItem === task.id;
   const showTopIndicator = draggedOver === "top";
@@ -331,15 +323,24 @@ export const TaskItem: React.FC<TaskItemProps> = ({
           </div>
 
           {/* Task Content */}
-          <div className="flex-1 space-y-3">
+          <div className="min-w-0 flex-1 space-y-3">
             <Controller
               control={form.control}
               name={`tasks.${taskIndex}.name` as const}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
-                  <Input
+                  <Textarea
                     {...field}
-                    ref={taskInputRef}
+                    ref={(element) => {
+                      field.ref(element);
+                      taskInputRef.current = element;
+                    }}
+                    rows={1}
+                    className="min-h-9 resize-y"
+                    aria-label={`Zadanie ${index + 1}`}
+                    aria-describedby={
+                      fieldState.invalid ? `${field.name}-error` : undefined
+                    }
                     placeholder="Wprowadź zadanie..."
                     onMouseDown={(e) => e.stopPropagation()}
                     onDragStart={(e) => e.preventDefault()}
@@ -348,7 +349,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                   />
 
                   {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
+                    <FieldError
+                      id={`${field.name}-error`}
+                      errors={[fieldState.error]}
+                    />
                   )}
                 </Field>
               )}
@@ -381,7 +385,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                     />
 
                     {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
+                      <FieldError
+                        id={`${field.name}-error`}
+                        errors={[fieldState.error]}
+                      />
                     )}
                   </Field>
                 )}
@@ -412,7 +419,10 @@ export const TaskItem: React.FC<TaskItemProps> = ({
                     />
 
                     {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
+                      <FieldError
+                        id={`${field.name}-error`}
+                        errors={[fieldState.error]}
+                      />
                     )}
                   </Field>
                 )}
@@ -453,6 +463,7 @@ export const TaskItem: React.FC<TaskItemProps> = ({
               variant="ghost"
               size="icon"
               className="hidden transition-opacity group-hover:opacity-100 hover:bg-red-100 hover:text-red-700 pointer-fine:flex pointer-fine:opacity-0"
+              aria-label={`Usuń zadanie: ${task.name || "Nowe zadanie"}`}
               onClick={() => handleDelete()}
             >
               <Trash2Icon className="size-4" />
@@ -552,10 +563,14 @@ export const TaskItem: React.FC<TaskItemProps> = ({
             setShowSuggestions(open);
           }}
           onAddTask={(suggestion) => {
-            form.setValue(`tasks.${taskIndex}.name`, suggestion.name);
+            form.setValue(`tasks.${taskIndex}.name`, suggestion.name, {
+              shouldDirty: true,
+              shouldValidate: true,
+            });
             form.setValue(
               `tasks.${taskIndex}.description`,
               suggestion.description,
+              { shouldDirty: true, shouldValidate: true },
             );
           }}
         />

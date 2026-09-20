@@ -3,19 +3,24 @@ import { motion } from "framer-motion";
 import { LoaderCircleIcon, PenIcon } from "lucide-react";
 import React from "react";
 
+import { FormErrors } from "./form-errors";
+
 interface WorksheetSubmitButtonProps {
   isSubmitting: boolean;
+  showDescriptions: boolean;
   mode: "create" | "edit";
   variant: "template" | "worksheet";
 }
 
 export const WorksheetSubmitButton: React.FC<WorksheetSubmitButtonProps> = ({
   isSubmitting,
+  showDescriptions,
   mode,
   variant,
 }) => {
   return (
-    <motion.div layout className="text-center">
+    <motion.div layout className="space-y-4 text-center">
+      <FormErrors showDescriptions={showDescriptions} />
       <Button
         type="submit"
         size="lg"

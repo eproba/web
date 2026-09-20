@@ -1,16 +1,16 @@
 import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
-import {
-  Task,
-  WorksheetWithTasks,
-  worksheetWithTasksSchema,
-} from "@/lib/schemas/worksheet";
-import { ToastMsg } from "@/lib/toast-msg";
+import { WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "nextjs-toploader/app";
-import { useState } from "react";
-import { Resolver, useForm, useWatch } from "react-hook-form";
-import { v4 as uuid } from "uuid";
+import { type BaseSyntheticEvent, useRef, useState } from "react";
+import { Resolver, useForm } from "react-hook-form";
+
+import {
+  initialTasks,
+  templateRequestBody,
+  templateSaveSchema,
+} from "../editor-model";
 
 interface UseTemplateFormProps {
   mode: "create" | "edit";
@@ -27,129 +27,37 @@ export const useTemplateForm = ({
   const { apiClient } = useApi();
   const router = useRouter();
 
-  const defaultTasks = [
-    ...["general", "individual"].flatMap((category) =>
-      Array.from({ length: 3 }, (_, order) => ({
-        id: uuid(),
-        name: "",
-        description: "",
-        category,
-        order,
-      })),
-    ),
-  ] as Task[];
-
-  const defaultValues: WorksheetWithTasks = {
+  const saving = useRef(false);
+  const [defaultValues] = useState<WorksheetWithTasks>(() => ({
     name: initialData?.name || "",
     description: initialData?.description || "",
     scope: initialData?.scope || "team",
-    tasks:
-      initialData?.tasks && initialData.tasks.length > 0
-        ? initialData.tasks.sort((a, b) => a.order - b.order)
-        : defaultTasks,
-    templateNotes: initialData?.templateNotes || undefined,
-    image:
-      (initialData as WorksheetWithTasks & { image?: string | File | null })
-        ?.image || undefined,
-    priority: initialData?.priority || 0,
-  };
+    tasks: initialTasks(initialData?.tasks),
+    templateNotes: initialData?.templateNotes,
+    image: initialData?.image,
+    priority: initialData?.priority ?? 0,
+  }));
 
   const form = useForm<WorksheetWithTasks>({
-    resolver: zodResolver(
-      worksheetWithTasksSchema,
-    ) as Resolver<WorksheetWithTasks>,
+    resolver: zodResolver(templateSaveSchema) as Resolver<WorksheetWithTasks>,
     defaultValues,
     mode: "onChange",
   });
 
   const onSubmit = async (data: WorksheetWithTasks) => {
-    if (isSubmitting) return;
+    if (saving.current) return;
+    saving.current = true;
 
     try {
       setIsSubmitting(true);
 
-      // Validate that we have at least one task with content
-      const validTasks = data.tasks.filter(
-        (task) =>
-          task.name.trim() !== "" ||
-          task.description.trim() ||
-          task.templateNotes?.trim(),
+      await apiClient(
+        mode === "edit" ? `/templates/${initialData?.id}/` : "/templates/",
+        {
+          method: mode === "create" ? "POST" : "PUT",
+          body: templateRequestBody(data),
+        },
       );
-      if (validTasks.length === 0) {
-        toast.add({ title: "Dodaj przynajmniej jedno zadanie", type: "error" });
-        return;
-      }
-
-      if (!data.scope) {
-        toast.add({
-          title:
-            "Template must be associated with either a team or an organization",
-          type: "error",
-        });
-        return;
-      }
-
-      const groupedTasks = Object.groupBy(validTasks, (task) => task.category);
-      const tasksWithUpdatedOrder = Object.values(groupedTasks)
-        .filter((group): group is Task[] => group !== undefined)
-        .flatMap((group) =>
-          group.map((task, index) => ({ ...task, order: index })),
-        );
-
-      const templateData = {
-        name: data.name.trim(),
-        description: data.description.trim(),
-        template_notes: data.templateNotes?.trim() || "",
-        scope: data.scope,
-        tasks: tasksWithUpdatedOrder.map((task) => ({
-          id: task.id,
-          task: task.name.trim(),
-          description: task.description.trim(),
-          category: task.category,
-          order: task.order,
-          template_notes: task.templateNotes?.trim() || "",
-        })),
-        priority: data.priority ?? 0,
-      };
-
-      const url =
-        mode === "edit" ? `/templates/${initialData?.id}/` : "/templates/";
-
-      // Check if we need to use multipart (file upload or removal)
-      if (data.image instanceof File) {
-        // Use FormData for multipart request when uploading file or removing image
-        const formData = new FormData();
-
-        // Handle image field
-        if (data.image instanceof File) {
-          // New image file to upload
-          formData.append("image", data.image);
-        }
-
-        // Add all template data as separate form fields
-        formData.append("name", templateData.name);
-        formData.append("description", templateData.description);
-
-        formData.append("scope", templateData.scope);
-        formData.append("priority", templateData.priority.toString());
-
-        // Add tasks as JSON string (since it's complex data)
-        formData.append("tasks", JSON.stringify(templateData.tasks));
-
-        await apiClient(url, {
-          method: mode === "create" ? "POST" : "PUT",
-          body: formData,
-        });
-      } else {
-        // Use JSON for regular request when no file changes
-        await apiClient(url, {
-          method: mode === "create" ? "POST" : "PUT",
-          body: JSON.stringify({
-            ...templateData,
-            image: data.image === null ? null : undefined,
-          }),
-        });
-      }
 
       toast.add({
         title:
@@ -160,36 +68,20 @@ export const useTemplateForm = ({
       });
 
       router.push(redirectTo);
-    } catch (error) {
-      console.error("Error creating worksheet:", error);
-      toast.add({
-        ...ToastMsg({
-          data: {
-            title: "Błąd podczas tworzenia szablonu",
-            description: error as Error,
-          },
-        }),
-        type: "error",
-      });
+    } catch {
+      const message =
+        "Nie udało się zapisać szablonu. Twoje zmiany pozostają w edytorze. Spróbuj ponownie.";
+      form.setError("root.server", { message });
     } finally {
+      saving.current = false;
       setIsSubmitting(false);
     }
   };
 
-  const isDirty = form.formState.isDirty;
-  const isValid = form.formState.isValid;
-  const errors = form.formState.errors;
-  const tasks = useWatch({ control: form.control, name: "tasks" });
-
-  const canSubmit = isValid && !isSubmitting && tasks.length > 0;
-
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit),
+    onSubmit: (event?: BaseSyntheticEvent) =>
+      form.handleSubmit(onSubmit)(event),
     isSubmitting,
-    isDirty,
-    isValid,
-    canSubmit,
-    errors,
   };
 };
