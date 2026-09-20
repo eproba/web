@@ -1,6 +1,6 @@
 {
   "name": "web-v2",
-  "version": "0.17.0",
+  "version": "0.17.1",
   "private": true,
   "packageManager": "pnpm@11.5.0",
   "engines": {
