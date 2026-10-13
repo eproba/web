@@ -27,7 +27,8 @@ export const VADEMECUM_BODY = `
     <label class="search">
       <span class="visually-hidden">Szukaj w drogowskazach</span>
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>
-      <input id="searchInput" type="text" placeholder="Szukaj drogowskazu…" autocomplete="off">
+      <input id="searchInput" type="text" placeholder="Szukaj" autocomplete="off">
+      <button type="button" class="search-clear" id="searchClear" aria-label="Wyczyść wyszukiwanie" hidden><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
       </label>
 
     <nav class="tree" aria-label="Spis treści">
@@ -65,6 +66,8 @@ export const VADEMECUM_BODY = `
         </div>
       </details>
     </nav>
+
+    <div class="search-results" id="searchResults" aria-live="polite"></div>
 
     <div class="sidebar-foot">
       <a class="pdf-link" href="https://drive.google.com/file/d/1Q4sVe_5xGJZ3iNGZBo4oypMZZAYHrCft/view?usp=sharing" target="_blank" rel="noopener noreferrer">
@@ -537,7 +540,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="bog-p1">
+        <section class="track" id="bog-p1">
           <h2><span class="idx">01</span> Poszukuję Logosu i transcendencji w świecie</h2>
           <p class="lead">Poszukuję rozumienia głębokich prawd o początku i celu rzeczywistości oraz źródle dobra, prawdy i piękna.</p>
           <ul class="wskazy">
@@ -551,7 +554,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="bog-p2">
+        <section class="track" id="bog-p2">
           <h2><span class="idx">02</span> Kieruję się zasadami etyki chrześcijańskiej</h2>
           <p class="lead">Europejska kultura została ufundowana na etyce chrześcijańskiej, która przenika również ruch harcerski – co wyrażone jest w Prawie i Przyrzeczeniu Harcerskim. Chrześcijanin widzi swoje życie jako odpowiedź człowieka na wezwanie Boga i łaskę bycia z Nim w jedności, dlatego zgłębia nauczanie moralne Kościoła i kształtuje swoje sumienie w oparciu o Dekalog i Przykazanie Miłości. Moralne życie człowieka i harcerza jest przywiązaniem do chrześcijańskich zasad etycznych niezależnie od wiary w źródło tych wartości.</p>
           <ul class="wskazy">
@@ -567,7 +570,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="bog-p3">
+        <section class="track" id="bog-p3">
           <h2><span class="idx">03</span> Poznaję chrześcijaństwo i Kościół, rozwijam osobistą relację z Bogiem</h2>
           <p class="lead">Kościoły chrześcijańskie przez wieki wytworzyły wielkie bogactwo różnych praktyk pobożnościowych oraz duchowości, które pomagają żyć w duchu własnego wyznania. Doświadczenie różnych praktyk i form duchowych jest też drogą poznania kultury chrześcijańskiej i otwarcia się na działanie Boga dla tych, którzy go poszukują.</p>
           <ul class="wskazy">
@@ -584,7 +587,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="bog-p4">
+        <section class="track" id="bog-p4">
           <h2><span class="idx">04</span> Jestem otwarty na wspólnotę duchową</h2>
           <p class="lead">Wartości duchowe poznaje się przez dialog z bliźnimi, wspólne stawianie pytań i poszukiwanie odpowiedzi. Chrześcijanie wierzą też, że to sam Bóg objawił się wobec całego Kościoła i ustanowił się jego Głową. Dlatego pogłębiają oni swoją wiarę również przez aktywne uczestnictwo w życiu Kościoła i utożsamianie się z jego wspólnotą. Najważniejszą wspólnotową formą działania Boga wobec Jego Kościoła i Kościoła wobec Boga jest liturgia – życie nią jest szczególnym elementem relacji z Bogiem.</p>
           <ul class="wskazy">
@@ -602,7 +605,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="bog-p5">
+        <section class="track" id="bog-p5">
           <h2><span class="idx">05</span> Poznaję Pismo Święte</h2>
           <p class="lead">Biblia jest fascynującym literackim zapisem korzeni cywilizacji, w której wszyscy wyrastamy niezależnie od naszych przekonań religijnych. Pismo Święte odczytywane zgodnie z Tradycją Kościoła jest dla wierzących w Boga podstawą wiary chrześcijańskiej. Znajomość Biblii jako Słowa Bożego jest drogą do Jego poznania.</p>
           <ul class="wskazy">
@@ -735,7 +738,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="intelekt-p1">
+        <section class="track" id="intelekt-p1">
           <h2><span class="idx">01</span> Uczę się metodycznie i regularnie</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Mam stałe pory w ciągu dnia i tygodnia, kiedy regularnie się uczę (nie tylko do sprawdzianów).</span><button class="add-btn">Dodaj</button></li>
@@ -744,7 +747,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="intelekt-p2">
+        <section class="track" id="intelekt-p2">
           <h2><span class="idx">02</span> Szkoła i nauka są dla mnie ważne</h2>
           <p class="lead">Przykładam się do swoich obowiązków szkolnych, korzystam z szans, które daje mi szkoła, uczestniczę w życiu szkolnym.</p>
           <ul class="wskazy">
@@ -754,7 +757,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="intelekt-p3">
+        <section class="track" id="intelekt-p3">
           <h2><span class="idx">03</span> Myślę logicznie</h2>
           <p class="lead">Staram się wyciągać wnioski, bazując na logicznych związkach między przesłankami rozumowania, a nie głównie na intuicji i odczuciach.</p>
           <ul class="wskazy">
@@ -764,7 +767,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="intelekt-p4">
+        <section class="track" id="intelekt-p4">
           <h2><span class="idx">04</span> Zachowuję krytycyzm i pokorę intelektualną</h2>
           <p class="lead">Badam argumenty swoje oraz innych, nie odrzucam ani nie akceptuję poglądów bez zrozumienia ich podstaw.</p>
           <ul class="wskazy">
@@ -775,7 +778,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="intelekt-p5">
+        <section class="track" id="intelekt-p5">
           <h2><span class="idx">05</span> Kształtuję swój światopogląd</h2>
           <p class="lead">Zapoznaję się z różnymi światopoglądami i koncepcjami społeczno-gospodarczymi oraz potrafię je ocenić na bazie argumentów.</p>
           <ul class="wskazy">
@@ -784,7 +787,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="intelekt-p6">
+        <section class="track" id="intelekt-p6">
           <h2><span class="idx">06</span> Jestem dociekliwy i ciekawy świata</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Mam potrzebę i wolę poznawania nowych rzeczy dogłębnie, a nie jedynie powierzchownie.</span><button class="add-btn">Dodaj</button></li>
@@ -815,7 +818,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="zdrowie-p1">
+        <section class="track" id="zdrowie-p1">
           <h2><span class="idx">01</span> Jestem wysportowany i sprawny fizycznie</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię zrealizować program treningowy.</span><button class="add-btn">Dodaj</button></li>
@@ -825,7 +828,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="zdrowie-p2">
+        <section class="track" id="zdrowie-p2">
           <h2><span class="idx">02</span> Dbam o swoje zdrowie</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Wiem, jaka jest moja właściwa waga, jaka jest odpowiednia dla mnie dieta (np. ile kalorii powinienem spożywać dziennie) i trzymam się jej.</span><button class="add-btn">Dodaj</button></li>
@@ -835,7 +838,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="zdrowie-p3">
+        <section class="track" id="zdrowie-p3">
           <h2><span class="idx">03</span> Dbam o swoją higienę i dobry wygląd</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Regularnie się golę lub strzygę brodę, codziennie myję się i używam dezodorantu.</span><button class="add-btn">Dodaj</button></li>
@@ -843,7 +846,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="zdrowie-p4">
+        <section class="track" id="zdrowie-p4">
           <h2><span class="idx">04</span> Zachowuję higienę cyfrową<sup>1</sup></h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Wiem, jak działa uzależnienie od urządzeń ekranowych i jakie niesie skutki.</span><button class="add-btn">Dodaj</button></li>
@@ -930,7 +933,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="ojczyzny-p1">
+        <section class="track" id="ojczyzny-p1">
           <h2><span class="idx">01</span> Znam polską historię i jej wpływ na teraźniejszość</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię opisać historię Polski od czasu I-go rozbioru.</span><button class="add-btn">Dodaj</button></li>
@@ -940,7 +943,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="ojczyzny-p2">
+        <section class="track" id="ojczyzny-p2">
           <h2><span class="idx">02</span> Jestem lokalnym patriotą</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię oprowadzić wycieczkę po miejscu mojego pochodzenia, prezentując elementy jego historii.</span><button class="add-btn">Dodaj</button></li>
@@ -949,7 +952,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="ojczyzny-p3">
+        <section class="track" id="ojczyzny-p3">
           <h2><span class="idx">03</span> Buduję braterstwo z ludźmi z Europy i z całego świata</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię godnie zaprezentować Polskę w międzynarodowym gronie.</span><button class="add-btn">Dodaj</button></li>
@@ -962,7 +965,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="ojczyzny-p4">
+        <section class="track" id="ojczyzny-p4">
           <h2><span class="idx">04</span> Jestem gotów do obrony ojczyzny</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Uczestniczę w działaniach Pogotowia Harcerek i Harcerzy.</span><button class="add-btn">Dodaj</button></li>
@@ -976,7 +979,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="ojczyzny-p5">
+        <section class="track" id="ojczyzny-p5">
           <h2><span class="idx">05</span> Jestem świadomym i aktywnym obywatelem</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Znam polskie partie polityczne, ich programy, profile ideowe i poglądy na najważniejsze kwestie społeczno-gospodarcze.</span><button class="add-btn">Dodaj</button></li>
@@ -1006,7 +1009,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="rodzina-p1">
+        <section class="track" id="rodzina-p1">
           <h2><span class="idx">01</span> Znam swoją rodzinę i moje pochodzenie</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Znam historię mojej rodziny (w szczególności na tle wydarzeń historii powszechnej).</span><button class="add-btn">Dodaj</button></li>
@@ -1014,7 +1017,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="rodzina-p2">
+        <section class="track" id="rodzina-p2">
           <h2><span class="idx">02</span> Buduję głębokie, oparte na szczerości relacje z rodzicami</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Wykonuję polecenie otrzymane od rodziców lub negocjuję jego zmianę, argumentując swoje zdanie w odpowiedzialny sposób.</span><button class="add-btn">Dodaj</button></li>
@@ -1024,7 +1027,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="rodzina-p3">
+        <section class="track" id="rodzina-p3">
           <h2><span class="idx">03</span> Jestem zaangażowany w życie mojej rodziny</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię zorganizować wycieczkę dla rodziny lub jej części (np. w wyjazd z ojcem).</span><button class="add-btn">Dodaj</button></li>
@@ -1035,7 +1038,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="rodzina-p4">
+        <section class="track" id="rodzina-p4">
           <h2><span class="idx">04</span> Rozpoznaję swoje powołanie i przygotowuję się do niego</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię przez pół dnia zaopiekować się małym dzieckiem (w tym zmienić pieluszkę, nakarmić je, umyć itp.).</span><button class="add-btn">Dodaj</button></li>
@@ -1067,7 +1070,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="pasje-p1">
+        <section class="track" id="pasje-p1">
           <h2><span class="idx">01</span> Rozwijam nowe umiejętności praktyczne</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Biorę udział w kursach, warsztatach i/lub zajęciach indywidualnych.</span><button class="add-btn">Dodaj</button></li>
@@ -1077,7 +1080,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="pasje-p2">
+        <section class="track" id="pasje-p2">
           <h2><span class="idx">02</span> Znam trud pracy zarobkowej i potrafię gospodarować swoimi pieniędzmi</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię zarobić na swoje potrzeby 1000 zł.</span><button class="add-btn">Dodaj</button></li>
@@ -1087,7 +1090,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="pasje-p3">
+        <section class="track" id="pasje-p3">
           <h2><span class="idx">03</span> Mam zainteresowania, które efektywnie rozwijam</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Dzielę się swoimi zainteresowaniami z innymi, uczę ich i dzielę się swoją pasją.</span><button class="add-btn">Dodaj</button></li>
@@ -1095,7 +1098,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="pasje-p4">
+        <section class="track" id="pasje-p4">
           <h2><span class="idx">04</span> Wolny czas spędzam w sposób kreatywny i ambitny</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Próbuję poszerzać swoje zainteresowania, zdobywając umiejętności i wiedzę z nowych dziedzin.</span><button class="add-btn">Dodaj</button></li>
@@ -1125,7 +1128,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="kultura-p1">
+        <section class="track" id="kultura-p1">
           <h2><span class="idx">01</span> Trzymam klasę i zachowuję kulturę osobistą</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Znam zasady dobrego ubioru (np. wiem, jak łączyć kolory i wzory, jak dobrać rozmiar ubrania itp.), potrafię ubrać się na randkę lub formalną okazję.</span><button class="add-btn">Dodaj</button></li>
@@ -1136,7 +1139,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="kultura-p2">
+        <section class="track" id="kultura-p2">
           <h2><span class="idx">02</span> Wypowiadam się w sposób zrozumiały</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Potrafię przygotować i nagrać kilkuminutowe wystąpienie, poprawne pod kątem retorycznym (ustrukturyzowane, z użyciem gestykulacji, bez mówienia „yyy” itp.).</span><button class="add-btn">Dodaj</button></li>
@@ -1146,7 +1149,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="kultura-p3">
+        <section class="track" id="kultura-p3">
           <h2><span class="idx">03</span> Poznaję klasyczne dzieła kultury i kształtuję swoją wrażliwość jako odbiorca sztuki</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Umiem przedstawić w dyskusji, w jaki sposób wybrane dzieła z kanonu lektur zmieniły moje spojrzenie na świat i wartości lub prawa nim rządzące.</span><button class="add-btn">Dodaj</button></li>
@@ -1157,7 +1160,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="kultura-p4">
+        <section class="track" id="kultura-p4">
           <h2><span class="idx">04</span> Wyrażam się za pomocą sztuki</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Staram się uczyć technik artystycznych (również amatorsko) i tworzyć wybrane formy sztuki (np. uczę się gry na nowym instrumencie, założyłem zespół muzyczny z kolegami, gram w teatrze szkolnym, majsterkuję z elementem artystycznym).</span><button class="add-btn">Dodaj</button></li>
@@ -1194,7 +1197,7 @@ export const VADEMECUM_BODY = `
           <p class="signature">Przełącz tryb powyżej — drogowskazy oznaczone <span class="hr-chip" style="position:static">HR</span> są zaadresowane głównie do zdobywających Harcerza Rzeczypospolitej, ale każdy może się nimi zainspirować.</p>
         </div>
 
-        <section class="track postawa" id="przyroda-p1">
+        <section class="track" id="przyroda-p1">
           <h2><span class="idx">01</span> Czuję się częścią świata przyrody</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Regularnie (np. raz w tygodniu) spędzam czas w otoczeniu przyrody (sportowo, rekreacyjnie, towarzysko), ograniczając korzystanie z rozpraszających dóbr cywilizacyjnych.</span><button class="add-btn">Dodaj</button></li>
@@ -1206,7 +1209,7 @@ export const VADEMECUM_BODY = `
           </ul>
         </section>
 
-        <section class="track postawa" id="przyroda-p2">
+        <section class="track" id="przyroda-p2">
           <h2><span class="idx">02</span> Rozwijam swoją wiedzę o środowisku przyrodniczym</h2>
           <ul class="wskazy">
             <li><span class="glyph">●</span><span class="txt">Korzystam z wiedzy naukowej dotyczącej zjawisk klimatycznych i przyrodniczych, weryfikuję źródła informacji w tej sprawie.</span><button class="add-btn">Dodaj</button></li>
@@ -1223,7 +1226,6 @@ export const VADEMECUM_BODY = `
         </div>
       </section>
 
-<div class="empty-state" id="emptyState">Żaden drogowskaz nie pasuje do wyszukiwania.</div>
 
     </article>
   </main>

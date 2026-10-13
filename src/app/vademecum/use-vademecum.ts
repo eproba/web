@@ -1,6 +1,7 @@
 import { type RefObject, useEffect } from "react";
 
 import { createReporter } from "./report";
+import { createSearch } from "./search";
 
 const START_PAGE = { id: "start", title: "Wstęp" };
 const RAIL_SCROLL_OFFSET = 110;
@@ -24,11 +25,12 @@ export function useVademecum(rootRef: RefObject<HTMLDivElement | null>) {
     const modeSwitch = $("#modeSwitch");
     const railList = $("#onpage");
     const appTopTitle = $("#appTopTitle");
-    const emptyState = $("#emptyState");
     const searchInput = $<HTMLInputElement>("#searchInput");
+    const searchClear = $("#searchClear");
     if (!sidebar || !scrim || !shell || !modeSwitch || !railList) return;
 
     const reporter = createReporter(root);
+    const search = createSearch(root, sidebar);
     let railSections: Element[] = [];
 
     const setSidebarOpen = (open: boolean) => {
@@ -80,7 +82,6 @@ export function useVademecum(rootRef: RefObject<HTMLDivElement | null>) {
         a.classList.toggle("current", a.getAttribute("data-page") === pageId);
       });
       if (appTopTitle) appTopTitle.textContent = title;
-      if (searchInput) searchInput.value = "";
       window.scrollTo({ top: 0 });
       reporter.hide();
       buildRail(target);
@@ -135,6 +136,14 @@ export function useVademecum(rootRef: RefObject<HTMLDivElement | null>) {
       refreshTrial();
     };
 
+    // ----- search box
+    const runSearch = (query: string) => {
+      if (!searchInput) return;
+      searchInput.value = query;
+      if (searchClear) searchClear.hidden = query === "";
+      search.run(query);
+    };
+
     // ----- event handlers
     const handleClick = (e: Event) => {
       const target = e.target as HTMLElement;
@@ -142,6 +151,11 @@ export function useVademecum(rootRef: RefObject<HTMLDivElement | null>) {
 
       if (target.closest("#openSidebar")) return setSidebarOpen(true);
       if (target.closest("#scrim")) return setSidebarOpen(false);
+
+      if (target.closest("#searchClear")) {
+        runSearch("");
+        return searchInput?.focus();
+      }
 
       const modeButton = target.closest<HTMLElement>("#modeSwitch button");
       if (modeButton) return setMode(modeButton);
@@ -170,36 +184,21 @@ export function useVademecum(rootRef: RefObject<HTMLDivElement | null>) {
             pageLink.textContent?.trim() ||
             "",
         );
+        const hit = pageLink.getAttribute("data-hit");
+        if (hit) requestAnimationFrame(() => search.reveal(hit));
       }
     };
 
     const handleSearch = (e: Event) => {
-      if (e.target !== searchInput) return;
-      const query = (searchInput?.value ?? "").trim().toLowerCase();
-      const page = root.querySelector(".page.active");
-      if (!page) return;
-      const sections = page.querySelectorAll<HTMLElement>("section.postawa");
-      let anyVisible = false;
-      sections.forEach((section) => {
-        let sectionMatches =
-          !query ||
-          (section.querySelector("h2")?.textContent ?? "")
-            .toLowerCase()
-            .includes(query);
-        section.querySelectorAll<HTMLElement>("li").forEach((li) => {
-          const text = li.querySelector(".txt")?.textContent ?? "";
-          const match = !query || text.toLowerCase().includes(query);
-          li.style.display = match ? "" : "none";
-          sectionMatches ||= match;
-        });
-        section.style.display = sectionMatches ? "" : "none";
-        anyVisible ||= sectionMatches;
-      });
-      emptyState?.classList.toggle("show", !anyVisible && sections.length > 0);
+      if (searchInput && e.target === searchInput) runSearch(searchInput.value);
     };
 
     const handleHover = (e: Event) => reporter.onHover(e.target as Element);
-    const handleKey = (e: Event) => reporter.onKey(e as KeyboardEvent);
+    const handleKey = (e: Event) => {
+      const key = e as KeyboardEvent;
+      reporter.onKey(key);
+      if (key.key === "Escape" && searchInput?.value) runSearch("");
+    };
 
     // ----- listeners
     const cleanups: Array<() => void> = [];

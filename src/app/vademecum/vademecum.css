@@ -141,7 +141,33 @@
   border-color: var(--vad-focus);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--vad-focus) 22%, transparent);
 }
-.vademecum-root .search svg {
+.vademecum-root .search input {
+  padding-right: 2rem;
+}
+.vademecum-root .search .search-clear {
+  position: absolute;
+  top: 50%;
+  right: 0.35rem;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--vad-ink-muted);
+  cursor: pointer;
+}
+.vademecum-root .search .search-clear[hidden] {
+  display: none;
+}
+.vademecum-root .search .search-clear:hover,
+.vademecum-root .search .search-clear:focus-visible {
+  background: var(--vad-surface-2);
+  color: var(--vad-ink);
+}
+.vademecum-root .search > svg {
   position: absolute;
   left: 0.6rem;
   top: 50%;
@@ -482,16 +508,6 @@
   background: var(--vad-moss-soft);
   border-color: var(--vad-moss);
   color: var(--vad-moss-strong);
-}
-.vademecum-root .empty-state {
-  display: none;
-  padding: 2.4rem 0;
-  text-align: center;
-  color: var(--vad-ink-muted);
-  font-size: 0.9rem;
-}
-.vademecum-root .empty-state.show {
-  display: block;
 }
 
 /* ---------- callouts ---------- */
@@ -1182,7 +1198,7 @@
   position: absolute;
   width: 36%;
   margin: 0;
-  font-size: 0.78rem;
+  font-size: clamp(0.78rem, 2.5cqw, 1.05rem);
   line-height: 1.4;
   color: var(--vad-ink-muted);
 }
@@ -1297,4 +1313,83 @@
 .vademecum-root .mode-ho .track[data-for="hr"]:hover,
 .vademecum-root .mode-hr .track[data-for="ho"]:hover {
   opacity: 0.85;
+}
+
+/* ---------- global search ---------- */
+.vademecum-root .search-results {
+  display: none;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.82rem;
+}
+.vademecum-root .sidebar.searching nav.tree {
+  display: none;
+}
+.vademecum-root .sidebar.searching .search-results {
+  display: flex;
+}
+.vademecum-root .sr-count {
+  padding: 0.2rem 0.5rem;
+  color: var(--vad-ink-muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.vademecum-root .sr-group {
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--vad-ink);
+}
+.vademecum-root .sr-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.45rem 0.5rem;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--vad-ink-muted);
+  text-align: left;
+  cursor: pointer;
+}
+.vademecum-root .sr-item:hover,
+.vademecum-root .sr-item:focus-visible {
+  background: var(--vad-surface);
+  color: var(--vad-ink);
+}
+.vademecum-root .sr-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .sr-hr {
+  padding: 0.04rem 0.3rem;
+  border-radius: 4px;
+  background: var(--vad-ember-soft);
+  color: var(--vad-ember);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+.vademecum-root .sr-text {
+  line-height: 1.4;
+}
+.vademecum-root .sr-text mark {
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--vad-focus) 30%, transparent);
+  color: inherit;
+}
+.vademecum-root .sr-empty {
+  padding: 1.2rem 0.5rem;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .search-hit {
+  outline: 2px solid var(--vad-focus);
+  outline-offset: 4px;
+  border-radius: 6px;
 }
