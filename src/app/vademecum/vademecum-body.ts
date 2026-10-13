@@ -178,7 +178,7 @@ export const VADEMECUM_BODY = `
         <span class="eyebrow"><span class="dot"></span>02 · Układanie próby</span>
         <h1 class="title">Opiekun próby</h1>
 
-          <p><em><strong>>Opiekun to Twój harcerski starszy brat, który będzie Ci towarzyszył w realizacji próby – od początku aż do jej końca. Przed opiekunem stoją 3 zadania:</strong></em></p>
+          <p><em><strong>Opiekun to Twój harcerski starszy brat, który będzie Ci towarzyszył w realizacji próby – od początku aż do jej końca. Przed opiekunem stoją 3 zadania:</strong></em></p>
           <div class="stepper">
             <div class="step">
               <div class="dot">1</div>
@@ -438,7 +438,7 @@ export const VADEMECUM_BODY = `
             <li><span class="glyph">●</span><span class="txt">Przez miesiąc codziennie będę się uczył lub czytał podręcznik do historii lub „Dzieje Polski” Andrzeja Nowaka, w swoim stałym miejscu do nauki, przez 45 minut od godz. 19:00 (margines błędu – 90%).</span></li>
           </ul>
 
-          <div class="callout callout--info">
+          <div class="callout callout--info" data-no-report>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18l6-6-6-6"/></svg>
             <div>Zobacz pełny zestaw drogowskazów w <a data-page="obszar-intelekt" data-crumb-title="Rozum i intelekt">Rozum i intelekt</a>.</div>
           </div>

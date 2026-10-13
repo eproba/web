@@ -4,6 +4,7 @@ const MAIL_TO = "lech.pastwa@zhr.pl";
 const SOURCE_FILE = "src/app/vademecum/vademecum-body.ts";
 const TEXT_BLOCKS =
   "p:not(.signature), .txt, li, summary, .a, .fs-body, .callout > div, .callout > div > div";
+const NOT_REPORTABLE = ".pager, [data-no-report]";
 const MIN_TEXT_LENGTH = 12;
 const QUOTE_LENGTH = 60;
 const NAVBAR_HEIGHT = 64;
@@ -55,7 +56,7 @@ const canonical = (el: HTMLElement) =>
 
 const isReportable = (el: HTMLElement) =>
   !!el.closest(".page.active") &&
-  !el.closest(".pager") &&
+  !el.closest(NOT_REPORTABLE) &&
   textOf(el).length >= MIN_TEXT_LENGTH;
 
 function resolveReportable(node: EventTarget | null): HTMLElement | null {
@@ -138,7 +139,10 @@ export function createReporter(root: HTMLElement) {
       const el = resolveReportable(node);
       if (el) {
         if (el !== target) show(el);
-      } else if (!node.closest(".page.active") || node.closest(".pager")) {
+      } else if (
+        !node.closest(".page.active") ||
+        node.closest(NOT_REPORTABLE)
+      ) {
         hide();
       }
     },
