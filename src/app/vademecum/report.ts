@@ -1,6 +1,6 @@
 import { VADEMECUM_BODY } from "./vademecum-body";
 
-const MAIL_TO = "lech.pastwa@zhr.pl";
+const MAIL_TO = "lech.pastwa+vademecum@zhr.pl";
 const SOURCE_FILE = "src/app/vademecum/vademecum-body.ts";
 const TEXT_BLOCKS =
   "p:not(.signature), .txt, li, summary, .a, .fs-body, .callout > div, .callout > div > div";

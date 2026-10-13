@@ -1,5 +1,5 @@
 export const VADEMECUM_BODY = `
-<a id="reportBtn" class="report-btn" href="mailto:lech.pastwa@zhr.pl" aria-label="Zgłoś poprawkę do tego akapitu"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Zgłoś poprawkę</a>
+<a id="reportBtn" class="report-btn" href="mailto:lech.pastwa+vademecum@zhr.pl" aria-label="Zgłoś poprawkę do tego akapitu"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>Zgłoś poprawkę</a>
 
 <div class="scrim" id="scrim"></div>
 
