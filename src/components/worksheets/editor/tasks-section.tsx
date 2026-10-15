@@ -3,6 +3,8 @@ import { type Task, type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 
+import { TaskCategory } from "./editor-model";
+
 interface TaskField extends Task {
   fieldId: string;
   taskIndex: number;
@@ -14,14 +16,14 @@ interface TasksSectionProps {
   individualTasks: TaskField[];
   showDescriptions: boolean;
   enableCategories: boolean;
-  onAddTask: (category: string) => string;
-  onRemoveTask: (category: string, id: string) => void;
-  onMoveTaskUp: (category: string, taskId: string) => void;
-  onMoveTaskDown: (category: string, taskId: string) => void;
+  onAddTask: (category: TaskCategory) => string;
+  onRemoveTask: (category: TaskCategory, id: string) => void;
+  onMoveTaskUp: (category: TaskCategory, taskId: string) => void;
+  onMoveTaskDown: (category: TaskCategory, taskId: string) => void;
   onMoveTaskToCategory: (
     taskId: string,
-    fromCategory: string,
-    toCategory: string,
+    fromCategory: TaskCategory,
+    toCategory: TaskCategory,
   ) => void;
   variant: "template" | "worksheet";
 }

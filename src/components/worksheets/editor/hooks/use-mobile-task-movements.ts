@@ -2,18 +2,16 @@ import { type WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { useCallback } from "react";
 import { UseFormReturn } from "react-hook-form";
 
+import { DropEdge, TaskCategory } from "../editor-model";
+
 interface UseMobileTaskMovementsProps {
   form: UseFormReturn<WorksheetWithTasks>;
-  reorderTasks: (
-    sourceId: string,
-    targetId: string,
-    edge: string | null,
-  ) => void;
+  reorderTasks: (sourceId: string, targetId: string, edge: DropEdge) => void;
   moveTaskBetweenCategories: (
     sourceId: string,
-    destCategory: string,
+    destCategory: TaskCategory,
     targetId: string | null,
-    edge: string | null,
+    edge: DropEdge,
   ) => void;
 }
 
@@ -23,8 +21,8 @@ export const useMobileTaskMovements = ({
   moveTaskBetweenCategories,
 }: UseMobileTaskMovementsProps) => {
   const handleMoveTaskUp = useCallback(
-    (category: string, taskId: string) => {
-      const tasks = form.watch("tasks");
+    (category: TaskCategory, taskId: string) => {
+      const tasks = form.getValues("tasks");
       const categoryTasks = tasks.filter((task) => task.category === category);
       const taskIndex = categoryTasks.findIndex((task) => task.id === taskId);
 
@@ -37,12 +35,12 @@ export const useMobileTaskMovements = ({
   );
 
   const handleMoveTaskDown = useCallback(
-    (category: string, taskId: string) => {
-      const tasks = form.watch("tasks");
+    (category: TaskCategory, taskId: string) => {
+      const tasks = form.getValues("tasks");
       const categoryTasks = tasks.filter((task) => task.category === category);
       const taskIndex = categoryTasks.findIndex((task) => task.id === taskId);
 
-      if (taskIndex < categoryTasks.length - 1) {
+      if (taskIndex >= 0 && taskIndex < categoryTasks.length - 1) {
         const targetTask = categoryTasks[taskIndex + 1];
         reorderTasks(taskId, targetTask.id, "bottom");
       }
@@ -51,8 +49,8 @@ export const useMobileTaskMovements = ({
   );
 
   const handleMoveTaskToCategory = useCallback(
-    (taskId: string, fromCategory: string, toCategory: string) => {
-      const tasks = form.watch("tasks");
+    (taskId: string, fromCategory: TaskCategory, toCategory: TaskCategory) => {
+      const tasks = form.getValues("tasks");
       const targetCategoryTasks = tasks.filter(
         (task) => task.category === toCategory,
       );

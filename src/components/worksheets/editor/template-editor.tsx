@@ -1,18 +1,17 @@
 "use client";
 
 import { DragDropProvider } from "@/components/worksheets/editor/drag-drop-provider";
-import { useDragDropHandler } from "@/components/worksheets/editor/hooks/use-drag-drop-handler";
-import { useMobileTaskMovements } from "@/components/worksheets/editor/hooks/use-mobile-task-movements";
-import { useTaskFieldArray } from "@/components/worksheets/editor/hooks/use-task-field-array";
 import { useTemplateForm } from "@/components/worksheets/editor/hooks/use-template-form";
 import { TaskControls } from "@/components/worksheets/editor/task-controls";
 import { TasksSection } from "@/components/worksheets/editor/tasks-section";
 import { TemplateWorksheetBasicInfo } from "@/components/worksheets/editor/template-basic-info";
 import { WorksheetSubmitButton } from "@/components/worksheets/editor/worksheet-submit-button";
-import { Task, WorksheetWithTasks } from "@/lib/schemas/worksheet";
+import { WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { User } from "@/types/user";
-import React, { useState } from "react";
+import React from "react";
 import { FormProvider } from "react-hook-form";
+
+import { useTaskEditor } from "./hooks/use-task-editor";
 
 interface TemplateEditorProps {
   initialData?: Partial<WorksheetWithTasks>;
@@ -34,54 +33,19 @@ export const TemplateEditor = ({
     initialData,
   });
 
-  // Initialize task management with useFieldArray hook
   const {
-    watchedTasks,
     generalFields,
     individualFields,
     addTask,
     removeTask,
-    reorderTasks,
-    moveTaskBetweenCategories,
-    transferAllTasks,
-  } = useTaskFieldArray({ form });
-
-  // Initialize drag and drop with a custom hook
-  useDragDropHandler({
-    reorderTasks,
-    moveTaskBetweenCategories,
-  });
-
-  // Initialize mobile task movements hook
-  const { handleMoveTaskUp, handleMoveTaskDown, handleMoveTaskToCategory } =
-    useMobileTaskMovements({
-      form,
-      reorderTasks,
-      moveTaskBetweenCategories,
-    });
-
-  // UI State
-  const [showDescriptions, setShowDescriptions] = useState(false);
-  const [userToggledDescriptions, setUserToggledDescriptions] = useState(false);
-  const [enableCategories, setEnableCategories] = useState(
-    currentUser.organization === 0,
-  );
-
-  // Watch tasks for changes to auto-enable descriptions
-  const hasDescriptions = (watchedTasks || []).some(
-    (task: Task) => task.description?.trim() || task.templateNotes?.trim(),
-  );
-
-  // Calculate effective show descriptions state
-  // Show if user manually enabled it OR (it has descriptions AND user hasn't manually disabled it)
-  const shouldShowDescriptions = userToggledDescriptions
-    ? showDescriptions
-    : showDescriptions || hasDescriptions;
-
-  const handleToggleDescriptions = () => {
-    setUserToggledDescriptions(true);
-    setShowDescriptions(!shouldShowDescriptions);
-  };
+    handleMoveTaskUp,
+    handleMoveTaskDown,
+    handleMoveTaskToCategory,
+    enableCategories,
+    showDescriptions,
+    toggleCategories,
+    toggleDescriptions,
+  } = useTaskEditor(form, currentUser.organization === 0, "template");
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && e.target instanceof HTMLInputElement) {
@@ -100,22 +64,17 @@ export const TemplateEditor = ({
           <TemplateWorksheetBasicInfo form={form} currentUser={currentUser} />
 
           <TaskControls
-            showDescriptions={shouldShowDescriptions}
+            showDescriptions={showDescriptions}
             enableCategories={enableCategories}
-            onToggleDescriptions={handleToggleDescriptions}
-            onToggleCategories={() => {
-              if (enableCategories) {
-                transferAllTasks("individual", "general");
-              }
-              setEnableCategories(!enableCategories);
-            }}
+            onToggleDescriptions={toggleDescriptions}
+            onToggleCategories={toggleCategories}
           />
 
           <TasksSection
             form={form}
             generalTasks={generalFields}
             individualTasks={individualFields}
-            showDescriptions={shouldShowDescriptions}
+            showDescriptions={showDescriptions}
             enableCategories={enableCategories}
             onAddTask={addTask}
             onRemoveTask={removeTask}
@@ -126,6 +85,7 @@ export const TemplateEditor = ({
           />
 
           <WorksheetSubmitButton
+            showDescriptions={showDescriptions}
             isSubmitting={isSubmitting}
             mode={mode}
             variant="template"

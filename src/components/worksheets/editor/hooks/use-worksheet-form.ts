@@ -1,32 +1,31 @@
 import { toast } from "@/components/ui/toast";
 import { useApi } from "@/lib/api-client";
-import {
-  Task,
-  WorksheetWithTasks,
-  worksheetWithTasksSchema,
-} from "@/lib/schemas/worksheet";
-import { ToastMsg } from "@/lib/toast-msg";
+import { WorksheetWithTasks } from "@/lib/schemas/worksheet";
 import { User } from "@/types/user";
-import { TaskStatus } from "@/types/worksheet";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "nextjs-toploader/app";
-import { useState } from "react";
-import { Resolver, useForm, useWatch } from "react-hook-form";
-import { v4 as uuid } from "uuid";
+import { type BaseSyntheticEvent, useRef, useState } from "react";
+import { Resolver, useForm } from "react-hook-form";
 
+import {
+  EditorInitialData,
+  ModifiedTask,
+  initialTasks,
+  modifiedStatusTasks,
+  worksheetPayload,
+  worksheetSaveSchema,
+} from "../editor-model";
+
+type SaveState =
+  | { phase: "editing" }
+  | { phase: "confirming"; data: WorksheetWithTasks; tasks: ModifiedTask[] }
+  | { phase: "saving" };
 interface UseWorksheetFormProps {
   mode: "create" | "edit";
   redirectTo: string;
-  initialData?: Partial<WorksheetWithTasks>;
+  initialData?: EditorInitialData;
   currentUser: User;
-  onModifiedTasksDetected?: (
-    modifiedTasks: Array<{
-      id: string;
-      name: string;
-      originalStatus: TaskStatus;
-    }>,
-  ) => boolean; // Returns true if submission should continue
 }
 
 export const useWorksheetForm = ({
@@ -34,185 +33,41 @@ export const useWorksheetForm = ({
   redirectTo,
   initialData,
   currentUser,
-  onModifiedTasksDetected,
 }: UseWorksheetFormProps) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [tasksToClearStatus, setTasksToClearStatus] = useState<string[]>([]);
-  const [hasHandledModifiedTasks, setHasHandledModifiedTasks] = useState(false);
+  const [state, setState] = useState<SaveState>({ phase: "editing" });
+  const saving = useRef(false);
   const { apiClient } = useApi();
   const router = useRouter();
-
-  const searchParams = useSearchParams();
-  const defaultUserId = searchParams.get("defaultUserId");
-
-  const defaultTasks = [
-    ...["general", "individual"].flatMap((category) =>
-      Array.from({ length: 3 }, (_, order) => ({
-        id: uuid(),
-        name: "",
-        description: "",
-        category,
-        order,
-      })),
-    ),
-  ] as Task[];
-
-  const defaultValues: WorksheetWithTasks = {
+  const defaultUserId = useSearchParams().get("defaultUserId");
+  const [defaultValues] = useState<WorksheetWithTasks>(() => ({
     name: initialData?.name || "",
     description: initialData?.description || "",
     supervisor: initialData?.supervisor || "",
     userId: initialData?.userId || defaultUserId || currentUser.id || "",
-    tasks:
-      initialData?.tasks && initialData.tasks.length > 0
-        ? initialData.tasks.sort((a, b) => a.order - b.order)
-        : defaultTasks,
-    templateNotes: initialData?.templateNotes || undefined,
+    tasks: initialTasks(initialData?.tasks),
+    templateNotes: initialData?.templateNotes,
     finalChallenge: initialData?.finalChallenge || "",
     finalChallengeDescription: initialData?.finalChallengeDescription || "",
-  };
-
+  }));
   const form = useForm<WorksheetWithTasks>({
-    resolver: zodResolver(
-      worksheetWithTasksSchema,
-    ) as Resolver<WorksheetWithTasks>,
+    resolver: zodResolver(worksheetSaveSchema) as Resolver<WorksheetWithTasks>,
     defaultValues,
     mode: "onChange",
   });
-
-  const onSubmit = async (data: WorksheetWithTasks) => {
-    await internalSubmit(data, false);
-  };
-
-  // Method to set tasks that should have their status cleared
-  const setTasksToClear = (taskIds: string[]) => {
-    setTasksToClearStatus(taskIds);
-  };
-
-  // Method to reset the modified tasks handling flag
-  const resetModifiedTasksHandling = () => {
-    setHasHandledModifiedTasks(false);
-    setTasksToClearStatus([]);
-  };
-
-  // Internal submission function that bypasses dialog logic
-  const internalSubmit = async (
-    data: WorksheetWithTasks,
-    skipDialogLogic = false,
-    tasksToSkipStatusClear?: string[],
-  ) => {
-    if (isSubmitting) return;
-
-    if (data.userId === data.supervisor && data.userId) {
-      form.setError("supervisor", {
-        type: "manual",
-        message: "Użytkownik nie może być swoim własnym opiekunem.",
-      });
-      toast.add({
-        title: "Użytkownik nie może być swoim własnym opiekunem.",
-        type: "error",
-      });
-      return;
-    }
-
+  const save = async (data: WorksheetWithTasks, clearStatus: string[] = []) => {
+    if (saving.current) return;
+    saving.current = true;
+    setState({ phase: "saving" });
     try {
-      // Check for modified tasks with non-TODO status in edit mode (only if we haven't handled it yet and not skipping)
-      if (
-        !skipDialogLogic &&
-        mode === "edit" &&
-        initialData?.tasks &&
-        onModifiedTasksDetected &&
-        !hasHandledModifiedTasks
-      ) {
-        const modifiedTasksWithStatus = data.tasks
-          .filter((currentTask) => {
-            const originalTask = initialData.tasks?.find(
-              (t) => t.id === currentTask.id,
-            );
-            if (!originalTask) return false;
-
-            const isModified =
-              currentTask.name !== originalTask.name ||
-              currentTask.description !== originalTask.description;
-
-            const hasNonTodoStatus =
-              "status" in originalTask &&
-              originalTask.status !== TaskStatus.TODO;
-
-            return isModified && hasNonTodoStatus;
-          })
-          .map((task) => {
-            const originalTask = initialData.tasks?.find(
-              (t) => t.id === task.id,
-            ) as { status?: TaskStatus } | undefined;
-            return {
-              id: task.id,
-              name: task.name,
-              originalStatus: originalTask?.status || TaskStatus.TODO,
-            };
-          });
-
-        if (modifiedTasksWithStatus.length > 0) {
-          setHasHandledModifiedTasks(true);
-          const shouldContinue = onModifiedTasksDetected(
-            modifiedTasksWithStatus,
-          );
-          if (!shouldContinue) {
-            setIsSubmitting(false);
-            return;
-          }
-        }
-      }
-
-      setIsSubmitting(true);
-
-      const validTasks = data.tasks.filter(
-        (task) => task.name.trim() !== "" || task.description.trim() !== "",
+      await apiClient(
+        mode === "edit" ? `/worksheets/${initialData?.id}/` : "/worksheets/",
+        {
+          method: mode === "edit" ? "PUT" : "POST",
+          body: JSON.stringify(
+            worksheetPayload(data, initialData?.templateId, clearStatus),
+          ),
+        },
       );
-
-      if (validTasks.length === 0) {
-        toast.add({ title: "Dodaj przynajmniej jedno zadanie", type: "error" });
-        return;
-      }
-
-      const effectiveTasksToClear =
-        tasksToSkipStatusClear || tasksToClearStatus;
-
-      const groupedTasks = Object.groupBy(validTasks, (task) => task.category);
-      const tasksWithUpdatedOrder = Object.values(groupedTasks)
-        .filter((group): group is Task[] => group !== undefined)
-        .flatMap((group) =>
-          group.map((task, index) => ({ ...task, order: index })),
-        );
-
-      const worksheetData = {
-        user_id: data.userId || undefined,
-        name: data.name.trim(),
-        description: data.description.trim(),
-        supervisor: data.supervisor || "",
-        tasks: tasksWithUpdatedOrder.map((task) => ({
-          id: task.id,
-          task: task.name.trim(),
-          description: task.description.trim(),
-          category: task.category,
-          order: task.order,
-          ...(effectiveTasksToClear.includes(task.id) && {
-            clear_status: true,
-          }),
-        })),
-        template_id: initialData?.templateId || undefined,
-        final_challenge: data.finalChallenge?.trim() || "",
-        final_challenge_description:
-          data.finalChallengeDescription?.trim() || "",
-      };
-
-      const url =
-        mode === "edit" ? `/worksheets/${initialData?.id}/` : "/worksheets/";
-
-      await apiClient(url, {
-        method: mode === "create" ? "POST" : "PUT",
-        body: JSON.stringify(worksheetData),
-      });
-
       toast.add({
         title:
           mode === "create"
@@ -220,60 +75,45 @@ export const useWorksheetForm = ({
             : "Próba została zaktualizowana",
         type: "success",
       });
-
       router.push(redirectTo);
-    } catch (error) {
-      console.error("Error creating worksheet:", error);
-      toast.add({
-        ...ToastMsg({
-          data: {
-            title: "Błąd podczas tworzenia próby",
-            description: error as Error,
-          },
-        }),
-        type: "error",
-      });
+    } catch {
+      const message =
+        "Nie udało się zapisać próby. Twoje zmiany pozostają w edytorze. Spróbuj ponownie.";
+      form.setError("root.server", { message });
     } finally {
-      setIsSubmitting(false);
-      setTasksToClearStatus([]);
-      setHasHandledModifiedTasks(false);
+      saving.current = false;
+      setState({ phase: "editing" });
     }
   };
-
-  // Method to submit with current form data (for programmatic submission)
-  const submitWithCurrentData = async (tasksToSkipStatusClear?: string[]) => {
-    const currentData = form.getValues();
-
-    const isValid = await form.trigger();
-    if (!isValid) return;
-
-    const effectiveTasksToClear = tasksToSkipStatusClear || tasksToClearStatus;
-
-    try {
-      await internalSubmit(currentData, true, effectiveTasksToClear);
-    } catch (error) {
-      console.error("Error in submitWithCurrentData:", error);
-      throw error;
-    }
+  const onSubmit = (event?: BaseSyntheticEvent) =>
+    form.handleSubmit(async (data) => {
+      if (saving.current || state.phase === "confirming") return;
+      const tasks =
+        mode === "edit"
+          ? modifiedStatusTasks(data.tasks, initialData?.tasks || [])
+          : [];
+      if (tasks.length) {
+        setState({ phase: "confirming", data, tasks });
+        return;
+      }
+      await save(data);
+    })(event);
+  const confirmModifiedTasks = async (keepStatus: string[]) => {
+    if (state.phase !== "confirming") return;
+    await save(
+      state.data,
+      state.tasks
+        .filter((task) => !keepStatus.includes(task.id))
+        .map((task) => task.id),
+    );
   };
-
-  const isDirty = form.formState.isDirty;
-  const isValid = form.formState.isValid;
-  const errors = form.formState.errors;
-  const tasks = useWatch({ control: form.control, name: "tasks" });
-
-  const canSubmit = isValid && !isSubmitting && tasks.length > 0;
-
   return {
     form,
-    onSubmit: form.handleSubmit(onSubmit),
-    submitWithCurrentData,
-    setTasksToClear,
-    resetModifiedTasksHandling,
-    isSubmitting,
-    isDirty,
-    isValid,
-    canSubmit,
-    errors,
+    onSubmit,
+    confirmModifiedTasks,
+    cancelConfirmation: () => setState({ phase: "editing" }),
+    modifiedTasks: state.phase === "confirming" ? state.tasks : [],
+    isConfirming: state.phase === "confirming",
+    isSubmitting: state.phase === "saving",
   };
 };

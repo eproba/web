@@ -33,7 +33,7 @@ export function VersionInfo({
         <CardTitle className="flex flex-wrap items-center gap-2 text-2xl font-bold">
           Informacje o wersji
           <a
-            href={`${API_URL}/schema/swagger-ui/`}
+            href={`${API_URL}/schema/scalar/`}
             target="_blank"
             className="text-muted-foreground hover:text-foreground flex items-center gap-1 text-sm font-normal"
           >
@@ -42,10 +42,10 @@ export function VersionInfo({
           </a>
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="flex flex-col gap-4">
         {/* Version Overview */}
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="space-y-2">
+          <div className="flex flex-col items-start gap-2">
             <h4 className="text-muted-foreground text-sm font-semibold">
               Wersja aplikacji
             </h4>
@@ -54,7 +54,7 @@ export function VersionInfo({
             </Badge>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col items-start gap-2">
             <h4 className="text-muted-foreground text-sm font-semibold">
               Wersja serwera
             </h4>
@@ -63,7 +63,7 @@ export function VersionInfo({
             </Badge>
           </div>
 
-          <div className="space-y-2">
+          <div className="flex flex-col items-start gap-2">
             <h4 className="text-muted-foreground text-sm font-semibold">
               Wersje API
             </h4>

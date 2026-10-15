@@ -4,6 +4,7 @@ export const taskSchema = z.object({
   id: z.string(),
   name: z
     .string()
+    .trim()
     .max(1000, { error: "Zadanie nie może przekraczać 1000 znaków" }),
   description: z
     .string()
@@ -20,6 +21,7 @@ export const worksheetWithTasksSchema = z.object({
   id: z.string().optional(),
   name: z
     .string()
+    .trim()
     .min(1, { error: "Nazwa próby jest wymagana" })
     .min(3, { error: "Nazwa próby musi mieć co najmniej 3 znaki" })
     .max(100, { error: "Nazwa próby nie może przekraczać 100 znaków" }),
