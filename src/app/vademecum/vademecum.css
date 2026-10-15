@@ -1,0 +1,1395 @@
+.vademecum-root {
+  --vad-canvas: var(--background);
+  --vad-surface: var(--card);
+  --vad-surface-2: var(--muted);
+  --vad-border: var(--border);
+  --vad-ink: var(--foreground);
+  --vad-ink-muted: var(--muted-foreground);
+  --vad-moss: var(--foreground);
+  --vad-moss-strong: var(--foreground);
+  --vad-moss-soft: var(--accent);
+  --vad-ember: var(--foreground);
+  --vad-ember-soft: var(--muted);
+  --vad-focus: var(--ring);
+  --vad-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.12);
+  color-scheme: light dark;
+  background: var(--vad-canvas);
+  color: var(--vad-ink);
+  font-family:
+    "Public Sans",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  isolation: isolate;
+}
+.dark .vademecum-root {
+  color-scheme: dark;
+}
+.vademecum-root h1,
+.vademecum-root h2,
+.vademecum-root h3 {
+  font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
+  text-wrap: balance;
+  margin: 0;
+  color: var(--vad-ink);
+}
+.vademecum-root code,
+.vademecum-root .mono {
+  font-family: "IBM Plex Mono", ui-monospace, monospace;
+}
+.vademecum-root a {
+  color: inherit;
+}
+.vademecum-root button {
+  font: inherit;
+  color: inherit;
+}
+.vademecum-root p {
+  margin: 0 0 0.8rem;
+}
+.vademecum-root p:last-child {
+  margin-bottom: 0;
+}
+.vademecum-root ::selection {
+  background: var(--vad-moss-soft);
+}
+.vademecum-root .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---------- shell ---------- */
+.vademecum-root .shell {
+  display: grid;
+  grid-template-columns: 264px minmax(0, 1fr) 248px;
+  max-width: 1360px;
+  margin: 0 auto;
+  min-height: 100%;
+}
+.vademecum-root .app-top {
+  display: none;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--vad-border);
+  background: var(--vad-surface);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+.vademecum-root .app-top button.icon-btn {
+  display: flex;
+}
+
+/* ---------- sidebar ---------- */
+.vademecum-root .sidebar {
+  background: var(--vad-surface-2);
+  border-right: 1px solid var(--vad-border);
+  padding: 1.25rem 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100dvh;
+  overflow-y: auto;
+}
+.vademecum-root .brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0 0.25rem;
+}
+.vademecum-root .brand .mark {
+  color: var(--vad-moss);
+  flex: none;
+}
+.vademecum-root .brand h1 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.vademecum-root .brand p {
+  margin: 0.05rem 0 0;
+  font-size: 0.72rem;
+  color: var(--vad-ink-muted);
+  font-family: "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.vademecum-root .search {
+  position: relative;
+}
+.vademecum-root .search input {
+  width: 100%;
+  background: var(--vad-surface);
+  border: 1px solid var(--vad-border);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem 0.5rem 2rem;
+  font-size: 0.85rem;
+  color: var(--vad-ink);
+  outline: none;
+}
+.vademecum-root .search input:focus-visible {
+  border-color: var(--vad-focus);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--vad-focus) 22%, transparent);
+}
+.vademecum-root .search input {
+  padding-right: 2rem;
+}
+.vademecum-root .search .search-clear {
+  position: absolute;
+  top: 50%;
+  right: 0.35rem;
+  translate: 0 -50%;
+  display: grid;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--vad-ink-muted);
+  cursor: pointer;
+}
+.vademecum-root .search .search-clear[hidden] {
+  display: none;
+}
+.vademecum-root .search .search-clear:hover,
+.vademecum-root .search .search-clear:focus-visible {
+  background: var(--vad-surface-2);
+  color: var(--vad-ink);
+}
+.vademecum-root .search > svg {
+  position: absolute;
+  left: 0.6rem;
+  top: 50%;
+  translate: 0 -50%;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root nav.tree {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.88rem;
+}
+.vademecum-root .tree a,
+.vademecum-root .tree summary {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42rem 0.5rem;
+  border-radius: 7px;
+  color: var(--vad-ink-muted);
+  text-decoration: none;
+  cursor: pointer;
+  list-style: none;
+}
+.vademecum-root .tree summary::-webkit-details-marker {
+  display: none;
+}
+.vademecum-root .tree a:hover,
+.vademecum-root .tree summary:hover {
+  background: var(--vad-surface);
+  color: var(--vad-ink);
+}
+.vademecum-root .tree a.current {
+  background: var(--vad-moss-soft);
+  color: var(--vad-moss-strong);
+  font-weight: 600;
+}
+.vademecum-root .tree .chev {
+  margin-left: auto;
+  transition: transform 0.15s ease;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root details[open] > summary .chev {
+  transform: rotate(90deg);
+}
+.vademecum-root .tree .n {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  color: var(--vad-ink-muted);
+  width: 1.1rem;
+  flex: none;
+}
+.vademecum-root .sub {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding-left: 1.55rem;
+  margin-top: 0.15rem;
+}
+.vademecum-root .sub a {
+  padding: 0.32rem 0.5rem;
+  font-size: 0.83rem;
+}
+.vademecum-root .sub a svg {
+  color: var(--vad-ink-muted);
+  flex: none;
+}
+.vademecum-root .sub a.current svg {
+  color: var(--vad-moss-strong);
+}
+.vademecum-root .sidebar-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--vad-border);
+}
+.vademecum-root .pdf-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--vad-ink-muted);
+  text-decoration: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: 7px;
+}
+.vademecum-root .pdf-link:hover {
+  background: var(--vad-surface);
+  color: var(--vad-ink);
+}
+
+/* ---------- main column ---------- */
+.vademecum-root main {
+  min-width: 0;
+  border-right: 1px solid var(--vad-border);
+}
+.vademecum-root .topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--vad-canvas) 88%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--vad-border);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 0.7rem 1.6rem;
+}
+.vademecum-root .topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex: none;
+}
+.vademecum-root .mode-switch {
+  display: flex;
+  background: var(--vad-surface-2);
+  border: 1px solid var(--vad-border);
+  border-radius: 999px;
+  padding: 0.2rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.vademecum-root .mode-switch button {
+  border: none;
+  background: none;
+  padding: 0.32rem 0.7rem;
+  border-radius: 999px;
+  cursor: pointer;
+  color: var(--vad-ink-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition:
+    background 0.15s ease,
+    color 0.15s ease;
+}
+.vademecum-root .mode-switch button.active {
+  background: var(--vad-ink);
+  color: var(--vad-canvas);
+}
+.vademecum-root .counter-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--vad-ember-soft);
+  color: var(--vad-ember);
+  border-radius: 999px;
+  padding: 0.3rem 0.65rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  font-family: "IBM Plex Mono", monospace;
+  white-space: nowrap;
+}
+.vademecum-root article {
+  padding: 2rem 1.6rem 5rem;
+  max-width: 720px;
+}
+.vademecum-root .page {
+  display: none;
+}
+.vademecum-root .page.active {
+  display: block;
+  animation: fade-in 0.25s ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    translate: 0 4px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+.vademecum-root .eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--vad-moss);
+  margin-bottom: 0.6rem;
+}
+.vademecum-root .eyebrow .dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--vad-moss);
+}
+.vademecum-root h1.title {
+  font-size: 2.15rem;
+  font-weight: 600;
+  margin-bottom: 0.85rem;
+}
+.vademecum-root .lede {
+  background: var(--vad-surface);
+  border: 1px solid var(--vad-border);
+  border-radius: 14px;
+  box-shadow: var(--vad-shadow);
+  padding: 1.1rem 1.3rem;
+  font-size: 0.95rem;
+  color: var(--vad-ink);
+  margin-bottom: 2.2rem;
+}
+.vademecum-root .lede .signature {
+  font-size: 0.78rem;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root section.track {
+  margin-bottom: 2.5rem;
+  scroll-margin-top: 5.5rem;
+}
+.vademecum-root section.track h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+.vademecum-root section.track h2 .idx {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.78rem;
+  color: var(--vad-ink-muted);
+  font-weight: 500;
+  margin-right: 0.4rem;
+}
+.vademecum-root section.track h3 {
+  font-family: "Public Sans";
+  font-size: 0.98rem;
+  font-weight: 700;
+  margin: 1.2rem 0 0.4rem;
+  color: var(--vad-ink);
+}
+.vademecum-root section.track .lead {
+  color: var(--vad-ink-muted);
+  font-size: 0.9rem;
+  margin: 0 0 0.9rem;
+  max-width: 60ch;
+}
+.vademecum-root section.track p {
+  font-size: 0.92rem;
+}
+.vademecum-root ul.wskazy {
+  list-style: none;
+  margin: 0 0 0.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+.vademecum-root ul.wskazy li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.7rem;
+  padding: 0.6rem 0.7rem;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    opacity 0.2s ease;
+}
+.vademecum-root ul.wskazy li:hover {
+  background: var(--vad-surface);
+  border-color: var(--vad-border);
+}
+.vademecum-root ul.wskazy li .glyph {
+  flex: none;
+  margin-top: 0.15rem;
+  color: var(--vad-border);
+  transition: color 0.15s ease;
+  font-size: 0.7rem;
+}
+.vademecum-root ul.wskazy li.added .glyph {
+  color: var(--vad-moss);
+}
+.vademecum-root ul.wskazy li .txt {
+  flex: 1;
+  font-size: 0.91rem;
+}
+.vademecum-root ul.wskazy li.added .txt {
+  color: var(--vad-ink-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--vad-border);
+}
+.vademecum-root ul.wskazy li .hr-chip {
+  flex: none;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--vad-ember);
+  background: var(--vad-ember-soft);
+  border-radius: 5px;
+  padding: 0.08rem 0.35rem;
+  margin-top: 0.1rem;
+}
+.vademecum-root ul.wskazy li.hr-only {
+  transition: opacity 0.2s ease;
+}
+.vademecum-root .mode-ho ul.wskazy li.hr-only {
+  opacity: 0.45;
+}
+.vademecum-root .mode-ho ul.wskazy li.hr-only:hover {
+  opacity: 0.85;
+}
+.vademecum-root ul.wskazy.plain li .glyph {
+  color: var(--vad-moss);
+  font-size: 0.8rem;
+  line-height: 1.2;
+  margin-top: 0.3rem;
+}
+.vademecum-root .add-btn {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border: 1px solid var(--vad-border);
+  background: var(--vad-surface);
+  border-radius: 7px;
+  padding: 0.28rem 0.55rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--vad-ink-muted);
+  cursor: pointer;
+  margin-top: 0.05rem;
+  transition: all 0.15s ease;
+}
+.vademecum-root .add-btn:hover {
+  border-color: var(--vad-moss);
+  color: var(--vad-moss-strong);
+}
+.vademecum-root li.added .add-btn {
+  background: var(--vad-moss-soft);
+  border-color: var(--vad-moss);
+  color: var(--vad-moss-strong);
+}
+
+/* ---------- callouts ---------- */
+.vademecum-root .callout {
+  display: flex;
+  gap: 0.7rem;
+  border-radius: 12px;
+  padding: 0.9rem 1.05rem;
+  font-size: 0.87rem;
+  margin: 1.2rem 0;
+  border-left: 3px solid;
+}
+.vademecum-root .callout svg {
+  flex: none;
+  margin-top: 0.15rem;
+}
+.vademecum-root .callout ol,
+.vademecum-root .callout ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.vademecum-root .callout--note {
+  background: var(--vad-ember-soft);
+  border-left-color: var(--vad-ember);
+}
+.vademecum-root .callout--note svg {
+  color: var(--vad-ember);
+}
+.vademecum-root .callout--info {
+  background: var(--vad-moss-soft);
+  border-left-color: var(--vad-moss);
+}
+.vademecum-root .callout--info svg {
+  color: var(--vad-moss-strong);
+}
+.vademecum-root .callout b {
+  display: block;
+  margin-bottom: 0.15rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-family: "IBM Plex Mono", monospace;
+}
+.vademecum-root .callout--note b {
+  color: var(--vad-ember);
+}
+.vademecum-root .callout--info b {
+  color: var(--vad-moss-strong);
+}
+.vademecum-root .steps-num {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  font-size: 0.89rem;
+}
+.vademecum-root .steps-num li::marker {
+  font-family: "IBM Plex Mono", monospace;
+  color: var(--vad-moss);
+  font-weight: 600;
+}
+@media (max-width: 560px) {
+}
+
+/* ---------- stepper ---------- */
+.vademecum-root .stepper {
+  position: relative;
+  margin: 1rem 0 0.5rem;
+}
+.vademecum-root .stepper::before {
+  content: "";
+  position: absolute;
+  left: 17px;
+  top: 17px;
+  bottom: 17px;
+  width: 2px;
+  background: var(--vad-border);
+  z-index: 0;
+}
+.vademecum-root .step {
+  display: flex;
+  gap: 1rem;
+  position: relative;
+  z-index: 1;
+  padding-bottom: 1.7rem;
+}
+.vademecum-root .step:last-child {
+  padding-bottom: 0;
+}
+.vademecum-root .step .dot {
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: var(--vad-surface);
+  border: 2px solid var(--vad-moss);
+  color: var(--vad-moss-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+.vademecum-root .step.optional .dot {
+  border-style: dashed;
+  border-color: var(--vad-ink-muted);
+  color: var(--vad-ink-muted);
+  background: transparent;
+  font-size: 0.7rem;
+}
+.vademecum-root .step .body {
+  flex: 1;
+  padding-top: 0.25rem;
+}
+.vademecum-root .step .body h3 {
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+}
+.vademecum-root .step .body p {
+  font-size: 0.85rem;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .step .body ul.wskazy.plain li {
+  padding: 0.4rem 0.5rem;
+}
+.vademecum-root .step .body ul.wskazy.plain .txt {
+  font-size: 0.85rem;
+}
+.vademecum-root .step .body .callout {
+  font-size: 0.83rem;
+}
+.vademecum-root .step-gap {
+  margin-left: 50px;
+  position: relative;
+  z-index: 1;
+  padding: 0.1rem 0 1.5rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vad-ink-muted);
+}
+
+/* ---------- funnel ---------- */
+.vademecum-root .funnel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 1.2rem 0 1.6rem;
+  gap: 0.25rem;
+}
+.vademecum-root .funnel .band {
+  background: var(--vad-surface);
+  border: 1px solid var(--vad-border);
+  border-radius: 10px;
+  padding: 0.55rem 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  text-align: center;
+  position: relative;
+  font: inherit;
+  font-size: 0.85rem;
+  color: inherit;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+.vademecum-root .funnel .band .num {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  color: var(--vad-moss);
+  font-weight: 700;
+}
+.vademecum-root .funnel .funnel-step:last-child > .band {
+  background: var(--vad-ink);
+  border-color: var(--vad-ink);
+}
+.vademecum-root .funnel .funnel-step:last-child > .band .num,
+.vademecum-root .funnel .funnel-step:last-child > .band .lbl {
+  color: var(--vad-canvas);
+}
+@media (max-width: 640px) {
+}
+
+/* ---------- kapituła points ---------- */
+.vademecum-root .kap-point {
+  border-left: 2px solid var(--vad-moss);
+  padding-left: 1rem;
+  margin: 1.2rem 0;
+}
+.vademecum-root .kap-point .lbl {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  font-size: 0.92rem;
+  margin-bottom: 0.3rem;
+}
+.vademecum-root .kap-point .lbl svg {
+  flex: none;
+  color: var(--vad-moss);
+}
+
+/* ---------- faq ---------- */
+.vademecum-root .faq {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+.vademecum-root .faq details {
+  border: 1px solid var(--vad-border);
+  border-radius: 10px;
+  background: var(--vad-surface);
+  overflow: hidden;
+}
+.vademecum-root .faq summary {
+  list-style: none;
+  padding: 0.75rem 0.95rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+}
+.vademecum-root .faq summary::-webkit-details-marker {
+  display: none;
+}
+.vademecum-root .faq summary svg {
+  margin-left: auto;
+  flex: none;
+  transition: transform 0.15s ease;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .faq details[open] summary svg {
+  transform: rotate(180deg);
+}
+.vademecum-root .faq .a {
+  padding: 0 0.95rem 0.9rem;
+  font-size: 0.86rem;
+  color: var(--vad-ink-muted);
+}
+
+/* ---------- watra diagram ---------- */
+.vademecum-root .watra-card {
+  background: var(--vad-surface);
+  border: 1px solid var(--vad-border);
+  border-radius: 14px;
+  padding: 0.9rem;
+  margin: 1.2rem 0 1.8rem;
+}
+.vademecum-root .watra-caption {
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--vad-ink-muted);
+  margin-top: 1rem;
+  padding-top: 0.9rem;
+  border-top: 1px dashed var(--vad-border);
+}
+@media (max-width: 560px) {
+}
+
+/* ---------- pager ---------- */
+.vademecum-root .pager {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 2.8rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--vad-border);
+}
+.vademecum-root .pager a {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  text-decoration: none;
+  padding: 0.6rem 0.9rem;
+  border: 1px solid var(--vad-border);
+  border-radius: 10px;
+  max-width: 48%;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
+}
+.vademecum-root .pager a:hover {
+  border-color: var(--vad-moss);
+  background: var(--vad-surface);
+}
+.vademecum-root .pager a.next {
+  text-align: right;
+  margin-left: auto;
+}
+.vademecum-root .pager .lbl {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .pager .ttl {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+/* ---------- right rail ---------- */
+.vademecum-root aside.rail {
+  padding: 1.5rem 1.2rem;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100dvh;
+  overflow-y: auto;
+}
+.vademecum-root .rail h3 {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--vad-ink-muted);
+  font-weight: 600;
+  margin-bottom: 0.7rem;
+}
+.vademecum-root .onpage {
+  list-style: none;
+  margin: 0 0 1.8rem;
+  padding: 0;
+  border-left: 2px solid var(--vad-border);
+  display: flex;
+  flex-direction: column;
+}
+.vademecum-root .onpage a {
+  display: block;
+  padding: 0.35rem 0 0.35rem 0.85rem;
+  margin-left: -2px;
+  border-left: 2px solid transparent;
+  font-size: 0.83rem;
+  color: var(--vad-ink-muted);
+  text-decoration: none;
+  cursor: pointer;
+}
+.vademecum-root .onpage a:hover {
+  color: var(--vad-ink);
+}
+.vademecum-root .onpage a.active {
+  border-left-color: var(--vad-moss);
+  color: var(--vad-moss-strong);
+  font-weight: 600;
+}
+.vademecum-root .onpage .empty {
+  font-size: 0.8rem;
+  color: var(--vad-ink-muted);
+  padding: 0.35rem 0 0.35rem 0.85rem;
+}
+.vademecum-root .proba-card {
+  background: var(--vad-surface);
+  border: 1px solid var(--vad-border);
+  border-radius: 14px;
+  box-shadow: var(--vad-shadow);
+  padding: 1rem;
+}
+.vademecum-root .proba-card .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+.vademecum-root .proba-card .head b {
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.vademecum-root .proba-count {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.72rem;
+  color: var(--vad-moss);
+  background: var(--vad-moss-soft);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+}
+.vademecum-root .proba-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  max-height: 230px;
+  overflow-y: auto;
+}
+.vademecum-root .proba-list li {
+  font-size: 0.79rem;
+  color: var(--vad-ink);
+  background: var(--vad-surface-2);
+  border-radius: 7px;
+  padding: 0.4rem 0.55rem;
+  line-height: 1.35;
+}
+.vademecum-root .proba-empty {
+  font-size: 0.79rem;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .proba-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  margin-top: 0.8rem;
+  background: var(--vad-ink);
+  color: var(--vad-canvas);
+  border: none;
+  border-radius: 9px;
+  padding: 0.55rem 0.7rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ---------- drawer / mobile ---------- */
+.vademecum-root .scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 39;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+.vademecum-root .scrim.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.vademecum-root .icon-btn {
+  border: 1px solid var(--vad-border);
+  background: var(--vad-surface);
+  border-radius: 8px;
+  padding: 0.4rem;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+@media (max-width: 1180px) {
+  .vademecum-root .shell {
+    grid-template-columns: 264px minmax(0, 1fr);
+  }
+  .vademecum-root aside.rail {
+    display: none;
+  }
+}
+@media (max-width: 860px) {
+  .vademecum-root .app-top {
+    display: flex;
+  }
+  .vademecum-root .shell {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+  .vademecum-root .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 280px;
+    z-index: 40;
+    transform: translateX(-100%);
+    transition: transform 0.2s ease;
+    box-shadow: var(--vad-shadow);
+  }
+  .vademecum-root .sidebar.open {
+    transform: translateX(0);
+  }
+  .vademecum-root .icon-btn {
+    display: flex;
+  }
+  .vademecum-root article {
+    padding: 1.4rem 1.1rem 4rem;
+  }
+  .vademecum-root .topbar {
+    padding: 0.6rem 1.1rem;
+    flex-wrap: wrap;
+    row-gap: 0.5rem;
+  }
+  .vademecum-root .topbar-right {
+    flex: 1 1 100%;
+    justify-content: flex-end;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .vademecum-root * {
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+    animation: none !important;
+  }
+}
+
+/* ---------- cross-references ---------- */
+.vademecum-root .xref {
+  display: block;
+  margin-top: 0.3rem;
+  font-size: 0.82rem;
+  font-style: italic;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .xref a {
+  color: var(--vad-moss-strong);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+/* ---------- funnel accordion ---------- */
+.vademecum-root .funnel-step {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.vademecum-root .funnel .band:hover {
+  border-color: var(--vad-moss);
+}
+.vademecum-root .funnel .band:focus-visible {
+  outline: 2px solid var(--vad-moss);
+  outline-offset: 2px;
+}
+.vademecum-root .funnel .band .chev {
+  position: absolute;
+  right: 0.8rem;
+  top: 50%;
+  margin-top: -7px;
+  transition: transform 0.3s ease;
+  opacity: 0.65;
+}
+.vademecum-root .funnel .funnel-step.open > .band .chev {
+  transform: rotate(180deg);
+}
+.vademecum-root .funnel .funnel-step:last-child > .band .chev {
+  color: var(--vad-canvas);
+}
+.vademecum-root .fs-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  width: 100%;
+  visibility: hidden;
+  transition:
+    grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+    visibility 0s linear 0.35s;
+}
+.vademecum-root .funnel-step.open > .fs-panel {
+  grid-template-rows: 1fr;
+  visibility: visible;
+  transition-delay: 0s;
+}
+.vademecum-root .fs-clip {
+  overflow: hidden;
+  min-height: 0;
+}
+.vademecum-root .fs-body {
+  margin: 0.4rem 0 0.5rem;
+  padding: 0.8rem 1rem;
+  background: var(--vad-surface);
+  border: 1px solid var(--vad-border);
+  border-left: 3px solid var(--vad-moss);
+  border-radius: 10px;
+  font-size: 0.89rem;
+  line-height: 1.6;
+  opacity: 0;
+  transform: translateY(-6px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.vademecum-root .funnel-step.open > .fs-panel .fs-body {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- report-a-correction button ---------- */
+.vademecum-root .report-btn {
+  position: fixed;
+  z-index: 60;
+  display: none;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.28rem 0.65rem;
+  border-radius: 999px;
+  background: var(--vad-surface);
+  color: var(--vad-moss-strong);
+  border: 1px solid var(--vad-moss);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.14);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.vademecum-root .report-btn.show {
+  display: inline-flex;
+}
+.vademecum-root .report-btn:hover {
+  background: var(--vad-moss-soft);
+}
+.vademecum-root .report-target {
+  outline: 1px dashed var(--vad-moss);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* MVP: zapisywanie próby wyłączone */
+.vademecum-root .counter-chip,
+.vademecum-root .add-btn,
+.vademecum-root .proba-card,
+.vademecum-root .rail .onpage ~ h3 {
+  display: none !important;
+}
+
+/* ---------- misc overrides ---------- */
+.vademecum-root a.brand {
+  color: inherit;
+  text-decoration: none;
+}
+
+.vademecum-root ul.wskazy.plain {
+  gap: 0;
+}
+.vademecum-root ul.wskazy.plain li {
+  padding: 0.12rem 0.2rem;
+  gap: 0.75rem;
+}
+.vademecum-root ul.wskazy.plain li:hover {
+  background: transparent;
+  border-color: transparent;
+}
+.vademecum-root ul.wskazy.plain li .txt {
+  font-weight: 500;
+}
+
+/* ---------- areas figure (flame + 4 arrows) ---------- */
+.vademecum-root .obszary-fig {
+  container-type: inline-size;
+  margin: 1.2rem 0 1.6rem;
+  padding: 1rem 0.8rem;
+  background: var(--vad-surface);
+  border: 1px solid var(--vad-border);
+  border-radius: 14px;
+}
+.vademecum-root .of-stage {
+  position: relative;
+  max-width: 640px;
+  margin: 0 auto;
+  aspect-ratio: 160/110;
+}
+.vademecum-root .of-flame {
+  position: absolute;
+  left: 38.125%;
+  top: 25.45%;
+  width: 23.75%;
+  aspect-ratio: 761/926;
+  background: url(/vademecum/obszar-flame.png) center/contain no-repeat;
+}
+.dark .vademecum-root .of-flame {
+  filter: invert(1);
+}
+.vademecum-root .of-arrows {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  color: var(--vad-ink-muted);
+  pointer-events: none;
+}
+.vademecum-root .of-arrows--narrow {
+  display: none;
+}
+.vademecum-root .of-txt {
+  position: absolute;
+  width: 36%;
+  margin: 0;
+  font-size: clamp(0.78rem, 2.5cqw, 1.05rem);
+  line-height: 1.4;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .of-txt strong {
+  color: var(--vad-ink);
+}
+.vademecum-root .of-tl {
+  left: 0;
+  top: 0;
+}
+.vademecum-root .of-tr {
+  right: 0;
+  top: 0;
+  text-align: right;
+}
+.vademecum-root .of-bl {
+  left: 0;
+  bottom: 0;
+}
+.vademecum-root .of-br {
+  right: 0;
+  bottom: 0;
+  text-align: right;
+}
+@container (max-width:560px) {
+  .vademecum-root .of-stage {
+    aspect-ratio: 100/104;
+  }
+  .vademecum-root .of-arrows--wide {
+    display: none;
+  }
+  .vademecum-root .of-arrows--narrow {
+    display: block;
+  }
+  .vademecum-root .of-flame {
+    left: 31%;
+    top: 27.88%;
+    width: 38%;
+  }
+  .vademecum-root .of-txt {
+    width: 46%;
+    font-size: 0.72rem;
+  }
+}
+
+/* ---------- watra figure (labelled arrows) ---------- */
+.vademecum-root .watra-wrap {
+  container-type: inline-size;
+}
+.vademecum-root .watra-stage {
+  position: relative;
+  aspect-ratio: 78/70.86;
+}
+.vademecum-root .watra-stage .wf-tile {
+  position: absolute;
+  left: 17.95%;
+  top: -12%;
+  width: 97.44%;
+  aspect-ratio: 1;
+}
+.vademecum-root .wf-tile img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  -webkit-mask-image:
+    linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent),
+    linear-gradient(0deg, transparent, #000 6%, #000 94%, transparent);
+  -webkit-mask-composite: source-in;
+  mask-image:
+    linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent),
+    linear-gradient(0deg, transparent, #000 6%, #000 94%, transparent);
+  mask-composite: intersect;
+}
+.vademecum-root .watra-board {
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 0.9rem;
+  background: #1b2e1c;
+  border-radius: 18px;
+  box-shadow: 0 10px 22px -12px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
+}
+.vademecum-root .wf-arrows {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+.vademecum-root .watra-stage p.wf-lbl {
+  position: absolute;
+  margin: 0;
+  font-size: 4.872cqw;
+  font-weight: 700;
+  line-height: 1.15;
+  white-space: nowrap;
+  color: #efeadb;
+}
+.vademecum-root .watra-stage p.wf-lbl--r {
+  text-align: right;
+}
+
+/* ---------- HO / HR section dimming ---------- */
+.vademecum-root .track[data-for] {
+  transition: opacity 0.2s ease;
+}
+.vademecum-root .mode-ho .track[data-for="hr"],
+.vademecum-root .mode-hr .track[data-for="ho"] {
+  opacity: 0.45;
+}
+.vademecum-root .mode-ho .track[data-for="hr"]:hover,
+.vademecum-root .mode-hr .track[data-for="ho"]:hover {
+  opacity: 0.85;
+}
+
+/* ---------- global search ---------- */
+.vademecum-root .search-results {
+  display: none;
+  flex-direction: column;
+  gap: 0.15rem;
+  font-size: 0.82rem;
+}
+.vademecum-root .sidebar.searching nav.tree {
+  display: none;
+}
+.vademecum-root .sidebar.searching .search-results {
+  display: flex;
+}
+.vademecum-root .sr-count {
+  padding: 0.2rem 0.5rem;
+  color: var(--vad-ink-muted);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.vademecum-root .sr-group {
+  margin-top: 0.5rem;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--vad-ink);
+}
+.vademecum-root .sr-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.45rem 0.5rem;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--vad-ink-muted);
+  text-align: left;
+  cursor: pointer;
+}
+.vademecum-root .sr-item:hover,
+.vademecum-root .sr-item:focus-visible {
+  background: var(--vad-surface);
+  color: var(--vad-ink);
+}
+.vademecum-root .sr-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.68rem;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .sr-hr {
+  padding: 0.04rem 0.3rem;
+  border-radius: 4px;
+  background: var(--vad-ember-soft);
+  color: var(--vad-ember);
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6rem;
+  font-weight: 600;
+}
+.vademecum-root .sr-text {
+  line-height: 1.4;
+}
+.vademecum-root .sr-text mark {
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--vad-focus) 30%, transparent);
+  color: inherit;
+}
+.vademecum-root .sr-empty {
+  padding: 1.2rem 0.5rem;
+  color: var(--vad-ink-muted);
+}
+.vademecum-root .search-hit {
+  outline: 2px solid var(--vad-focus);
+  outline-offset: 4px;
+  border-radius: 6px;
+}

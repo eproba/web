@@ -13,6 +13,7 @@ const PUBLIC_ROUTES = [
   "^/login-required$", // Special route for showing login prompt
   "^/verify-email/.*", // Email verification pages
   "^/regulations/.*", // Regulations pages
+  "^/vademecum$", // Vademecum page (exact match)
 ];
 
 const AUTH_ROUTES = [
