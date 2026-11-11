@@ -1,95 +1,92 @@
-export type Mode = "ho" | "hr";
+/**
+ * Content model of the Vademecum (HO/HR individual trials handbook).
+ *
+ * Text fields hold Markdown (bold, italics, lists and links to other
+ * Vademecum pages), rendered with the app's typography.
+ */
+export type Markdown = string;
 
-export type Inline = string | InlineNode;
+export type Rank = "ho" | "hr";
 
-export type InlineNode =
-  | { t: "strong" | "em" | "b" | "sup"; c: Inline[] }
-  | { t: "br" }
-  | { t: "link"; page: string; c: Inline[] }
-  | { t: "hr-chip" }
-  | { t: "xref"; c: Inline[] };
+export type ChapterId = "rover-path" | "ho" | "hr" | "trial" | "guideposts";
 
-export interface ListItem {
-  id?: string;
-  c: Inline[];
-  /** Drogowskaz adresowany głównie do zdobywających HR. */
+export type IconName =
+  | "book-open"
+  | "flame"
+  | "award"
+  | "crown"
+  | "user-round-check"
+  | "users"
+  | "route"
+  | "list-checks"
+  | "compass"
+  | "message-circle-question"
+  | "signpost"
+  | "church"
+  | "shield"
+  | "brain"
+  | "heart-pulse"
+  | "hand-heart"
+  | "landmark"
+  | "house"
+  | "sparkles"
+  | "messages-square"
+  | "trees";
+
+/** A single guidepost: a concrete hint for building an individual task. */
+export interface Guidepost {
+  text: Markdown;
+  /** Meant mainly for the HR trial (marked with an „HR” symbol in print). */
   hr?: boolean;
+  /** Pointer to a related posture in another area („Zajrzyj też do…”). */
+  seeAlso?: Markdown;
 }
-
-export interface Step {
-  id?: string;
-  /** Numer w kółku (np. "1"); "•" oznacza krok opcjonalny. */
-  n: string;
-  title: string;
-  optional?: boolean;
-  /** Podpis wyświetlany między tym a następnym krokiem. */
-  gapAfter?: string;
-  blocks: Block[];
-}
-
-export interface FunnelStep {
-  id?: string;
-  n: string;
-  label: string;
-  /** Szerokość paska w procentach. */
-  width: number;
-  c: Inline[];
-}
-
-export interface OlItem {
-  id?: string;
-  c: Inline[];
-  blocks?: Block[];
-}
-
-export interface FaqItem {
-  id?: string;
-  q: Inline[];
-  a: Block[];
-}
-
-export type AreaCorner = "tl" | "tr" | "bl" | "br";
 
 export type Block =
-  | { t: "p"; id?: string; c: Inline[]; v?: "lead" | "signature" | "right" }
-  | { t: "lede"; blocks: Block[] }
-  | { t: "h3"; c: Inline[] }
-  | { t: "list"; items: ListItem[] }
+  | { type: "text"; text: Markdown }
+  /** A sentence set apart from the text, e.g. the posture of service. */
+  | { type: "quote"; text: Markdown }
   | {
-      t: "callout";
-      kind: "info" | "note";
+      type: "callout";
+      variant: "example" | "important" | "note";
       title?: string;
-      blocks: Block[];
+      text: Markdown;
     }
-  | { t: "stepper"; steps: Step[] }
-  | { t: "kap"; label: string; blocks: Block[] }
-  | { t: "funnel"; steps: FunnelStep[] }
-  | { t: "ol"; items: OlItem[] }
-  | { t: "faq"; items: FaqItem[] }
-  | { t: "watra"; id?: string; caption: Inline[] }
+  /** Label/value rows, e.g. age, conditions and duration of a rank. */
+  | { type: "facts"; rows: { label: string; text: Markdown }[] }
+  | { type: "guideposts"; items: Guidepost[] }
+  | { type: "faq"; items: { question: string; answer: Block[] }[] }
   | {
-      t: "areas";
-      items: { pos: AreaCorner; id?: string; c: Inline[] }[];
+      type: "figure";
+      figure: "campfire" | "area-hints" | "task-funnel" | "trial-rhythm";
     }
-  | {
-      t: "section";
-      id: string;
-      title: Inline[];
-      /** Numer postawy wyświetlany przed tytułem (np. "01"). */
-      idx?: string;
-      /** Sekcja adresowana tylko do jednego ze stopni. */
-      mode?: Mode;
-      blocks: Block[];
-    };
+  | { type: "signature"; lines: string[] };
 
-export type GroupId = "proba" | "obszary";
+export interface Section {
+  title: string;
+  /** Anchor; derived from the title when omitted. */
+  id?: string;
+  /** Short lead shown under the title. */
+  description?: Markdown;
+  /** Step number, e.g. in the trial rhythm. */
+  step?: string;
+  /** Time until the next step, shown between step cards. */
+  then?: string;
+  /** Section that applies to one rank only. */
+  rank?: Rank;
+  blocks: Block[];
+}
 
 export interface Page {
+  /** Path below /vademecum; empty for the start page. */
   slug: string;
-  group?: GroupId;
-  eyebrow: string;
+  chapter?: ChapterId;
   title: string;
-  /** Krótszy tytuł w menu bocznym. */
-  navTitle: string;
-  blocks: Block[];
+  /** Shorter title for navigation. */
+  navTitle?: string;
+  /** Used for page metadata and on overview cards. */
+  description: string;
+  icon?: IconName;
+  intro?: Block[];
+  sections: Section[];
 }

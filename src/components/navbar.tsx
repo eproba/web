@@ -28,12 +28,9 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { UserHydrator } from "@/components/user-hydrator";
-import { VademecumMobileNav } from "@/components/vademecum/vademecum-mobile-nav";
-import { VademecumTabletMenu } from "@/components/vademecum/vademecum-tablet-menu";
 import { RequiredFunctionLevel } from "@/lib/const";
 import { fetchCurrentUser } from "@/lib/server-api";
 import { cn } from "@/lib/utils";
-import { type NavData, buildNav } from "@/lib/vademecum/pages";
 import { Organization } from "@/types/team";
 import { User } from "@/types/user";
 import { LogOutIcon, MenuIcon, UserIcon, XIcon } from "lucide-react";
@@ -46,8 +43,6 @@ type NavItem = {
   subItems?: NavItem[];
   external?: boolean;
   kind?: "bug-report";
-  /** Własna zawartość pozycji w menu na telefonie (zamiast zwykłego odnośnika). */
-  mobileMenu?: "vademecum";
   access?: (user?: User) => boolean;
 };
 
@@ -110,7 +105,6 @@ const MAIN_NAV_ITEMS: NavItem[] = [
   {
     title: "Vademecum",
     href: "/vademecum",
-    mobileMenu: "vademecum",
   },
 ];
 
@@ -278,41 +272,6 @@ const DesktopNavItem = ({ item }: { item: NavItem }) => {
   );
 };
 
-/**
- * „Vademecum” na pasku nawigacji. Od szerokości lg spis jest w bocznym menu
- * Vademecum, więc to zwykły odnośnik; na tabletach (md) rozwijane menu ze
- * spisem, jak przy „Twojej drużynie”.
- */
-const VademecumDesktopNavItem = ({
-  item,
-  nav,
-}: {
-  item: NavItem;
-  nav: NavData;
-}) => (
-  <>
-    <NavigationMenuItem className="lg:hidden">
-      <NavigationMenuTrigger>
-        <span className="pointer-fine:hidden">{item.title}</span>
-        <Link href={item.href} className="pointer-coarse:hidden">
-          {item.title}
-        </Link>
-      </NavigationMenuTrigger>
-      <NavigationMenuContent>
-        <VademecumTabletMenu nav={nav} />
-      </NavigationMenuContent>
-    </NavigationMenuItem>
-    <NavigationMenuItem className="hidden lg:block">
-      <NavigationMenuLink
-        render={<Link href={item.href} />}
-        className={cn(navigationMenuTriggerStyle(), "bg-transparent")}
-      >
-        {item.title}
-      </NavigationMenuLink>
-    </NavigationMenuItem>
-  </>
-);
-
 export async function Navbar() {
   let user: User | undefined = undefined;
   const session = await auth();
@@ -337,8 +296,6 @@ export async function Navbar() {
       (subItem) => subItem.access?.(user) ?? true,
     ),
   }));
-
-  const vademecumNav = buildNav();
 
   const filteredMoreNav = MORE_NAV_ITEMS.filter(
     (item) => item.access?.(user) ?? true,
@@ -379,30 +336,26 @@ export async function Navbar() {
               </DrawerHeader>
 
               <div className="flex flex-1 flex-col gap-3 overflow-y-auto">
-                {filteredMainNav.map((item) =>
-                  item.mobileMenu === "vademecum" ? (
-                    <VademecumMobileNav key={item.href} nav={vademecumNav} />
-                  ) : (
-                    <div key={item.href} className="flex flex-col gap-1">
-                      <DrawerClose
-                        nativeButton={false}
-                        render={
-                          <MobileNavItem
-                            item={item}
-                            header={(item.subItems?.length ?? 0) > 0}
-                          />
-                        }
-                      />
-                      {item.subItems?.map((subItem) => (
-                        <DrawerClose
-                          key={subItem.href}
-                          nativeButton={false}
-                          render={<MobileNavItem item={subItem} />}
+                {filteredMainNav.map((item) => (
+                  <div key={item.href} className="flex flex-col gap-1">
+                    <DrawerClose
+                      nativeButton={false}
+                      render={
+                        <MobileNavItem
+                          item={item}
+                          header={(item.subItems?.length ?? 0) > 0}
                         />
-                      ))}
-                    </div>
-                  ),
-                )}
+                      }
+                    />
+                    {item.subItems?.map((subItem) => (
+                      <DrawerClose
+                        key={subItem.href}
+                        nativeButton={false}
+                        render={<MobileNavItem item={subItem} />}
+                      />
+                    ))}
+                  </div>
+                ))}
 
                 <div className="mt-4 border-t pt-2">
                   <h5 className="text-muted-foreground mb-2 px-3 text-xs">
@@ -429,17 +382,9 @@ export async function Navbar() {
         <div className="hidden flex-1 items-center justify-between md:flex">
           <NavigationMenu align="start">
             <NavigationMenuList className="hidden flex-wrap md:flex lg:flex-nowrap">
-              {filteredMainNav.map((item) =>
-                item.mobileMenu === "vademecum" ? (
-                  <VademecumDesktopNavItem
-                    key={item.href}
-                    item={item}
-                    nav={vademecumNav}
-                  />
-                ) : (
-                  <DesktopNavItem key={item.href} item={item} />
-                ),
-              )}
+              {filteredMainNav.map((item) => (
+                <DesktopNavItem key={item.href} item={item} />
+              ))}
 
               <MoreNavMenuDesktop items={filteredMoreNav} />
             </NavigationMenuList>

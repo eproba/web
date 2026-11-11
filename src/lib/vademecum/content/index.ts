@@ -1,40 +1,96 @@
-import type { Page } from "../types";
-import { obszarBog } from "./obszar-bog";
-import { obszarCharakter } from "./obszar-charakter";
-import { obszarIntelekt } from "./obszar-intelekt";
-import { obszarKultura } from "./obszar-kultura";
-import { obszarOjczyzny } from "./obszar-ojczyzny";
-import { obszarPasje } from "./obszar-pasje";
-import { obszarPrzyroda } from "./obszar-przyroda";
-import { obszarRodzina } from "./obszar-rodzina";
-import { obszarSluzba } from "./obszar-sluzba";
-import { obszarZdrowie } from "./obszar-zdrowie";
-import { probaFaq } from "./proba-faq";
-import { probaKapitula } from "./proba-kapitula";
-import { probaObszary } from "./proba-obszary";
-import { probaOpiekun } from "./proba-opiekun";
-import { probaRytm } from "./proba-rytm";
-import { probaZadanie } from "./proba-zadanie";
-import { start } from "./start";
-import { wedrownik } from "./wedrownik";
+import type { ChapterId, Page } from "../types";
+import { character } from "./areas/character";
+import { culture } from "./areas/culture";
+import { faith } from "./areas/faith";
+import { family } from "./areas/family";
+import { health } from "./areas/health";
+import { homeland } from "./areas/homeland";
+import { intellect } from "./areas/intellect";
+import { nature } from "./areas/nature";
+import { passions } from "./areas/passions";
+import { service } from "./areas/service";
+import { guideposts } from "./guideposts";
+import { rankHo } from "./rank-ho";
+import { rankHr } from "./rank-hr";
+import { roverPath } from "./rover-path";
+import { areas } from "./trial/areas";
+import { board } from "./trial/board";
+import { faq } from "./trial/faq";
+import { mentor } from "./trial/mentor";
+import { rhythm } from "./trial/rhythm";
+import { tasks } from "./trial/tasks";
+import { welcome } from "./welcome";
 
-export const PAGES: Page[] = [
-  start,
-  wedrownik,
-  probaOpiekun,
-  probaKapitula,
-  probaRytm,
-  probaZadanie,
-  probaObszary,
-  probaFaq,
-  obszarBog,
-  obszarCharakter,
-  obszarIntelekt,
-  obszarZdrowie,
-  obszarSluzba,
-  obszarOjczyzny,
-  obszarRodzina,
-  obszarPasje,
-  obszarKultura,
-  obszarPrzyroda,
+export interface Chapter {
+  id: ChapterId;
+  number: string;
+  title: string;
+  description: string;
+  pages: Page[];
+}
+
+/** Chapters in the order of the printed edition. */
+export const CHAPTERS: Chapter[] = [
+  {
+    id: "rover-path",
+    description: "Symbolika Watry Wędrowniczej – pola i cele pracy wędrownika.",
+    number: "01",
+    title: "Droga Wędrownika",
+    pages: [roverPath],
+  },
+  {
+    id: "ho",
+    description: "Sylwetka, warunki zdobycia, wymagania i wytyczne do zadań.",
+    number: "02",
+    title: "Harcerz orli",
+    pages: [rankHo],
+  },
+  {
+    id: "hr",
+    description:
+      "Sylwetka harcerza Rzeczypospolitej i warunki zdobycia stopnia.",
+    number: "03",
+    title: "Harcerz Rzeczypospolitej",
+    pages: [rankHr],
+  },
+  {
+    id: "trial",
+    description: "Opiekun, kapituła, rytm próby i jak ułożyć dobre zadanie.",
+    number: "04",
+    title: "Układanie próby indywidualnej",
+    pages: [mentor, board, rhythm, tasks, areas, faq],
+  },
+  {
+    id: "guideposts",
+    description:
+      "Obszary życia, postawy i drogowskazy do zadań indywidualnych.",
+    number: "05",
+    title: "Drogowskazy",
+    pages: [
+      guideposts,
+      faith,
+      character,
+      intellect,
+      health,
+      service,
+      homeland,
+      family,
+      passions,
+      culture,
+      nature,
+    ],
+  },
 ];
+
+export const START_PAGE = welcome;
+
+/** All pages in reading order, starting with the welcome letter. */
+export const PAGES: Page[] = [
+  welcome,
+  ...CHAPTERS.flatMap((chapter) => chapter.pages),
+];
+
+/** Areas of life, i.e. the pages below "Drogowskazy". */
+export const AREAS = CHAPTERS.find((c) => c.id === "guideposts")!.pages.slice(
+  1,
+);

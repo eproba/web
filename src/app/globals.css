@@ -45,20 +45,6 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-@theme {
-  --animate-hit: hit-flash 2.5s ease-out;
-
-  @keyframes hit-flash {
-    0%,
-    40% {
-      background-color: color-mix(in oklch, var(--warning) 30%, transparent);
-    }
-    100% {
-      background-color: transparent;
-    }
-  }
-}
-
 :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
@@ -146,5 +132,41 @@
   button:not(:disabled),
   [role="button"]:not(:disabled) {
     cursor: pointer;
+  }
+}
+
+/*
+ * Vademecum sidebar height while scrolling; used in app/vademecum/layout.tsx.
+ * Each animation moves its own variable, so both can run on the same card.
+ */
+@property --vademecum-sidebar-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+@property --vademecum-sidebar-end {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+/* at the top of the page the navbar is above the sidebar */
+@keyframes vademecum-sidebar-top {
+  from {
+    --vademecum-sidebar-top: 84px;
+  }
+  to {
+    --vademecum-sidebar-top: 0px;
+  }
+}
+
+/* at the end of the page the footer comes into view */
+@keyframes vademecum-sidebar-end {
+  from {
+    --vademecum-sidebar-end: 0px;
+  }
+  to {
+    --vademecum-sidebar-end: 41px;
   }
 }

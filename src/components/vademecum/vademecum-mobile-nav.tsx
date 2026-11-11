@@ -2,69 +2,70 @@
 
 import { Button } from "@/components/ui/button";
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
-import { DrawerClose } from "@/components/ui/drawer";
-import { navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
-import { cn } from "@/lib/utils";
-import { BASE_PATH } from "@/lib/vademecum/config";
-import type { NavData } from "@/lib/vademecum/pages";
-import { ChevronDownIcon } from "lucide-react";
-import Link from "next/link";
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import type { NavChapter, NavLink } from "@/lib/vademecum/navigation";
+import { DownloadIcon, ListIcon, SearchIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-import { NavTree } from "./nav-tree";
-import { SearchableNav } from "./searchable-nav";
+import { VademecumNav } from "./vademecum-nav";
+import { VademecumSearch } from "./vademecum-search";
 
-/**
- * Pozycja „Vademecum” w menu głównym na telefonie: odnośnik do strony
- * głównej i zwijany pod nim spis treści. Renderowana wewnątrz Drawera.
- */
-export function VademecumMobileNav({ nav }: { nav: NavData }) {
+/** Table of contents in a side sheet, for screens without the sidebar. */
+export function VademecumMobileNav({
+  start,
+  chapters,
+  pdfUrl,
+}: {
+  start: NavLink;
+  chapters: NavChapter[];
+  pdfUrl: string;
+}) {
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  // Rozwinięte od razu, jeśli menu otwarto na stronie Vademecum.
-  const [defaultOpen] = useState(
-    () => pathname === BASE_PATH || pathname.startsWith(`${BASE_PATH}/`),
+  const current = [start, ...chapters.flatMap((chapter) => chapter.links)].find(
+    (link) => link.href === pathname,
   );
 
   return (
-    <Collapsible defaultOpen={defaultOpen}>
-      <div className="flex items-center gap-1">
-        <DrawerClose
-          nativeButton={false}
-          render={
-            <Link
-              href={BASE_PATH}
-              className={cn(
-                navigationMenuTriggerStyle(),
-                "h-auto flex-1 justify-start py-1.5",
-              )}
+    <Sheet open={open} onOpenChange={setOpen}>
+      <SheetTrigger
+        render={<Button variant="outline" className="w-full justify-start" />}
+      >
+        <ListIcon />
+        <span className="truncate">{current?.title ?? "Spis treści"}</span>
+        <SearchIcon className="text-muted-foreground ml-auto" />
+      </SheetTrigger>
+      <SheetContent side="left" className="gap-0">
+        <SheetHeader>
+          <SheetTitle>Vademecum</SheetTitle>
+        </SheetHeader>
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <VademecumSearch onNavigate={() => setOpen(false)}>
+            <VademecumNav
+              start={start}
+              chapters={chapters}
+              onNavigate={() => setOpen(false)}
             />
-          }
-        >
-          Vademecum
-        </DrawerClose>
-        <CollapsibleTrigger
-          render={
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              className="group/vademecum"
-              aria-label="Pokaż spis treści Vademecum"
-            />
-          }
-        >
-          <ChevronDownIcon className="transition-transform group-aria-expanded/vademecum:rotate-180" />
-        </CollapsibleTrigger>
-      </div>
-      <CollapsibleContent className="pt-2 pl-3">
-        <SearchableNav container="drawer">
-          <NavTree nav={nav} container="drawer" />
-        </SearchableNav>
-      </CollapsibleContent>
-    </Collapsible>
+          </VademecumSearch>
+        </div>
+        <div className="border-t p-4">
+          <Button
+            variant="outline"
+            className="w-full"
+            nativeButton={false}
+            render={<a href={pdfUrl} target="_blank" rel="noopener" />}
+          >
+            <DownloadIcon />
+            Pobierz PDF
+          </Button>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 }
