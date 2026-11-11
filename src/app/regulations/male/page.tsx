@@ -428,7 +428,7 @@ export default async function MaleRegulationsPage() {
           </TabsTrigger>
           <TabsTrigger value="individual-tasks">
             <CheckCircleIcon className="size-4" />
-            Wytyczne do zadań indywidualne
+            Wytyczne do zadań indywidualnych
           </TabsTrigger>
           <TabsTrigger value="process">
             <ShieldIcon className="size-4" />

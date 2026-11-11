@@ -102,6 +102,10 @@ const MAIN_NAV_ITEMS: NavItem[] = [
     href: "/regulations/male",
     access: (user) => !!user && user.organization === Organization.Male,
   },
+  {
+    title: "Vademecum",
+    href: "/vademecum",
+  },
 ];
 
 const MORE_NAV_ITEMS: NavItem[] = [
