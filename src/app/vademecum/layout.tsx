@@ -7,9 +7,11 @@ import { cn } from "@/lib/utils";
 import { PDF_URL, getNavigation } from "@/lib/vademecum/navigation";
 import { DownloadIcon } from "lucide-react";
 
+import "./vademecum.css";
+
 /**
  * Sticky sidebar that always fits on the screen. Two scroll-driven animations
- * (keyframes in globals.css) shorten it: by 84px at the very top of the page,
+ * (keyframes in vademecum.css) shorten it: by 84px at the very top of the page,
  * where the navbar is above it, and by 41px at the very end, where the footer
  * comes into view. Browsers without scroll-driven animations skip both.
  */
